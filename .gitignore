@@ -16,4 +16,5 @@ TEST-*.xml
 junit*.properties
 *.class
 *.prefs
-*.class
+_LOG/
+bin/

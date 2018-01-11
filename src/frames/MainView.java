@@ -116,8 +116,13 @@ public class MainView {
 		ArrayList<String> list = this.dm.getList("SELECT * FROM customers");
 		for(int i = 0; i < list.size(); i++)
 			System.out.println(i + " in " + list.get(i));
-		
-		initialize();
+		test();
+//		initialize();
+	}
+
+	private void test() {
+		// TODO Here I will be testing all of the functionalities
+		System.out.println("TEST");
 	}
 
 	/**
