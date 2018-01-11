@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -29,10 +31,10 @@ public class DatabaseManager {
 		try {
 			Class.forName(cdb.JDBC_DRIVER);
 			Connection conn = DriverManager.getConnection(cdb.DB_URL, cdb.USER, cdb.PASS);
-			JOptionPane.showMessageDialog(null, "Connected!");
+//			JOptionPane.showMessageDialog(null, "Connected!");
 			return conn;
 		} catch (Exception ex) {
-//			JOptionPane.showMessageDialog(null, "Error: "+ex.getMessage());
+			JOptionPane.showMessageDialog(null, "Connection Error: "+ex.getMessage());
 			log.logError(date+" "+this.getClass().getName()+"\t"+ex.getMessage());
 			return null;		
 		}		
@@ -62,6 +64,42 @@ public class DatabaseManager {
 	
 //	 TODO
 //	retrieve list of records
+	public Map<String, String> selectDataMap(String q) {
+		Map<String, String> toReturn = new HashMap<String, String>();
+		Connection conn = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		try {
+			if(conn == null || conn.isClosed())
+				conn = this.connect();
+		} catch (SQLException e) {
+			log.logError(date+" 1st "+this.getClass().getName()+"\tSELECT DATA MAP [E1]\t"+e.getMessage());
+		}
+
+		try {
+			pst = conn.prepareStatement(q);
+			rs = pst.executeQuery();		
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int columnsNumber = rsmd.getColumnCount();   
+			
+			while(rs.next()) {			
+				for(int i = 0 ; i <= columnsNumber; i++){
+					if(i % 2 != 0){
+						toReturn.put(rs.getString(i), rs.getString(i+1));
+					}
+				}        
+			}
+		} catch (SQLException e) {
+			log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA [E2] \t"+e.getMessage());
+		} finally {
+			try{
+				this.close(rs, pst, conn);
+			} catch (Exception e){
+				log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA MAP [E3]\t"+e.getMessage());
+			}
+		}
+		return toReturn;
+	}
 		
 //	 TODO
 //	retrieve one record
@@ -99,5 +137,8 @@ public class DatabaseManager {
 		}
 		return list;
 	}
+
+
+	
 
 }

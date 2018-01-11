@@ -9,4 +9,8 @@ public class ConstDB {
 	public static final String USER = "hct";
 	public static final String PASS = "pass1234";
 
+	//Database query's
+	public static final String SELECT_CARS_LIST_BRAND_ID = "SELECT brand, idbrand FROM brands";
+	public static final String SELECT_CARS_LIST_ID_BRAND = "SELECT idbrand, brand FROM brands";
+
 }

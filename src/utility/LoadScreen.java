@@ -12,8 +12,7 @@ public class LoadScreen {
 	  SplashScreen screen;
 
 	  public LoadScreen(ConstPaths cp, ConstInts ci) {
-//		cp = new ConstPaths();
-		  this.cp = cp;
+		this.cp = cp;
 		String poop;
 	    splashScreenInit();
 	    for (int i = 0; i <= 100; i++) {

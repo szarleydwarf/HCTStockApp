@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -45,6 +46,8 @@ public class MainView {
 	private static ConstStrings cs;
 	private static String date;
 	private static MiscHelper msch;
+	private static HashMap cars_BI;
+	private static HashMap cars_IB;
 	
 
 	/**
@@ -66,8 +69,8 @@ public class MainView {
 				try {
 					ls.splashScreenDestruct();
 
-					MainView window = new MainView();
-					window.frame.setVisible(true);
+//					MainView window = new MainView();
+//					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -93,6 +96,11 @@ public class MainView {
 
 //		TODO
 //		get cars list
+		cars_BI = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_BRAND_ID);
+		cars_IB = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_ID_BRAND);
+		
+//		msch.printMap(cars_BI);
+//		msch.printMap(cars_IB);
 		
 //		TODO
 //		get customer list?

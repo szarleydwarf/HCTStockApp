@@ -20,6 +20,7 @@ public class MiscHelper {
 	 * https://stackoverflow.com/questions/1066589/iterate-through-a-hashmap
 	*/
 	public static void printMap(Map mp) {
+		System.out.println("Printing - " + mp.getClass().getTypeName());
 	    Iterator it = mp.entrySet().iterator();
 	    while (it.hasNext()) {
 	        Map.Entry pair = (Map.Entry)it.next();
