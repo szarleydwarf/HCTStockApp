@@ -23,7 +23,6 @@ public class FileHelper {
 	    	try {
 				return file.createNewFile();
 			} catch (IOException e) {
-				// TODO Add logger :P
 				e.printStackTrace();
 			}
 	    }

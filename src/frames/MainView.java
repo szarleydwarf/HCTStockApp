@@ -3,6 +3,7 @@ package frames;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -23,30 +24,35 @@ import consts.ConstInts;
 import consts.ConstPaths;
 import consts.ConstStrings;
 import managers.DatabaseManager;
+import utility.DateHelper;
+import utility.FileHelper;
 import utility.LoadScreen;
+import utility.Logger;
+import utility.MiscHelper;
 
 public class MainView {
 
 	private JFrame frame;
 	private static DatabaseManager dm;
-	protected static LoadScreen ls;
+	private static LoadScreen ls;
+	private static Logger logger;
+	private static DateHelper dh;
+	private static FileHelper fh;
+	
 	private static ConstDB cdb;
 	private static ConstInts ci;
 	private static ConstPaths cp;
 	private static ConstStrings cs;
+	private static String date;
+	private static MiscHelper msch;
 	
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		cdb = new ConstDB();
-		ci = new ConstInts();
-		cp = new ConstPaths();
-		cs = new ConstStrings();
+		loadClasses();
 		
-		dm = new DatabaseManager(null, cdb);
-
 		try {
 		      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		    }
@@ -69,6 +75,40 @@ public class MainView {
 		});
 	}
 
+	private static void loadClasses() {
+		cdb = new ConstDB();
+		ci = new ConstInts();
+		cp = new ConstPaths();
+		cs = new ConstStrings();
+		
+		dh = new DateHelper(cs);
+		fh = new FileHelper();
+		msch = new MiscHelper();
+		
+		date = dh.getFormatedDate();
+
+		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
+		
+		dm = new DatabaseManager(logger, date, cdb);
+
+//		TODO
+//		get cars list
+		
+//		TODO
+//		get customer list?
+		
+//		TODO
+//		get stock
+
+//		TODO
+//		check last database last backup - do it if necessary
+		
+//		TODO
+//		load other managers if necessary
+		
+//		TODO
+	}
+
 	/**
 	 * Create the application.
 	 */
@@ -88,7 +128,7 @@ public class MainView {
 		frame.getContentPane().setBackground(new Color(204, 0, 0));
 //		frame.getContentPane().setBackground(Color.CYAN);
 		
-//		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(this.fv.ICON_PATH));
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(this.cp.ICON_PATH));
 		frame.setTitle("HCT APP");
 		frame.setBounds(10, 10, 704, 359);
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -104,7 +144,6 @@ public class MainView {
 //		        }
 		    }
 		});
-//		frame.setLocation(10, 10);
 		frame.getContentPane().setLayout(null);
 		
 		JButton stockBtn = new JButton("Magazyn");

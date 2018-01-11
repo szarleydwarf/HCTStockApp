@@ -11,13 +11,17 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import consts.ConstDB;
+import utility.Logger;
 
 public class DatabaseManager {
 	private ConstDB cdb;	
+	private Logger  log;
 	private String date;
 	
-	public DatabaseManager (String p_loggerFolderPath, ConstDB cdb) {
+	public DatabaseManager (Logger logger, String date, ConstDB cdb) {
 		this.cdb = cdb;
+		this.log = logger;
+		this.date = date;
 	}
 	
 	
@@ -28,11 +32,12 @@ public class DatabaseManager {
 			JOptionPane.showMessageDialog(null, "Connected!");
 			return conn;
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(null, "Error: "+ex.getMessage());
-//			log.logError(date+" "+this.getClass().getName()+"\t"+ex.getMessage());
+//			JOptionPane.showMessageDialog(null, "Error: "+ex.getMessage());
+			log.logError(date+" "+this.getClass().getName()+"\t"+ex.getMessage());
 			return null;		
 		}		
 	}
+	
 	private void close(ResultSet rs,PreparedStatement pst, Connection conn) {
 		try{
             if (rs != null) {
@@ -45,10 +50,25 @@ public class DatabaseManager {
                  conn.close();
              }
 		} catch (Exception e3){
-//			log.logError(date+" "+this.getClass().getName()+"\tCLOSE E3\t"+e3.getMessage());
+			log.logError(date+" "+this.getClass().getName()+"\tCLOSE E3\t"+e3.getMessage());
 		}
 	}
 
+//	TODO
+//	add new record
+	
+//	TODO
+//	edit record
+	
+//	 TODO
+//	retrieve list of records
+		
+//	 TODO
+//	retrieve one record
+	
+//	 TODO
+//	delete record
+	
 	public ArrayList<String> getList(String q) {
 		Connection conn = this.connect();
 		PreparedStatement pst = null;
@@ -68,13 +88,13 @@ public class DatabaseManager {
 				
 			}
 		} catch (SQLException e1) {
-//			log.logError(date+" "+this.getClass().getName()+"\tGET ITEMS LIST\tE1 "+e1.getMessage());
+			log.logError(date+" "+this.getClass().getName()+"\tGET ITEMS LIST\tE1 "+e1.getMessage());
 		} finally {
 			try{
 				this.close(rs, pst, conn);
 			} catch (Exception e2){
 				e2.printStackTrace();
-//				log.logError(date+" "+this.getClass().getName()+"\tGET ITEMS LIST\tE2 "+e2.getMessage());
+				log.logError(date+" "+this.getClass().getName()+"\tGET ITEMS LIST\tE2 "+e2.getMessage());
 			}
 		}
 		return list;

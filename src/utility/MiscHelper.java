@@ -9,7 +9,6 @@ public class MiscHelper {
 		
 	}
 
-
 	public void timeOut(long timeout) {
 		int i = 0;
 		while(i < timeout){
