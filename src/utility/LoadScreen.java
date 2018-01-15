@@ -3,7 +3,7 @@ package utility;
 import utility.SplashScreen;
 import javax.swing.ImageIcon;
 
-import consts.ConstInts;
+import consts.ConstNums;
 import consts.ConstPaths;
 
 
@@ -11,7 +11,7 @@ public class LoadScreen {
 	private static ConstPaths cp;	
 	  SplashScreen screen;
 
-	  public LoadScreen(ConstPaths cp, ConstInts ci) {
+	  public LoadScreen(ConstPaths cp, ConstNums ci) {
 		this.cp = cp;
 		String poop;
 	    splashScreenInit();

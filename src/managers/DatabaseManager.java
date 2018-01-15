@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 
 import consts.ConstDB;
+import objects.Item;
 import utility.Logger;
 
 public class DatabaseManager {
@@ -58,12 +60,78 @@ public class DatabaseManager {
 
 //	TODO
 //	add new record
+	public boolean addNewRecord(String query) {
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		Connection conn = null;
+		try {
+			if(conn == null || conn.isClosed())
+				conn = this.connect();
+		} catch (SQLException e) {
+			log.logError(date+" 1st "+this.getClass().getName()+"\tAdd New Record E\t"+e.getMessage());
+		}
+			
+		try {
+			pst = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			int inserted = pst.executeUpdate();
+			
+			rs = pst.getGeneratedKeys();
+			if(inserted == 1)
+				return true;
+			else
+				return false;
+
+		} catch (SQLException e11) {
+			e11.printStackTrace();
+			log.logError(date+" "+this.getClass().getName()+"\tAdd New Record E11\t"+e11.getMessage());
+		}	finally {
+			try{
+				this.close(rs, pst, conn);
+			} catch (Exception e3){
+				e3.printStackTrace();
+				log.logError(date+" "+this.getClass().getName()+"\tAdd New Record E3\t"+e3.getMessage());
+			}
+		}
+		
+		return false;
+	}
 	
+	public void addNewRecord(String table, ArrayList<?> list) {
+		// TODO Auto-generated method stub
+		
+	}
+
 //	TODO
 //	edit record
 	
 //	 TODO
 //	retrieve list of records
+	public ResultSet selectData(String q){
+		Connection conn = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		try {
+			if(conn == null || conn.isClosed())
+				conn = this.connect();
+		} catch (SQLException e) {
+			log.logError(date+" 1st "+this.getClass().getName()+"\tSELECT DATA [E]\t"+e.getMessage());
+		}
+		try {
+			pst = conn.prepareStatement(q);
+			rs = pst.executeQuery();		
+		} catch (SQLException e2) {
+			log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA [E2] \t"+e2.getMessage());
+		} finally {
+			try{
+				this.close(rs, pst, conn);
+			} catch (Exception e3){
+				log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA [E3]\t"+e3.getMessage());
+			}
+		}
+		return rs;
+	}
+
+	
 	public Map<String, String> selectDataMap(String q) {
 		Map<String, String> toReturn = new HashMap<String, String>();
 		Connection conn = null;
@@ -137,6 +205,7 @@ public class DatabaseManager {
 		}
 		return list;
 	}
+
 
 
 	

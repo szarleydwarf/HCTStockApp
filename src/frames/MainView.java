@@ -21,15 +21,20 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
 import consts.ConstDB;
-import consts.ConstInts;
+import consts.ConstNums;
 import consts.ConstPaths;
 import consts.ConstStrings;
+import managers.CustomersManager;
 import managers.DatabaseManager;
+import managers.InvoiceManager;
+import managers.StockManager;
+import objects.Item;
 import utility.DateHelper;
 import utility.FileHelper;
 import utility.LoadScreen;
 import utility.Logger;
 import utility.MiscHelper;
+import utility.tScanner;
 
 public class MainView {
 
@@ -41,20 +46,24 @@ public class MainView {
 	private static FileHelper fh;
 	
 	private static ConstDB cdb;
-	private static ConstInts ci;
+	private static ConstNums cn;
 	private static ConstPaths cp;
 	private static ConstStrings cs;
-	private static String date;
+	private static String today;
 	private static MiscHelper msch;
-	private static HashMap cars_BI;
-	private static HashMap cars_IB;
+	private static HashMap<String, String> cars_BI;
+	private static HashMap<String, String> cars_IB;
+	private static StockManager stmng;
+	private static CustomersManager cmng;
+	private static tScanner ts;
+	private static InvoiceManager invmng;
 	
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		loadClasses();
+		loader();
 		
 		try {
 		      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -62,14 +71,14 @@ public class MainView {
 		    catch (Exception e) {
 		      e.printStackTrace();
 		    }
-		    ls = new LoadScreen(cp, ci);
+		    ls = new LoadScreen(cp, cn);
 		    
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					ls.splashScreenDestruct();
 
-//					MainView window = new MainView();
+					MainView window = new MainView();
 //					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -78,59 +87,83 @@ public class MainView {
 		});
 	}
 
-	private static void loadClasses() {
-		cdb = new ConstDB();
-		ci = new ConstInts();
-		cp = new ConstPaths();
-		cs = new ConstStrings();
-		
-		dh = new DateHelper(cs);
-		fh = new FileHelper();
-		msch = new MiscHelper();
-		
-		date = dh.getFormatedDate();
+	private static void loader() {
+		System.out.println("loader");
+		ts = new tScanner();
 
-		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
-		
-		dm = new DatabaseManager(logger, date, cdb);
+		loadConst();
+		loadHelpers();
 
-//		TODO
+		today = dh.getFormatedDateAndTime();
+		
+		loadManagers();
+
 //		get cars list
 		cars_BI = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_BRAND_ID);
 		cars_IB = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_ID_BRAND);
 		
-//		msch.printMap(cars_BI);
-//		msch.printMap(cars_IB);
-		
-//		TODO
-//		get customer list?
-		
-//		TODO
-//		get stock
-
 //		TODO
 //		check last database last backup - do it if necessary
-		
+	}
+
+	private static void loadConst() {
+		System.out.println("loadConst");
+		cdb = new ConstDB();
+		cn = new ConstNums();
+		cp = new ConstPaths();
+		cs = new ConstStrings();
+	}
+
+	private static void loadHelpers() {
+		System.out.println("loadHelpers");
+		dh = new DateHelper(cs);
+		fh = new FileHelper();
+		msch = new MiscHelper();
+		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
+	}
+
+	private static void loadManagers() {
+		System.out.println("loadManagers");
 //		TODO
-//		load other managers if necessary
+		dm = new DatabaseManager(logger, today, cdb);
+
+//		get customer list
+		cmng = new CustomersManager();
 		
-//		TODO
+//		get stock
+		stmng = new StockManager(dm, cdb, cn, cs);
+		
+		//get invoices list
+		invmng = new InvoiceManager();		
 	}
 
 	/**
 	 * Create the application.
 	 */
 	public MainView() {
-		ArrayList<String> list = this.dm.getList("SELECT * FROM customers");
-		for(int i = 0; i < list.size(); i++)
-			System.out.println(i + " in " + list.get(i));
+		System.out.println("MainView");
+
 		test();
+		
+		System.out.println("EXIT");
+		System.exit(0);
 //		initialize();
 	}
 
 	private void test() {
 		// TODO Here I will be testing all of the functionalities
 		System.out.println("TEST");
+		stmng.printList();
+		String id = ts.getString("wpisz id ");
+		String nazwa = ts.getString("wpisz nazwe ");
+		double cost = ts.getFloat("wpisz koszt ");
+		double price = ts.getFloat("wpisz cene ");
+		int qnt = ts.getByte("QNT ");
+		stmng.addItem(new Item(dm, cdb, cn, cs, id, nazwa, cost, price, 1, 0, qnt));
+		stmng.printList();
+
+		//		Item i = 
+//		i.saveNewInDatabase();
 	}
 
 	/**

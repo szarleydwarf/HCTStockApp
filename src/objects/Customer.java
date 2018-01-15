@@ -1,6 +1,6 @@
 package objects;
 
-public class Customer {
+public abstract class Customer {
 	private int numOfServices;
 	private String id;
 	
@@ -24,4 +24,5 @@ public class Customer {
 	public void setNumOfServices(int numOfServices) {
 		this.numOfServices = numOfServices;
 	}
+	public abstract boolean equals(Object o);
 }

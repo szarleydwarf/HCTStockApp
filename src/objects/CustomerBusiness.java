@@ -56,5 +56,33 @@ public class CustomerBusiness extends Customer {
 	public void setCar(Car car) {
 		this.car = car;
 	}
+	/*     @Override
+    public boolean equals(Object c) {
+	   CustomerInd cCopy = (CustomerInd)c;
+	   if (this.getId() == cCopy.getId() && this.car.getRegistration() == cCopy.car.getRegistration()) {
+	       return true;
+	   }
+       return false;
+   }
+	 * 
+	 */
+
+	@Override
+	public boolean equals(Object c) {
+		   if (c == null) {
+		       return false;
+		   }
+		   
+		   if (c == this) {
+		       return true;
+		   }
+		   
+		   //!(c instanceof Car)) 
+		   if (getClass() != c.getClass()) {
+		       return false;
+		   }
+
+		return false;
+	}
 
 }

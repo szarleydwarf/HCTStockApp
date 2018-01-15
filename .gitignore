@@ -18,3 +18,4 @@ junit*.properties
 *.prefs
 _LOG/
 bin/
+.classpath

@@ -7,4 +7,12 @@ public class ConstStrings {
 	public final String DATE_FORMAT = "dd-MM-yyyy";//"yyyy-MM-dd" ?? not sure which format is correct for a database entry. so far works
 	public final String DATE_TIME_FORMAT = "dd-MM-yyyy @HH:mm:ss";
 
+	// ITEM CODES
+	public static final String TYRE_CODE = "TR";
+	public static final String TUBE_CODE = "TB";
+	public static final String SERVICE_CODE = "SR";
+	public static final String OTHER_CODE = "OT";
+	public static final String CARWASH_CODE = "CW";
+
+	
 }
