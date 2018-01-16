@@ -24,64 +24,21 @@ public class StockManager {
 		this.cn = cn;
 		this.cs = cs;
 		
-		populateList();
-	}
-	
-	private void populateList() {
-		ResultSet rs = this.dm.selectData(this.cdb.SELECT_ALL_ITEMS);
-		ResultSetMetaData rsmd;
-		try {
-			rsmd = rs.getMetaData();
-			int colNum = rsmd.getColumnCount();
-			while(rs.next()){
-				Item i = cretateItem(rs, colNum);
-				this.addItem(i);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		list = extracted();
+//		populateList();
 	}
 
-	private Item cretateItem(ResultSet rs, int colNum) throws NumberFormatException, SQLException {
-		String  itID = "", itName = "";
-		double cost = 0, price = 0;
-		int qnt = 0, addTransport = 0, addVat = 0;
-		for(int i = 1 ; i <= colNum; i++){
-//			System.out.println(i + " "+ rs.getString(i));
-			if(!rs.getString(i).isEmpty()) {
-				switch(i){
-				case 1:
-					itID = rs.getString(i);
-					break;
-				case 2:
-					itName = rs.getString(i);
-					break;
-				case 3:
-					cost = Double.parseDouble(rs.getString(i));
-					break;
-				case 4:
-					addVat = rs.getInt(i);
-					break;
-				case 5:
-					addTransport = rs.getInt(i);
-					break;
-				case 6:
-					price = Double.parseDouble(rs.getString(i));
-					break;
-				case 7:
-					qnt = Integer.parseInt(rs.getString(i));
-					break;
-				}
-			}
-		}
-		/*DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, String p_stock_number, 
-		 * String p_name, double p_cost, double p_price, int addVat, int addTransportCost, int qnt*/
-		return new Item(this.dm, this.cdb, this.cn, this.cs, itID, itName, cost, price, addVat, addTransport, qnt);	}
+
+	@SuppressWarnings("unchecked")
+	private ArrayList<Item> extracted() {
+		return (ArrayList<Item>) this.dm.selectData(this.cdb.SELECT_ALL_ITEMS, list);
+	}
+	
 
 	public boolean addItem(Item i){
 		if(!list.contains(i)) {
 			list.add(i);
+			this.dm.addNewRecord(i.createInsertQuery());
 			return true;
 		}
 		return false;
@@ -90,6 +47,7 @@ public class StockManager {
 	public boolean deleteItem(Item i){
 		if(list.contains(i)){
 			list.remove(i);
+			//TODO update database
 			return true;
 		}
 		return false;

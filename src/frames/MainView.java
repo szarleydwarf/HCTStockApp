@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -57,6 +58,7 @@ public class MainView {
 	private static CustomersManager cmng;
 	private static tScanner ts;
 	private static InvoiceManager invmng;
+	private static DecimalFormat df;
 	
 
 	/**
@@ -120,12 +122,13 @@ public class MainView {
 		fh = new FileHelper();
 		msch = new MiscHelper();
 		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
+		df = new DecimalFormat();
 	}
 
 	private static void loadManagers() {
 		System.out.println("loadManagers");
 //		TODO
-		dm = new DatabaseManager(logger, today, cdb);
+		dm = new DatabaseManager(logger, today, cdb, cn, cs);
 
 //		get customer list
 		cmng = new CustomersManager();
@@ -156,8 +159,8 @@ public class MainView {
 		stmng.printList();
 		String id = ts.getString("wpisz id ");
 		String nazwa = ts.getString("wpisz nazwe ");
-		double cost = ts.getFloat("wpisz koszt ");
-		double price = ts.getFloat("wpisz cene ");
+		double cost = ts.getFloatHandleException("wpisz koszt ");
+		double price = ts.getFloatHandleException("wpisz cene ");
 		int qnt = ts.getByte("QNT ");
 		stmng.addItem(new Item(dm, cdb, cn, cs, id, nazwa, cost, price, 1, 0, qnt));
 		stmng.printList();

@@ -14,6 +14,8 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 
 import consts.ConstDB;
+import consts.ConstNums;
+import consts.ConstStrings;
 import objects.Item;
 import utility.Logger;
 
@@ -21,11 +23,18 @@ public class DatabaseManager {
 	private ConstDB cdb;	
 	private Logger  log;
 	private String date;
+	private ConstNums cn;
+	private ConstStrings cs;
 	
-	public DatabaseManager (Logger logger, String date, ConstDB cdb) {
-		this.cdb = cdb;
+	
+	public DatabaseManager (Logger logger, String date, ConstDB cdbm, ConstNums cn, ConstStrings cs) {
+		this.cdb = cdbm;
+		this.cs = cs;
+		this.cn = cn;
 		this.log = logger;
 		this.date = date;
+
+		
 	}
 	
 	
@@ -58,8 +67,7 @@ public class DatabaseManager {
 		}
 	}
 
-//	TODO
-//	add new record
+
 	public boolean addNewRecord(String query) {
 		PreparedStatement pst = null;
 		ResultSet rs = null;
@@ -96,6 +104,8 @@ public class DatabaseManager {
 		return false;
 	}
 	
+//	TODO
+//	add new record	
 	public void addNewRecord(String table, ArrayList<?> list) {
 		// TODO Auto-generated method stub
 		
@@ -106,19 +116,25 @@ public class DatabaseManager {
 	
 //	 TODO
 //	retrieve list of records
-	public ResultSet selectData(String q){
+	public ArrayList<?> selectData(String q, ArrayList<?> list){
 		Connection conn = null;
 		PreparedStatement pst = null;
 		ResultSet rs = null;
+//		ArrayList<?> list = new ArrayList();
 		try {
 			if(conn == null || conn.isClosed())
 				conn = this.connect();
 		} catch (SQLException e) {
 			log.logError(date+" 1st "+this.getClass().getName()+"\tSELECT DATA [E]\t"+e.getMessage());
 		}
+		
 		try {
 			pst = conn.prepareStatement(q);
-			rs = pst.executeQuery();		
+			rs = pst.executeQuery();
+			
+			if(q.contains(ConstDB.TableNames.TB_STOCK.getName()))
+				list = populateItemList(rs, (ArrayList<Item>) list);
+			
 		} catch (SQLException e2) {
 			log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA [E2] \t"+e2.getMessage());
 		} finally {
@@ -128,7 +144,7 @@ public class DatabaseManager {
 				log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA [E3]\t"+e3.getMessage());
 			}
 		}
-		return rs;
+		return list;
 	}
 
 	
@@ -175,39 +191,59 @@ public class DatabaseManager {
 //	 TODO
 //	delete record
 	
-	public ArrayList<String> getList(String q) {
-		Connection conn = this.connect();
-		PreparedStatement pst = null;
-		ResultSet rs = null;
-		ArrayList<String> list = new ArrayList<String>();
-		System.out.println(q);
+	
+	public ArrayList<Item> populateItemList(ResultSet rs, ArrayList<Item> list) {
+
+		ResultSetMetaData rsmd;
 		try {
-			pst = conn.prepareStatement(q);		
-			
-			rs = pst.executeQuery();
-			ResultSetMetaData rsmd = rs.getMetaData();
-			int columnsNumber = rsmd.getColumnCount();
-			System.out.println("cnv "+columnsNumber);
-			while (rs.next()){
-				for(int i = 1; i <= columnsNumber; i++)
-					list.add(rs.getString(i));
-				
+			rsmd = rs.getMetaData();
+			int colNum = rsmd.getColumnCount();
+			while(rs.next()){
+				Item i = cretateItem(rs, colNum);
+				list.add(i);
 			}
-		} catch (SQLException e1) {
-			log.logError(date+" "+this.getClass().getName()+"\tGET ITEMS LIST\tE1 "+e1.getMessage());
-		} finally {
-			try{
-				this.close(rs, pst, conn);
-			} catch (Exception e2){
-				e2.printStackTrace();
-				log.logError(date+" "+this.getClass().getName()+"\tGET ITEMS LIST\tE2 "+e2.getMessage());
-			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return list;
 	}
 
-
-
-	
+	private Item cretateItem(ResultSet rs, int colNum) throws NumberFormatException, SQLException {
+		String  itID = "", itName = "";
+		double cost = 0, price = 0;
+		int qnt = 0, addTransport = 0, addVat = 0;
+		for(int i = 1 ; i <= colNum; i++){
+//			System.out.println(i + " "+ rs.getString(i));
+			if(!rs.getString(i).isEmpty()) {
+				switch(i){
+				case 1:
+					itID = rs.getString(i);
+					break;
+				case 2:
+					itName = rs.getString(i);
+					break;
+				case 3:
+					cost = Double.parseDouble(rs.getString(i));
+					break;
+				case 4:
+					addVat = rs.getInt(i);
+					break;
+				case 5:
+					addTransport = rs.getInt(i);
+					break;
+				case 6:
+					price = Double.parseDouble(rs.getString(i));
+					break;
+				case 7:
+					qnt = Integer.parseInt(rs.getString(i));
+					break;
+				}
+			}
+		}
+		/*DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, String p_stock_number, 
+		 * String p_name, double p_cost, double p_price, int addVat, int addTransportCost, int qnt*/
+		return new Item(this, this.cdb, this.cn, this.cs, itID, itName, cost, price, addVat, addTransport, qnt);	
+	}
 
 }
