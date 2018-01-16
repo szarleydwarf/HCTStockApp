@@ -92,9 +92,9 @@ public class Item {
 	//TODO
 //	save new item to database
 	public boolean saveNewInDatabase(){
-		System.out.println("Q: "+this.createInsertQuery());
-		System.out.println(this.dm.addNewRecord(this.createInsertQuery()));
-		return false;
+		String q = this.createInsertQuery();
+		System.out.println("Q: "+q);
+		return this.dm.addNewRecord(q);
 	}
 	//TODO
 	//	save edited item
@@ -127,7 +127,7 @@ public class Item {
 	   if (c == null) {
 	       return false;
 	   }
-	   
+
 	   if (c == this) {
 	       return true;
 	   }
@@ -136,14 +136,16 @@ public class Item {
 	   if (getClass() != c.getClass()) {
 	       return false;
 	   }
+
 	   Item cCopy = (Item)c;
-	   if (this.getName() == cCopy.getName()) {
+	   //TODO - add other checkups - stock number?
+	   if (this.getName().equals(cCopy.getName()) && this.getStockNumber().equals(cCopy.getStockNumber())) {
 	       return true;
 	   }
        return false;
 	}
 
-	//getters & setters
+	//GETTERS & SETTERS
 	public String getStockNumber() {
 		return stockNumber;
 	}

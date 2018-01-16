@@ -36,10 +36,11 @@ public class StockManager {
 	
 
 	public boolean addItem(Item i){
-		if(!list.contains(i)) {
+//		if(!list.contains(i)) {
+		if(!this.search(i)){
 			list.add(i);
-			this.dm.addNewRecord(i.createInsertQuery());
-			return true;
+			return i.saveNewInDatabase();
+//			 true;
 		}
 		return false;
 	}
@@ -54,8 +55,26 @@ public class StockManager {
 	}
 	
 	//TODO - edit?
-	//TODO - search
-	
+
+	//TODO other searches - by name, stock number, price?	
+	public boolean search(Item i) {
+		for(Item in : this.list){
+			if(i.equals(in)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean search(String str) {
+		for(Item in : this.list){
+			if(in.getName().equals(str) || in.getStockNumber().equals(str)){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public ArrayList<Item> getList() {
 		return list;
 	}
@@ -68,5 +87,6 @@ public class StockManager {
 		for(Item i : this.list)
 			System.out.println("I: "+i.toString());
 	}
+
 
 }

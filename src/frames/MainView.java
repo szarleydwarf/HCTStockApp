@@ -157,16 +157,20 @@ public class MainView {
 		// TODO Here I will be testing all of the functionalities
 		System.out.println("TEST");
 		stmng.printList();
+		System.out.println();
 		String id = ts.getString("wpisz id ");
 		String nazwa = ts.getString("wpisz nazwe ");
-		double cost = ts.getFloatHandleException("wpisz koszt ");
-		double price = ts.getFloatHandleException("wpisz cene ");
-		int qnt = ts.getByte("QNT ");
-		stmng.addItem(new Item(dm, cdb, cn, cs, id, nazwa, cost, price, 1, 0, qnt));
-		stmng.printList();
+		double cost = 22.01;//ts.getFloatHandleException("wpisz koszt ");
+		double price = 55.25;//ts.getFloatHandleException("wpisz cene ");
+		int qnt = 4;//ts.getByte("QNT ");
+		Item i = new Item(dm, cdb, cn, cs, id, nazwa, cost, price, 1, 0, qnt);
+//		stmng.addItem(i);
+		System.out.println();
+//		stmng.printList();
 
-		//		Item i = 
-//		i.saveNewInDatabase();
+		System.out.println("SEARCH "+stmng.search(i));
+		System.out.println("SEARCH id "+stmng.search(id));
+		System.out.println("SEARCH nazwa "+stmng.search(nazwa));
 	}
 
 	/**
