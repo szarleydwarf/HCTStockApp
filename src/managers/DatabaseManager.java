@@ -113,14 +113,48 @@ public class DatabaseManager {
 
 //	TODO
 //	edit record
-	
+	public boolean updateRecord(String q) {
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		Connection conn = null;
+//		System.out.println(q);
+		try {
+			if(conn == null || conn.isClosed())
+				conn = this.connect();
+		} catch (SQLException e) {
+			log.logError(date+" 1st "+this.getClass().getName()+"\tUpdate Record E\t"+e.getMessage());
+		}
+			
+		try {
+			pst = conn.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
+			int updated = pst.executeUpdate();
+			
+			rs = pst.getGeneratedKeys();
+			if(updated == 1)
+				return true;
+			else
+				return false;
+
+		} catch (SQLException e11) {
+			e11.printStackTrace();
+			log.logError(date+" "+this.getClass().getName()+"\tUpdate Record E11\t"+e11.getMessage());
+		}	finally {
+			try{
+				this.close(rs, pst, conn);
+			} catch (Exception e3){
+				e3.printStackTrace();
+				log.logError(date+" "+this.getClass().getName()+"\tUpdate Record E3\t"+e3.getMessage());
+			}
+		}
+		return false;
+	}
+
 //	 TODO
 //	retrieve list of records
 	public ArrayList<?> selectData(String q, ArrayList<?> list){
 		Connection conn = null;
 		PreparedStatement pst = null;
 		ResultSet rs = null;
-//		ArrayList<?> list = new ArrayList();
 		try {
 			if(conn == null || conn.isClosed())
 				conn = this.connect();
@@ -190,6 +224,42 @@ public class DatabaseManager {
 	
 //	 TODO
 //	delete record
+	public boolean deleteRecord(String q) {
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		Connection conn = null;
+		System.out.println("DBM Delete " + q);
+		try {
+			if(conn == null || conn.isClosed())
+				conn = this.connect();
+		} catch (SQLException e) {
+			log.logError(date+" 1st "+this.getClass().getName()+"\tDelete Record E\t"+e.getMessage());
+		}
+			
+		try {
+			pst = conn.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
+			int inserted = pst.executeUpdate();
+			
+			rs = pst.getGeneratedKeys();
+			if(inserted == 1)
+				return true;
+			else
+				return false;
+
+		} catch (SQLException e11) {
+			e11.printStackTrace();
+			log.logError(date+" "+this.getClass().getName()+"\ttDelete Record E11\t"+e11.getMessage());
+		}	finally {
+			try{
+				this.close(rs, pst, conn);
+			} catch (Exception e3){
+				e3.printStackTrace();
+				log.logError(date+" "+this.getClass().getName()+"\ttDelete Record E3\t"+e3.getMessage());
+			}
+		}
+		
+		return false;
+	}
 	
 	
 	public ArrayList<Item> populateItemList(ResultSet rs, ArrayList<Item> list) {
@@ -245,5 +315,9 @@ public class DatabaseManager {
 		 * String p_name, double p_cost, double p_price, int addVat, int addTransportCost, int qnt*/
 		return new Item(this, this.cdb, this.cn, this.cs, itID, itName, cost, price, addVat, addTransport, qnt);	
 	}
+
+
+
+
 
 }

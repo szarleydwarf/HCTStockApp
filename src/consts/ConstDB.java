@@ -16,9 +16,18 @@ public class ConstDB {
 	public  final String VALUES = " VALUES ";
 	public  final String INSERT = "INSERT INTO ";
 	public  final String UPDATE = "UPDATE ";
+	public final String DELETE = "DELETE";
 	public  final String SELECT = "SELECT ";
 	public  final String SELECT_STAR = "SELECT * ";
 	public  final String LIMIT = " LIMIT ";
+	public  final String FROM = " FROM ";
+	public  final String WHERE = " WHERE ";
+	public  final String LIKE = " LIKE ";
+	public  final String AND = " AND ";
+	public  final String OR = " OR ";
+	public  final String EQUAL = "=";
+	public final String SET = " SET ";
+
 	
 	//database tables names
 	public  enum TableNames {
@@ -58,6 +67,8 @@ public class ConstDB {
 	public final String TB_STOCK_COST = "cost";
 	public final String TB_STOCK_PRICE = "price";
 	public final String TB_STOCK_QNT = "qnt";
+	public final String TB_STOCK_VAT = "addVat";
+	public final String TB_STOCK_TRANSPORT = "addTransport";
 	
 	
 	

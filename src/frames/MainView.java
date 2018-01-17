@@ -158,19 +158,15 @@ public class MainView {
 		System.out.println("TEST");
 		stmng.printList();
 		System.out.println();
-		String id = ts.getString("wpisz id ");
-		String nazwa = ts.getString("wpisz nazwe ");
-		double cost = 22.01;//ts.getFloatHandleException("wpisz koszt ");
-		double price = 55.25;//ts.getFloatHandleException("wpisz cene ");
-		int qnt = 4;//ts.getByte("QNT ");
+		String id = "tr012";//ts.getString("wpisz id ");
+		String nazwa = "goodyear 235/55 r17";// ts.getString("wpisz nazwe ");
+		double cost = 25.01;//ts.getFloatHandleException("wpisz koszt ");
+		double price = 70.25;//ts.getFloatHandleException("wpisz cene ");
+		int qnt = 10;//ts.getByte("QNT ");
 		Item i = new Item(dm, cdb, cn, cs, id, nazwa, cost, price, 1, 0, qnt);
 //		stmng.addItem(i);
-		System.out.println();
-//		stmng.printList();
-
-		System.out.println("SEARCH "+stmng.search(i));
-		System.out.println("SEARCH id "+stmng.search(id));
-		System.out.println("SEARCH nazwa "+stmng.search(nazwa));
+		System.out.println("MI: "+i.toString());	
+		System.out.println(stmng.addItem(i));	
 	}
 
 	/**

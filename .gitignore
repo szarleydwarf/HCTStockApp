@@ -1,11 +1,4 @@
-workspace.xml
-junitvmwatcher*.properties
-build.properties
+.settings/
 _LOG/
 bin/
-.classpath
 *.class
-*.class
-bin/frames/MainView$10.class
-bin/frames/MainView$10.class
-dfgyhuiop
