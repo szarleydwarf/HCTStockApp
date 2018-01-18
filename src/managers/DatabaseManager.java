@@ -32,12 +32,9 @@ public class DatabaseManager {
 		this.cs = cs;
 		this.cn = cn;
 		this.log = logger;
-		this.date = date;
-
-		
+		this.date = date;		
 	}
-	
-	
+		
 	private Connection connect() {
 		try {
 			Class.forName(cdb.JDBC_DRIVER);
@@ -168,6 +165,10 @@ public class DatabaseManager {
 			
 			if(q.contains(ConstDB.TableNames.TB_STOCK.getName()))
 				list = populateItemList(rs, (ArrayList<Item>) list);
+			else {
+				list =  populateStringList(rs, (ArrayList<String>)list);
+			}
+				
 			
 		} catch (SQLException e2) {
 			log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA [E2] \t"+e2.getMessage());
@@ -182,6 +183,14 @@ public class DatabaseManager {
 	}
 
 	
+	private ArrayList<?> populateStringList(ResultSet rs, ArrayList<String> list) throws SQLException {
+		while(rs.next()){
+			String s = rs.getString(1);
+			list.add(s);
+		}
+		return list;
+	}
+
 	public Map<String, String> selectDataMap(String q) {
 		Map<String, String> toReturn = new HashMap<String, String>();
 		Connection conn = null;
@@ -273,7 +282,7 @@ public class DatabaseManager {
 				list.add(i);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			log.logError(date+" "+this.getClass().getName()+"\tPOPULATE ITEM LIST E\t"+e.getMessage());
 			e.printStackTrace();
 		}
 		return list;

@@ -91,7 +91,6 @@ public class Item {
 	}
  
 	//TODO
-//	save new item to database
 	public boolean saveNewInDatabase(){
 		String q = this.createInsertQuery();
 		return this.dm.addNewRecord(q);

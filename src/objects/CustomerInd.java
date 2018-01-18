@@ -1,11 +1,17 @@
 package objects;
 
+import consts.ConstDB;
+import consts.ConstNums;
+import consts.ConstStrings;
+import managers.DatabaseManager;
+
 public class CustomerInd extends Customer{
+
 	private Car car;
 	
-	public CustomerInd(String id, int numOfServices, Car car) {
-		super(id, numOfServices);
-
+	public CustomerInd(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, String id, int numOfServices, Car car) {
+		super(dm, cdb, ci, cs, id, numOfServices);
+		
 		this.setCar(car);
 	}
 

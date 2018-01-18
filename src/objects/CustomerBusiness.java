@@ -1,22 +1,30 @@
 package objects;
 
+import consts.ConstDB;
+import consts.ConstNums;
+import consts.ConstStrings;
+import managers.DatabaseManager;
+
 public class CustomerBusiness extends Customer {
 	private String VATTaxNUM, compName, CompAddress;
 	private Car car;
 	
-	public CustomerBusiness(String id, int numOfServices) {
-		super(id, numOfServices);
+	public CustomerBusiness(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs,String id, int numOfServices) {
+		super(dm, cdb, ci, cs, id, numOfServices);
+
 	}
 
-	public CustomerBusiness(String id, int numOfServices, String vatTaxNum, String name, String address) {
-		super(id, numOfServices);
+	public CustomerBusiness(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs,String id, int numOfServices, String vatTaxNum, String name, String address) {
+		super(dm, cdb, ci, cs, id, numOfServices);
+
 		this.setVATTaxNUM(vatTaxNum);
 		this.setCompName(name);
 		this.setCompAddress(address);
 	}
 
-	public CustomerBusiness(String id, int numOfServices, String vatTaxNum, String name, String address, Car car) {
-		super(id, numOfServices);
+	public CustomerBusiness(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs,String id, int numOfServices, String vatTaxNum, String name, String address, Car car) {
+		super(dm, cdb, ci, cs, id, numOfServices);
+
 		this.setVATTaxNUM(vatTaxNum);
 		this.setCompName(name);
 		this.setCompAddress(address);

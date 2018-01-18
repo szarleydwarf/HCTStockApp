@@ -29,6 +29,7 @@ import managers.CustomersManager;
 import managers.DatabaseManager;
 import managers.InvoiceManager;
 import managers.StockManager;
+import objects.Car;
 import objects.Item;
 import utility.DateHelper;
 import utility.FileHelper;
@@ -59,6 +60,7 @@ public class MainView {
 	private static tScanner ts;
 	private static InvoiceManager invmng;
 	private static DecimalFormat df;
+	private static ArrayList<String> carList;
 	
 
 	/**
@@ -103,7 +105,11 @@ public class MainView {
 //		get cars list
 		cars_BI = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_BRAND_ID);
 		cars_IB = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_ID_BRAND);
+		carList = new ArrayList<String>();
+		carList = (ArrayList<String>) dm.selectData("SELECT brand FROM brands", carList);
 		
+		System.out.println("carLIst "+carList.size());
+//		msch.printMap(cars_BI);
 //		TODO
 //		check last database last backup - do it if necessary
 	}
@@ -158,16 +164,8 @@ public class MainView {
 		System.out.println("TEST");
 		stmng.printList();
 		System.out.println();
-		String id = "s012";//ts.getString("wpisz id ");
-		String nazwa = "car wash + wax";// ts.getString("wpisz nazwe ");
-		double cost = 25.01;//ts.getFloatHandleException("wpisz koszt ");
-		double price = 70.25;//ts.getFloatHandleException("wpisz cene ");
-		int qnt = 10;//ts.getByte("QNT ");
-		Item i = new Item(dm, cdb, cn, cs, id, nazwa, cost, price, 1, 0, qnt);
-//		stmng.addItem(i);
-		System.out.println("MI: "+i.toString());	
-		System.out.println(stmng.addItem(i));	
-//		stmng.printData();
+		Car c = new Car(dm, cdb, carList, "03lm1452", 1, 3);
+		System.out.println(c.toString());
 	}
 
 	/**
