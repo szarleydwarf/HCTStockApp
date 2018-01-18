@@ -158,8 +158,8 @@ public class MainView {
 		System.out.println("TEST");
 		stmng.printList();
 		System.out.println();
-		String id = "tr012";//ts.getString("wpisz id ");
-		String nazwa = "goodyear 235/55 r17";// ts.getString("wpisz nazwe ");
+		String id = "s012";//ts.getString("wpisz id ");
+		String nazwa = "car wash + wax";// ts.getString("wpisz nazwe ");
 		double cost = 25.01;//ts.getFloatHandleException("wpisz koszt ");
 		double price = 70.25;//ts.getFloatHandleException("wpisz cene ");
 		int qnt = 10;//ts.getByte("QNT ");
@@ -167,6 +167,7 @@ public class MainView {
 //		stmng.addItem(i);
 		System.out.println("MI: "+i.toString());	
 		System.out.println(stmng.addItem(i));	
+//		stmng.printData();
 	}
 
 	/**

@@ -12,14 +12,15 @@ import managers.DatabaseManager;
 public class Item {
 	private DatabaseManager dm;
 	private ConstDB cdb;
+	private ConstNums ci;
+	private ConstStrings cs;
+
 	private String stockNumber;
 	private String name;
 	private double cost;
 	private byte addVat, addTransportCost;
 	private double price;
 	private int qnt;
-	private ConstNums ci;
-	private ConstStrings cs;
 	
 	
 	public Item(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, String p_stock_number, String p_name, double p_cost, double p_price, int addVat, int addTransportCost){
@@ -76,7 +77,19 @@ public class Item {
 		else
 			this.price = profit;
 	}
-
+	
+	public String[] getItemAsData(){
+		String[] data = new String[7];
+		data[0] = this.stockNumber;
+		data[1] = this.name;
+		data[2] = ""+this.cost;
+		data[3] = ""+this.price;
+		data[4] = ""+this.qnt;
+		data[5] = ""+this.addVat;
+		data[6] = ""+this.addTransportCost;
+		return data;
+	}
+ 
 	//TODO
 //	save new item to database
 	public boolean saveNewInDatabase(){

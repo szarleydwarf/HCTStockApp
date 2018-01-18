@@ -27,33 +27,26 @@ public class StockManager {
 
 
 	public boolean addItem(Item i){
-		if(this.search(i)){
-			Item t = this.find(i.getStockNumber());
-			System.out.println("EQUAL\n"+t.toString());
-			this.removeFromList(i);
-			t = this.edit(t, i);
-			this.list.add(t);
-			return t.updateRecord();
-		} else if(this.search(i.getStockNumber())){
-			Item t = this.find(i.getStockNumber());
-			System.out.println("ID "+t.toString());
-			this.removeFromList(i);
-			t = this.edit(t, i);
-			this.list.add(t);
-			return t.updateRecord();
-		} else if(this.search(i.getName())) {
-			Item t = this.find(i.getName());
-			System.out.println("NAME "+t.toString());
-			this.removeFromList(i);
-			t = this.edit(t, i);
-			this.list.add(t);
-			return t.updateRecord();
+		if(this.search(i.getStockNumber()) || this.search(i.getName())){
+			String str = "";
+			if(this.search(i.getName()))
+				str = i.getName();
+			else
+				str = i.getStockNumber();
+			
+			Item t = this.find(str);
+			if(t != null){
+				this.removeFromList(i);
+				t = this.edit(t, i);
+				this.list.add(t);
+				return t.updateRecord();
+			}
 		} else {
 			System.out.println("ADD NEW");
 			list.add(i);
 			return i.saveNewInDatabase();
 		}		
-//		return false;
+		return false;
 	}
 	
 	private void removeFromList(Item t) {
@@ -91,14 +84,21 @@ public class StockManager {
 		if(i.getAddVat() != i2.getAddVat()){
 			i.setAddVat(i2.getAddVat());
 		}
-		if(i.getQnt() != i2.getQnt()){
+//		if(i.getQnt() != i2.getQnt()){
 			int tq = i.getQnt();
 			tq = tq + i2.getQnt();
 			i.setQnt(tq);
-		}
+			System.out.println("\nEditing item 2\n"+i.getQnt()+"\t"+i2.getQnt()+"\t"+tq);
+//		}
 		return i;
 	}
 
+	public String[][] getData(){
+		String[][] data = new String[this.list.size()][];
+		for (int i = 0; i < list.size(); i++)
+			data[i] = list.get(i).getItemAsData();
+		return data;
+	}
 	//TODO other searches - by name, stock number, price?	
 	public boolean search(Item i) {
 		for(Item in : this.list){
@@ -141,5 +141,16 @@ public class StockManager {
 			System.out.println("I: "+i.toString());
 	}
 
-
+	public void printData() {
+		String d[][] = this.getData();
+		for(int j = 0 ; j< d.length; j++)
+			for(int i = 0; i < d[j].length; i++)
+				System.out.println(d[j][i]);
+	}
+	
+	public void printData(String[][] d) {
+		for(int j = 0 ; j< d.length; j++)
+			for(int i = 0; i < d[j].length; i++)
+				System.out.println(d[j][i]);
+	}
 }
