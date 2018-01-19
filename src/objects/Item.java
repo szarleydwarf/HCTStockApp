@@ -138,7 +138,7 @@ public class Item {
 				+ "`"+cdb.TB_STOCK_VAT+"`"+cdb.EQUAL+this.addVat+","
 				+ "`"+cdb.TB_STOCK_TRANSPORT+"`"+cdb.EQUAL+this.addTransportCost+"," 
 				+ "`"+cdb.TB_STOCK_QNT+"`"+cdb.EQUAL+this.qnt 
-				+ cdb.WHERE + "`"+ConstDB.TableNames.TB_STOCK.getName()+"`.`"+cdb.TB_STOCK_ID+"` = '"+this.stockNumber+"'";
+				+ cdb.WHERE + "`"+ConstDB.TableNames.TB_STOCK.getName()+"`.`"+cdb.ID+"` = '"+this.stockNumber+"'";
 	}
 
 	private String createUpdateQuery(String columnToSet, String valueToSet, String columnToFind, String valueToFind) {

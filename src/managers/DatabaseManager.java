@@ -60,7 +60,7 @@ public class DatabaseManager {
                  conn.close();
              }
 		} catch (Exception e3){
-			log.logError(date+" "+this.getClass().getName()+"\tCLOSE E3\t"+e3.getMessage());
+			log.logError(date+" "+this.getClass().getName()+"\tCLOSE E\t"+e3.getMessage());
 		}
 	}
 
@@ -73,7 +73,7 @@ public class DatabaseManager {
 			if(conn == null || conn.isClosed())
 				conn = this.connect();
 		} catch (SQLException e) {
-			log.logError(date+" 1st "+this.getClass().getName()+"\tAdd New Record E\t"+e.getMessage());
+			log.logError(date+" 1st "+this.getClass().getName()+"\tADD NEW RECORD E1\t"+e.getMessage());
 		}
 			
 		try {
@@ -88,13 +88,13 @@ public class DatabaseManager {
 
 		} catch (SQLException e11) {
 			e11.printStackTrace();
-			log.logError(date+" "+this.getClass().getName()+"\tAdd New Record E11\t"+e11.getMessage());
+			log.logError(date+" "+this.getClass().getName()+"\tADD NEW RECORD E2\t"+e11.getMessage());
 		}	finally {
 			try{
 				this.close(rs, pst, conn);
 			} catch (Exception e3){
 				e3.printStackTrace();
-				log.logError(date+" "+this.getClass().getName()+"\tAdd New Record E3\t"+e3.getMessage());
+				log.logError(date+" "+this.getClass().getName()+"\tADD NEW RECORD E3\t"+e3.getMessage());
 			}
 		}
 		
@@ -119,7 +119,7 @@ public class DatabaseManager {
 			if(conn == null || conn.isClosed())
 				conn = this.connect();
 		} catch (SQLException e) {
-			log.logError(date+" 1st "+this.getClass().getName()+"\tUpdate Record E\t"+e.getMessage());
+			log.logError(date+" 1st "+this.getClass().getName()+"\tUPDATE RECORD E1\t"+e.getMessage());
 		}
 			
 		try {
@@ -134,13 +134,13 @@ public class DatabaseManager {
 
 		} catch (SQLException e11) {
 			e11.printStackTrace();
-			log.logError(date+" "+this.getClass().getName()+"\tUpdate Record E11\t"+e11.getMessage());
+			log.logError(date+" "+this.getClass().getName()+"\tUPDATE RECORD E2\t"+e11.getMessage());
 		}	finally {
 			try{
 				this.close(rs, pst, conn);
 			} catch (Exception e3){
 				e3.printStackTrace();
-				log.logError(date+" "+this.getClass().getName()+"\tUpdate Record E3\t"+e3.getMessage());
+				log.logError(date+" "+this.getClass().getName()+"\tUPDATE RECORD E3\t"+e3.getMessage());
 			}
 		}
 		return false;
@@ -156,7 +156,7 @@ public class DatabaseManager {
 			if(conn == null || conn.isClosed())
 				conn = this.connect();
 		} catch (SQLException e) {
-			log.logError(date+" 1st "+this.getClass().getName()+"\tSELECT DATA [E]\t"+e.getMessage());
+			log.logError(date+" 1st "+this.getClass().getName()+"\tSELECT DATA ARRAYLIST [E]\t"+e.getMessage());
 		}
 		
 		try {
@@ -171,12 +171,12 @@ public class DatabaseManager {
 				
 			
 		} catch (SQLException e2) {
-			log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA [E2] \t"+e2.getMessage());
+			log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA ARRAYLIST [E2] \t"+e2.getMessage());
 		} finally {
 			try{
 				this.close(rs, pst, conn);
 			} catch (Exception e3){
-				log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA [E3]\t"+e3.getMessage());
+				log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA ARRAYLIST [E3]\t"+e3.getMessage());
 			}
 		}
 		return list;
@@ -217,7 +217,7 @@ public class DatabaseManager {
 				}        
 			}
 		} catch (SQLException e) {
-			log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA [E2] \t"+e.getMessage());
+			log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA MAP [E2] \t"+e.getMessage());
 		} finally {
 			try{
 				this.close(rs, pst, conn);
@@ -230,19 +230,47 @@ public class DatabaseManager {
 		
 //	 TODO
 //	retrieve one record
-	
+	public String selectData(String q) {
+		String toReturn = "";
+		Connection conn = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		try {
+			if(conn == null || conn.isClosed())
+				conn = this.connect();
+		} catch (SQLException e) {
+			log.logError(date+" 1st "+this.getClass().getName()+"\tSELECT DATA ONE STRING [E1]\t"+e.getMessage());
+		}
+
+		try {
+			pst = conn.prepareStatement(q);
+			rs = pst.executeQuery();		
+			while(rs.next()){
+				toReturn = rs.getString(1);
+			}
+		} catch (SQLException e) {
+			log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA ONE STRING [E2] \t"+e.getMessage());
+		} finally {
+			try{
+				this.close(rs, pst, conn);
+			} catch (Exception e){
+				log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA ONE STRING [E3]\t"+e.getMessage());
+			}
+		}
+		return toReturn;
+	}
+
 //	 TODO
 //	delete record
 	public boolean deleteRecord(String q) {
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		Connection conn = null;
-		System.out.println("DBM Delete " + q);
 		try {
 			if(conn == null || conn.isClosed())
 				conn = this.connect();
 		} catch (SQLException e) {
-			log.logError(date+" 1st "+this.getClass().getName()+"\tDelete Record E\t"+e.getMessage());
+			log.logError(date+" 1st "+this.getClass().getName()+"\tDELETE RECORD E1\t"+e.getMessage());
 		}
 			
 		try {
@@ -257,13 +285,13 @@ public class DatabaseManager {
 
 		} catch (SQLException e11) {
 			e11.printStackTrace();
-			log.logError(date+" "+this.getClass().getName()+"\ttDelete Record E11\t"+e11.getMessage());
+			log.logError(date+" "+this.getClass().getName()+"\tDELETE RECORD E2\t"+e11.getMessage());
 		}	finally {
 			try{
 				this.close(rs, pst, conn);
 			} catch (Exception e3){
 				e3.printStackTrace();
-				log.logError(date+" "+this.getClass().getName()+"\ttDelete Record E3\t"+e3.getMessage());
+				log.logError(date+" "+this.getClass().getName()+"\tDELETE RECORD E3\t"+e3.getMessage());
 			}
 		}
 		
@@ -320,13 +348,6 @@ public class DatabaseManager {
 				}
 			}
 		}
-		/*DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, String p_stock_number, 
-		 * String p_name, double p_cost, double p_price, int addVat, int addTransportCost, int qnt*/
 		return new Item(this, this.cdb, this.cn, this.cs, itID, itName, cost, price, addVat, addTransport, qnt);	
 	}
-
-
-
-
-
 }

@@ -67,4 +67,13 @@ public abstract class Customer {
 		this.numOfServices = numOfServices;
 	}
 	public abstract boolean equals(Object o);
+	
+	public abstract boolean saveNewInDatabase();
+	public abstract boolean updateRecord();
+	public abstract boolean deleteRecord();
+	protected abstract String createInsertQuery();
+	protected abstract String createDeleteQuery();
+	protected abstract String createUpdateQuery();
+	protected abstract String createUpdateQuery(String columnToSet, String valueToSet, String columnToFind, String valueToFind) ;
+	
 }

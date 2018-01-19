@@ -31,7 +31,61 @@ public class CustomerBusiness extends Customer {
 		this.setCar(car);
 	}
 
-	//getters & setters
+	@Override
+	public boolean saveNewInDatabase() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public boolean updateRecord() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public boolean deleteRecord() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	protected String createInsertQuery() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	protected String createDeleteQuery() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	protected String createUpdateQuery() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	protected String createUpdateQuery(String columnToSet, String valueToSet, String columnToFind, String valueToFind) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	//GETTERS & SETTERS
 
 	public String getVATTaxNUM() {
 		return VATTaxNUM;

@@ -30,6 +30,7 @@ import managers.DatabaseManager;
 import managers.InvoiceManager;
 import managers.StockManager;
 import objects.Car;
+import objects.CustomerInd;
 import objects.Item;
 import utility.DateHelper;
 import utility.FileHelper;
@@ -164,8 +165,7 @@ public class MainView {
 		System.out.println("TEST");
 		stmng.printList();
 		System.out.println();
-		Car c = new Car(dm, cdb, carList, "03lm1452", 1, 3);
-		System.out.println(c.toString());
+
 	}
 
 	/**

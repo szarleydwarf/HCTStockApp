@@ -31,8 +31,8 @@ public class ConstDB {
 	
 	//database tables names
 	public  enum TableNames {
-		TB_BRANDS("brands"), TB_BUSINESS("business"), TB_CUSTOMRS("customers"),
-		TB_INVOICES("invoices"), TB_REPAK("repak_report"), TB_SETTINGS("settings"), TB_STOCK("stock");
+		TB_BRANDS("brands"), TB_BUSINESS("business"), TB_CUSTOMERS("customers"),
+		TB_INVOICES("invoices"), TB_REPAK("repak_report"), TB_SETTINGS("settings"), TB_STOCK("stock"), TB_CARS("car");
 		
 		private String name;		
 		
@@ -57,12 +57,12 @@ public class ConstDB {
 //	public  final String TB_SETTINGS = "settings";
 //	public  final String TB_STOCK = "stock";
 
+	public final String ID = "id";
+
 	//brands table column names
-	public final String TB_BRANDS_ID = "idbrand";
 	public final String TB_BRANDS_NAME = "brand";
 	
 	//stock table column names
-	public final String TB_STOCK_ID = "id";
 	public final String TB_STOCK_NAME = "name";
 	public final String TB_STOCK_COST = "cost";
 	public final String TB_STOCK_PRICE = "price";
@@ -70,11 +70,17 @@ public class ConstDB {
 	public final String TB_STOCK_VAT = "addVat";
 	public final String TB_STOCK_TRANSPORT = "addTransport";
 	
+	//car table column names
+	public final String TB_CARS_REGISTRATION = "registration";
+	public final String TB_CARS_BRAND_ID = "brand_id";
 	
+	// costumers table column names
+	public final String TB_CUSTOMER_CAR_ID = "car_id";
+	public final String TB_CUSTOMER_NO_OF_SERVICES = "no_of_services";
 	
 	//Database query's
-	public final String SELECT_CARS_LIST_BRAND_ID = "SELECT brand, idbrand FROM brands";
-	public final String SELECT_CARS_LIST_ID_BRAND = "SELECT idbrand, brand FROM brands";
+	public final String SELECT_CARS_LIST_BRAND_ID = this.SELECT+this.TB_BRANDS_NAME+", "+this.ID+this.FROM+TableNames.TB_BRANDS.getName();
+	public final String SELECT_CARS_LIST_ID_BRAND = this.SELECT+ this.ID+","+ this.TB_BRANDS_NAME+this.FROM+TableNames.TB_BRANDS.getName();
 	public final String SELECT_ALL_ITEMS = "SELECT * FROM "+TableNames.TB_STOCK.getName();
 	
 
