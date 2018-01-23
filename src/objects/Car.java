@@ -1,10 +1,13 @@
 package objects;
 
-import java.util.ArrayList;
-
 import consts.ConstDB;
+import consts.ConstStrings;
 import managers.DatabaseManager;
 
+/**
+ * @author RJ
+ *
+ */
 public class Car {
 	private DatabaseManager dm;
 	private ConstDB cdb;
@@ -12,9 +15,39 @@ public class Car {
 	int brand;
 	private String registration;
 	private int id;
-	private ArrayList<String> list;
 	
-	public Car (DatabaseManager dm, ConstDB cdb, String registration, int id, int brand) {
+	/**
+	 * Constructor which will be used only for new  cars
+	 * @param dm
+	 * @param cdb
+	 * @param cs
+	 * @param registration
+	 * @param brand
+	 */
+	public Car (DatabaseManager dm, ConstDB cdb, ConstStrings cs, String registration, int brand) {
+		this.dm = dm;
+		this.cdb = cdb;
+		
+		this.brand = brand;
+		this.registration = registration;
+		String q = this.cdb.SELECT + this.cdb.ID + this.cdb.FROM + ConstDB.TableNames.TB_CARS.getName() + this.cdb.ODER_BY + this.cdb.ID + this.cdb.DESC + this.cdb.LIMIT + " 1";
+		String s = this.dm.selectData(q);
+		
+		int i = (!s.isEmpty()) ? Integer.parseInt(s) : 1;
+		
+		this.id = ++i;
+		this.saveNewInDatabase();
+	}
+
+	/**
+	 * Constructor which will be used for car list from database
+	 * @param dm
+	 * @param cdb
+	 * @param cs
+	 * @param registration
+	 * @param brand
+	 */
+	public Car (DatabaseManager dm, ConstDB cdb, ConstStrings cs, String registration, int id, int brand) {
 		this.dm = dm;
 		this.cdb = cdb;
 		
@@ -23,16 +56,6 @@ public class Car {
 		this.id = id;
 	}
 
-	public Car (DatabaseManager dm, ConstDB cdb, ArrayList<String> list, String registration, int id, int brand) {
-		this.dm = dm;
-		this.cdb = cdb;
-		this.list = list;
-		
-		this.brand = brand;
-		this.registration = registration;
-		this.id = id;
-	}
-	//TODO
 	public boolean saveNewInDatabase(){
 		String q = this.createInsertQuery();
 		return this.dm.addNewRecord(q);
@@ -82,14 +105,10 @@ public class Car {
 
 	@Override
 	public String toString(){
-		if(this.list != null)
-			return this.list.get(this.brand) + " " + this.registration;
-		else{
-			String q = this.cdb.SELECT+this.cdb.TB_BRANDS_NAME + this.cdb.FROM+ConstDB.TableNames.TB_BRANDS.getName()
-			+this.cdb.WHERE+this.cdb.ID+this.cdb.EQUAL+this.brand;
-			String brand = this.dm.selectData(q);
-			return brand + " "  + this.registration;
-		}
+		String q = this.cdb.SELECT+this.cdb.TB_BRANDS_NAME + this.cdb.FROM+ConstDB.TableNames.TB_BRANDS.getName()
+		+this.cdb.WHERE+this.cdb.ID+this.cdb.EQUAL+this.brand;
+		String brand = this.dm.selectData(q);
+		return brand + " "  + this.registration;
 	}
 
 	public int getBrand() {

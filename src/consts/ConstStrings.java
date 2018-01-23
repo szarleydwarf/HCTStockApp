@@ -13,6 +13,10 @@ public class ConstStrings {
 	public final String SERVICE_CODE = "SR";
 	public final String OTHER_CODE = "OT";
 	public final String CARWASH_CODE = "CW";
+	
+	// CUSTOMER CODES
+	public final String CUST_IND_CODE = "C_";
+	public final String CUST_BUS_CODE = "B_";
 
 
 	//PATTERNS AND FORMATS
@@ -21,4 +25,12 @@ public class ConstStrings {
 	public final String DECIMAL_FORMAT = "000.00";
 	public final String DECIMAL_FORMAT_5_2 = "00000.00";
 
+	public final String DEFAULT_REGISTRATION = "00AA0000";
+	
+	public final String CAR = "car";
+	public final String CUSTOMER_I = "customer individual";
+	public final String CUSTOMER_B = "customer business";
+	public final String INVOICE = "invoice";
+	public final String ITEM = "item";
+	
 }

@@ -59,7 +59,6 @@ public class StockManager {
 		}
 	}
 
-
 	public boolean deleteItem(Item i){
 		if(list.contains(i)){
 			list.remove(i);
@@ -138,7 +137,8 @@ public class StockManager {
 
 	public void printList() {
 		for(Item i : this.list)
-			System.out.println("I: "+i.toString());
+			if(i != null) System.out.println("I: "+i.toString());
+			else System.out.println("I = null");
 	}
 
 	public void printData() {

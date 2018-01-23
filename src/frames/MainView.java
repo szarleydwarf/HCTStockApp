@@ -30,6 +30,7 @@ import managers.DatabaseManager;
 import managers.InvoiceManager;
 import managers.StockManager;
 import objects.Car;
+import objects.CustomerBusiness;
 import objects.CustomerInd;
 import objects.Item;
 import utility.DateHelper;
@@ -102,14 +103,16 @@ public class MainView {
 		today = dh.getFormatedDateAndTime();
 		
 		loadManagers();
-
+		
+		//TODO
+		// getLastIDs();
+		
 //		get cars list
 		cars_BI = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_BRAND_ID);
 		cars_IB = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_ID_BRAND);
 		carList = new ArrayList<String>();
 		carList = (ArrayList<String>) dm.selectData("SELECT brand FROM brands", carList);
-		
-		System.out.println("carLIst "+carList.size());
+
 //		msch.printMap(cars_BI);
 //		TODO
 //		check last database last backup - do it if necessary
@@ -138,7 +141,7 @@ public class MainView {
 		dm = new DatabaseManager(logger, today, cdb, cn, cs);
 
 //		get customer list
-		cmng = new CustomersManager();
+		cmng = new CustomersManager(dm, cdb, cn, cs);
 		
 //		get stock
 		stmng = new StockManager(dm, cdb, cn, cs);
@@ -162,8 +165,25 @@ public class MainView {
 
 	private void test() {
 		// TODO Here I will be testing all of the functionalities
-		System.out.println("TEST");
-		stmng.printList();
+		System.out.println("TEST\n1");
+		
+//		DatabaseManager dm, ConstDB cdb, ConstNums cn, ConstStrings cs, int numOfServices, String registration, int brand
+		CustomerInd ci = new CustomerInd(dm, cdb, cn, cs, 4, "12lm4567", 12);
+		System.out.println("main "+ci.toString());
+//		cmng.addCustomer(ci);
+//		System.out.println("\n2");
+//		cmng.printList();
+//		CustomerBusiness cb = new CustomerBusiness(dm, cdb, cn, cs, "5", 8, "98556746", "Upsala", "3 zakrety", "1,3");
+//		cmng.addCustomer(cb);
+//		System.out.println("\n3");
+//		cmng.printList();
+//		cmng.delete(ci);
+//		System.out.println("\n4");
+//		cmng.printList();
+//		cmng.delete(cb);
+//		System.out.println("\n5");
+//		cmng.printList();
+
 		System.out.println();
 
 	}

@@ -16,6 +16,10 @@ import javax.swing.JOptionPane;
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
+import objects.Car;
+import objects.Customer;
+import objects.CustomerBusiness;
+import objects.CustomerInd;
 import objects.Item;
 import utility.Logger;
 
@@ -163,9 +167,15 @@ public class DatabaseManager {
 			pst = conn.prepareStatement(q);
 			rs = pst.executeQuery();
 			
-			if(q.contains(ConstDB.TableNames.TB_STOCK.getName()))
+			if(q.contains(ConstDB.TableNames.TB_STOCK.getName())){
 				list = populateItemList(rs, (ArrayList<Item>) list);
-			else {
+			} else if(q.contains(ConstDB.TableNames.TB_CUSTOMERS.getName()) || q.contains(ConstDB.TableNames.TB_BUSINESS.getName())) {
+				boolean isIndividual;
+				if(q.contains(ConstDB.TableNames.TB_CUSTOMERS.getName()))
+					isIndividual = true;
+				else isIndividual = false;
+				list =  populateCustomersList(rs, (ArrayList<Customer>)list, isIndividual);
+			} else {
 				list =  populateStringList(rs, (ArrayList<String>)list);
 			}
 				
@@ -181,16 +191,7 @@ public class DatabaseManager {
 		}
 		return list;
 	}
-
 	
-	private ArrayList<?> populateStringList(ResultSet rs, ArrayList<String> list) throws SQLException {
-		while(rs.next()){
-			String s = rs.getString(1);
-			list.add(s);
-		}
-		return list;
-	}
-
 	public Map<String, String> selectDataMap(String q) {
 		Map<String, String> toReturn = new HashMap<String, String>();
 		Connection conn = null;
@@ -260,8 +261,6 @@ public class DatabaseManager {
 		return toReturn;
 	}
 
-//	 TODO
-//	delete record
 	public boolean deleteRecord(String q) {
 		PreparedStatement pst = null;
 		ResultSet rs = null;
@@ -298,9 +297,89 @@ public class DatabaseManager {
 		return false;
 	}
 	
-	
-	public ArrayList<Item> populateItemList(ResultSet rs, ArrayList<Item> list) {
+	private ArrayList<Customer> populateCustomersList(ResultSet rs, ArrayList<Customer> list, boolean isIndividual) {
+		ResultSetMetaData rsmd;
+		try {
+			rsmd = rs.getMetaData();
+			int colNum = rsmd.getColumnCount();
+			while(rs.next()){
+				Customer c = null;
+				if(isIndividual) c = cretateCustomer(rs, colNum);
+				else c = createBusiness(rs, colNum);
+				
+				list.add(c);
+			}
+		} catch (SQLException e) {
+			log.logError(date+" "+this.getClass().getName()+"\tPOPULATE CUSTOMER LIST E\t"+e.getMessage());
+			e.printStackTrace();
+		}
+		return list;
+	}
 
+	private Customer createBusiness(ResultSet rs, int colNum) throws SQLException {
+		int id = 0, noOfServices = 0;
+		String vatTax = "", name = "", address = "", cars = "";
+		for(int i = 1; i <= colNum; i++){
+//			if(!rs.getString(i).isEmpty()) {
+				switch (i) {
+				case 1:
+					id = rs.getInt(i);
+					break;
+				case 2:
+					vatTax = rs.getString(i);
+					break;
+				case 3:
+					name= rs.getString(i);
+					break;
+				case 4:
+					address = rs.getString(i);
+					break;
+				case 5:
+					cars = rs.getString(i);
+					break;
+				case 6:
+					noOfServices = rs.getInt(i);
+					break;
+	
+				default:
+					break;
+				}
+//			}
+		}
+		return new CustomerBusiness(this, this.cdb, this.cn, this.cs, ""+id, noOfServices, vatTax, name, address, cars);
+	}
+
+	private Customer cretateCustomer(ResultSet rs, int colNum) throws SQLException {
+		int id = 0, carID = 0, noOfServices = 0;
+		for(int i = 1; i <= colNum; i++){
+//			if(rs.getInt(i) >= 0)
+			switch (i) {
+			case 1:
+				id = rs.getInt(i);
+				break;
+			case 2:
+				carID = rs.getInt(i);
+				break;
+			case 3:
+				noOfServices = rs.getInt(i);
+				break;
+
+			default:
+				break;
+			}
+		}
+		return new CustomerInd(this, this.cdb, this.cn, this.cs, id, noOfServices, carID);
+	}
+
+	private ArrayList<String> populateStringList(ResultSet rs, ArrayList<String> list) throws SQLException {
+		while(rs.next()){
+			String s = rs.getString(1);
+			list.add(s);
+		}
+		return list;
+	}
+
+	public ArrayList<Item> populateItemList(ResultSet rs, ArrayList<Item> list) {
 		ResultSetMetaData rsmd;
 		try {
 			rsmd = rs.getMetaData();
@@ -349,5 +428,63 @@ public class DatabaseManager {
 			}
 		}
 		return new Item(this, this.cdb, this.cn, this.cs, itID, itName, cost, price, addVat, addTransport, qnt);	
+	}
+
+	public Object getObject(int id, String str) {
+		Connection conn = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		try {
+			if(conn == null || conn.isClosed())
+				conn = this.connect();
+		} catch (SQLException e) {
+			log.logError(date+" 1st "+this.getClass().getName()+"\tSELECT DATA ARRAYLIST [E]\t"+e.getMessage());
+		}
+		String q;
+		if(str.equals(this.cs.CAR))
+			q = this.cdb.SELECT_CAR + id;
+		else q = "";
+		try {
+			pst = conn.prepareStatement(q);
+			rs = pst.executeQuery();
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int colNum = rsmd.getColumnCount();   
+			while(rs.next()){
+				return this.createCar(rs, colNum);
+			}
+
+			
+		} catch (SQLException e2) {
+			log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA ARRAYLIST [E2] \t"+e2.getMessage());
+		} finally {
+			try{
+				this.close(rs, pst, conn);
+			} catch (Exception e3){
+				log.logError(date+" "+this.getClass().getName()+"\tSELECT DATA ARRAYLIST [E3]\t"+e3.getMessage());
+			}
+		}
+		return null;
+	}
+
+	private Car createCar(ResultSet rs, int colNum) throws SQLException {
+		String registration = "";
+		int id = 0, brand = 0;
+		for(int i = 1 ; i <= colNum; i++){
+			switch (i) {
+			case 1:
+				id = rs.getInt(i);
+				break;
+			case 2:
+				registration = rs.getString(i);
+				break;
+			case 3:
+				brand = rs.getInt(i);
+				break;
+
+			default:
+				break;
+			}
+		}
+		return  new Car(this, cdb, cs, registration, id, brand);
 	}
 }

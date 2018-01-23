@@ -27,6 +27,8 @@ public class ConstDB {
 	public  final String OR = " OR ";
 	public  final String EQUAL = "=";
 	public final String SET = " SET ";
+	public final String ODER_BY = " ORDER BY ";
+	public final String DESC = " DESC ";
 
 	
 	//database tables names
@@ -78,10 +80,18 @@ public class ConstDB {
 	public final String TB_CUSTOMER_CAR_ID = "car_id";
 	public final String TB_CUSTOMER_NO_OF_SERVICES = "no_of_services";
 	
+	// business costumers table column names
+	public final String TB_B_CUSTOMER_VAT_TAX = "vat_tax";
+	public final String TB_B_CUSTOMER_NAME = "name";
+	public final String TB_B_CUSTOMER_ADDRESS = "address";
+	public final String TB_B_CUSTOMER_CARS_LIST = "cars";
+	
 	//Database query's
 	public final String SELECT_CARS_LIST_BRAND_ID = this.SELECT+this.TB_BRANDS_NAME+", "+this.ID+this.FROM+TableNames.TB_BRANDS.getName();
 	public final String SELECT_CARS_LIST_ID_BRAND = this.SELECT+ this.ID+","+ this.TB_BRANDS_NAME+this.FROM+TableNames.TB_BRANDS.getName();
 	public final String SELECT_ALL_ITEMS = "SELECT * FROM "+TableNames.TB_STOCK.getName();
-	
+	public final String SELECT_ALL_CUSTOMERS_I = this.SELECT_STAR  + this.FROM + TableNames.TB_CUSTOMERS.getName();
+	public final String SELECT_ALL_CUSTOMERS_B = this.SELECT + TableNames.TB_BUSINESS.getName() + ".* " + this.FROM + TableNames.TB_BUSINESS.getName();
+	public final String SELECT_CAR = this.SELECT_STAR + this.FROM + TableNames.TB_CARS.getName() + this.WHERE + this.ID + this.EQUAL;
 
 }

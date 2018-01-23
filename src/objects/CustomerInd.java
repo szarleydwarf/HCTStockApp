@@ -5,24 +5,63 @@ import consts.ConstNums;
 import consts.ConstStrings;
 import managers.DatabaseManager;
 
+/**
+ * @author RJ
+ *
+ */
 public class CustomerInd extends Customer{
 
 	private Car car;
-	
-	public CustomerInd(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, String id, int numOfServices, Car car) {
-		super(dm, cdb, ci, cs, id, numOfServices);
+	private int idINT;
+	/**
+	 * Constructor which will be used only for new customers
+	 * @param dm
+	 * @param cdb
+	 * @param cn
+	 * @param cs
+	 * @param id
+	 * @param numOfServices
+	 * @param car
+	 */
+	public CustomerInd(DatabaseManager dm, ConstDB cdb, ConstNums cn, ConstStrings cs, int numOfServices, String registration, int brand) {
+		super(dm, cdb, cn, cs, "1", numOfServices);
+
+		String q = cdb.SELECT + cdb.ID + cdb.FROM + ConstDB.TableNames.TB_CUSTOMERS.getName() + cdb.ODER_BY + cdb.ID + cdb.DESC + cdb.LIMIT + " 1";
+		String s = dm.selectData(q);
+		this.idINT = (!s.isEmpty()) ? Integer.parseInt(s) : 1;
+		this.idINT++;
+		String id = cs.CUST_IND_CODE + this.idINT;
+		this.setId(id);
 		
-		this.setCar(car);
+		this.setCar(new Car(dm, cdb, cs, registration, brand));
+		
+		this.saveNewInDatabase();
+
+	}
+
+	/**
+	 * Constructor which will be used only for customers from database
+	 * @param dm
+	 * @param cdb
+	 * @param cn
+	 * @param cs
+	 * @param id
+	 * @param noOfServices
+	 * @param carID
+	 */
+	public CustomerInd(DatabaseManager dm, ConstDB cdb, ConstNums cn, ConstStrings cs, int id, int noOfServices, int carID) {
+		super(dm, cdb, cn, cs, cs.CUST_IND_CODE + id, noOfServices);
+
+		Car c = (Car) this.getDm().getObject(carID, cs.CAR);
+		if(c == null)
+			c = new Car(dm, cdb, cs, cs.DEFAULT_REGISTRATION, cn.DEFAULT_CAR_BRAND_ID);
+		this.setCar(c);
 	}
 
 	@Override
 	public boolean saveNewInDatabase() {
-		boolean carSaved = this.getCar().saveNewInDatabase();
-		if(carSaved){
-			String q = this.createInsertQuery();
-			return this.getDm().addNewRecord(q);
-		}
-		return false;
+		String q = this.createInsertQuery();
+		return this.getDm().addNewRecord(q);
 	}
 
 
@@ -56,7 +95,7 @@ public class CustomerInd extends Customer{
 	@Override
 	protected String createInsertQuery() {
 		return this.getCdb().INSERT+ConstDB.TableNames.TB_CUSTOMERS.getName()+ this.getCdb().VALUES+"("
-				+this.getId()+ ", "
+				+this.getIdINT()+ ", "
 				+this.getCar().getId()+ ", "
 				+this.getNumOfServices() + ");";
 	}
@@ -65,7 +104,6 @@ public class CustomerInd extends Customer{
 
 	@Override
 	protected String createDeleteQuery() {
-		// TODO Auto-generated method stub
 		return this.getCdb().DELETE + this.getCdb().FROM + ConstDB.TableNames.TB_CUSTOMERS.getName() 
 		+ this.getCdb().WHERE + this.getCdb().ID + this.getCdb().EQUAL + this.getId();
 	}
@@ -85,8 +123,8 @@ public class CustomerInd extends Customer{
 
 	@Override
 	protected String createUpdateQuery(String columnToSet, String valueToSet, String columnToFind, String valueToFind) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getCdb().UPDATE + "`"+ConstDB.TableNames.TB_CUSTOMERS.getName()+"`" + this.getCdb().SET + "`"+columnToSet+"`"+this.getCdb().EQUAL+"'"+valueToSet+"'" 
+				+ this.getCdb().WHERE + "`"+ConstDB.TableNames.TB_CUSTOMERS.getName()+"`.`"+columnToFind+"` = '"+valueToFind+"'";
 	}
 	
 	// GETTERS & SETTERS
@@ -95,13 +133,17 @@ public class CustomerInd extends Customer{
 	}
 
 	public void setCar(Car car) {
+//		car.saveNewInDatabase();
 		this.car = car;
 	}
 	
 	
     @Override
     public String toString(){
-    	return this.getId() + " " + this.getCar().toString() + " " + this.getNumOfServices();
+    	if(this.getCar() != null)
+    		return "id: " + this.getId() + " c: " + this.getCar().toString() + " ns: " + this.getNumOfServices();
+    	else
+    		return "id: " + this.getId() + " c: N/A" + " ns: " + this.getNumOfServices();
     }
     
     @Override
@@ -143,4 +185,12 @@ public class CustomerInd extends Customer{
 		}
 	}
 	*/
+
+	public int getIdINT() {
+		return idINT;
+	}
+
+	public void setIdINT(int idINT) {
+		this.idINT = idINT;
+	}
 }

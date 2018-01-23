@@ -9,6 +9,7 @@ public class ConstNums {
 	public final double TRANSPORT_COST_DALY = 3.00;
 	public final double TRANSPORT_COST_PHILIPWHITE = 10.00;
 	
-	
+	public final int DEFAULT_CAR_BRAND_ID = 45;
+
 
 }
