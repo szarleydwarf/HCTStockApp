@@ -13,6 +13,7 @@ public class CustomerInd extends Customer{
 
 	private Car car;
 	private int idINT;
+	
 	/**
 	 * Constructor which will be used only for new customers
 	 * @param dm
@@ -21,10 +22,10 @@ public class CustomerInd extends Customer{
 	 * @param cs
 	 * @param id
 	 * @param numOfServices
-	 * @param car
+	 * @param car registration & brand
 	 */
 	public CustomerInd(DatabaseManager dm, ConstDB cdb, ConstNums cn, ConstStrings cs, int numOfServices, String registration, int brand) {
-		super(dm, cdb, cn, cs, "1", numOfServices);
+		super(dm, cdb, cn, cs, cs.CUST_IND_CODE+"1", numOfServices);
 
 		String q = cdb.SELECT + cdb.ID + cdb.FROM + ConstDB.TableNames.TB_CUSTOMERS.getName() + cdb.ODER_BY + cdb.ID + cdb.DESC + cdb.LIMIT + " 1";
 		String s = dm.selectData(q);
@@ -36,7 +37,6 @@ public class CustomerInd extends Customer{
 		this.setCar(new Car(dm, cdb, cs, registration, brand));
 		
 		this.saveNewInDatabase();
-
 	}
 
 	/**
@@ -51,6 +51,9 @@ public class CustomerInd extends Customer{
 	 */
 	public CustomerInd(DatabaseManager dm, ConstDB cdb, ConstNums cn, ConstStrings cs, int id, int noOfServices, int carID) {
 		super(dm, cdb, cn, cs, cs.CUST_IND_CODE + id, noOfServices);
+		this.idINT = id;
+		String ids = cs.CUST_IND_CODE + this.idINT;
+		this.setId(ids);
 
 		Car c = (Car) this.getDm().getObject(carID, cs.CAR);
 		if(c == null)
@@ -64,20 +67,12 @@ public class CustomerInd extends Customer{
 		return this.getDm().addNewRecord(q);
 	}
 
-
-
 	@Override
 	public boolean updateRecord() {
-		// Not sure if that check up for car update is necessary
-		boolean carUpdate = this.getCar().updateRecord();
-		if(carUpdate){
-			String q = this.createUpdateQuery();
-			return this.getDm().updateRecord(q);
-		}
-		return false;
+		this.getCar().updateRecord();
+		String q = this.createUpdateQuery();
+		return this.getDm().updateRecord(q);
 	}
-
-
 
 	@Override
 	public boolean deleteRecord() {
@@ -90,8 +85,6 @@ public class CustomerInd extends Customer{
 		return false;
 	}
 
-
-
 	@Override
 	protected String createInsertQuery() {
 		return this.getCdb().INSERT+ConstDB.TableNames.TB_CUSTOMERS.getName()+ this.getCdb().VALUES+"("
@@ -100,17 +93,13 @@ public class CustomerInd extends Customer{
 				+this.getNumOfServices() + ");";
 	}
 
-
-
 	@Override
 	protected String createDeleteQuery() {
 		return this.getCdb().DELETE + this.getCdb().FROM + ConstDB.TableNames.TB_CUSTOMERS.getName() 
 		+ this.getCdb().WHERE + this.getCdb().ID + this.getCdb().EQUAL + this.getId();
 	}
 
-
-	// TODO - update query only for number of services
-
+//	TODO update only for number of services & only car id
 	@Override
 	protected String createUpdateQuery() {
 		return this.getCdb().UPDATE+ "`" + ConstDB.TableNames.TB_CUSTOMERS.getName()+"`" + this.getCdb().SET 
@@ -119,24 +108,11 @@ public class CustomerInd extends Customer{
 				+ this.getCdb().WHERE + ConstDB.TableNames.TB_CUSTOMERS.getName()+"."+this.getCdb().ID + this.getCdb().EQUAL + this.getId();
 	}
 
-
-
 	@Override
 	protected String createUpdateQuery(String columnToSet, String valueToSet, String columnToFind, String valueToFind) {
 		return this.getCdb().UPDATE + "`"+ConstDB.TableNames.TB_CUSTOMERS.getName()+"`" + this.getCdb().SET + "`"+columnToSet+"`"+this.getCdb().EQUAL+"'"+valueToSet+"'" 
 				+ this.getCdb().WHERE + "`"+ConstDB.TableNames.TB_CUSTOMERS.getName()+"`.`"+columnToFind+"` = '"+valueToFind+"'";
 	}
-	
-	// GETTERS & SETTERS
-	public Car getCar() {
-		return car;
-	}
-
-	public void setCar(Car car) {
-//		car.saveNewInDatabase();
-		this.car = car;
-	}
-	
 	
     @Override
     public String toString(){
@@ -144,6 +120,17 @@ public class CustomerInd extends Customer{
     		return "id: " + this.getId() + " c: " + this.getCar().toString() + " ns: " + this.getNumOfServices();
     	else
     		return "id: " + this.getId() + " c: N/A" + " ns: " + this.getNumOfServices();
+    }
+    
+	@Override
+	public boolean compare(Object c) {
+ 	   if (c == null) return false;
+	   
+	   if (getClass() != c.getClass()) return false;    	
+
+	   if(this.getCar().getId() == ((CustomerInd) c).getCar().getId()) return true;
+	   
+	   return false;
     }
     
     @Override
@@ -155,8 +142,7 @@ public class CustomerInd extends Customer{
 	   if (c == this) {
 	       return true;
 	   }
-	   
-	   //!(c instanceof Car)) 
+ 
 	   if (getClass() != c.getClass()) {
 	       return false;
 	   }
@@ -186,6 +172,15 @@ public class CustomerInd extends Customer{
 	}
 	*/
 
+	// GETTERS & SETTERS
+	public Car getCar() {
+		return car;
+	}
+
+	public void setCar(Car car) {
+		this.car = car;
+	}
+	
 	public int getIdINT() {
 		return idINT;
 	}

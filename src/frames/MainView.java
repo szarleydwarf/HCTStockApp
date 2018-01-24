@@ -166,13 +166,26 @@ public class MainView {
 	private void test() {
 		// TODO Here I will be testing all of the functionalities
 		System.out.println("TEST\n1");
-		
-//		DatabaseManager dm, ConstDB cdb, ConstNums cn, ConstStrings cs, int numOfServices, String registration, int brand
-		CustomerInd ci = new CustomerInd(dm, cdb, cn, cs, 4, "12lm4567", 12);
-		System.out.println("main "+ci.toString());
+//CI		DatabaseManager dm, ConstDB cdb, ConstNums cn, ConstStrings cs, int numOfServices, String registration, int brand
+//CB		DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs,int numOfServices,String vatTaxNum, String name, String address
+//		String vat;
+//		for (int i = 0; i < 5; i++) {
+//			vat = this.ts.getRandomString();
+//			int rand = ts.getRandomInt(1,  45);
+//			System.out.println(i + " - " + vat + " / " +  rand);
+//			CustomerInd ci = new CustomerInd(dm, cdb, cn, cs, 4, vat, rand);
+//			System.out.println(""+ci.toString());
+//			cmng.addCustomer(ci);
+//			
+//			CustomerBusiness cb = new CustomerBusiness(dm, cdb, cn, cs, 1, vat, "Test 2", "no road");
+//			System.out.println(""+cb.toString());
+//			cmng.addCustomer(cb);
+//			
+//		}
+//		
 //		cmng.addCustomer(ci);
-//		System.out.println("\n2");
-//		cmng.printList();
+		System.out.println("\n2");
+		cmng.printList();
 //		CustomerBusiness cb = new CustomerBusiness(dm, cdb, cn, cs, "5", 8, "98556746", "Upsala", "3 zakrety", "1,3");
 //		cmng.addCustomer(cb);
 //		System.out.println("\n3");

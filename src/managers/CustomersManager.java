@@ -35,15 +35,15 @@ public class CustomersManager {
 	//add
 	public boolean addCustomer(Customer c){
 		// TODO check up for existing customer
-		if(!this.list.contains(c)){
+		if(!this.search(c)){
 			this.list.add(c);
 			String query = this.getCdb().INSERT;
 			if(c instanceof CustomerInd)
-				query += ConstDB.TableNames.TB_CUSTOMERS.getName() + this.getCdb().VALUES + "(" + c.getId() + "," + ((CustomerInd) c).getCar().getId() + "," + c.getNumOfServices() + ")";
-			else query += ConstDB.TableNames.TB_BUSINESS.getName() + this.getCdb().VALUES + "(" + c.getId() + ", '" + ((CustomerBusiness) c).getVATTaxNUM() + "', '" + ((CustomerBusiness) c).getCompName() + "', '" + ((CustomerBusiness) c).getCompAddress() + "', '" + ((CustomerBusiness) c).getCarIdList() + "'," +c.getNumOfServices() + ")" ;
+				query += ConstDB.TableNames.TB_CUSTOMERS.getName() + this.getCdb().VALUES + "(" + c.getIdINT() + "," + ((CustomerInd) c).getCar().getId() + "," + c.getNumOfServices() + ")";
+			else query += ConstDB.TableNames.TB_BUSINESS.getName() + this.getCdb().VALUES + "(" + c.getIdINT() + ", '" + ((CustomerBusiness) c).getVATTaxNUM() + "', '" + ((CustomerBusiness) c).getCompName() + "', '" + ((CustomerBusiness) c).getCompAddress() + "', '" + ((CustomerBusiness) c).getCarIdList() + "'," +c.getNumOfServices() + ")" ;
 			
-			System.out.println("cm q " + query);
-			this.getDm().addNewRecord(query);
+			System.out.println("adding new cm q " + query);
+//			this.getDm().addNewRecord(query);
 			return true;
 		}
 		return false;
@@ -63,6 +63,15 @@ public class CustomersManager {
 	}
 	
 	//search/find
+	private boolean search(Customer c) {
+		for(Customer ct : this.list){
+//			if(ct instanceof)
+			if(ct.getId() == c.getId()){
+				return true;
+			}else return ct.compare(c);
+		}
+		return false;
+	}
 	
 	//edit
 	

@@ -8,22 +8,54 @@ import managers.DatabaseManager;
 public class CustomerBusiness extends Customer {
 	private String VATTaxNUM, compName, CompAddress;
 	private String carIdList;
+	private int idINT;
 	
-	public CustomerBusiness(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs,String id, int numOfServices) {
-		super(dm, cdb, ci, cs, id, numOfServices);
-
-	}
-
-	public CustomerBusiness(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs,String id, int numOfServices, String vatTaxNum, String name, String address) {
-		super(dm, cdb, ci, cs, id, numOfServices);
-
+	/**
+	 * Constructor for new business customers
+	 * @param dm
+	 * @param cdb
+	 * @param ci
+	 * @param cs
+	 * @param numOfServices
+	 * @param vatTaxNum
+	 * @param name
+	 * @param address
+	 */
+	public CustomerBusiness(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs,int numOfServices,String vatTaxNum, String name, String address) {
+		super(dm, cdb, ci, cs, cs.CUST_BUS_CODE + "1", numOfServices);
+		
+		String q = cdb.SELECT + cdb.ID + cdb.FROM + ConstDB.TableNames.TB_BUSINESS.getName() + cdb.ODER_BY + cdb.ID + cdb.DESC + cdb.LIMIT + " 1";
+		String s = dm.selectData(q);
+		this.idINT = (!s.isEmpty()) ? Integer.parseInt(s) : 1;
+		this.idINT++;
+		String id = cs.CUST_BUS_CODE + this.idINT;
+		this.setId(id);
+		
 		this.setVATTaxNUM(vatTaxNum);
 		this.setCompName(name);
 		this.setCompAddress(address);
+		this.setCarIdList("");
+				
+		this.saveNewInDatabase();
 	}
 
+	/**
+	 * Constructor for customers saved in database
+	 * @param dm
+	 * @param cdb
+	 * @param ci
+	 * @param cs
+	 * @param id
+	 * @param numOfServices
+	 * @param vatTaxNum
+	 * @param name
+	 * @param address
+	 * @param list of cars
+	 */
 	public CustomerBusiness(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs,String id, int numOfServices, String vatTaxNum, String name, String address, String cars) {
 		super(dm, cdb, ci, cs, id, numOfServices);
+		id = cs.CUST_BUS_CODE + id;
+		this.setId(id);
 
 		this.setVATTaxNUM(vatTaxNum);
 		this.setCompName(name);
@@ -58,7 +90,7 @@ public class CustomerBusiness extends Customer {
 	@Override
 	protected String createInsertQuery() {
 		return this.getCdb().INSERT+ConstDB.TableNames.TB_BUSINESS.getName()+ this.getCdb().VALUES+"("
-				+this.getId()+ ", '"
+				+ this.getIdINT()+ ", '"
 				+ this.getVATTaxNUM() + "', '"
 				+ this.getCompName() + "', '"
 				+ this.getCompAddress() + "', '"
@@ -74,7 +106,14 @@ public class CustomerBusiness extends Customer {
 		+ this.getCdb().WHERE + this.getCdb().ID + this.getCdb().EQUAL + this.getId();
 	}
 
-
+/* TODO
+ * updates for
+ * num of services
+ * vat tax
+ * name
+ * address
+ * cars list
+ */
 
 	@Override
 	protected String createUpdateQuery() {
@@ -86,8 +125,6 @@ public class CustomerBusiness extends Customer {
 		+ this.getCdb().TB_CUSTOMER_NO_OF_SERVICES + this.getCdb().EQUAL + this.getNumOfServices()+","
 		+ this.getCdb().WHERE + ConstDB.TableNames.TB_CUSTOMERS.getName()+"."+this.getCdb().ID + this.getCdb().EQUAL + this.getId();
 	}
-
-
 
 	@Override
 	protected String createUpdateQuery(String columnToSet, String valueToSet, String columnToFind, String valueToFind) {
@@ -110,6 +147,35 @@ public class CustomerBusiness extends Customer {
     	}
     	return this.getId() + " '" + this.getCompName() + "', '" + this.getCompAddress() + "', " + this.getVATTaxNUM() + ", ns: " + this.getNumOfServices() + ", cID: " + cars;
     }
+
+	@Override
+	public boolean compare(Object c) {
+  	   if (c == null) return false;
+ 	   
+ 	   if (getClass() != c.getClass()) return false;    	
+
+ 	   if(this.getVATTaxNUM() == ((CustomerBusiness) c).getVATTaxNUM()) return true;
+ 	   
+ 	   return false;
+     }
+
+	@Override
+	public boolean equals(Object c) {
+		   if (c == null) {
+		       return false;
+		   }
+		   
+		   if (c == this) {
+		       return true;
+		   }
+		   
+		   //!(c instanceof Car)) 
+		   if (getClass() != c.getClass()) {
+		       return false;
+		   }
+
+		return false;
+	}
 
 	//GETTERS & SETTERS
 	public String getVATTaxNUM() {
@@ -136,36 +202,6 @@ public class CustomerBusiness extends Customer {
 		CompAddress = compAddress;
 	}
 
-
-	/*     @Override
-    public boolean equals(Object c) {
-	   CustomerInd cCopy = (CustomerInd)c;
-	   if (this.getId() == cCopy.getId() && this.car.getRegistration() == cCopy.car.getRegistration()) {
-	       return true;
-	   }
-       return false;
-   }
-	 * 
-	 */
-
-	@Override
-	public boolean equals(Object c) {
-		   if (c == null) {
-		       return false;
-		   }
-		   
-		   if (c == this) {
-		       return true;
-		   }
-		   
-		   //!(c instanceof Car)) 
-		   if (getClass() != c.getClass()) {
-		       return false;
-		   }
-
-		return false;
-	}
-
 	public String getCarIdList() {
 		return carIdList;
 	}
@@ -173,5 +209,11 @@ public class CustomerBusiness extends Customer {
 	public void setCarIdList(String carIdList) {
 		this.carIdList = carIdList;
 	}
+	public int getIdINT() {
+		return idINT;
+	}
 
+	public void setIdINT(int idINT) {
+		this.idINT = idINT;
+	}
 }

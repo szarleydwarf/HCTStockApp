@@ -11,7 +11,9 @@ public abstract class Customer {
 	private ConstNums ci;
 	private ConstStrings cs;
 
-	private int numOfServices; private String id;
+	private String id;
+	private int numOfServices; 
+	private int idINT;
 	
 	public Customer(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, String id, int numOfServices){
 		this.dm = dm;
@@ -66,8 +68,12 @@ public abstract class Customer {
 	public void setNumOfServices(int numOfServices) {
 		this.numOfServices = numOfServices;
 	}
-	public abstract boolean equals(Object o);
+	public int getIdINT() {
+		return idINT;
+	}
 	
+	public abstract boolean equals(Object o);	
+	public abstract boolean compare(Object c) ;
 	public abstract boolean saveNewInDatabase();
 	public abstract boolean updateRecord();
 	public abstract boolean deleteRecord();
@@ -75,5 +81,7 @@ public abstract class Customer {
 	protected abstract String createDeleteQuery();
 	protected abstract String createUpdateQuery();
 	protected abstract String createUpdateQuery(String columnToSet, String valueToSet, String columnToFind, String valueToFind) ;
+
+
 	
 }

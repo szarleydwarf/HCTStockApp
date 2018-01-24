@@ -1,5 +1,6 @@
 package utility;
 
+import java.util.Random;
 import java.util.Scanner;
 
 public class tScanner {
@@ -54,4 +55,21 @@ public class tScanner {
 		return kb.nextLine();
 	}
 
+	public String getRandomString(){
+		String str = "";
+		for(int i = 0; i < 10; i++){
+			str+= rndChar();
+		}
+		return str;
+	}
+	private static char rndChar () {
+	    int rnd = (int) (Math.random() * 52); // or use Random or whatever
+	    char base = (rnd < 26) ? 'A' : 'a';
+	    return (char) (base + rnd % 26);
+	}
+	public int getRandomInt(int min, int max){
+		Random rand = new Random();
+	    int randomNum = rand.nextInt((max - min) + 1) + min;
+	    return randomNum;
+	}
 }

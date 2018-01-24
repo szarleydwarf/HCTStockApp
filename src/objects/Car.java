@@ -33,9 +33,9 @@ public class Car {
 		String q = this.cdb.SELECT + this.cdb.ID + this.cdb.FROM + ConstDB.TableNames.TB_CARS.getName() + this.cdb.ODER_BY + this.cdb.ID + this.cdb.DESC + this.cdb.LIMIT + " 1";
 		String s = this.dm.selectData(q);
 		
-		int i = (!s.isEmpty()) ? Integer.parseInt(s) : 1;
-		
-		this.id = ++i;
+		this.id = (!s.isEmpty()) ? Integer.parseInt(s) : 1;
+		this.id++;
+		this.setId(id);
 		this.saveNewInDatabase();
 	}
 
@@ -58,6 +58,7 @@ public class Car {
 
 	public boolean saveNewInDatabase(){
 		String q = this.createInsertQuery();
+		System.out.println("car "+q);
 		return this.dm.addNewRecord(q);
 	}
 	
