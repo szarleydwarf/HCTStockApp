@@ -27,17 +27,18 @@ public class StockManager {
 
 
 	public boolean addItem(Item i){
-		if(this.search(i.getStockNumber()) || this.search(i.getName())){
+		if(this.search(i.getCode()+i.getID()) || this.search(i.getName())){
+			//TODO perform item update
 			String str = "";
 			if(this.search(i.getName()))
 				str = i.getName();
 			else
-				str = i.getStockNumber();
-			
+				str = i.getCode()+i.getID();
+
 			Item t = this.find(str);
 			if(t != null){
 				this.removeFromList(i);
-				t = this.edit(t, i);
+				t = this.editNew(t, i);
 				this.list.add(t);
 				return t.updateRecord();
 			}
@@ -60,16 +61,16 @@ public class StockManager {
 	}
 
 	public boolean deleteItem(Item i){
-		if(list.contains(i)){
-			list.remove(i);
+		if(this.search(i.getCode()+i.getID())){
+			this.removeFromList(i);
 			return i.deleteRecordFromDatabase();
 		}
 		return false;
 	}
 	
 	//TODO - edit?
-	public Item edit(Item i, Item i2){
-		System.out.println("\nEditing item\n"+i.toString()+"\n"+i2.toString());
+	public Item editNew(Item i, Item i2){
+		System.out.println("\nEditing new item\n"+i.toString()+"\n"+i2.toString());
 		//make adjustments
 		if(!i.getName().equals(i2.getName())){
 			i.setName(i2.getName());
@@ -83,13 +84,22 @@ public class StockManager {
 		if(i.getAddVat() != i2.getAddVat()){
 			i.setAddVat(i2.getAddVat());
 		}
-//		if(i.getQnt() != i2.getQnt()){
-			int tq = i.getQnt();
-			tq = tq + i2.getQnt();
-			i.setQnt(tq);
-			System.out.println("\nEditing item 2\n"+i.getQnt()+"\t"+i2.getQnt()+"\t"+tq);
-//		}
+		if(i.getAddVEMCCharge() != i2.getAddVEMCCharge()){
+			i.setAddVEMCCharge(i2.getAddVEMCCharge());;
+		}
+		if(i.getPrice() != i2.getPrice()){
+			i.setPrice(i2.getPrice());
+		}
+		int tq = i.getQnt();
+		tq = tq + i2.getQnt();
+		i.setQnt(tq);
+		System.out.println("\nEditing new item 2\n"+i.getQnt()+"\t"+i2.getQnt()+"\t"+tq);
 		return i;
+	}
+	
+	public boolean edit(Item i){
+		System.out.println("\nEditing item 1\n");
+		return i.updateRecord();
 	}
 
 	public String[][] getData(){
@@ -98,6 +108,7 @@ public class StockManager {
 			data[i] = list.get(i).getItemAsData();
 		return data;
 	}
+	
 	//TODO other searches - by name, stock number, price?	
 	public boolean search(Item i) {
 		for(Item in : this.list){
@@ -110,7 +121,7 @@ public class StockManager {
 
 	public boolean search(String str) {
 		for(Item in : this.list){
-			if(in.getName().toLowerCase().equals(str.toLowerCase()) || in.getStockNumber().toUpperCase().equals(str.toUpperCase())){
+			if(in.getName().toUpperCase().equals(str.toUpperCase()) || (in.getCode()+in.getID()).toUpperCase().equals(str.toUpperCase())){
 				return true;
 			}
 		}
@@ -119,7 +130,7 @@ public class StockManager {
 	
 	public Item find(String str) {
 		for(Item in : this.list){
-			if(in.getName().toLowerCase().equals(str.toLowerCase()) || in.getStockNumber().toUpperCase().equals(str.toUpperCase())){
+			if(in.getName().toUpperCase().equals(str.toUpperCase()) || (in.getCode()+in.getID()).toUpperCase().equals(str.toUpperCase())){
 				System.out.println("Item find and return");
 				return in;
 			}

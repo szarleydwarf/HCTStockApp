@@ -30,6 +30,7 @@ import managers.DatabaseManager;
 import managers.InvoiceManager;
 import managers.StockManager;
 import objects.Car;
+import objects.Customer;
 import objects.CustomerBusiness;
 import objects.CustomerInd;
 import objects.Item;
@@ -61,7 +62,7 @@ public class MainView {
 	private static CustomersManager cmng;
 	private static tScanner ts;
 	private static InvoiceManager invmng;
-	private static DecimalFormat df;
+	private static DecimalFormat df_3_2, df_5_2;
 	private static ArrayList<String> carList;
 	
 
@@ -132,13 +133,14 @@ public class MainView {
 		fh = new FileHelper();
 		msch = new MiscHelper();
 		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
-		df = new DecimalFormat();
+		df_3_2 = new DecimalFormat(cs.DECIMAL_FORMAT_3_2);
+		df_5_2 = new DecimalFormat(cs.DECIMAL_FORMAT_5_2);
 	}
 
 	private static void loadManagers() {
 		System.out.println("loadManagers");
 //		TODO
-		dm = new DatabaseManager(logger, today, cdb, cn, cs);
+		dm = new DatabaseManager(logger, today, cdb, cn, cs, df_3_2);
 
 //		get customer list
 		cmng = new CustomersManager(dm, cdb, cn, cs);
@@ -166,36 +168,9 @@ public class MainView {
 	private void test() {
 		// TODO Here I will be testing all of the functionalities
 		System.out.println("TEST\n1");
-//CI		DatabaseManager dm, ConstDB cdb, ConstNums cn, ConstStrings cs, int numOfServices, String registration, int brand
-//CB		DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs,int numOfServices,String vatTaxNum, String name, String address
-//		String vat;
-//		for (int i = 0; i < 5; i++) {
-//			vat = this.ts.getRandomString();
-//			int rand = ts.getRandomInt(1,  45);
-//			System.out.println(i + " - " + vat + " / " +  rand);
-//			CustomerInd ci = new CustomerInd(dm, cdb, cn, cs, 4, vat, rand);
-//			System.out.println(""+ci.toString());
-//			cmng.addCustomer(ci);
-//			
-//			CustomerBusiness cb = new CustomerBusiness(dm, cdb, cn, cs, 1, vat, "Test 2", "no road");
-//			System.out.println(""+cb.toString());
-//			cmng.addCustomer(cb);
-//			
-//		}
-//		
-//		cmng.addCustomer(ci);
-		System.out.println("\n2");
-		cmng.printList();
-//		CustomerBusiness cb = new CustomerBusiness(dm, cdb, cn, cs, "5", 8, "98556746", "Upsala", "3 zakrety", "1,3");
-//		cmng.addCustomer(cb);
+//		System.out.println("\n2");
+//
 //		System.out.println("\n3");
-//		cmng.printList();
-//		cmng.delete(ci);
-//		System.out.println("\n4");
-//		cmng.printList();
-//		cmng.delete(cb);
-//		System.out.println("\n5");
-//		cmng.printList();
 
 		System.out.println();
 

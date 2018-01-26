@@ -36,7 +36,8 @@ public class CustomerInd extends Customer{
 		
 		this.setCar(new Car(dm, cdb, cs, registration, brand));
 		
-		this.saveNewInDatabase();
+//		TODO this should be handled by manager
+//this.saveNewInDatabase();
 	}
 
 	/**
@@ -96,7 +97,7 @@ public class CustomerInd extends Customer{
 	@Override
 	protected String createDeleteQuery() {
 		return this.getCdb().DELETE + this.getCdb().FROM + ConstDB.TableNames.TB_CUSTOMERS.getName() 
-		+ this.getCdb().WHERE + this.getCdb().ID + this.getCdb().EQUAL + this.getId();
+		+ this.getCdb().WHERE + this.getCdb().ID + this.getCdb().EQUAL + this.getIdINT();
 	}
 
 //	TODO update only for number of services & only car id
@@ -105,7 +106,7 @@ public class CustomerInd extends Customer{
 		return this.getCdb().UPDATE+ "`" + ConstDB.TableNames.TB_CUSTOMERS.getName()+"`" + this.getCdb().SET 
 				+ this.getCdb().TB_CUSTOMER_CAR_ID + this.getCdb().EQUAL + this.getCar().getId()+","
 				+ this.getCdb().TB_CUSTOMER_NO_OF_SERVICES + this.getCdb().EQUAL + this.getNumOfServices()
-				+ this.getCdb().WHERE + ConstDB.TableNames.TB_CUSTOMERS.getName()+"."+this.getCdb().ID + this.getCdb().EQUAL + this.getId();
+				+ this.getCdb().WHERE + ConstDB.TableNames.TB_CUSTOMERS.getName()+"."+this.getCdb().ID + this.getCdb().EQUAL + this.getIdINT();
 	}
 
 	@Override
@@ -135,17 +136,10 @@ public class CustomerInd extends Customer{
     
     @Override
     public boolean equals(Object c) {
-	   if (c == null) {
-	       return false;
-	   }
-	   
-	   if (c == this) {
-	       return true;
-	   }
- 
-	   if (getClass() != c.getClass()) {
-	       return false;
-	   }
+	   if (c == null) return false;
+	   if (c == this) return true;
+	   if (getClass() != c.getClass()) return false;
+
 	   CustomerInd cCopy = (CustomerInd)c;
 	   if (this.getId() == cCopy.getId() && this.car.getRegistration() == cCopy.car.getRegistration()) {
 	       return true;

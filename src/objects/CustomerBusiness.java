@@ -36,7 +36,8 @@ public class CustomerBusiness extends Customer {
 		this.setCompAddress(address);
 		this.setCarIdList("");
 				
-		this.saveNewInDatabase();
+//		TODO this should be handled by manager
+//this.saveNewInDatabase();
 	}
 
 	/**
@@ -54,6 +55,7 @@ public class CustomerBusiness extends Customer {
 	 */
 	public CustomerBusiness(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs,String id, int numOfServices, String vatTaxNum, String name, String address, String cars) {
 		super(dm, cdb, ci, cs, id, numOfServices);
+		this.idINT = Integer.parseInt(id);
 		id = cs.CUST_BUS_CODE + id;
 		this.setId(id);
 
@@ -103,7 +105,7 @@ public class CustomerBusiness extends Customer {
 	@Override
 	protected String createDeleteQuery() {
 		return this.getCdb().DELETE + this.getCdb().FROM + ConstDB.TableNames.TB_BUSINESS.getName() 
-		+ this.getCdb().WHERE + this.getCdb().ID + this.getCdb().EQUAL + this.getId();
+		+ this.getCdb().WHERE + this.getCdb().ID + this.getCdb().EQUAL + this.getIdINT();
 	}
 
 /* TODO
@@ -122,8 +124,8 @@ public class CustomerBusiness extends Customer {
 		+ this.getCdb().TB_B_CUSTOMER_ADDRESS + this.getCdb().EQUAL + "'" +  this.getCompAddress()+"',"
 		+ this.getCdb().TB_B_CUSTOMER_VAT_TAX + this.getCdb().EQUAL + "'" +  this.getVATTaxNUM()+"',"
 		+ this.getCdb().TB_B_CUSTOMER_CARS_LIST + this.getCdb().EQUAL + "'" +  this.getCarIdList()+"',"
-		+ this.getCdb().TB_CUSTOMER_NO_OF_SERVICES + this.getCdb().EQUAL + this.getNumOfServices()+","
-		+ this.getCdb().WHERE + ConstDB.TableNames.TB_CUSTOMERS.getName()+"."+this.getCdb().ID + this.getCdb().EQUAL + this.getId();
+		+ this.getCdb().TB_CUSTOMER_NO_OF_SERVICES + this.getCdb().EQUAL + this.getNumOfServices()
+		+ this.getCdb().WHERE + ConstDB.TableNames.TB_BUSINESS.getName()+"."+this.getCdb().ID + this.getCdb().EQUAL + this.getIdINT();
 	}
 
 	@Override
@@ -161,20 +163,21 @@ public class CustomerBusiness extends Customer {
 
 	@Override
 	public boolean equals(Object c) {
-		   if (c == null) {
-		       return false;
-		   }
-		   
-		   if (c == this) {
-		       return true;
-		   }
-		   
-		   //!(c instanceof Car)) 
-		   if (getClass() != c.getClass()) {
-		       return false;
-		   }
+	   if (c == null) return false;
+	   if (c == this) return true;
+	   
+	   //!(c instanceof Car)) 
+	   if (getClass() != c.getClass()) return false;
+	   
+	   CustomerBusiness cbCopy = (CustomerBusiness) c;
+ 	   if(this.getVATTaxNUM() == ((CustomerBusiness) c).getVATTaxNUM()
+ 			&& this.getId() == cbCopy.getId()
+ 			&& this.getCompName() == cbCopy.getCompName()
+ 			&& this.getCompAddress() == cbCopy.getCompAddress()) 
+ 		   return true;
+	   
 
-		return false;
+	   return false;
 	}
 
 	//GETTERS & SETTERS

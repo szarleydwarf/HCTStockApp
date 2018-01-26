@@ -15,6 +15,7 @@ public class CustomersManager {
 	private DatabaseManager dm;
 	private ConstDB cdb;
 	private ConstNums cn;
+	private ConstStrings cs;
 	
 	public CustomersManager(DatabaseManager dm, ConstDB cdb, ConstNums cn, ConstStrings cs){
 		list = new ArrayList<Customer>();
@@ -23,7 +24,6 @@ public class CustomersManager {
 		this.cn = cn;
 		this.cs = cs;
 		ArrayList<Customer> t = new ArrayList<Customer>();
-		System.out.println(""+this.cdb.SELECT_ALL_CUSTOMERS_I);
 		t = (ArrayList<Customer>) this.dm.selectData(this.cdb.SELECT_ALL_CUSTOMERS_I, t);
 		list.addAll(t);
 		t.clear();
@@ -34,17 +34,10 @@ public class CustomersManager {
 	//TODO
 	//add
 	public boolean addCustomer(Customer c){
-		// TODO check up for existing customer
+		// TODO check up for existing customer and perform update?
 		if(!this.search(c)){
 			this.list.add(c);
-			String query = this.getCdb().INSERT;
-			if(c instanceof CustomerInd)
-				query += ConstDB.TableNames.TB_CUSTOMERS.getName() + this.getCdb().VALUES + "(" + c.getIdINT() + "," + ((CustomerInd) c).getCar().getId() + "," + c.getNumOfServices() + ")";
-			else query += ConstDB.TableNames.TB_BUSINESS.getName() + this.getCdb().VALUES + "(" + c.getIdINT() + ", '" + ((CustomerBusiness) c).getVATTaxNUM() + "', '" + ((CustomerBusiness) c).getCompName() + "', '" + ((CustomerBusiness) c).getCompAddress() + "', '" + ((CustomerBusiness) c).getCarIdList() + "'," +c.getNumOfServices() + ")" ;
-			
-			System.out.println("adding new cm q " + query);
-//			this.getDm().addNewRecord(query);
-			return true;
+			return c.saveNewInDatabase();
 		}
 		return false;
 	}
@@ -65,7 +58,6 @@ public class CustomersManager {
 	//search/find
 	private boolean search(Customer c) {
 		for(Customer ct : this.list){
-//			if(ct instanceof)
 			if(ct.getId() == c.getId()){
 				return true;
 			}else return ct.compare(c);
@@ -115,6 +107,5 @@ public class CustomersManager {
 	public void setCs(ConstStrings cs) {
 		this.cs = cs;
 	}
-	private ConstStrings cs;
 
 }

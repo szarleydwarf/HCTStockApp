@@ -22,7 +22,7 @@ public class ConstStrings {
 	//PATTERNS AND FORMATS
 	public final String DECIMAL_PATTERN = "^-?([0-9]*)\\.([0-9]*)+$";	
 	public final String INTEGER_PATTERN = "^-?\\d+$";
-	public final String DECIMAL_FORMAT = "000.00";
+	public final String DECIMAL_FORMAT_3_2 = "000.00";
 	public final String DECIMAL_FORMAT_5_2 = "00000.00";
 
 	public final String DEFAULT_REGISTRATION = "00AA0000";

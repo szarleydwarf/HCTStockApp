@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,13 +30,15 @@ public class DatabaseManager {
 	private String date;
 	private ConstNums cn;
 	private ConstStrings cs;
+	private DecimalFormat df;
 	
 	
-	public DatabaseManager (Logger logger, String date, ConstDB cdbm, ConstNums cn, ConstStrings cs) {
+	public DatabaseManager (Logger logger, String date, ConstDB cdbm, ConstNums cn, ConstStrings cs, DecimalFormat df) {
 		this.cdb = cdbm;
 		this.cs = cs;
 		this.cn = cn;
 		this.log = logger;
+		this.df = df;
 		this.date = date;		
 	}
 		
@@ -396,38 +399,44 @@ public class DatabaseManager {
 	}
 
 	private Item cretateItem(ResultSet rs, int colNum) throws NumberFormatException, SQLException {
-		String  itID = "", itName = "";
+		String  code = "", itName = "";
 		double cost = 0, price = 0;
-		int qnt = 0, addTransport = 0, addVat = 0;
+		int id = 0, qnt = 0, addTransport = 0, addVat = 0, addVEMCCharge = 0;
 		for(int i = 1 ; i <= colNum; i++){
 //			System.out.println(i + " "+ rs.getString(i));
 			if(!rs.getString(i).isEmpty()) {
 				switch(i){
 				case 1:
-					itID = rs.getString(i);
+					id = rs.getInt(i);
 					break;
 				case 2:
-					itName = rs.getString(i);
+					code = rs.getString(i);
 					break;
 				case 3:
-					cost = Double.parseDouble(rs.getString(i));
+					itName = rs.getString(i);
 					break;
 				case 4:
-					addVat = rs.getInt(i);
+					cost = Double.parseDouble(rs.getString(i));
 					break;
 				case 5:
-					addTransport = rs.getInt(i);
+					addVat = rs.getInt(i);
 					break;
 				case 6:
-					price = Double.parseDouble(rs.getString(i));
+					addTransport = rs.getInt(i);
 					break;
 				case 7:
+					addVEMCCharge = rs.getInt(i);
+					break;
+				case 8:
+					price = Double.parseDouble(rs.getString(i));
+					break;
+				case 9:
 					qnt = Integer.parseInt(rs.getString(i));
 					break;
 				}
 			}
 		}
-		return new Item(this, this.cdb, this.cn, this.cs, itID, itName, cost, price, addVat, addTransport, qnt);	
+		return new Item(this, this.cdb, this.cn, this.cs, this.df, id, code, itName, cost, price, addVat, addTransport, addVEMCCharge, qnt);	
 	}
 
 	public Object getObject(int id, String str) {

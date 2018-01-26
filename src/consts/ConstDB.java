@@ -32,32 +32,15 @@ public class ConstDB {
 
 	
 	//database tables names
-	public  enum TableNames {
+	public enum TableNames {
 		TB_BRANDS("brands"), TB_BUSINESS("business"), TB_CUSTOMERS("customers"),
 		TB_INVOICES("invoices"), TB_REPAK("repak_report"), TB_SETTINGS("settings"), TB_STOCK("stock"), TB_CARS("car");
 		
 		private String name;		
-		
-		private TableNames(String name) {
-			this.setName(name);
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}	
+		private TableNames(String name) { this.setName(name); }
+		public String getName() { return name; }
+		public void setName(String name) { this.name = name; }	
 	}
-
-//	public  final String TB_BRANDS = "brands";
-//	public  final String TB_BUSINESS = "business";
-//	public  final String TB_CUSTOMRS = "customers";
-//	public  final String TB_INVOICES = "invoices";
-//	public  final String TB_REPAK = "repak_report";
-//	public  final String TB_SETTINGS = "settings";
-//	public  final String TB_STOCK = "stock";
 
 	public final String ID = "id";
 
@@ -65,12 +48,13 @@ public class ConstDB {
 	public final String TB_BRANDS_NAME = "brand";
 	
 	//stock table column names
+	public final String TB_STOCK_CODE = "code";
 	public final String TB_STOCK_NAME = "name";
 	public final String TB_STOCK_COST = "cost";
 	public final String TB_STOCK_PRICE = "price";
 	public final String TB_STOCK_QNT = "qnt";
 	public final String TB_STOCK_VAT = "addVat";
-	public final String TB_STOCK_TRANSPORT = "addTransport";
+	public final String TB_STOCK_TRANSPORT = "addTransit";
 	
 	//car table column names
 	public final String TB_CARS_REGISTRATION = "registration";

@@ -1,5 +1,7 @@
 package objects;
 
+import java.text.DecimalFormat;
+
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
@@ -15,45 +17,68 @@ public class Item {
 	private ConstNums ci;
 	private ConstStrings cs;
 
-	private String stockNumber;
+	private int id;
+	private String code;
 	private String name;
 	private double cost;
-	private byte addVat, addTransportCost;
+	private byte addVat, addTransportCost, addVEMCCharge;
 	private double price;
 	private int qnt;
+	private DecimalFormat df;
 	
 	
-	public Item(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, String p_stock_number, String p_name, double p_cost, double p_price, int addVat, int addTransportCost){
+	/**
+	 * constructor for new item
+	 */
+	public Item(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, DecimalFormat df, String p_code, String p_name, double p_cost, int addVat, int addTransportCost, int addVEMCCharge, int qnt){
 		this.dm = dm;
 		this.cdb = cdb;
 		this.ci = ci;
 		this.cs = cs;
+		this.df = df;
 
-		this.stockNumber = p_stock_number.toUpperCase();
+		String q = cdb.SELECT + cdb.ID + cdb.FROM + ConstDB.TableNames.TB_STOCK.getName() + cdb.ODER_BY + cdb.ID + cdb.DESC + cdb.LIMIT + " 1";
+		String s = dm.selectData(q);
+		this.id = (!s.isEmpty()) ? Integer.parseInt(s) : 1;
+		this.id++;
+		System.out.println("item id "+this.id);
+		this.setID(id);
+
+		this.code = p_code.toUpperCase();
 		this.name = p_name.toUpperCase();
 		this.setAddVat((byte) addVat);
 		this.setAddTransportCost((byte) addTransportCost);
+		this.setAddVEMCCharge((byte) addVEMCCharge);
 
 		calculateCost(p_cost);
 		this.calculatePrice();
 		
-		this.qnt = 0;
+		this.qnt = qnt;
+//		TODO this should be handled by manager
+//		this.saveNewInDatabase();
 	}	
 	
-	public Item(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, String p_stock_number, String p_name, double p_cost, double p_price, int addVat, int addTransportCost, int qnt){
+	/**
+	 * constructor for Item taken from database
+	 * TODO
+	 */
+	public Item(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, DecimalFormat df, int id, String p_code, String p_name, double p_cost, double p_price, int addVat, int addTransportCost, int addVEMCCharge, int qnt){
 		this.dm = dm;
 		this.cdb = cdb;
 		this.ci = ci;
 		this.cs = cs;
+		this.df = df;
 
-		this.stockNumber = p_stock_number.toUpperCase();
+		this.id = id;
+
+		this.code = p_code.toUpperCase();
 		this.name = p_name.toUpperCase();
 		this.setAddVat((byte) addVat);
 		this.setAddTransportCost((byte) addTransportCost);
-
-		calculateCost(p_cost);
-		calculatePrice();
+		this.setAddVEMCCharge((byte) addVEMCCharge);
 		
+		this.cost = p_cost;
+		this.price = p_price;
 		this.qnt = qnt;
 	}
 
@@ -61,32 +86,39 @@ public class Item {
 		if(this.getAddVat() == 1)
 			p_cost  = p_cost * ci.VAT;
 		
+		// TODO - different transport cost depending, company depend
 		if (this.getAddTransportCost() == 1)
 			p_cost = p_cost + ci.TRANSPORT_COST_DALY;
 		
-		p_cost +=  ci.REPAK_CHARGE;
-		this.cost = p_cost;
+		if(this.getAddVEMCCharge() == 1)
+			p_cost = p_cost + ci.REPAK_CHARGE;
+		
+		this.cost = Double.parseDouble(this.df.format(p_cost));
 	}
 
 	private void calculatePrice() {
-		double tPrice = this.getCost();
+		double tCost = this.getCost();
 		double profit;
-		profit = tPrice * this.ci.PROFIT;
-		if(this.getName().contains(cs.TYRE_CODE) && (profit - tPrice) < 20)//TODO ??
-			this.price = tPrice + 20;
+		profit = tCost * this.ci.PROFIT;
+		
+		if(this.getCode().contains(cs.TYRE_CODE) && (profit - tCost) < 20)//TODO ??
+			this.price = tCost + 20;
 		else
 			this.price = profit;
+		this.price = Double.parseDouble(this.df.format(this.price));
+		System.out.println("price "+profit + " - " + tCost + " - " + this.price);
 	}
 	
 	public String[] getItemAsData(){
-		String[] data = new String[7];
-		data[0] = this.stockNumber;
-		data[1] = this.name;
-		data[2] = ""+this.cost;
-		data[3] = ""+this.price;
-		data[4] = ""+this.qnt;
-		data[5] = ""+this.addVat;
-		data[6] = ""+this.addTransportCost;
+		String[] data = new String[8];
+		data[0] = ""+this.id;
+		data[1] = ""+this.code;
+		data[2] = this.name;
+		data[3] = ""+this.cost;
+		data[4] = ""+this.price;
+		data[5] = ""+this.qnt;
+		data[6] = ""+this.addVat;
+		data[7] = ""+this.addTransportCost;
 		return data;
 	}
  
@@ -113,12 +145,14 @@ public class Item {
 
 	//QUERYS FOR DATABASE
 	private String createInsertQuery(){
-		return cdb.INSERT + ConstDB.TableNames.TB_STOCK.getName() +cdb.VALUES + "('" 
-				+ this.getStockNumber().toUpperCase() + "', '"
+		return cdb.INSERT + ConstDB.TableNames.TB_STOCK.getName() +cdb.VALUES + "(" 
+				+ this.getID() + ", '"
+				+ this.getCode().toUpperCase() + "', '"
 				+ this.getName().toUpperCase() + "', "
 				+ this.getCost() + ", "
 				+ this.getAddVat() + ", "
 				+ this.getAddTransportCost() + ", "
+				+ this.getAddVEMCCharge() + ", "
 				+ this.getPrice() + ", "
 				+ this.getQnt()
 				+ ");";
@@ -138,7 +172,7 @@ public class Item {
 				+ "`"+cdb.TB_STOCK_VAT+"`"+cdb.EQUAL+this.addVat+","
 				+ "`"+cdb.TB_STOCK_TRANSPORT+"`"+cdb.EQUAL+this.addTransportCost+"," 
 				+ "`"+cdb.TB_STOCK_QNT+"`"+cdb.EQUAL+this.qnt 
-				+ cdb.WHERE + "`"+ConstDB.TableNames.TB_STOCK.getName()+"`.`"+cdb.ID+"` = '"+this.stockNumber+"'";
+				+ cdb.WHERE + "`"+ConstDB.TableNames.TB_STOCK.getName()+"`.`"+cdb.ID+"` = '"+this.id+"'";
 	}
 
 	private String createUpdateQuery(String columnToSet, String valueToSet, String columnToFind, String valueToFind) {
@@ -149,7 +183,7 @@ public class Item {
 	// OVERRIDE METHODS
 	@Override
 	public String toString(){
-		return this.getStockNumber() + " - " + this.getName() + " - " + this.getCost() + " - " + this.getPrice() + " - " + this.getQnt(); 
+		return this.code + "_" + this.getID()+ " - " + this.getName() + " - " + this.getCost() + " - " + this.getPrice() + " - " + this.getQnt(); 
 	}
 	
 	@Override
@@ -168,7 +202,7 @@ public class Item {
 	   }
 
 	   Item cCopy = (Item)c;
-	   if (this.getName().equals(cCopy.getName()) && this.getStockNumber().equals(cCopy.getStockNumber())) {
+	   if (this.getName().equals(cCopy.getName()) && (this.getCode()+this.getID()) == ((cCopy.getCode()+cCopy.getID()))) {
 //		   System.out.println("Item copy if");
 	       return true;
 	   }
@@ -206,12 +240,12 @@ public class Item {
 	 */
 
 	//GETTERS & SETTERS
-	public String getStockNumber() {
-		return stockNumber;
+	public int getID() {
+		return id;
 	}
 
-	public void setStockNumber(String stockNumber) {
-		this.stockNumber = stockNumber;
+	public void setID(int id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -261,5 +295,18 @@ public class Item {
 	public void setAddTransportCost(byte addTransportCost) {
 		this.addTransportCost = addTransportCost;
 	}
+	public String getCode() {
+		return code;
+	}
 
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public byte getAddVEMCCharge() {
+		return addVEMCCharge;
+	}
+
+	public void setAddVEMCCharge(byte addVEMCCharge) {
+		this.addVEMCCharge = addVEMCCharge;
+	}
 }
