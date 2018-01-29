@@ -33,6 +33,7 @@ import objects.Car;
 import objects.Customer;
 import objects.CustomerBusiness;
 import objects.CustomerInd;
+import objects.Invoice;
 import objects.Item;
 import utility.DateHelper;
 import utility.FileHelper;
@@ -54,7 +55,7 @@ public class MainView {
 	private static ConstNums cn;
 	private static ConstPaths cp;
 	private static ConstStrings cs;
-	private static String today;
+	private static String todayL, todayS;
 	private static MiscHelper msch;
 	private static HashMap<String, String> cars_BI;
 	private static HashMap<String, String> cars_IB;
@@ -101,7 +102,8 @@ public class MainView {
 		loadConst();
 		loadHelpers();
 
-		today = dh.getFormatedDateAndTime();
+		todayL = dh.getFormatedDateAndTime();
+		todayS = dh.getFormatedDate();
 		
 		loadManagers();
 		
@@ -140,7 +142,7 @@ public class MainView {
 	private static void loadManagers() {
 		System.out.println("loadManagers");
 //		TODO
-		dm = new DatabaseManager(logger, today, cdb, cn, cs, df_3_2);
+		dm = new DatabaseManager(logger, todayL, cdb, cn, cs, df_3_2);
 
 //		get customer list
 		cmng = new CustomersManager(dm, cdb, cn, cs);
@@ -168,6 +170,9 @@ public class MainView {
 	private void test() {
 		// TODO Here I will be testing all of the functionalities
 		System.out.println("TEST\n1");
+//		int custID, boolean isBusiness, String list, double discount, boolean isPercent, double total, String date, String file
+		Invoice i = new Invoice(dm, cdb, cs, cn, 2, false, "2TR_TEST#12.50@27.75,1SR_TEST#3.0@7.55", 0, false, 63.05, todayS, "TEST.pdf");
+				System.out.println(""+i.toString());
 //		System.out.println("\n2");
 //
 //		System.out.println("\n3");
