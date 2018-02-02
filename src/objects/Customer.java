@@ -80,7 +80,6 @@ public abstract class Customer {
 	protected abstract String createInsertQuery();
 	protected abstract String createDeleteQuery();
 	protected abstract String createUpdateQuery();
-	protected abstract String createUpdateQuery(String columnToSet, String valueToSet, String columnToFind, String valueToFind) ;
 
 
 	

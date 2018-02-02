@@ -108,12 +108,6 @@ public class CustomerInd extends Customer{
 				+ this.getCdb().TB_CUSTOMER_NO_OF_SERVICES + this.getCdb().EQUAL + this.getNumOfServices()
 				+ this.getCdb().WHERE + ConstDB.TableNames.TB_CUSTOMERS.getName()+"."+this.getCdb().ID + this.getCdb().EQUAL + this.getIdINT();
 	}
-
-	@Override
-	protected String createUpdateQuery(String columnToSet, String valueToSet, String columnToFind, String valueToFind) {
-		return this.getCdb().UPDATE + "`"+ConstDB.TableNames.TB_CUSTOMERS.getName()+"`" + this.getCdb().SET + "`"+columnToSet+"`"+this.getCdb().EQUAL+"'"+valueToSet+"'" 
-				+ this.getCdb().WHERE + "`"+ConstDB.TableNames.TB_CUSTOMERS.getName()+"`.`"+columnToFind+"` = '"+valueToFind+"'";
-	}
 	
     @Override
     public String toString(){

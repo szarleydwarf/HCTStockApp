@@ -5,7 +5,9 @@ public class ConstStrings {
 	public final String[] YEARS_NO_STRING = {"2017", "2018", "2019", "2020"};
 	public final String[] MONTHS_NAMES = {"Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"};
 	public final String DATE_FORMAT = "dd-MM-yyyy";//"yyyy-MM-dd" ?? not sure which format is correct for a database entry. so far works
+	public final String DATE_FORMAT_REVERSE = "yyyy-MM-dd";
 	public final String DATE_TIME_FORMAT = "dd-MM-yyyy @HH:mm:ss";
+	public final String DATE_TIME_FORMAT_REVERSE = "yyyy-MM-dd @HH:mm:ss";
 
 	// ITEM CODES
 	public final String TYRE_CODE = "TR";

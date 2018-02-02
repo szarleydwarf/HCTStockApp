@@ -11,9 +11,9 @@ public class Invoice {
 	private DatabaseManager dm;
 	private ConstDB cdb;
 	private ConstStrings cs;
+	
 	private int id;
-	private int custId;
-
+	private String custId;
 	private boolean isBusiness;
 	private double discount;
 	private String list;
@@ -23,7 +23,7 @@ public class Invoice {
 	private String file;
 
 	public Invoice(DatabaseManager dm, ConstDB cdb, ConstStrings cs, ConstNums cn, 
-			int custID, boolean isBusiness, String list, double discount, boolean isPercent, double total, String date, String file){
+			String custID, boolean isBusiness, String list, double discount, boolean isPercent, double total, String date, String file){
 		this.dm = dm;
 		this.cdb = cdb;
 		this.cs = cs;
@@ -48,7 +48,7 @@ public class Invoice {
 	}
 
 	public Invoice(DatabaseManager dm, ConstDB cdb, ConstStrings cs, ConstNums cn, int id,
-			int custID, boolean isBusiness, String list, double discount, boolean isPercent, double total, String date, String file){
+			String custID, boolean isBusiness, String list, double discount, boolean isPercent, double total, String date, String file){
 		this.dm = dm;
 		this.cdb = cdb;
 		this.cs = cs;
@@ -65,11 +65,10 @@ public class Invoice {
 		this.file = file;
 	}
 	
-	//add new to database
 	public boolean addNew(){
 		String query = this.cdb.INSERT+ConstDB.TableNames.TB_INVOICES.getName()+this.cdb.VALUES+"("
-				+this.getId()+ ", "
-				+this.getCustId()+ ", '"
+				+this.getId()+ ", '"
+				+this.getCustId()+ "', '"
 				+this.getList() + "', "
 				+this.getDiscount() + ", "
 				+this.isPercent() + ", "
@@ -78,13 +77,30 @@ public class Invoice {
 				+this.getFile() + "');";
 		return this.dm.addNewRecord(query);
 	}
-	//remove from database
 	
-	//edit record in database
+	public boolean updateRecord() {
+		String q = this.cdb.UPDATE + ConstDB.TableNames.TB_INVOICES.getName() + this.cdb.SET 
+		+ this.cdb.TB_INVOICE_CUSTOMER_ID + this.cdb.EQUAL + "'" + this.getCustId() + "',"
+		+ this.cdb.TB_INVOICE_STOCK_CODES + this.cdb.EQUAL + "'" + this.getList() + "',"
+		+ this.cdb.TB_INVOICE_DISCOUNT + this.cdb.EQUAL + this.getDiscount() + ","
+		+ this.cdb.TB_INVOICE_IS_PERCENT + this.cdb.EQUAL + this.isPercent() + ","
+		+ this.cdb.TB_INVOICE_TOTAL + this.cdb.EQUAL + this.getTotal() + ","
+		+ this.cdb.TB_INVOICE_DATE  + this.cdb.EQUAL + "'" + this.getDate() + "',"
+		+ this.cdb.TB_INVOICE_FILE_NAME + this.cdb.EQUAL + "'" + this.getFile() + "'"
+		+ this.cdb.WHERE + ConstDB.TableNames.TB_INVOICES.getName()+"."+this.cdb.ID + this.cdb.EQUAL + this.getId();
+		return this.dm.updateRecord(q);
+	}
+
+	public boolean deleteRecord() {
+		String q = this.cdb.DELETE + this.cdb.FROM + ConstDB.TableNames.TB_INVOICES.getName() 
+		+ this.cdb.WHERE + this.cdb.ID + this.cdb.EQUAL + this.getId();
+		return this.dm.deleteRecord(q);
+	}
 	
 	@Override
 	public String toString(){
-		return "Invoice\n["+this.date+"]"+this.custId+"-"+this.isBusiness+"-"+this.list+"-"+this.discount+"-"+this.isPercent+"-"+this.total+"-"+this.file;
+		return "Invoice\n["+this.date+"] "+this.custId+"-"+this.isBusiness+"-"+this.list+"-"+this.discount+"-"
+				+this.isPercent+"-"+this.total+"-"+this.file;
 	}
 	/*
 	 *     @Override
@@ -110,22 +126,6 @@ public class Invoice {
 	 * 
 	 */
 
-	public ConstNums getCn() {
-		return cn;
-	}
-
-	public DatabaseManager getDm() {
-		return dm;
-	}
-
-	public ConstDB getCdb() {
-		return cdb;
-	}
-
-	public ConstStrings getCs() {
-		return cs;
-	}
-
 	public int getId() {
 		return id;
 	}
@@ -133,11 +133,11 @@ public class Invoice {
 	private void setId(int id) {
 		this.id = id;
 	}
-	public int getCustId() {
+	public String getCustId() {
 		return custId;
 	}
 
-	public void setCustId(int custId) {
+	public void setCustId(String custId) {
 		this.custId = custId;
 	}
 

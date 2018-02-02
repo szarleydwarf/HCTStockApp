@@ -153,6 +153,44 @@ public class DatabaseManager {
 		return false;
 	}
 
+	public boolean updateRecord(String tableName, String columnToSet, String valueToSet, String columnToFind, String valueToFind) {
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		Connection conn = null;
+		String q = this.cdb.UPDATE + "`"+tableName+"`" + this.cdb.SET + "`"+columnToSet+"`"+this.cdb.EQUAL+"'"+valueToSet+"'" 
+				+ this.cdb.WHERE + "`"+ConstDB.TableNames.TB_BUSINESS.getName()+"`.`"+columnToFind+"` = '"+valueToFind+"'";
+//		System.out.println(q);
+		try {
+			if(conn == null || conn.isClosed())
+				conn = this.connect();
+		} catch (SQLException e) {
+			log.logError(date+" 1st "+this.getClass().getName()+"\tUPDATE RECORD 5ST E1\t"+e.getMessage());
+		}
+		
+		try {
+			pst = conn.prepareStatement(q, Statement.RETURN_GENERATED_KEYS);
+			int updated = pst.executeUpdate();
+			
+			rs = pst.getGeneratedKeys();
+			if(updated == 1)
+				return true;
+			else
+				return false;
+			
+		} catch (SQLException e11) {
+			e11.printStackTrace();
+			log.logError(date+" "+this.getClass().getName()+"\tUPDATE RECORD 5ST E2\t"+e11.getMessage());
+		}	finally {
+			try{
+				this.close(rs, pst, conn);
+			} catch (Exception e3){
+				e3.printStackTrace();
+				log.logError(date+" "+this.getClass().getName()+"\tUPDATE RECORD 5ST E3\t"+e3.getMessage());
+			}
+		}
+		return false;
+	}
+
 //	 TODO
 //	retrieve list of records
 	public ArrayList<?> selectData(String q, ArrayList<?> list){

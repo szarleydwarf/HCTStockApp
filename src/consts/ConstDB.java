@@ -70,6 +70,15 @@ public class ConstDB {
 	public final String TB_B_CUSTOMER_ADDRESS = "address";
 	public final String TB_B_CUSTOMER_CARS_LIST = "cars";
 	
+	// invoice table column names
+	public final String TB_INVOICE_CUSTOMER_ID = "customer";
+	public final String TB_INVOICE_STOCK_CODES = "stock_codes";
+	public final String TB_INVOICE_DISCOUNT = "discount";
+	public final String TB_INVOICE_IS_PERCENT = "ispercent";
+	public final String TB_INVOICE_TOTAL = "total";
+	public final String TB_INVOICE_DATE = "date";
+	public final String TB_INVOICE_FILE_NAME = "file_name";
+	
 	//Database query's
 	public final String SELECT_CARS_LIST_BRAND_ID = this.SELECT+this.TB_BRANDS_NAME+", "+this.ID+this.FROM+TableNames.TB_BRANDS.getName();
 	public final String SELECT_CARS_LIST_ID_BRAND = this.SELECT+ this.ID+","+ this.TB_BRANDS_NAME+this.FROM+TableNames.TB_BRANDS.getName();
