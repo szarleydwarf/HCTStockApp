@@ -6,6 +6,9 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +23,10 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import consts.ConstDB;
 import consts.ConstNums;
@@ -65,6 +72,9 @@ public class MainView {
 	private static InvoiceManager invmng;
 	private static DecimalFormat df_3_2, df_5_2;
 	private static ArrayList<String> carList;
+	private static boolean isNew;
+	private static JSONObject jDefLang;
+	private static JSONObject jUser;
 	
 
 	/**
@@ -72,6 +82,7 @@ public class MainView {
 	 */
 	public static void main(String[] args) {
 		loader();
+	    isNew = checkInstallation();
 		
 		try {
 		      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -80,14 +91,14 @@ public class MainView {
 		      e.printStackTrace();
 		    }
 		    ls = new LoadScreen(cp, cn);
-		    
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					ls.splashScreenDestruct();
-
 					MainView window = new MainView();
-//					window.frame.setVisible(true);
+					if(!isNew){
+						window.frame.setVisible(true);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -106,6 +117,7 @@ public class MainView {
 		todayS = dh.getFormatedDate();
 		
 		loadManagers();
+		loadJsonDefaultLang();
 		
 		//TODO
 		// getLastIDs();
@@ -120,6 +132,7 @@ public class MainView {
 //		TODO
 //		check last database last backup - do it if necessary
 	}
+
 
 	private static void loadConst() {
 		System.out.println("loadConst");
@@ -154,17 +167,65 @@ public class MainView {
 		invmng = new InvoiceManager(dm, cdb, cn, cs);		
 	}
 
+	private static void loadJsonDefaultLang() {
+		JSONParser parser = new JSONParser();
+
+		try {
+			jDefLang = (JSONObject) parser.parse(new FileReader(cp.JSON_ENG_PATH));
+		} catch (FileNotFoundException e1) {
+			logger.logError(todayL+" loadJsonDefaultLang E1 FILE NOT FOUND "+"\t"+e1.getMessage());
+			e1.printStackTrace();
+		} catch (IOException e2) {
+			logger.logError(todayL+" loadJsonDefaultLang E2 IOException "+"\t"+e2.getMessage());
+			e2.printStackTrace();
+		} catch (ParseException e3) {
+			logger.logError(todayL+" loadJsonDefaultLang E3 ParseException"+"\t"+e3.getMessage());
+			e3.printStackTrace();
+		}
+		
+	}
+
+	private static boolean checkInstallation() {
+		JSONParser parser = new JSONParser();
+
+		try {
+			jUser = (JSONObject) parser.parse(new FileReader(cp.JSON_USER_PATH));
+			if(jUser.get(cs.JSON_NAME).equals("") && jUser.get(cs.JSON_VAT).equals("") && jUser.get(cs.JSON_ADDRESS).equals("") && jUser.get(cs.JSON_COUNTY).equals("")){
+				System.out.println("New");
+				return true;
+			} else {
+				System.out.println("Existing");
+				return false;
+			}
+		
+		} catch (FileNotFoundException e1) {
+			logger.logError(todayL+" MAIN E1 FILE NOT FOUND "+"\t"+e1.getMessage());
+			e1.printStackTrace();
+		} catch (IOException e2) {
+			logger.logError(todayL+" MAIN E2 IOException "+"\t"+e2.getMessage());
+			e2.printStackTrace();
+		} catch (ParseException e3) {
+			logger.logError(todayL+" MAIN E3 ParseException"+"\t"+e3.getMessage());
+			e3.printStackTrace();
+		}
+		return false;
+	}
+
+
 	/**
 	 * Create the application.
 	 */
 	public MainView() {
-		System.out.println("MainView");
+		System.out.println("MainView "+isNew);
 
 		test();
 		
-		System.out.println("EXIT");
-		System.exit(0);
-//		initialize();
+//		System.out.println("EXIT");
+//		System.exit(0);
+		if(isNew)
+			CompanyDetails.main(dm, cdb, cs, cn, jDefLang, jUser, isNew);
+		else
+			initialize();
 	}
 
 	private void test() {
@@ -184,8 +245,9 @@ public class MainView {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.getContentPane().setBackground(new Color(204, 0, 0));
-//		frame.getContentPane().setBackground(Color.CYAN);
+//		frame.getContentPane().setBackground(new Color(204, 0, 0));
+		frame.getContentPane().setBackground(Color.CYAN);
+		System.out.println("\n2");
 		
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(this.cp.ICON_PATH));
 		frame.setTitle("HCT APP");
@@ -242,7 +304,7 @@ public class MainView {
 		nowyRachunekBtn.setBounds(60, 52, 200, 36);
 		frame.getContentPane().add(nowyRachunekBtn);
 		
-		JButton nowyTowarBtn = new JButton("Nowy produkt");
+		JButton nowyTowarBtn = new JButton("Dodaj");
 		nowyTowarBtn.setBackground(new Color(0, 255, 153));
 		nowyTowarBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		nowyTowarBtn.addActionListener(new ActionListener() {
@@ -254,17 +316,17 @@ public class MainView {
 		nowyTowarBtn.setBounds(358, 52, 200, 36);
 		frame.getContentPane().add(nowyTowarBtn);
 		
-		JButton nowaUslugaBtn = new JButton("Nowa usługa");
-		nowaUslugaBtn.setBackground(new Color(0, 255, 153));
-		nowaUslugaBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
-		nowaUslugaBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				frame.dispose();
-//				DodajUsluge.main(loggerFolderPath);
-			}
-		});
-		nowaUslugaBtn.setBounds(358, 112, 200, 36);
-		frame.getContentPane().add(nowaUslugaBtn);
+//		JButton nowaUslugaBtn = new JButton("Nowa usługa");
+//		nowaUslugaBtn.setBackground(new Color(0, 255, 153));
+//		nowaUslugaBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
+//		nowaUslugaBtn.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent arg0) {
+//				frame.dispose();
+////				DodajUsluge.main(loggerFolderPath);
+//			}
+//		});
+//		nowaUslugaBtn.setBounds(358, 112, 200, 36);
+//		frame.getContentPane().add(nowaUslugaBtn);
 		
 		Icon settingsImg = new ImageIcon("resources/img/cogs.png");
 		JButton btnSettings = new JButton("Settings", settingsImg);

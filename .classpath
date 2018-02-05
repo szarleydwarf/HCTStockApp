@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="D:/@Development/JLIB/apachePDF/preflight-2.0.7.jar"/>
 	<classpathentry kind="lib" path="D:/@Development/JLIB/apachePDF/preflight-app-2.0.7.jar"/>
 	<classpathentry kind="lib" path="D:/@Development/JLIB/apachePDF/xmpbox-2.0.7.jar"/>
+	<classpathentry kind="lib" path="D:/@Development/JLIB/json-simple-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

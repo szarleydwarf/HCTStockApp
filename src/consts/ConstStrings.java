@@ -1,6 +1,26 @@
 package consts;
 
 public class ConstStrings {
+	public final String ENTER_DETAILS = "Enter your details";
+	
+	// JSON USER FILE
+	public final String JSON_NAME = "company";
+	public final String JSON_VAT = "vat number";
+	public final String JSON_ADDRESS = "address";
+	public final String JSON_TOWN = "town";
+	public final String JSON_COUNTY = "county";
+	public final String JSON_POST_CODE = "post code";
+	public final String JSON_TELEPHONE = "telephone";
+	public final String JSON_EMAIL = "email";
+	public final String JSON_WWW = "wwww";
+	public final String JSON_FB = "fb";
+	
+	// JSON LANG PAKET
+	public final String FONT_SIZE = "font size";
+	public final String FONT = "font";
+	public final String NEXT = "next";
+	
+	
 	//DATE RELATED
 	public final String[] YEARS_NO_STRING = {"2017", "2018", "2019", "2020"};
 	public final String[] MONTHS_NAMES = {"Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"};
