@@ -82,9 +82,11 @@ public class ConstDB {
 	//Database query's
 	public final String SELECT_CARS_LIST_BRAND_ID = this.SELECT+this.TB_BRANDS_NAME+", "+this.ID+this.FROM+TableNames.TB_BRANDS.getName();
 	public final String SELECT_CARS_LIST_ID_BRAND = this.SELECT+ this.ID+","+ this.TB_BRANDS_NAME+this.FROM+TableNames.TB_BRANDS.getName();
-	public final String SELECT_ALL_ITEMS = "SELECT * FROM "+TableNames.TB_STOCK.getName();
+	public final String SELECT_ALL_ITEMS = this.SELECT_STAR  + this.FROM + TableNames.TB_STOCK.getName();
 	public final String SELECT_ALL_CUSTOMERS_I = this.SELECT_STAR  + this.FROM + TableNames.TB_CUSTOMERS.getName();
 	public final String SELECT_ALL_CUSTOMERS_B = this.SELECT + TableNames.TB_BUSINESS.getName() + ".* " + this.FROM + TableNames.TB_BUSINESS.getName();
+	public final String SELECT_ALL_INVOICES = this.SELECT_STAR + this.FROM + TableNames.TB_INVOICES.getName();
+	
 	public final String SELECT_CAR = this.SELECT_STAR + this.FROM + TableNames.TB_CARS.getName() + this.WHERE + this.ID + this.EQUAL;
-
+	
 }

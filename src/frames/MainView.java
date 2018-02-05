@@ -170,19 +170,9 @@ public class MainView {
 	private void test() {
 		// TODO Here I will be testing all of the functionalities
 		System.out.println("TEST\n1");
-		/*	public final String TYRE_CODE = "TR";
-	public final String TUBE_CODE = "TB";
-	public final String SERVICE_CODE = "SR";
-	public final String OTHER_CODE = "OT";
-	public final String CARWASH_CODE = "CW";*/
-//		int custID, boolean isBusiness, String list, double discount, boolean isPercent, double total, String date, String file
-		Invoice i = new Invoice(dm, cdb, cs, cn, "C_4", false, "4*TB_TEST#12.50@27.75,3*CW_TEST#3.0@7.55", 0, false, 63.05, todayS, "TEST.pdf");
-				System.out.println(todayL +" "+i.toString());
-		System.out.println("\n2");
-		i.setCustId("B_2");
-		msch.timeOut(500000000);
-		i.deleteRecord();
-//		System.out.println(""+i.toString());
+
+//		System.out.println("\n2");
+
 //		System.out.println("\n3");
 
 		System.out.println();

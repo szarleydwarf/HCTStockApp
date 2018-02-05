@@ -21,6 +21,7 @@ import objects.Car;
 import objects.Customer;
 import objects.CustomerBusiness;
 import objects.CustomerInd;
+import objects.Invoice;
 import objects.Item;
 import utility.Logger;
 
@@ -210,6 +211,8 @@ public class DatabaseManager {
 			
 			if(q.contains(ConstDB.TableNames.TB_STOCK.getName())){
 				list = populateItemList(rs, (ArrayList<Item>) list);
+			} else if(q.contains(ConstDB.TableNames.TB_INVOICES.getName())) {
+				list = populateInvoiceList(rs, (ArrayList<Invoice>) list);
 			} else if(q.contains(ConstDB.TableNames.TB_CUSTOMERS.getName()) || q.contains(ConstDB.TableNames.TB_BUSINESS.getName())) {
 				boolean isIndividual;
 				if(q.contains(ConstDB.TableNames.TB_CUSTOMERS.getName()))
@@ -475,6 +478,64 @@ public class DatabaseManager {
 			}
 		}
 		return new Item(this, this.cdb, this.cn, this.cs, this.df, id, code, itName, cost, price, addVat, addTransport, addVEMCCharge, qnt);	
+	}
+
+	private ArrayList<?> populateInvoiceList(ResultSet rs, ArrayList<Invoice> list) {
+		ResultSetMetaData rsmd;
+		try {
+			rsmd = rs.getMetaData();
+			int colNum = rsmd.getColumnCount();
+			while(rs.next()){
+				Invoice i = cretateInvoice(rs, colNum);
+				list.add(i);
+			}
+		} catch (SQLException e) {
+			log.logError(date+" "+this.getClass().getName()+"\tPOPULATE ITEM LIST E\t"+e.getMessage());
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	private Invoice cretateInvoice(ResultSet rs, int colNum) throws SQLException {
+		int id = 0;
+		double discount = 0, total = 0;
+		boolean isPercent = false, isBusiness = false;
+		String customerID = "", codeList = "", date = "", fileName = "";
+		for(int i = 1 ; i <= colNum; i++){
+//			System.out.println(i + " "+ rs.getString(i));
+			if(!rs.getString(i).isEmpty()) {
+				switch(i){
+				case 1:
+					id = rs.getInt(i);
+					break;
+				case 2:
+					customerID = rs.getString(i);
+					if(customerID.contains(this.cs.CUST_BUS_CODE))
+						isBusiness = true;
+					break;
+				case 3:
+					codeList = rs.getString(i);
+					break;
+				case 4:
+					discount = Double.parseDouble(rs.getString(i));
+					break;
+				case 5:
+					byte t = rs.getByte(i);
+					if(t == 1)
+						isPercent = true;
+					break;
+				case 6:
+					total = Double.parseDouble(rs.getString(i));
+					break;
+				case 7:
+					date = rs.getString(i);
+					break;
+				case 8:
+					fileName = rs.getString(i);
+					break;
+				}
+			}
+		}return new Invoice(this, cdb, cs, cn, id, customerID, isBusiness, codeList, discount, isPercent, total, date, fileName);
 	}
 
 	public Object getObject(int id, String str) {

@@ -44,7 +44,7 @@ public class Invoice {
 		this.date = date;
 		this.file = file;
 		
-		this.addNew();
+//		this.addNew();
 	}
 
 	public Invoice(DatabaseManager dm, ConstDB cdb, ConstStrings cs, ConstNums cn, int id,
