@@ -36,12 +36,6 @@ import managers.CustomersManager;
 import managers.DatabaseManager;
 import managers.InvoiceManager;
 import managers.StockManager;
-import objects.Car;
-import objects.Customer;
-import objects.CustomerBusiness;
-import objects.CustomerInd;
-import objects.Invoice;
-import objects.Item;
 import utility.DateHelper;
 import utility.FileHelper;
 import utility.LoadScreen;
@@ -73,8 +67,10 @@ public class MainView {
 	private static DecimalFormat df_3_2, df_5_2;
 	private static ArrayList<String> carList;
 	private static boolean isNew;
-	private static JSONObject jDefLang;
+	private static JSONObject jSettings;
 	private static JSONObject jUser;
+	private static JSONObject jLang;
+	private static JSONObject jPL;
 	
 
 	/**
@@ -117,7 +113,7 @@ public class MainView {
 		todayS = dh.getFormatedDate();
 		
 		loadManagers();
-		loadJsonDefaultLang();
+		loadJsonFiles();
 		
 		//TODO
 		// getLastIDs();
@@ -156,22 +152,21 @@ public class MainView {
 		System.out.println("loadManagers");
 //		TODO
 		dm = new DatabaseManager(logger, todayL, cdb, cn, cs, df_3_2);
-
 //		get customer list
 		cmng = new CustomersManager(dm, cdb, cn, cs);
-		
 //		get stock
 		stmng = new StockManager(dm, cdb, cn, cs);
-		
 		//get invoices list
 		invmng = new InvoiceManager(dm, cdb, cn, cs);		
 	}
 
-	private static void loadJsonDefaultLang() {
+	private static void loadJsonFiles() {
 		JSONParser parser = new JSONParser();
 
 		try {
-			jDefLang = (JSONObject) parser.parse(new FileReader(cp.JSON_ENG_PATH));
+			jSettings = (JSONObject) parser.parse(new FileReader(cp.JSON_SETTINGS_PATH));
+			jUser = (JSONObject) parser.parse(new FileReader(cp.JSON_USER_PATH));
+			jLang = loadLanguage();
 		} catch (FileNotFoundException e1) {
 			logger.logError(todayL+" loadJsonDefaultLang E1 FILE NOT FOUND "+"\t"+e1.getMessage());
 			e1.printStackTrace();
@@ -185,30 +180,29 @@ public class MainView {
 		
 	}
 
-	private static boolean checkInstallation() {
+	private static JSONObject loadLanguage() {
 		JSONParser parser = new JSONParser();
-
-		try {
-			jUser = (JSONObject) parser.parse(new FileReader(cp.JSON_USER_PATH));
-			if(jUser.get(cs.JSON_NAME).equals("") && jUser.get(cs.JSON_VAT).equals("") && jUser.get(cs.JSON_ADDRESS).equals("") && jUser.get(cs.JSON_COUNTY).equals("")){
-				System.out.println("New");
-				return true;
-			} else {
-				System.out.println("Existing");
-				return false;
-			}
-		
-		} catch (FileNotFoundException e1) {
-			logger.logError(todayL+" MAIN E1 FILE NOT FOUND "+"\t"+e1.getMessage());
-			e1.printStackTrace();
-		} catch (IOException e2) {
-			logger.logError(todayL+" MAIN E2 IOException "+"\t"+e2.getMessage());
-			e2.printStackTrace();
-		} catch (ParseException e3) {
-			logger.logError(todayL+" MAIN E3 ParseException"+"\t"+e3.getMessage());
-			e3.printStackTrace();
+		{
+			try {
+				String lang = (String) jSettings.get(cs.JLANG);
+				return (JSONObject) parser.parse(new FileReader(cp.JSON_LANG_PATH+lang));
+			} catch (IOException | ParseException e) {
+				e.printStackTrace();
+			};
 		}
-		return false;
+		return null;
+	}
+
+	private static boolean checkInstallation() {
+		if(jUser.get(cs.JSON_NAME).equals("") 
+			&& jUser.get(cs.JSON_VAT).equals("") 
+			&& jUser.get(cs.JSON_ADDRESS).equals("") 
+			&& jUser.get(cs.JSON_TOWN).equals("") 
+			&& jUser.get(cs.JSON_COUNTY).equals("")){
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 
@@ -217,13 +211,13 @@ public class MainView {
 	 */
 	public MainView() {
 		System.out.println("MainView "+isNew);
-
+		jLang = loadLanguage();
 		test();
 		
 //		System.out.println("EXIT");
 //		System.exit(0);
 		if(isNew)
-			CompanyDetails.main(dm, cdb, cs, cn, jDefLang, jUser, isNew);
+			CompanyDetails.main(dm, cdb, cs, cn, cp, jSettings, jUser, jLang, msch);
 		else
 			initialize();
 	}

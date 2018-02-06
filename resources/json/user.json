@@ -1,12 +1,1 @@
-{
-	"company":"",
-	"vat number":"",
-	"address":"",
-	"town":"",
-	"county":"",
-	"post code":"",
-	"telephone":"",
-	"email":"",
-	"www":"",
-	"fb":""
-}
+{"vat number":"","address":"","town":"","www":"","county":"","company":"","telephone":"","fb":"","post code":"","email":""}

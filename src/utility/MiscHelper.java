@@ -3,6 +3,8 @@ package utility;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.json.simple.JSONObject;
+
 public class MiscHelper {
 
 	public MiscHelper(){
@@ -26,6 +28,23 @@ public class MiscHelper {
 	        Map.Entry pair = (Map.Entry)it.next();
 	        System.out.println(pair.getKey() + " = " + pair.getValue());
 	        it.remove(); // avoids a ConcurrentModificationException
+	    }
+	}
+	/* Copied from: 
+	 * https://stackoverflow.com/questions/9151619/how-to-iterate-over-a-jsonobject
+	 * */
+	public static void printJsonObject(JSONObject jsonObj) {
+	    for (Object key : jsonObj.keySet()) {
+	        //based on you key types
+	        String keyStr = (String)key;
+	        Object keyvalue = jsonObj.get(keyStr);
+
+	        //Print key and value
+	        System.out.println("key: "+ keyStr + " value: " + keyvalue);
+
+	        //for nested objects iteration if required
+	        if (keyvalue instanceof JSONObject)
+	            printJsonObject((JSONObject)keyvalue);
 	    }
 	}
 }

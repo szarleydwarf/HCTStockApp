@@ -1,5 +1,7 @@
 package consts;
 
+import javax.swing.ComboBoxModel;
+
 public class ConstStrings {
 	public final String ENTER_DETAILS = "Enter your details";
 	
@@ -18,8 +20,10 @@ public class ConstStrings {
 	// JSON LANG PAKET
 	public final String FONT_SIZE = "font size";
 	public final String FONT = "font";
+	public final String JLANG = "lang";
 	public final String NEXT = "next";
 	
+	public final String[] LANG = {"ENGLISH", "POLISH"};
 	
 	//DATE RELATED
 	public final String[] YEARS_NO_STRING = {"2017", "2018", "2019", "2020"};
@@ -54,5 +58,9 @@ public class ConstStrings {
 	public final String CUSTOMER_B = "customer business";
 	public final String INVOICE = "invoice";
 	public final String ITEM = "item";
+
+	// SYMBOLS ETC
+	public final String STAR = "*";
+
 	
 }
