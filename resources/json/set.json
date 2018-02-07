@@ -1,6 +1,9 @@
 {
-"fs def":"14",
-"lang":"eng.json",
-"font":"Segoe UI Black",
-"fs lbl title":"18"
+	"app color R":"0",
+	"app color G":"153",
+	"app color B":"204",
+	"fs def":"14",
+	"lang":"eng.json",
+	"font":"Segoe UI Black",
+	"fs lbl title":"18"
 }

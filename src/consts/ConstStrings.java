@@ -4,30 +4,8 @@ import javax.swing.ComboBoxModel;
 
 public class ConstStrings {
 	public final String ENTER_DETAILS = "company details";
-	
-	// JSON USER FILE
-	public final String JSON_NAME = "company";
-	public final String JSON_VAT = "vat number";
-	public final String JSON_ADDRESS = "address";
-	public final String JSON_TOWN = "town";
-	public final String JSON_COUNTY = "county";
-	public final String JSON_POST_CODE = "post code";
-	public final String JSON_TELEPHONE = "telephone";
-	public final String JSON_EMAIL = "email";
-	public final String JSON_WWW = "wwww";
-	public final String JSON_FB = "fb";
-	
-	// JSON LANG PAKET
-	public final String FONT_SIZE_DEF = "fs def";
-	public final String FONT_SIZE_TITLE = "fs lbl title";
-	public final String FONT = "font";
-	public final String JLANG = "lang";
-	public final String NEXT = "next";
-	public final String SAVE = "save";
-	public final String FILL_UP = "fill_up";
-	
-	public final String[] LANG = {"ENGLISH", "POLISH"};
-	
+	public final String APP = "app";
+
 	//DATE RELATED
 	public final String[] YEARS_NO_STRING = {"2017", "2018", "2019", "2020"};
 	public final String[] MONTHS_NAMES = {"Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"};
@@ -65,4 +43,30 @@ public class ConstStrings {
 	// SYMBOLS ETC
 	public final String STAR = "*";
 
+	
+	// JSON USER FILE
+	public final String JSON_NAME = "company";
+	public final String JSON_VAT = "vat number";
+	public final String JSON_ADDRESS = "address";
+	public final String JSON_TOWN = "town";
+	public final String JSON_COUNTY = "county";
+	public final String JSON_POST_CODE = "post code";
+	public final String JSON_TELEPHONE = "telephone";
+	public final String JSON_EMAIL = "email";
+	public final String JSON_WWW = "wwww";
+	public final String JSON_FB = "fb";
+	
+	// JSON LANG PAKET
+	public final String APP_COLOR_R = "app color R";
+	public final String APP_COLOR_G = "app color G";
+	public final String APP_COLOR_B = "app color B";
+	public final String FONT_SIZE_DEF = "fs def";
+	public final String FONT_SIZE_TITLE = "fs lbl title";
+	public final String FONT = "font";
+	public final String JLANG = "lang";
+	public final String NEXT = "next";
+	public final String SAVE = "save";
+	public final String FILL_UP = "fill_up";
+	
+	public final String[] LANG = {"ENGLISH", "POLISH"};
 }

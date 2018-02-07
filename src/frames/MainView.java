@@ -57,7 +57,7 @@ public class MainView {
 	private static ConstPaths cp;
 	private static ConstStrings cs;
 	private static String todayL, todayS;
-	private static MiscHelper msch;
+	private static MiscHelper msh;
 	private static HashMap<String, String> cars_BI;
 	private static HashMap<String, String> cars_IB;
 	private static StockManager stmng;
@@ -77,6 +77,7 @@ public class MainView {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		//TODO - not sure if I should load all the classes again every time, do some research
 		loader();
 	    isNew = checkInstallation();
 		
@@ -142,7 +143,7 @@ public class MainView {
 		System.out.println("loadHelpers");
 		dh = new DateHelper(cs);
 		fh = new FileHelper();
-		msch = new MiscHelper();
+		msh = new MiscHelper();
 		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
 		df_3_2 = new DecimalFormat(cs.DECIMAL_FORMAT_3_2);
 		df_5_2 = new DecimalFormat(cs.DECIMAL_FORMAT_5_2);
@@ -210,17 +211,13 @@ public class MainView {
 	 * Create the application.
 	 */
 	public MainView() {
-		System.out.println("MainView "+isNew);
 		jLang = loadLanguage();
 //		test();
 		if(isNew)
-			CompanyDetails.main(dm, logger, cdb, cs, cn, cp, jSettings, jUser, jLang, msch);
+			CompanyDetails.main(dm, logger, cdb, cs, cn, cp, jSettings, jUser, jLang, msh);
 		else
 			initialize();
-
-//		System.out.println("EXIT");
-//		System.exit(0);	
-		}
+	}
 
 	private void test() {
 		// TODO Here I will be testing all of the functionalities
@@ -237,10 +234,9 @@ public class MainView {
 	 * Initialise the contents of the frame.
 	 */
 	private void initialize() {
+		Color color = msh.getColor(cs.APP, cs, jSettings);
 		frame = new JFrame();
-//		frame.getContentPane().setBackground(new Color(204, 0, 0));
-		frame.getContentPane().setBackground(Color.CYAN);
-		System.out.println("\n2");
+		frame.getContentPane().setBackground(color);
 		
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(this.cp.ICON_PATH));
 		frame.setTitle("HCT APP");
@@ -266,7 +262,7 @@ public class MainView {
 		stockBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-//				WyswietlMagazyn.main(loggerFolderPath);
+				WyswietlMagazyn.main(dm, cdb, cs, cn, logger, jSettings , jLang, msh);
 			}
 		});
 		stockBtn.setBounds(60, 112, 200, 36);

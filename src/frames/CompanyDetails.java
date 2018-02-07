@@ -190,9 +190,10 @@ public class CompanyDetails {
 		Map attributes = fonts_title.getAttributes();
 		attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 		int yPos = 42, xPos = 30, line = 26, tfxPos = 130, tfLength = 540, tfHeight = 24;
+		Color color = msh.getColor(cs.APP, cs, js);
 		
 		frame = new JFrame();
-		frame.getContentPane().setBackground(new Color(0, 153, 204));
+		frame.getContentPane().setBackground(color);
 		frame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, 704, 410);
 		
 		JLabel lblTitle = new JLabel(jl.get(cs.ENTER_DETAILS).toString());

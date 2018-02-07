@@ -1,16 +1,32 @@
 package utility;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
 
+import consts.ConstStrings;
+
+
 public class MiscHelper {
 
 	public MiscHelper(){
-		
-	}
 
+	}
+	
+	public int[] getScreenDimension() {
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		int[] sd = new int[2];
+		sd[0] = gd.getDisplayMode().getWidth() -10;
+		sd[1] = gd.getDisplayMode().getHeight() -50;
+		return sd;
+	}
+	
 	public void timeOut(long timeout) {
 		int i = 0;
 		while(i < timeout){
@@ -50,5 +66,15 @@ public class MiscHelper {
 
 	public String removeLastChar(String str, char c) {
 		return str.substring(0, str.lastIndexOf(c));
+	}
+
+	public Color getColor(String str, ConstStrings cs, JSONObject js) {
+		int r = 0, g = 0, b = 0;
+		if(str.equals(cs.APP)){
+			r = Integer.parseInt(js.get(cs.APP_COLOR_R).toString());
+			g = Integer.parseInt(js.get(cs.APP_COLOR_G).toString());
+			b = Integer.parseInt(js.get(cs.APP_COLOR_B).toString());
+		}
+		return new Color(r, g, b);
 	}
 }
