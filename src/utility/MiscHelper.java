@@ -47,4 +47,8 @@ public class MiscHelper {
 	            printJsonObject((JSONObject)keyvalue);
 	    }
 	}
+
+	public String removeLastChar(String str, char c) {
+		return str.substring(0, str.lastIndexOf(c));
+	}
 }

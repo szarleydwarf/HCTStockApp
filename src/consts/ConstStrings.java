@@ -3,7 +3,7 @@ package consts;
 import javax.swing.ComboBoxModel;
 
 public class ConstStrings {
-	public final String ENTER_DETAILS = "Enter your details";
+	public final String ENTER_DETAILS = "company details";
 	
 	// JSON USER FILE
 	public final String JSON_NAME = "company";
@@ -18,10 +18,13 @@ public class ConstStrings {
 	public final String JSON_FB = "fb";
 	
 	// JSON LANG PAKET
-	public final String FONT_SIZE = "font size";
+	public final String FONT_SIZE_DEF = "fs def";
+	public final String FONT_SIZE_TITLE = "fs lbl title";
 	public final String FONT = "font";
 	public final String JLANG = "lang";
 	public final String NEXT = "next";
+	public final String SAVE = "save";
+	public final String FILL_UP = "fill_up";
 	
 	public final String[] LANG = {"ENGLISH", "POLISH"};
 	
@@ -62,5 +65,4 @@ public class ConstStrings {
 	// SYMBOLS ETC
 	public final String STAR = "*";
 
-	
 }

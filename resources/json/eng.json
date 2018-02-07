@@ -1,3 +1,5 @@
 {
-	"save":"Save"
+	"save":"Save",
+	"company details":"Please enter company details. Fields with '*' are required to proceed.",
+	"fill_up":"Please fill following fields: "
 }

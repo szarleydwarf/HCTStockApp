@@ -4,3 +4,5 @@ bin/
 *.class
 *.class
 *.class
+*.sublime-project
+*.sublime-workspace

@@ -1,1 +1,12 @@
-{"vat number":"","address":"","town":"","www":"","county":"","company":"","telephone":"","fb":"","post code":"","email":""}
+{
+	"company":"HCT",
+	"vat number":"123456789",
+	"address":"Killaneen",
+	"town":"Ballinamore",
+	"county":"Leitrim",
+	"post code":"N41 YK50",
+	"telephone":"089 24 22 993",
+	"email":"hctballinamore@gmail.com",
+	"www":"http://hct-ireland.business.site/",
+	"fb":"@hct.irl"
+}

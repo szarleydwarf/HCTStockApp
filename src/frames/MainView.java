@@ -212,30 +212,29 @@ public class MainView {
 	public MainView() {
 		System.out.println("MainView "+isNew);
 		jLang = loadLanguage();
-		test();
-		
-//		System.out.println("EXIT");
-//		System.exit(0);
+//		test();
 		if(isNew)
-			CompanyDetails.main(dm, cdb, cs, cn, cp, jSettings, jUser, jLang, msch);
+			CompanyDetails.main(dm, logger, cdb, cs, cn, cp, jSettings, jUser, jLang, msch);
 		else
 			initialize();
-	}
+
+//		System.out.println("EXIT");
+//		System.exit(0);	
+		}
 
 	private void test() {
 		// TODO Here I will be testing all of the functionalities
-		System.out.println("TEST\n1");
+//		System.out.println("TEST\n1");
 
 //		System.out.println("\n2");
 
 //		System.out.println("\n3");
 
 		System.out.println();
-
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialise the contents of the frame.
 	 */
 	private void initialize() {
 		frame = new JFrame();
