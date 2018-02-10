@@ -238,7 +238,7 @@ public class MainView {
 	}
 
 	private static boolean checkInstallation() {
-		if(jUser.get(cs.JSON_NAME).equals("") 
+		if(jUser.get(cs.JSON_COMPANY_NAME).equals("") 
 			&& jUser.get(cs.JSON_VAT).equals("") 
 			&& jUser.get(cs.JSON_ADDRESS).equals("") 
 			&& jUser.get(cs.JSON_TOWN).equals("") 

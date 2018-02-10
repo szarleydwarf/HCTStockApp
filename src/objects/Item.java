@@ -103,7 +103,7 @@ public class Item {
 		double profit;
 		profit = tCost * this.ci.PROFIT;
 		
-		if(this.getCode().contains(cs.TYRE_CODE) && (profit - tCost) < 20)//TODO ??
+		if(this.getCode().contains(cs.ITEM_CODES[0]) && (profit - tCost) < 20)//TODO ??
 			this.price = tCost + 20;
 		else
 			this.price = profit;

@@ -5,6 +5,14 @@
 	"stock_lbl":"STOCK / SERVICES",
 	"back":"Go Back",
 	"edit":"EDIT",
+	"code":"Item Code:",
+	"name":"Name:",
+	"cost":"Cost:",
+	"price":"Price:",
+	"qnt":"Quantity:",
+	"vat":"VAT:",
+	"transport":"Transport:",
+	"vemc":"VEMC:",
 	"close":"Are you really want to close this window?",
 	"search":"Enter frease you looking for:"
 

@@ -20,6 +20,7 @@ public class ConstStrings {
 	public final String SERVICE_CODE = "SR";
 	public final String OTHER_CODE = "OT";
 	public final String CARWASH_CODE = "CW";
+	public final String[] ITEM_CODES = {"TR", "TB", "SR", "OT", "CW"};
 	
 	// CUSTOMER CODES
 	public final String CUST_IND_CODE = "C_";
@@ -45,7 +46,7 @@ public class ConstStrings {
 
 	
 	// JSON USER FILE
-	public final String JSON_NAME = "company";
+	public final String JSON_COMPANY_NAME = "company";
 	public final String JSON_VAT = "vat number";
 	public final String JSON_ADDRESS = "address";
 	public final String JSON_TOWN = "town";
@@ -73,6 +74,14 @@ public class ConstStrings {
 	public final String BACK = "back";
 	public final String EDIT = "edit";
 	public final String CLOSE = "close";
+	public final String NAME = "name";
+	public final String CODE = "code";
+	public final String COST = "cost";
+	public final String PRICE = "price";
+	public final String QNT = "qnt";
+	public final String VAT = "vat";
+	public final String TRANSPORT = "transport";
+	public final String VEMC = "vemc";
 
 	public final String STOCK = "stock_lbl";
 	public final String SEARCH_TEXT_FIELD_FRAZE = "search";

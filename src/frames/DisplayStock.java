@@ -12,6 +12,8 @@ import java.awt.font.TextAttribute;
 import java.util.Map;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -36,6 +38,7 @@ import consts.ConstNums;
 import consts.ConstStrings;
 import managers.DatabaseManager;
 import managers.StockManager;
+import objects.Item;
 import utility.Logger;
 import utility.MiscHelper;
 
@@ -54,6 +57,10 @@ public class DisplayStock {
 	private TableRowSorter rowSorter;
 	private JButton btnEdit;
 	private MainView mainView;
+	private Font fonts;
+	private Font fonts_title;
+	private Map attributes;
+	private Color color;
 	private static MiscHelper msh;
 	private static String[][] data;
 	private static StockManager sm;
@@ -114,6 +121,12 @@ public class DisplayStock {
 		
 		data = SM.getData();
 		sm = SM;
+		fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
+		fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
+		attributes = fonts_title.getAttributes();
+		attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+		color = msh.getColor(cs.APP, cs, js);
+
 
 		initialize();
 	}
@@ -122,12 +135,6 @@ public class DisplayStock {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		Font fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
-		Font fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
-		Map attributes = fonts_title.getAttributes();
-		attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-		Color color = msh.getColor(cs.APP, cs, js);
-
 		frame = new JFrame();
 		this.setIsVisible(false);
 		frame.getContentPane().setBackground(color);
@@ -244,8 +251,158 @@ public class DisplayStock {
 	}
 
 	protected void editRecordInDatabase() {
-		// TODO Auto-generated method stub
+		Item i = getSelected();
+		if(i != null){
+			Item it = openEditFrame(i);
+			
+			System.out.println("Edit "+i.getName());
+		} else {
+			System.out.println("Edit NULL");
+		}
+	}
+
+	private Item openEditFrame(Item i) {
+		int lblX = 10, lblY = 10; 
+		int xOffset = 120, yOffset = 24;
+		int lblW = 80, tfW = 260;
+		int lbltfH = 20;
+		JFrame editFrame = new JFrame();
+		editFrame.getContentPane().setBackground(color);
+		editFrame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, 500, 280);
+		editFrame.getContentPane().setLayout(null);
+		editFrame.setVisible(true);
+				
+		JLabel code = new JLabel(jl.get(cs.CODE).toString());
+		code.setFont(fonts);
+		code.setBounds(lblX, lblY, lblW, lbltfH);
+		editFrame.getContentPane().add(code);
 		
+		JComboBox cbCodes = new JComboBox(cs.ITEM_CODES);
+//		cbDays.setSelectedIndex(today-1); TODO
+		cbCodes.setBounds(xOffset, lblY, tfW, lbltfH);
+		editFrame.getContentPane().add(cbCodes);
+		
+		cbCodes.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbCodes ){
+					JComboBox cb = (JComboBox) a.getSource();
+					System.out.println("CB: "+cb.getSelectedItem().toString());
+//					dayOfReport = (cb.getSelectedItem().toString()); TODO
+				}		
+			}
+		});
+
+		JLabel name = new JLabel(jl.get(cs.NAME).toString());
+		name.setFont(fonts);
+		lblY += yOffset;
+		name.setBounds(lblX, lblY, lblW, lbltfH);
+		editFrame.getContentPane().add(name);
+		
+		JTextField tfName = new JTextField();
+		tfName.setFont(fonts);
+		tfName.setBounds(xOffset, lblY, tfW, lbltfH);
+		editFrame.getContentPane().add(tfName);
+		
+		JLabel cost = new JLabel(jl.get(cs.COST).toString());
+		cost.setFont(fonts);
+		lblY += yOffset;
+		cost.setBounds(lblX, lblY, lblW, lbltfH);
+		editFrame.getContentPane().add(cost);
+		
+		JTextField tfCost = new JTextField();
+		tfCost.setFont(fonts);
+		tfCost.setBounds(xOffset, lblY, tfW, lbltfH);
+		editFrame.getContentPane().add(tfCost);
+		
+		JLabel price = new JLabel(jl.get(cs.PRICE).toString());
+		price.setFont(fonts);
+		lblY += yOffset;
+		price.setBounds(lblX, lblY, lblW, lbltfH);
+		editFrame.getContentPane().add(price);
+		
+		JTextField tfPrice = new JTextField();
+		tfPrice.setFont(fonts);
+		tfPrice.setBounds(xOffset, lblY, tfW, lbltfH);
+		editFrame.getContentPane().add(tfPrice);
+		
+		JLabel qnt = new JLabel(jl.get(cs.QNT).toString());
+		qnt.setFont(fonts);
+		lblY += yOffset;
+		qnt.setBounds(lblX, lblY, lblW, lbltfH);
+		editFrame.getContentPane().add(qnt);
+		
+		JTextField tfQnt = new JTextField();
+		tfQnt.setFont(fonts);
+		tfQnt.setBounds(xOffset, lblY, tfW, lbltfH);
+		editFrame.getContentPane().add(tfQnt);
+		
+		JLabel vat = new JLabel(jl.get(cs.VAT).toString());
+		vat.setFont(fonts);
+		lblY += yOffset;
+		vat.setBounds(lblX, lblY, lblW, lbltfH);
+		editFrame.getContentPane().add(vat);
+		
+		JCheckBox chbVAT = new JCheckBox();
+		chbVAT.setSelected(true);
+		chbVAT.setBackground(color);
+		chbVAT.setFont(fonts);
+		chbVAT.setBounds(xOffset, lblY, tfW, lbltfH);
+		editFrame.getContentPane().add(chbVAT);
+
+		JLabel transport = new JLabel(jl.get(cs.TRANSPORT).toString());
+		transport.setFont(fonts);
+		lblY += yOffset;
+		transport.setBounds(lblX, lblY, lblW, lbltfH);
+		editFrame.getContentPane().add(transport);
+		
+		JCheckBox chbTransport = new JCheckBox();
+		chbTransport.setSelected(true);
+		chbTransport.setBackground(color);
+		chbTransport.setFont(fonts);
+		chbTransport.setBounds(xOffset, lblY, tfW, lbltfH);
+		editFrame.getContentPane().add(chbTransport);
+		
+		JLabel vemc = new JLabel(jl.get(cs.VEMC).toString());
+		vemc.setFont(fonts);
+		lblY += yOffset;
+		vemc.setBounds(lblX, lblY, lblW, lbltfH);
+		editFrame.getContentPane().add(vemc);
+		
+		JCheckBox chbVemc = new JCheckBox();
+		chbVemc.setSelected(true);
+		chbVemc.setBackground(color);
+		chbVemc.setFont(fonts);
+		chbVemc.setBounds(xOffset, lblY, tfW, lbltfH);
+		editFrame.getContentPane().add(chbVemc);
+		
+		JButton btnSave = new JButton(jl.get(cs.SAVE).toString());
+		btnSave.setForeground(Color.RED);
+		btnSave.setBackground(Color.LIGHT_GRAY);
+		btnSave.setFont(fonts);
+		lblY += yOffset;
+		btnSave.setBounds(xOffset, lblY, tfW, lbltfH+10);
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("ZAPISUJE");
+			}
+		});
+		editFrame.getContentPane().add(btnSave);
+
+		return null;
+	}
+
+	private Item getSelected() {
+		int row = table.getSelectedRow();
+		if(row > -1){
+			int j = 0;
+			for(Item ih : sm.getList()){
+				if(ih.getName().equals(table.getValueAt(row, 2).toString())){
+					return ih;
+				}
+			}
+		}
+		return null;
 	}
 
 	private void createTable() {

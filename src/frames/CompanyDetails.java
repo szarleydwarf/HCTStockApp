@@ -105,7 +105,7 @@ public class CompanyDetails {
 		boolean allGood = false;
 		for (Object key : ju.keySet()) {
 	        String keyStr = (String)key;
-	        if(keyStr.equals(cs.JSON_NAME) && !validateTextField(this.tfName)){
+	        if(keyStr.equals(cs.JSON_COMPANY_NAME) && !validateTextField(this.tfName)){
 	        	t = this.tfName.getText();
 	        } else if(keyStr.equals(cs.JSON_VAT) && !validateTextField(this.tfVat)) {
 	        	t = this.tfVat.getText();
@@ -136,7 +136,7 @@ public class CompanyDetails {
 
 	private boolean validateTextField(JTextField tf) {
 		if(tf.getName() != null && tf.getText().isEmpty()){
-			if(tf.getName().equals(cs.JSON_NAME))
+			if(tf.getName().equals(cs.JSON_COMPANY_NAME))
 				info += " Company Name,";
 			if(tf.getName().equals(cs.JSON_VAT))
 				info += " VAT number,";
@@ -228,7 +228,7 @@ public class CompanyDetails {
 		});
 
 		
-		JLabel lblName = new JLabel(cs.JSON_NAME+cs.STAR);
+		JLabel lblName = new JLabel(cs.JSON_COMPANY_NAME+cs.STAR);
 		yPos+=line;
 		lblName.setBounds(xPos, yPos, 96, 28);
 		lblName.setFont(fonts);
@@ -236,7 +236,7 @@ public class CompanyDetails {
 
 		tfName = new JTextField();
 		tfName.setBounds(tfxPos, yPos, tfLength, tfHeight);
-		tfName.setName(cs.JSON_NAME);
+		tfName.setName(cs.JSON_COMPANY_NAME);
 		frame.getContentPane().add(tfName);
 		tfName.setColumns(10);
 
