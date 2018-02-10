@@ -5,8 +5,14 @@ import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 import org.json.simple.JSONObject;
 
@@ -15,8 +21,18 @@ import consts.ConstStrings;
 
 public class MiscHelper {
 
-	public MiscHelper(){
+	private Logger log;
 
+	public MiscHelper(Logger logger){
+		log = logger;
+	}
+	
+	public void printData(String[][] d) {
+		System.out.println("Data 1st length "+d.length);
+		System.out.println("Data 2nd length "+d[0].length);
+		for(int j = 0 ; j< d.length; j++)
+			for(int i = 0; i < d[j].length; i++)
+				System.out.println("j:"+j+" i:"+i+" - "+d[j][i]);
 	}
 	
 	public int[] getScreenDimension() {
@@ -26,12 +42,28 @@ public class MiscHelper {
 		sd[1] = gd.getDisplayMode().getHeight() -50;
 		return sd;
 	}
+
+	public int getXenterXofFrame(JFrame frame, JLabel lbl) {
+		return ((frame.getWidth() - lbl.getWidth()) / 2);
+	}
 	
 	public void timeOut(long timeout) {
 		int i = 0;
 		while(i < timeout){
 			i++;
 		}
+	}
+	
+	public boolean saveJSON(String path, JSONObject object){
+        try (FileWriter file = new FileWriter(path)) {
+            file.write(object.toJSONString());
+            file.flush();
+            return true;
+        } catch (IOException e) {
+        	log.logError("Fail to save JSON file in "+this.getClass().getName() + ". E: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
 	}
 
 	/* Function copied from
@@ -77,4 +109,11 @@ public class MiscHelper {
 		}
 		return new Color(r, g, b);
 	}
+
+	public void toggleJButton(JButton btn, Color foreground_color, Color background_color, boolean toggle) {
+		btn.setForeground(foreground_color);
+		btn.setBackground(background_color);
+		btn.setEnabled(toggle);
+	}
+
 }

@@ -16,5 +16,9 @@ public class ConstNums {
 	
 	public final int DEFAULT_CAR_BRAND_ID = 45;
 
-
+	// JBUTTONS
+	public final int BACK_BTN_X_OFFSET = 160;
+	public final int BACK_BTN_Y_OFFSET = 80;
+	public final int BACK_BTN_WIDTH = 130;
+	public final int BACK_BTN_HEIGHT = 24;
 }

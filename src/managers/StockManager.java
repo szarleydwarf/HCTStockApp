@@ -158,10 +158,4 @@ public class StockManager {
 			for(int i = 0; i < d[j].length; i++)
 				System.out.println(d[j][i]);
 	}
-	
-	public void printData(String[][] d) {
-		for(int j = 0 ; j< d.length; j++)
-			for(int i = 0; i < d[j].length; i++)
-				System.out.println(d[j][i]);
-	}
 }

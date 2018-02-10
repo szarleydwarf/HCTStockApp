@@ -1,5 +1,11 @@
 {
 	"save":"Save",
 	"company details":"Please enter company details. Fields with '*' are required to proceed.",
-	"fill_up":"Please fill following fields: "
+	"fill_up":"Please fill following fields: ",
+	"stock_lbl":"STOCK / SERVICES",
+	"back":"Go Back",
+	"edit":"EDIT",
+	"close":"Are you really want to close this window?",
+	"search":"Enter frease you looking for:"
+
 }

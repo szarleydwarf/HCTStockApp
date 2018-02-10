@@ -56,7 +56,7 @@ public class ConstStrings {
 	public final String JSON_WWW = "wwww";
 	public final String JSON_FB = "fb";
 	
-	// JSON LANG PAKET
+	// JSON SETTINGS FILE
 	public final String APP_COLOR_R = "app color R";
 	public final String APP_COLOR_G = "app color G";
 	public final String APP_COLOR_B = "app color B";
@@ -64,9 +64,19 @@ public class ConstStrings {
 	public final String FONT_SIZE_TITLE = "fs lbl title";
 	public final String FONT = "font";
 	public final String JLANG = "lang";
+	public final String JSTART = "starting";
+	
+	// JSON LANG PACKET
 	public final String NEXT = "next";
 	public final String SAVE = "save";
 	public final String FILL_UP = "fill_up";
-	
+	public final String BACK = "back";
+	public final String EDIT = "edit";
+	public final String CLOSE = "close";
+
+	public final String STOCK = "stock_lbl";
+	public final String SEARCH_TEXT_FIELD_FRAZE = "search";
+
 	public final String[] LANG = {"ENGLISH", "POLISH"};
+	public final String[] STOCK_TB_HEADINGS = {"ID", "Kod", "Nazwa", "Koszt", "Cena", "Qnt", "VAT", "Transport", "VEMC"};
 }

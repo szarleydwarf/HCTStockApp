@@ -46,6 +46,7 @@ import utility.tScanner;
 public class MainView {
 
 	private JFrame frame;
+	protected static MainView window;
 	private static DatabaseManager dm;
 	private static LoadScreen ls;
 	private static Logger logger;
@@ -71,6 +72,8 @@ public class MainView {
 	private static JSONObject jUser;
 	private static JSONObject jLang;
 	private static JSONObject jPL;
+	private static boolean isStarting;
+	private static DisplayStock stockFrame;
 	
 
 	/**
@@ -80,19 +83,25 @@ public class MainView {
 		//TODO - not sure if I should load all the classes again every time, do some research
 		loader();
 	    isNew = checkInstallation();
-		
+//		test();
 		try {
-		      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		    }
-		    catch (Exception e) {
-		      e.printStackTrace();
-		    }
-		    ls = new LoadScreen(cp, cn);
+	      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	    }
+	    catch (Exception e) {
+	      e.printStackTrace();
+	    }
+		isStarting = Boolean.parseBoolean(jSettings.get(cs.JSTART).toString());
+		if(isStarting){
+			ls = new LoadScreen(cp, cn);
+			updateJSONSettings(false);
+		}
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ls.splashScreenDestruct();
-					MainView window = new MainView();
+					if(isStarting)
+						ls.splashScreenDestruct();
+					
+					window = new MainView();
 					if(!isNew){
 						window.frame.setVisible(true);
 					}
@@ -101,6 +110,34 @@ public class MainView {
 				}
 			}
 		});
+	}
+
+	private void test() {
+		// TODO Here I will be testing all of the functionalities
+//		System.out.println("TEST\n1");
+
+//		System.out.println("\n2");
+
+//		System.out.println("\n3");
+
+		System.out.println();
+	}
+
+	private static void updateJSONSettings(boolean isStarting) {
+		JSONObject jo = new JSONObject();
+		String t = "";
+		for (Object key : jSettings.keySet()) {
+			String keyStr = (String)key;
+			if(keyStr.equals(cs.JSTART)){
+				t = ""+isStarting;
+			} else {
+				t = (String) jSettings.get(keyStr);
+			}
+	    	jo.put(keyStr, t);
+		}
+		boolean saved = msh.saveJSON(cp.JSON_SETTINGS_PATH, jo);
+		if(!saved)
+			logger.logError("Fail to save JSON file in MAIN updateJSONSettings().");
 	}
 
 	private static void loader() {
@@ -116,6 +153,7 @@ public class MainView {
 		loadManagers();
 		loadJsonFiles();
 		
+		loadClasses();
 		//TODO
 		// getLastIDs();
 		
@@ -125,11 +163,15 @@ public class MainView {
 		carList = new ArrayList<String>();
 		carList = (ArrayList<String>) dm.selectData("SELECT brand FROM brands", carList);
 
-//		msch.printMap(cars_BI);
 //		TODO
 //		check last database last backup - do it if necessary
 	}
 
+
+	private static void loadClasses() {
+		System.out.println("loadClasses");
+		stockFrame = new DisplayStock(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng);
+	}
 
 	private static void loadConst() {
 		System.out.println("loadConst");
@@ -143,8 +185,10 @@ public class MainView {
 		System.out.println("loadHelpers");
 		dh = new DateHelper(cs);
 		fh = new FileHelper();
-		msh = new MiscHelper();
+
 		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
+		msh = new MiscHelper(logger);
+
 		df_3_2 = new DecimalFormat(cs.DECIMAL_FORMAT_3_2);
 		df_5_2 = new DecimalFormat(cs.DECIMAL_FORMAT_5_2);
 	}
@@ -162,6 +206,7 @@ public class MainView {
 	}
 
 	private static void loadJsonFiles() {
+		System.out.println("loadJSONFiles");
 		JSONParser parser = new JSONParser();
 
 		try {
@@ -183,14 +228,12 @@ public class MainView {
 
 	private static JSONObject loadLanguage() {
 		JSONParser parser = new JSONParser();
-		{
-			try {
-				String lang = (String) jSettings.get(cs.JLANG);
-				return (JSONObject) parser.parse(new FileReader(cp.JSON_LANG_PATH+lang));
-			} catch (IOException | ParseException e) {
-				e.printStackTrace();
-			};
-		}
+		try {
+			String lang = (String) jSettings.get(cs.JLANG);
+			return (JSONObject) parser.parse(new FileReader(cp.JSON_LANG_PATH+lang));
+		} catch (IOException | ParseException e) {
+			e.printStackTrace();
+		};
 		return null;
 	}
 
@@ -212,22 +255,10 @@ public class MainView {
 	 */
 	public MainView() {
 		jLang = loadLanguage();
-//		test();
 		if(isNew)
 			CompanyDetails.main(dm, logger, cdb, cs, cn, cp, jSettings, jUser, jLang, msh);
 		else
 			initialize();
-	}
-
-	private void test() {
-		// TODO Here I will be testing all of the functionalities
-//		System.out.println("TEST\n1");
-
-//		System.out.println("\n2");
-
-//		System.out.println("\n3");
-
-		System.out.println();
 	}
 
 	/**
@@ -241,10 +272,11 @@ public class MainView {
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(this.cp.ICON_PATH));
 		frame.setTitle("HCT APP");
 		frame.setBounds(10, 10, 704, 359);
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+//		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		    	updateJSONSettings(true);
 //		        if (JOptionPane.showConfirmDialog(frame, 
 //			            fv.CLOSE_WINDOW, fv.CLOSE_WINDOW, 
 //		            JOptionPane.YES_NO_OPTION,
@@ -256,13 +288,15 @@ public class MainView {
 		});
 		frame.getContentPane().setLayout(null);
 		
-		JButton stockBtn = new JButton("Magazyn");
+		JButton stockBtn = new JButton(jLang.get(cs.STOCK).toString());
 		stockBtn.setBackground(new Color(135, 206, 235));
 		stockBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		stockBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-				WyswietlMagazyn.main(dm, cdb, cs, cn, logger, jSettings , jLang, msh);
+//				frame.dispose();
+				if(!stockFrame.isVisible())
+					stockFrame.setIsVisible(true);
+//					DisplayStock.main(dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng);
 			}
 		});
 		stockBtn.setBounds(60, 112, 200, 36);
@@ -273,7 +307,7 @@ public class MainView {
 		invoiceBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		invoiceBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
+//				frame.dispose();
 //				WyswietlRachunki.main(loggerFolderPath);
 			}
 		});
@@ -286,7 +320,7 @@ public class MainView {
 		nowyRachunekBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		nowyRachunekBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				frame.dispose();
+//				frame.dispose();
 //				WystawRachunek.main(defaultPaths);
 			}
 		});
@@ -298,7 +332,7 @@ public class MainView {
 		nowyTowarBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		nowyTowarBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
+//				frame.dispose();
 //				DodajTowar.main(loggerFolderPath);
 			}
 		});
@@ -321,7 +355,7 @@ public class MainView {
 		JButton btnSettings = new JButton("Settings", settingsImg);
 		btnSettings.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				frame.dispose();
+//				frame.dispose();
 //				SettingsFrame.main(defaultPaths);
 			}
 		});
@@ -335,7 +369,7 @@ public class MainView {
 		btnSalesReports.setBounds(60, 209, 200, 36);
 		btnSalesReports.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				frame.dispose();
+//				frame.dispose();
 //				SalesReports.main(defaultPaths);
 			}
 		});
@@ -360,7 +394,7 @@ public class MainView {
 		btnCustomers.setBounds(358, 209, 200, 36);
 		btnCustomers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				frame.dispose();
+//				frame.dispose();
 //				CustomersWindow.main(defaultPaths);
 			}
 		});
@@ -387,4 +421,14 @@ public class MainView {
 		line.setBorder(border);
 		frame.getContentPane().add(line);
 	}
+	
+	// GETTERS & SETTERS
+	public boolean isVisible(){
+		return frame.isVisible();
+	}
+	
+	public void setIsVisible(boolean b){
+		frame.setVisible(b);
+	}
+
 }

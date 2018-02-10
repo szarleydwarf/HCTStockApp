@@ -131,7 +131,7 @@ public class CompanyDetails {
         if(!info.equals(jl.get(cs.FILL_UP).toString())){
         	return false;
         }
-		return saveJSON(cp.JSON_USER_PATH, newJU);
+		return msh.saveJSON(cp.JSON_USER_PATH, newJU);
 	}
 
 	private boolean validateTextField(JTextField tf) {
@@ -165,20 +165,20 @@ public class CompanyDetails {
 			}
 	    	newJS.put(keyStr, t);
 		}
-		return saveJSON(cp.JSON_SETTINGS_PATH, newJS);
+		return msh.saveJSON(cp.JSON_SETTINGS_PATH, newJS);
 	}
 
-	private boolean saveJSON(String path, JSONObject object){
-        try (FileWriter file = new FileWriter(path)) {
-            file.write(object.toJSONString());
-            file.flush();
-            return true;
-        } catch (IOException e) {
-        	log.logError("Fail to save JSON file in "+this.getClass().getName() + ". E: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return false;
-	}
+//	private boolean saveJSON(String path, JSONObject object){
+//        try (FileWriter file = new FileWriter(path)) {
+//            file.write(object.toJSONString());
+//            file.flush();
+//            return true;
+//        } catch (IOException e) {
+//        	log.logError("Fail to save JSON file in "+this.getClass().getName() + ". E: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//        return false;
+//	}
 
 	/**
 	 * Initialize the contents of the frame.

@@ -62,7 +62,9 @@ public class Item {
 	 * constructor for Item taken from database
 	 * TODO
 	 */
-	public Item(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, DecimalFormat df, int id, String p_code, String p_name, double p_cost, double p_price, int addVat, int addTransportCost, int addVEMCCharge, int qnt){
+	public Item(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, DecimalFormat df, 
+			int id, String p_code, String p_name, double p_cost, double p_price, 
+			int addVat, int addTransportCost, int addVEMCCharge, int qnt){
 		this.dm = dm;
 		this.cdb = cdb;
 		this.ci = ci;
@@ -110,7 +112,7 @@ public class Item {
 	}
 	
 	public String[] getItemAsData(){
-		String[] data = new String[8];
+		String[] data = new String[9];
 		data[0] = ""+this.id;
 		data[1] = ""+this.code;
 		data[2] = this.name;
@@ -119,6 +121,7 @@ public class Item {
 		data[5] = ""+this.qnt;
 		data[6] = ""+this.addVat;
 		data[7] = ""+this.addTransportCost;
+		data[8] = ""+this.addVEMCCharge;
 		return data;
 	}
  
