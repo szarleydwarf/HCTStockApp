@@ -38,7 +38,7 @@ public class MiscHelper {
 	public int[] getScreenDimension() {
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		int[] sd = new int[2];
-		sd[0] = gd.getDisplayMode().getWidth() -10;
+		sd[0] = gd.getDisplayMode().getWidth() -100;
 		sd[1] = gd.getDisplayMode().getHeight() -50;
 		return sd;
 	}

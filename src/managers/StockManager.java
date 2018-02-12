@@ -22,9 +22,13 @@ public class StockManager {
 		this.cn = cn;
 		this.cs = cs;
 		
-		list = (ArrayList<Item>) this.dm.selectData(this.cdb.SELECT_ALL_ITEMS, list);
+		this.getListFormDatabase();
+//		list = (ArrayList<Item>) this.dm.selectData(this.cdb.SELECT_ALL_ITEMS, list);
 	}
 
+	public void getListFormDatabase(){
+		list = (ArrayList<Item>) this.dm.selectData(this.cdb.SELECT_ALL_ITEMS, list);
+	}
 
 	public boolean addItem(Item i){
 		if(this.search(i.getCode()+i.getID()) || this.search(i.getName())){

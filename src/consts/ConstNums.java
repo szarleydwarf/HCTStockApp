@@ -2,7 +2,7 @@ package consts;
 
 public class ConstNums {
 
-	public static final int FRAME_X_BOUND = 10;
+	public static final int FRAME_X_BOUND = 100;
 	public static final int FRAME_Y_BOUND = 10;
 
 	public final long SPLASHSCREEN_TIME = 5000;

@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.font.TextAttribute;
+import java.text.DecimalFormat;
 import java.util.Map;
 
 import javax.swing.JButton;
@@ -61,9 +62,11 @@ public class DisplayStock {
 	private Font fonts_title;
 	private Map attributes;
 	private Color color;
+	private DecimalFormat df;
 	private static MiscHelper msh;
 	private static String[][] data;
 	private static StockManager sm;
+	private boolean itemSaved = false;
 
 	/**
 	 * Launch the application.
@@ -105,7 +108,7 @@ public class DisplayStock {
 	}
 
 	public DisplayStock(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
-			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM) {
+			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM, DecimalFormat df_3_2) {
 		mainView = main;
 		jl = jLang;
 		js = jSettings;
@@ -121,6 +124,9 @@ public class DisplayStock {
 		
 		data = SM.getData();
 		sm = SM;
+		
+		df = df_3_2;
+		
 		fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
 		fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
 		attributes = fonts_title.getAttributes();
@@ -253,15 +259,14 @@ public class DisplayStock {
 	protected void editRecordInDatabase() {
 		Item i = getSelected();
 		if(i != null){
-			Item it = openEditFrame(i);
-			
-			System.out.println("Edit "+i.getName());
+			openEditFrame(i);
 		} else {
+			log.logError(jl.get(cs.ITEM_EDITION_ERROR).toString());
 			System.out.println("Edit NULL");
 		}
 	}
 
-	private Item openEditFrame(Item i) {
+	private void openEditFrame(Item i) {
 		int lblX = 10, lblY = 10; 
 		int xOffset = 120, yOffset = 24;
 		int lblW = 80, tfW = 260;
@@ -278,20 +283,8 @@ public class DisplayStock {
 		editFrame.getContentPane().add(code);
 		
 		JComboBox cbCodes = new JComboBox(cs.ITEM_CODES);
-//		cbDays.setSelectedIndex(today-1); TODO
 		cbCodes.setBounds(xOffset, lblY, tfW, lbltfH);
 		editFrame.getContentPane().add(cbCodes);
-		
-		cbCodes.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent a) {
-				if(a.getSource() == cbCodes ){
-					JComboBox cb = (JComboBox) a.getSource();
-					System.out.println("CB: "+cb.getSelectedItem().toString());
-//					dayOfReport = (cb.getSelectedItem().toString()); TODO
-				}		
-			}
-		});
 
 		JLabel name = new JLabel(jl.get(cs.NAME).toString());
 		name.setFont(fonts);
@@ -383,13 +376,87 @@ public class DisplayStock {
 		lblY += yOffset;
 		btnSave.setBounds(xOffset, lblY, tfW, lbltfH+10);
 		btnSave.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent arg0) {
 				System.out.println("ZAPISUJE");
+				setItemUpdates(i, cbCodes, tfName, tfCost, tfPrice, tfQnt, chbVAT, chbTransport, chbVemc);
+				itemSaved = i.updateRecord();
+				if(itemSaved){
+					JOptionPane.showMessageDialog(editFrame, jl.get(cs.SAVED_MSG).toString());
+					editFrame.dispose();
+					System.out.println("refreshing B "+itemSaved);
+					if(itemSaved){//TODO
+						System.out.println("refreshing A "+itemSaved);
+						sm.getListFormDatabase();
+						data = null;
+						data = sm.getData();
+						table.removeAll();
+						createTable();
+						itemSaved = false;
+					}
+				}else{
+					JOptionPane.showMessageDialog(editFrame, jl.get(cs.ITEM_EDITION_ERROR_MSG).toString());
+				}
 			}
 		});
 		editFrame.getContentPane().add(btnSave);
+		
+		populateFields(i, cbCodes, tfName, tfCost, tfPrice, tfQnt, chbVAT, chbTransport, chbVemc);
+	}
 
-		return null;
+	protected void setItemUpdates(Item i, JComboBox cbCodes, JTextField tfName, JTextField tfCost, JTextField tfPrice, JTextField tfQnt,
+			JCheckBox chbVAT, JCheckBox chbTransport, JCheckBox chbVemc) {
+		cbCodes.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbCodes ){
+					JComboBox cb = (JComboBox) a.getSource();
+					System.out.println("CB: "+cb.getSelectedItem().toString());
+					i.setCode(cb.getSelectedItem().toString());
+				}		
+			}
+		});
+		
+		if(!tfName.getText().isEmpty())i.setName(tfName.getText());
+		if(!tfCost.getText().isEmpty())i.setCost(Double.parseDouble(df.format(Double.parseDouble(tfCost.getText()))));
+		if(!tfPrice.getText().isEmpty())i.setPrice(Double.parseDouble(df.format(Double.parseDouble(tfPrice.getText()))));
+		if(!tfQnt.getText().isEmpty())i.setQnt(Integer.parseInt(tfQnt.getText()));
+		
+		if(chbVAT.isSelected()) i.setAddVat((byte) 1); else i.setAddVat((byte) 0);;
+		if(chbTransport.isSelected()) i.setAddTransportCost((byte) 1); else i.setAddTransportCost((byte) 0);;
+		if(chbVemc.isSelected()) i.setAddVEMCCharge((byte) 1); else i.setAddVEMCCharge((byte) 0);;
+	}
+
+	private void populateFields(Item i, JComboBox<?> cbCodes, JTextField tfName, JTextField tfCost, JTextField tfPrice,
+			JTextField tfQnt, JCheckBox chbVAT, JCheckBox chbTransport, JCheckBox chbVemc) {
+		if(!i.getCode().isEmpty()){
+			int index = 0;
+			for (int j = 0; j < cs.ITEM_CODES.length; j++) {
+				if(cs.ITEM_CODES[j].equals(i.getCode()))
+					index = j;
+			}
+			cbCodes.setSelectedIndex(index);
+		}
+		
+		if(!i.getName().isEmpty())
+			tfName.setText(i.getName());
+		if(i.getCost() != 0)
+			tfCost.setText(""+i.getCost());
+		if(i.getPrice() != 0)
+			tfPrice.setText(""+i.getPrice());
+		if(i.getQnt() != 0)
+			tfQnt.setText(""+i.getQnt());
+		
+		if(i.getAddVat() == 1) chbVAT.setSelected(true);
+		else chbVAT.setSelected(false);
+
+		if(i.getAddTransportCost() == 1) chbTransport.setSelected(true);
+		else chbTransport.setSelected(false);
+		
+		if(i.getAddVEMCCharge() == 1) chbVemc.setSelected(true);
+		else chbVemc.setSelected(false);
+
+
 	}
 
 	private Item getSelected() {
