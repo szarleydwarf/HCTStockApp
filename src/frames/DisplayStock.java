@@ -67,6 +67,8 @@ public class DisplayStock {
 	private static String[][] data;
 	private static StockManager sm;
 	private boolean itemSaved = false;
+	protected String itemCode;
+	private JButton btnDelete;
 
 	/**
 	 * Launch the application.
@@ -122,7 +124,7 @@ public class DisplayStock {
 		
 		msh = mSH;
 		
-		data = SM.getData();
+		
 		sm = SM;
 		
 		df = df_3_2;
@@ -134,7 +136,7 @@ public class DisplayStock {
 		color = msh.getColor(cs.APP, cs, js);
 
 
-		initialize();
+//		initialize();
 	}
 
 	/**
@@ -142,7 +144,7 @@ public class DisplayStock {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		this.setIsVisible(false);
+//		this.setIsVisible(false);
 		frame.getContentPane().setBackground(color);
 		frame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, (msh.getScreenDimension()[0]), (msh.getScreenDimension()[1]));
 		frame.getContentPane().setLayout(null);
@@ -170,7 +172,7 @@ public class DisplayStock {
 		btnBack.setFont(fonts_title);
 		btnBack.setBounds((frame.getWidth() - cn.BACK_BTN_X_OFFSET), (frame.getHeight() - cn.BACK_BTN_Y_OFFSET), cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
 		frame.getContentPane().add(btnBack);
-
+		
 		btnEdit = new JButton(jl.get(cs.EDIT).toString());
 		btnEdit.setForeground(new Color(245, 245, 245));
 		btnEdit.setBackground(Color.GRAY);
@@ -179,8 +181,23 @@ public class DisplayStock {
 		btnEdit.setEnabled(false);
 		frame.getContentPane().add(btnEdit);
 
+		btnDelete = new JButton(jl.get(cs.DELETE).toString());
+		btnDelete.setBounds((frame.getWidth() - cn.BACK_BTN_X_OFFSET), 80, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
+		btnDelete.setForeground(new Color(245, 245, 245));
+		btnDelete.setBackground(Color.GRAY);
+		btnDelete.setFont(fonts);
+		btnDelete.setEnabled(false);
+		frame.getContentPane().add(btnDelete);
+
+		JButton btnAddNew = new JButton(jl.get(cs.NEW).toString());
+		btnAddNew.setForeground(new Color(245, 245, 245));
+		btnAddNew.setBackground(Color.GREEN);
+		btnAddNew.setFont(fonts);
+		btnAddNew.setBounds((frame.getWidth() - cn.BACK_BTN_X_OFFSET), 120, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
+		frame.getContentPane().add(btnAddNew);
 		
-		createTable();
+		
+//		createTable();
 		
 		// LISTENERS SECTION
 		btnEdit.addActionListener(new ActionListener() {
@@ -189,6 +206,12 @@ public class DisplayStock {
 			}
 		});
 
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				deleteRecord();
+			}
+		});
+		
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
@@ -247,13 +270,31 @@ public class DisplayStock {
 			            jl.get(cs.CLOSE).toString(), "", 
 		            JOptionPane.YES_NO_OPTION,
 		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
-		        	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-					if(mainView != null)
+		        	frame.setVisible(false);
+		        	frame.dispose();
+					
+		        	if(mainView != null)
 						if(!mainView.isVisible())
 							mainView.setIsVisible(true);
 		        }
 		    }
 		});		
+	}
+
+	protected void deleteRecord() {
+		Item i = getSelected();
+		if(i != null){
+			 if (JOptionPane.showConfirmDialog(frame, 
+			            jl.get(cs.DELETE_MSG).toString(), "", 
+		            JOptionPane.YES_NO_OPTION,
+		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+				boolean deleted = sm.deleteItem(i);//i.deleteRecordFromDatabase();
+				if(deleted) refreashTable();
+			 }
+		} else {
+			log.logError(jl.get(cs.ITEM_DELETING_ERROR).toString());
+			System.out.println("Delete NULL");
+		}
 	}
 
 	protected void editRecordInDatabase() {
@@ -285,6 +326,16 @@ public class DisplayStock {
 		JComboBox cbCodes = new JComboBox(cs.ITEM_CODES);
 		cbCodes.setBounds(xOffset, lblY, tfW, lbltfH);
 		editFrame.getContentPane().add(cbCodes);
+		cbCodes.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbCodes ){
+					JComboBox cb = (JComboBox) a.getSource();
+					System.out.println("CB: "+cb.getSelectedItem().toString());
+					itemCode = (cb.getSelectedItem().toString());
+				}		
+			}
+		});
 
 		JLabel name = new JLabel(jl.get(cs.NAME).toString());
 		name.setFont(fonts);
@@ -378,21 +429,13 @@ public class DisplayStock {
 		btnSave.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("ZAPISUJE");
 				setItemUpdates(i, cbCodes, tfName, tfCost, tfPrice, tfQnt, chbVAT, chbTransport, chbVemc);
-				itemSaved = i.updateRecord();
+				itemSaved = sm.edit(i);//i.updateRecord();
 				if(itemSaved){
 					JOptionPane.showMessageDialog(editFrame, jl.get(cs.SAVED_MSG).toString());
 					editFrame.dispose();
-					System.out.println("refreshing B "+itemSaved);
-					if(itemSaved){//TODO
-						System.out.println("refreshing A "+itemSaved);
-						sm.getListFormDatabase();
-						data = null;
-						data = sm.getData();
-						table.removeAll();
-						createTable();
-						itemSaved = false;
+					if(itemSaved){
+						refreashTable();
 					}
 				}else{
 					JOptionPane.showMessageDialog(editFrame, jl.get(cs.ITEM_EDITION_ERROR_MSG).toString());
@@ -404,19 +447,19 @@ public class DisplayStock {
 		populateFields(i, cbCodes, tfName, tfCost, tfPrice, tfQnt, chbVAT, chbTransport, chbVemc);
 	}
 
+	protected void refreashTable() {
+		sm.getListFormDatabase();
+		data = null;
+		data = sm.getData();
+		table.removeAll();
+		createTable();
+		itemSaved = false;		
+	}
+
 	protected void setItemUpdates(Item i, JComboBox cbCodes, JTextField tfName, JTextField tfCost, JTextField tfPrice, JTextField tfQnt,
 			JCheckBox chbVAT, JCheckBox chbTransport, JCheckBox chbVemc) {
-		cbCodes.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent a) {
-				if(a.getSource() == cbCodes ){
-					JComboBox cb = (JComboBox) a.getSource();
-					System.out.println("CB: "+cb.getSelectedItem().toString());
-					i.setCode(cb.getSelectedItem().toString());
-				}		
-			}
-		});
-		
+	
+		if(!itemCode.isEmpty())i.setCode(itemCode); else i.setCode(cs.OTHER_CODE);
 		if(!tfName.getText().isEmpty())i.setName(tfName.getText());
 		if(!tfCost.getText().isEmpty())i.setCost(Double.parseDouble(df.format(Double.parseDouble(tfCost.getText()))));
 		if(!tfPrice.getText().isEmpty())i.setPrice(Double.parseDouble(df.format(Double.parseDouble(tfPrice.getText()))));
@@ -460,12 +503,12 @@ public class DisplayStock {
 	}
 
 	private Item getSelected() {
+		//TODO - find way to refresh this
 		int row = table.getSelectedRow();
 		if(row > -1){
-			int j = 0;
-			for(Item ih : sm.getList()){
-				if(ih.getName().equals(table.getValueAt(row, 2).toString())){
-					return ih;
+			for(Item i : sm.getList()){
+				if(i.getName().equals(table.getValueAt(row, 2).toString())){
+					return i;
 				}
 			}
 		}
@@ -497,7 +540,6 @@ public class DisplayStock {
 		int xOffset = 250, yOffset = 140;
 		scrollPane.setBounds(20, 66, frame.getWidth() - xOffset , frame.getHeight() - yOffset);
 		frame.getContentPane().add(scrollPane);
-
 	}
 
 	private ListSelectionListener createTableListener() {
@@ -505,7 +547,7 @@ public class DisplayStock {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 //				helper.toggleJButton(btnAddToInvoice, Color.green, Color.darkGray, true);
-//				helper.toggleJButton(btnDelete, Color.red, Color.gray, true);
+				msh.toggleJButton(btnDelete, Color.red, Color.gray, true);
 				msh.toggleJButton(btnEdit, Color.yellow, Color.GREEN, true);	
 			}
 	    };
@@ -515,10 +557,16 @@ public class DisplayStock {
 
 	// GETTERS & SETTERS
 	public boolean isVisible(){
+		if(frame != null)
 		return frame.isVisible();
+		return false;
 	}
 	
 	public void setIsVisible(boolean b){
+		initialize();
+		sm.getListFormDatabase();
+		data = sm.getData();
+		createTable();
 		frame.setVisible(b);
 	}
 	

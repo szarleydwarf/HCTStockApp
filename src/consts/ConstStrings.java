@@ -88,7 +88,12 @@ public class ConstStrings {
 
 	public final String[] LANG = {"ENGLISH", "POLISH"};
 	public final String[] STOCK_TB_HEADINGS = {"ID", "Kod", "Nazwa", "Koszt", "Cena", "Qnt", "VAT", "Transport", "VEMC"};
+	public final String SAVED_MSG = "saved";
+	public final String DELETE = "delete";
+	public final String DELETE_MSG = "delete_msg";
+	public final String NEW = "new";
+
 	public final String ITEM_EDITION_ERROR = "item_edition_error";
 	public final String ITEM_EDITION_ERROR_MSG = "saving error";
-	public final String SAVED_MSG = "saved";
+	public final String ITEM_DELETING_ERROR = "delete_error";
 }

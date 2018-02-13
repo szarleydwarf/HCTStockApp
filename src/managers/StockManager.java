@@ -27,6 +27,7 @@ public class StockManager {
 	}
 
 	public void getListFormDatabase(){
+		list.clear();
 		list = (ArrayList<Item>) this.dm.selectData(this.cdb.SELECT_ALL_ITEMS, list);
 	}
 

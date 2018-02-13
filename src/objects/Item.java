@@ -169,6 +169,7 @@ public class Item {
 
 	private String createUpdateQuery() {
 		return  cdb.UPDATE + "`"+ConstDB.TableNames.TB_STOCK.getName()+"`" + cdb.SET 
+				+ "`"+cdb.TB_STOCK_CODE+"`"+cdb.EQUAL+"'"+this.code+"'" +","
 				+ "`"+cdb.TB_STOCK_NAME+"`"+cdb.EQUAL+"'"+this.name+"'" +","
 				+ "`"+cdb.TB_STOCK_COST+"`"+cdb.EQUAL+this.cost +","
 				+ "`"+cdb.TB_STOCK_PRICE+"`"+cdb.EQUAL+this.price+","

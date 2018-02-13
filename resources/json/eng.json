@@ -4,7 +4,10 @@
 	"fill_up":"Please fill following fields: ",
 	"stock_lbl":"STOCK / SERVICES",
 	"back":"Go Back",
+	"delete":"Delete",
+	"delete_msg":"You sure you want to delete this item, it is not recoverable process.",
 	"edit":"EDIT",
+	"new":"Add New",
 	"code":"Item Code:",
 	"name":"Name:",
 	"cost":"Cost:",
@@ -14,9 +17,9 @@
 	"transport":"Transport:",
 	"vemc":"VEMC:",
 	"item_edition_error":"There was an error when trying edit an item. Most likely, item selection return null.",
+	"delete_error":"There was an error when trying to delete an item. Most likely, item selection return null.",
 	"saving error":"There was an error when trying save an item. Save unsucessful",
 	"saved":"Item saved sucessfully",
 	"close":"Are you really want to close this window?",
 	"search":"Enter frease you looking for:"
-
 }
