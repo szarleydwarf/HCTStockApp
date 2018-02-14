@@ -1,6 +1,7 @@
 package frames;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -69,6 +70,7 @@ public class DisplayStock {
 	private boolean itemSaved = false;
 	protected String itemCode;
 	private JButton btnDelete;
+	protected AddNew newItemFrame;
 
 	/**
 	 * Launch the application.
@@ -109,9 +111,10 @@ public class DisplayStock {
 		initialize();
 	}
 
-	public DisplayStock(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
+	public DisplayStock(MainView main, AddNew AN, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
 			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM, DecimalFormat df_3_2) {
 		mainView = main;
+		this.newItemFrame = AN;
 		jl = jLang;
 		js = jSettings;
 
@@ -168,12 +171,12 @@ public class DisplayStock {
 		frame.getContentPane().add(tfSearch);
 		tfSearch.setColumns(10);
 		
-		JButton btnBack = new JButton(jl.get(cs.BACK).toString());
+		JButton btnBack = new JButton(jl.get(cs.BTN_BACK).toString());
 		btnBack.setFont(fonts_title);
 		btnBack.setBounds((frame.getWidth() - cn.BACK_BTN_X_OFFSET), (frame.getHeight() - cn.BACK_BTN_Y_OFFSET), cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
 		frame.getContentPane().add(btnBack);
 		
-		btnEdit = new JButton(jl.get(cs.EDIT).toString());
+		btnEdit = new JButton(jl.get(cs.BTN_EDIT).toString());
 		btnEdit.setForeground(new Color(245, 245, 245));
 		btnEdit.setBackground(Color.GRAY);
 		btnEdit.setFont(fonts);
@@ -181,7 +184,7 @@ public class DisplayStock {
 		btnEdit.setEnabled(false);
 		frame.getContentPane().add(btnEdit);
 
-		btnDelete = new JButton(jl.get(cs.DELETE).toString());
+		btnDelete = new JButton(jl.get(cs.BTN_DELETE).toString());
 		btnDelete.setBounds((frame.getWidth() - cn.BACK_BTN_X_OFFSET), 80, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
 		btnDelete.setForeground(new Color(245, 245, 245));
 		btnDelete.setBackground(Color.GRAY);
@@ -189,7 +192,7 @@ public class DisplayStock {
 		btnDelete.setEnabled(false);
 		frame.getContentPane().add(btnDelete);
 
-		JButton btnAddNew = new JButton(jl.get(cs.NEW).toString());
+		JButton btnAddNew = new JButton(jl.get(cs.BTN_NEW).toString());
 		btnAddNew.setForeground(new Color(245, 245, 245));
 		btnAddNew.setBackground(Color.GREEN);
 		btnAddNew.setFont(fonts);
@@ -222,6 +225,13 @@ public class DisplayStock {
 			}
 		});
 
+		btnAddNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(!newItemFrame.isVisible())
+					newItemFrame.setIsVisible(true);
+			}
+		});
+		
 		tfSearch.addFocusListener(new FocusListener(){
 	        @Override
 	        public void focusGained(FocusEvent e){
@@ -267,7 +277,7 @@ public class DisplayStock {
 		    @Override
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 		        if (JOptionPane.showConfirmDialog(frame, 
-			            jl.get(cs.CLOSE).toString(), "", 
+			            jl.get(cs.BTN_CLOSE).toString(), "", 
 		            JOptionPane.YES_NO_OPTION,
 		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 		        	frame.setVisible(false);
@@ -314,11 +324,11 @@ public class DisplayStock {
 		int lbltfH = 20;
 		JFrame editFrame = new JFrame();
 		editFrame.getContentPane().setBackground(color);
-		editFrame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, 500, 280);
+		editFrame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND,  cn.ADD_EDIT_FRAME_WIDTH, cn.ADD_EDIT_FRAME_HEIGHT);
 		editFrame.getContentPane().setLayout(null);
 		editFrame.setVisible(true);
 				
-		JLabel code = new JLabel(jl.get(cs.CODE).toString());
+		JLabel code = new JLabel(jl.get(cs.LBL_CODE).toString());
 		code.setFont(fonts);
 		code.setBounds(lblX, lblY, lblW, lbltfH);
 		editFrame.getContentPane().add(code);
@@ -337,7 +347,7 @@ public class DisplayStock {
 			}
 		});
 
-		JLabel name = new JLabel(jl.get(cs.NAME).toString());
+		JLabel name = new JLabel(jl.get(cs.LBL_NAME).toString());
 		name.setFont(fonts);
 		lblY += yOffset;
 		name.setBounds(lblX, lblY, lblW, lbltfH);
@@ -348,7 +358,7 @@ public class DisplayStock {
 		tfName.setBounds(xOffset, lblY, tfW, lbltfH);
 		editFrame.getContentPane().add(tfName);
 		
-		JLabel cost = new JLabel(jl.get(cs.COST).toString());
+		JLabel cost = new JLabel(jl.get(cs.LBL_COST).toString());
 		cost.setFont(fonts);
 		lblY += yOffset;
 		cost.setBounds(lblX, lblY, lblW, lbltfH);
@@ -359,7 +369,7 @@ public class DisplayStock {
 		tfCost.setBounds(xOffset, lblY, tfW, lbltfH);
 		editFrame.getContentPane().add(tfCost);
 		
-		JLabel price = new JLabel(jl.get(cs.PRICE).toString());
+		JLabel price = new JLabel(jl.get(cs.LBL_PRICE).toString());
 		price.setFont(fonts);
 		lblY += yOffset;
 		price.setBounds(lblX, lblY, lblW, lbltfH);
@@ -370,7 +380,7 @@ public class DisplayStock {
 		tfPrice.setBounds(xOffset, lblY, tfW, lbltfH);
 		editFrame.getContentPane().add(tfPrice);
 		
-		JLabel qnt = new JLabel(jl.get(cs.QNT).toString());
+		JLabel qnt = new JLabel(jl.get(cs.LBL_QNT).toString());
 		qnt.setFont(fonts);
 		lblY += yOffset;
 		qnt.setBounds(lblX, lblY, lblW, lbltfH);
@@ -381,7 +391,7 @@ public class DisplayStock {
 		tfQnt.setBounds(xOffset, lblY, tfW, lbltfH);
 		editFrame.getContentPane().add(tfQnt);
 		
-		JLabel vat = new JLabel(jl.get(cs.VAT).toString());
+		JLabel vat = new JLabel(jl.get(cs.LBL_VAT).toString());
 		vat.setFont(fonts);
 		lblY += yOffset;
 		vat.setBounds(lblX, lblY, lblW, lbltfH);
@@ -394,7 +404,7 @@ public class DisplayStock {
 		chbVAT.setBounds(xOffset, lblY, tfW, lbltfH);
 		editFrame.getContentPane().add(chbVAT);
 
-		JLabel transport = new JLabel(jl.get(cs.TRANSPORT).toString());
+		JLabel transport = new JLabel(jl.get(cs.LBL_TRANSPORT).toString());
 		transport.setFont(fonts);
 		lblY += yOffset;
 		transport.setBounds(lblX, lblY, lblW, lbltfH);
@@ -407,7 +417,7 @@ public class DisplayStock {
 		chbTransport.setBounds(xOffset, lblY, tfW, lbltfH);
 		editFrame.getContentPane().add(chbTransport);
 		
-		JLabel vemc = new JLabel(jl.get(cs.VEMC).toString());
+		JLabel vemc = new JLabel(jl.get(cs.LBL_VEMC).toString());
 		vemc.setFont(fonts);
 		lblY += yOffset;
 		vemc.setBounds(lblX, lblY, lblW, lbltfH);
@@ -420,7 +430,7 @@ public class DisplayStock {
 		chbVemc.setBounds(xOffset, lblY, tfW, lbltfH);
 		editFrame.getContentPane().add(chbVemc);
 		
-		JButton btnSave = new JButton(jl.get(cs.SAVE).toString());
+		JButton btnSave = new JButton(jl.get(cs.BTN_SAVE).toString());
 		btnSave.setForeground(Color.RED);
 		btnSave.setBackground(Color.LIGHT_GRAY);
 		btnSave.setFont(fonts);
@@ -465,9 +475,9 @@ public class DisplayStock {
 		if(!tfPrice.getText().isEmpty())i.setPrice(Double.parseDouble(df.format(Double.parseDouble(tfPrice.getText()))));
 		if(!tfQnt.getText().isEmpty())i.setQnt(Integer.parseInt(tfQnt.getText()));
 		
-		if(chbVAT.isSelected()) i.setAddVat((byte) 1); else i.setAddVat((byte) 0);;
-		if(chbTransport.isSelected()) i.setAddTransportCost((byte) 1); else i.setAddTransportCost((byte) 0);;
-		if(chbVemc.isSelected()) i.setAddVEMCCharge((byte) 1); else i.setAddVEMCCharge((byte) 0);;
+		if(chbVAT.isSelected()) i.setAddVat((byte) 1); else i.setAddVat((byte) 0);
+		if(chbTransport.isSelected()) i.setAddTransportCost((byte) 1); else i.setAddTransportCost((byte) 0);
+		if(chbVemc.isSelected()) i.setAddVEMCCharge((byte) 1); else i.setAddVEMCCharge((byte) 0);
 	}
 
 	private void populateFields(Item i, JComboBox<?> cbCodes, JTextField tfName, JTextField tfCost, JTextField tfPrice,

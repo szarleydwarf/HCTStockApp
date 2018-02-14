@@ -74,6 +74,7 @@ public class MainView {
 	private static JSONObject jPL;
 	private static boolean isStarting;
 	private static DisplayStock stockFrame;
+	private static AddNew newItemFrame;
 	
 
 	/**
@@ -170,7 +171,8 @@ public class MainView {
 
 	private static void loadClasses() {
 		System.out.println("loadClasses");
-		stockFrame = new DisplayStock(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
+		newItemFrame = new AddNew(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
+		stockFrame = new DisplayStock(window, newItemFrame, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
 	}
 
 	private static void loadConst() {
@@ -318,13 +320,13 @@ public class MainView {
 		stockBtn.setBounds(btnX, btnY, 200, 36);
 		frame.getContentPane().add(stockBtn);
 		
-		JButton nowyTowarBtn = new JButton("Dodaj");
+		JButton nowyTowarBtn = new JButton(jLang.get(cs.BTN_NEW).toString());
 		nowyTowarBtn.setBackground(new Color(0, 255, 153));
 		nowyTowarBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		nowyTowarBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				frame.dispose();
-//				DodajTowar.main(loggerFolderPath);
+				if(!newItemFrame.isVisible())
+					newItemFrame.setIsVisible(true);
 			}
 		});
 		btnY += yOffset;

@@ -14,7 +14,7 @@ import managers.DatabaseManager;
 public class Item {
 	private DatabaseManager dm;
 	private ConstDB cdb;
-	private ConstNums ci;
+	private ConstNums cn;
 	private ConstStrings cs;
 
 	private int id;
@@ -33,7 +33,7 @@ public class Item {
 	public Item(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, DecimalFormat df, String p_code, String p_name, double p_cost, int addVat, int addTransportCost, int addVEMCCharge, int qnt){
 		this.dm = dm;
 		this.cdb = cdb;
-		this.ci = ci;
+		this.cn = ci;
 		this.cs = cs;
 		this.df = df;
 
@@ -54,20 +54,20 @@ public class Item {
 		this.calculatePrice();
 		
 		this.qnt = qnt;
-//		TODO this should be handled by manager
+//		this should be handled by manager
 //		this.saveNewInDatabase();
 	}	
 	
 	/**
 	 * constructor for Item taken from database
-	 * TODO
+	 * 
 	 */
 	public Item(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, DecimalFormat df, 
 			int id, String p_code, String p_name, double p_cost, double p_price, 
 			int addVat, int addTransportCost, int addVEMCCharge, int qnt){
 		this.dm = dm;
 		this.cdb = cdb;
-		this.ci = ci;
+		this.cn = ci;
 		this.cs = cs;
 		this.df = df;
 
@@ -86,14 +86,14 @@ public class Item {
 
 	private void calculateCost(double p_cost) {
 		if(this.getAddVat() == 1)
-			p_cost  = p_cost * ci.VAT;
+			p_cost  = p_cost * cn.VAT;
 		
 		// TODO - different transport cost depending, company depend
 		if (this.getAddTransportCost() == 1)
-			p_cost = p_cost + ci.TRANSPORT_COST_DALY;
+			p_cost = p_cost + cn.TRANSPORT_COST_DALY;
 		
 		if(this.getAddVEMCCharge() == 1)
-			p_cost = p_cost + ci.REPAK_CHARGE;
+			p_cost = p_cost + cn.REPAK_CHARGE;
 		
 		this.cost = Double.parseDouble(this.df.format(p_cost));
 	}
@@ -101,7 +101,7 @@ public class Item {
 	private void calculatePrice() {
 		double tCost = this.getCost();
 		double profit;
-		profit = tCost * this.ci.PROFIT;
+		profit = tCost * this.cn.PROFIT;
 		
 		if(this.getCode().contains(cs.ITEM_CODES[0]) && (profit - tCost) < 20)//TODO ??
 			this.price = tCost + 20;
@@ -109,6 +109,38 @@ public class Item {
 			this.price = profit;
 		this.price = Double.parseDouble(this.df.format(this.price));
 		System.out.println("price "+profit + " - " + tCost + " - " + this.price);
+	}
+	
+	// TODO - 
+	public String calcCost(double p_cost, int vat, int transport, int vemc) {
+		if(vat == 1)
+			p_cost  = p_cost * cn.VAT;
+		
+		
+		if (transport == 1)
+			p_cost = p_cost + cn.TRANSPORT_COST_DALY;
+		
+		if(vemc == 1)
+			p_cost = p_cost + cn.REPAK_CHARGE;
+		
+		this.cost = Double.parseDouble(this.df.format(p_cost));
+		System.out.println("Cost " + p_cost + " / " + cost);
+		return df.format(p_cost);
+	}
+	
+	// TODO -
+	public String calculateSuggestedPrice(double p_cost, String code) {
+		double tCost = p_cost;
+		double profit, price;
+		profit = tCost * this.cn.PROFIT;
+		
+		if(code.contains(cs.ITEM_CODES[0]) && (profit - tCost) < 20)//TODO ??
+			price = tCost + 20;
+		else
+			price = profit;
+		this.price = Double.parseDouble(this.df.format(price));
+		System.out.println("price "+profit + " - " + tCost + " - " + price + " / " +this.price);
+		return df.format(price);
 	}
 	
 	public String[] getItemAsData(){
@@ -125,7 +157,6 @@ public class Item {
 		return data;
 	}
  
-	//TODO
 	public boolean saveNewInDatabase(){
 		String q = this.createInsertQuery();
 		return this.dm.addNewRecord(q);

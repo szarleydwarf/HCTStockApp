@@ -350,7 +350,7 @@ public class CompanyDetails {
 		frame.getContentPane().add(tfFB);
 
 		
-		JButton nextBtn = new JButton(jl.get(cs.SAVE).toString());
+		JButton nextBtn = new JButton(jl.get(cs.BTN_SAVE).toString());
 		nextBtn.setBounds(478, 330, 200, 36);
 		nextBtn.setBackground(new Color(135, 206, 235));
 		nextBtn.setFont(fonts);

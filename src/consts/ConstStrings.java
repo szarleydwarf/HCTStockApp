@@ -68,20 +68,25 @@ public class ConstStrings {
 	public final String JSTART = "starting";
 	
 	// JSON LANG PACKET
-	public final String NEXT = "next";
-	public final String SAVE = "save";
+	public final String BTN_NEXT = "next";
+	public final String BTN_SAVE = "save";
 	public final String FILL_UP = "fill_up";
-	public final String BACK = "back";
-	public final String EDIT = "edit";
-	public final String CLOSE = "close";
-	public final String NAME = "name";
-	public final String CODE = "code";
-	public final String COST = "cost";
-	public final String PRICE = "price";
-	public final String QNT = "qnt";
-	public final String VAT = "vat";
-	public final String TRANSPORT = "transport";
-	public final String VEMC = "vemc";
+	public final String BTN_BACK = "back";
+	public final String BTN_EDIT = "edit";
+	public final String BTN_CLOSE = "close";
+	public final String BTN_DELETE = "delete";
+	public final String BTN_NEW = "new";
+
+	public final String LBL_NAME = "name";
+	public final String LBL_CODE = "code";
+	public final String LBL_COST = "cost";
+	public final String LBL_PRICE = "price";
+	public final String LBL_QNT = "qnt";
+	public final String LBL_VAT = "vat";
+	public final String LBL_TRANSPORT = "transport";
+	public final String LBL_VEMC = "vemc";
+	public final String LBL_SUGGESTED_COST = "s_cost";
+	public final String LBL_SUGGESTED_PRICE = "s_price";
 
 	public final String STOCK = "stock_lbl";
 	public final String SEARCH_TEXT_FIELD_FRAZE = "search";
@@ -89,10 +94,8 @@ public class ConstStrings {
 	public final String[] LANG = {"ENGLISH", "POLISH"};
 	public final String[] STOCK_TB_HEADINGS = {"ID", "Kod", "Nazwa", "Koszt", "Cena", "Qnt", "VAT", "Transport", "VEMC"};
 	public final String SAVED_MSG = "saved";
-	public final String DELETE = "delete";
 	public final String DELETE_MSG = "delete_msg";
-	public final String NEW = "new";
-
+	
 	public final String ITEM_EDITION_ERROR = "item_edition_error";
 	public final String ITEM_EDITION_ERROR_MSG = "saving error";
 	public final String ITEM_DELETING_ERROR = "delete_error";
