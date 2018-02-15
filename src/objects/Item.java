@@ -41,7 +41,6 @@ public class Item {
 		String s = dm.selectData(q);
 		this.id = (!s.isEmpty()) ? Integer.parseInt(s) : 1;
 		this.id++;
-		System.out.println("item id "+this.id);
 		this.setID(id);
 
 		this.code = p_code.toUpperCase();
@@ -124,7 +123,6 @@ public class Item {
 			p_cost = p_cost + cn.REPAK_CHARGE;
 		
 		this.cost = Double.parseDouble(this.df.format(p_cost));
-		System.out.println("Cost " + p_cost + " / " + cost);
 		return df.format(p_cost);
 	}
 	
@@ -134,12 +132,11 @@ public class Item {
 		double profit, price;
 		profit = tCost * this.cn.PROFIT;
 		
-		if(code.contains(cs.ITEM_CODES[0]) && (profit - tCost) < 20)//TODO ??
+		if((profit - tCost) < 20 && code.contains(cs.ITEM_CODES[0]))//TODO ??
 			price = tCost + 20;
 		else
 			price = profit;
 		this.price = Double.parseDouble(this.df.format(price));
-		System.out.println("price "+profit + " - " + tCost + " - " + price + " / " +this.price);
 		return df.format(price);
 	}
 	
@@ -238,7 +235,6 @@ public class Item {
 
 	   Item cCopy = (Item)c;
 	   if (this.getName().equals(cCopy.getName()) && (this.getCode()+this.getID()) == ((cCopy.getCode()+cCopy.getID()))) {
-//		   System.out.println("Item copy if");
 	       return true;
 	   }
        return false;

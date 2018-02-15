@@ -21,6 +21,6 @@ public class ConstNums {
 	public final int BACK_BTN_Y_OFFSET = 80;
 	public final int BACK_BTN_WIDTH = 130;
 	public final int BACK_BTN_HEIGHT = 24;
-	public final int ADD_EDIT_FRAME_WIDTH = 500;
-	public final int ADD_EDIT_FRAME_HEIGHT = 280;
+	public final int ADD_EDIT_FRAME_WIDTH = 528;
+	public final int ADD_EDIT_FRAME_HEIGHT = 320;
 }

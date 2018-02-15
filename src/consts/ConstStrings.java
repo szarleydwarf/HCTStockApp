@@ -43,6 +43,7 @@ public class ConstStrings {
 
 	// SYMBOLS ETC
 	public final String STAR = "*";
+	public final String EURO = "€ ";
 
 	
 	// JSON USER FILE
@@ -77,6 +78,9 @@ public class ConstStrings {
 	public final String BTN_DELETE = "delete";
 	public final String BTN_NEW = "new";
 
+	public final String RB_TYPED_IN = "typed";
+	public final String RB_SUGGESTED = "suggested";
+
 	public final String LBL_NAME = "name";
 	public final String LBL_CODE = "code";
 	public final String LBL_COST = "cost";
@@ -96,7 +100,9 @@ public class ConstStrings {
 	public final String SAVED_MSG = "saved";
 	public final String DELETE_MSG = "delete_msg";
 	
+	public final String ITEM_ADD_ERROR = "item_add_error";
 	public final String ITEM_EDITION_ERROR = "item_edition_error";
 	public final String ITEM_EDITION_ERROR_MSG = "saving error";
 	public final String ITEM_DELETING_ERROR = "delete_error";
+	public final String NOT_NUMBER_ERROR = "not_number_error";
 }

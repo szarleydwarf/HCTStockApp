@@ -9,6 +9,8 @@
 	"delete_msg":"You sure you want to delete this item, it is not recoverable process.",
 	"edit":"EDIT",
 	"new":"Add New",
+	"typed":"Typed in",
+	"suggested":"Suggested",
 
 	"code":"Item Code:",
 	"name":"Name:",
@@ -21,7 +23,9 @@
 	"s_cost":"Calc.cost",
 	"s_price":"Rec.Price",
 
+	"item_add_error":"There was an error when trying add an item. Most likely, item selection return null.",
 	"item_edition_error":"There was an error when trying edit an item. Most likely, item selection return null.",
+	"not_number_error":"This is not a number. Please try again.",
 	"delete_error":"There was an error when trying to delete an item. Most likely, item selection return null.",
 	"saving error":"There was an error when trying save an item. Save unsucessful",
 	"saved":"Item saved sucessfully",

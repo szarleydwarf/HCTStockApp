@@ -9,6 +9,8 @@ public class Logger {
 	private String defaultFolderPath;
 	private DateHelper dh;
 	private FileHelper fh;
+	private String todayLong;
+	private String todayShort;
 	
 	public Logger(DateHelper dateHelper, FileHelper fileHelper, String folderPath){
 		this.dh = dateHelper;
@@ -26,7 +28,7 @@ public class Logger {
 		try {
 			FileWriter write = new FileWriter(filePathName, true);
 			PrintWriter printLine = new PrintWriter(write);
-			printLine.printf("%s"+"%n", msg);
+			printLine.printf("%s"+"%n", this.getTodayLong() + msg);
 			printLine.close();
 			
 		} catch (IOException e) {
@@ -34,5 +36,21 @@ public class Logger {
 			JOptionPane.showMessageDialog(null, "Nie udalo sie zapisac logga\n"+e.getMessage());
 			e.printStackTrace();
 		}	
+	}
+
+	public void setShortDate(String today) {
+		todayShort = today;
+	}
+
+	public String getTodayLong() {
+		return todayLong;
+	}
+
+	public String getTodayShort() {
+		return todayShort;
+	}
+
+	public void setLongDate(String today) {
+		todayLong = today;
 	}
 }

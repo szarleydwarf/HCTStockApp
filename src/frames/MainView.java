@@ -150,7 +150,10 @@ public class MainView {
 		loadHelpers();
 
 		todayL = dh.getFormatedDateAndTime();
+		logger.setLongDate(todayL);
+		
 		todayS = dh.getFormatedDate();
+		logger.setShortDate(todayS);
 		
 		loadManagers();
 		loadJsonFiles();
