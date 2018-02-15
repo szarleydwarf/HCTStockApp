@@ -75,6 +75,7 @@ public class MainView {
 	private static boolean isStarting;
 	private static DisplayStock stockFrame;
 	private static AddNew newItemFrame;
+	private static NewInvoice newInvoice;
 	
 
 	/**
@@ -95,7 +96,7 @@ public class MainView {
 		isStarting = Boolean.parseBoolean(jSettings.get(cs.JSTART).toString());
 		if(isStarting){
 			ls = new LoadScreen(cp, cn);
-			updateJSONSettings(false);
+//			updateJSONSettings(false);TODO
 		}
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -175,6 +176,7 @@ public class MainView {
 	private static void loadClasses() {
 		System.out.println("loadClasses");
 		newItemFrame = new AddNew(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
+		newInvoice = new NewInvoice(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
 		stockFrame = new DisplayStock(window, newItemFrame, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
 	}
 
@@ -200,7 +202,6 @@ public class MainView {
 
 	private static void loadManagers() {
 		System.out.println("loadManagers");
-//		TODO
 		dm = new DatabaseManager(logger, todayL, cdb, cn, cs, df_3_2);
 //		get customer list
 		cmng = new CustomersManager(dm, cdb, cn, cs);
@@ -260,7 +261,7 @@ public class MainView {
 	 */
 	public MainView() {
 		jLang = loadLanguage();
-		if(isNew)
+		if(isNew)//TODO change to field 
 			CompanyDetails.main(dm, logger, cdb, cs, cn, cp, jSettings, jUser, jLang, msh);
 		else
 			initialize();
@@ -296,13 +297,13 @@ public class MainView {
 		});
 		frame.getContentPane().setLayout(null);
 
-		JButton nowyRachunekBtn = new JButton("Wystaw rachunek");
+		JButton nowyRachunekBtn = new JButton(jLang.get(cs.BTN_N_INVOICE).toString());
 		nowyRachunekBtn.setBackground(new Color(255, 255, 0));
 		nowyRachunekBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		nowyRachunekBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				frame.dispose();
-//				WystawRachunek.main(defaultPaths);
+				if(!newInvoice.isVisible())
+					newInvoice.setIsVisible(true);
 			}
 		});
 		nowyRachunekBtn.setBounds(btnX, btnX, 200, 36);
@@ -313,10 +314,8 @@ public class MainView {
 		stockBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		stockBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				frame.dispose();
 				if(!stockFrame.isVisible())
 					stockFrame.setIsVisible(true);
-//					DisplayStock.main(dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng);
 			}
 		});
 		btnY += yOffset;
@@ -361,8 +360,7 @@ public class MainView {
 		btnSalesReports.setBackground(new Color(135, 206, 235));
 		btnSalesReports.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				frame.dispose();
-//				SalesReports.main(defaultPaths);
+				JOptionPane.showMessageDialog(frame, "W trakcie tworzenia");
 			}
 		});
 		btnY += (yOffset/2);
@@ -375,8 +373,7 @@ public class MainView {
 		btnCustomers.setBackground(new Color(204, 255, 255));
 		btnCustomers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				frame.dispose();
-//				CustomersWindow.main(defaultPaths);
+				JOptionPane.showMessageDialog(frame, "W trakcie tworzenia");
 			}
 		});
 		btnY += yOffset;
@@ -389,8 +386,6 @@ public class MainView {
 		btnRepakReport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JOptionPane.showMessageDialog(frame, "W trakcie tworzenia");
-//				frame.dispose();
-//				Repak.main(defaultPaths);
 			}
 		});
 		btnY += yOffset;
@@ -402,8 +397,7 @@ public class MainView {
 		invoiceBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		invoiceBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				frame.dispose();
-//				WyswietlRachunki.main(loggerFolderPath);
+				JOptionPane.showMessageDialog(frame, "W trakcie tworzenia");
 			}
 		});
 		btnY += yOffset;
@@ -415,7 +409,7 @@ public class MainView {
 		btnTestPage.setIconTextGap(-15);
 		btnTestPage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				printTestPage(true);
+				JOptionPane.showMessageDialog(frame, "W trakcie tworzenia");
 			}
 		});
 		btnTestPage.setBackground(new Color(255, 255, 255));
@@ -427,8 +421,7 @@ public class MainView {
 		JButton btnSettings = new JButton("Settings", settingsImg);
 		btnSettings.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				frame.dispose();
-//				SettingsFrame.main(defaultPaths);
+				JOptionPane.showMessageDialog(frame, "W trakcie tworzenia");
 			}
 		});
 		btnX += (1.5*yOffset);
@@ -440,8 +433,7 @@ public class MainView {
 		JButton btnCompanyDetails = new JButton("Company", companyImg);
 		btnCompanyDetails.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				frame.dispose();
-//				SettingsFrame.main(defaultPaths);
+				JOptionPane.showMessageDialog(frame, "W trakcie tworzenia");
 			}
 		});
 		btnX += (1.5*yOffset);

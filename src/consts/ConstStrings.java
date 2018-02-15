@@ -77,6 +77,7 @@ public class ConstStrings {
 	public final String BTN_CLOSE = "close";
 	public final String BTN_DELETE = "delete";
 	public final String BTN_NEW = "new";
+	public final String BTN_N_INVOICE = "new_invoice";
 
 	public final String RB_TYPED_IN = "typed";
 	public final String RB_SUGGESTED = "suggested";

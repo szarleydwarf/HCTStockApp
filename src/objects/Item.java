@@ -107,7 +107,7 @@ public class Item {
 		else
 			this.price = profit;
 		this.price = Double.parseDouble(this.df.format(this.price));
-		System.out.println("price "+profit + " - " + tCost + " - " + this.price);
+//		System.out.println("price "+profit + " - " + tCost + " - " + this.price);
 	}
 	
 	// TODO - 

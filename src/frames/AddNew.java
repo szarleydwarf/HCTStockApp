@@ -117,8 +117,6 @@ public class AddNew {
 		
 		isSuggested = true;
 		
-		i = new Item(dm, cdb, cn, cs, df, "", "", 0,0,0,0,0);
-		
 		fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
 		fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
 		attributes = fonts_title.getAttributes();
@@ -324,7 +322,6 @@ public class AddNew {
 				cost = ""; price = "";
 				if(chbVemc.isSelected())	vemc = 1;
 				else vemc = 0;
-				System.out.println("VEMC: "+d_cost);
 				if(d_cost > 0) {
 					cost = calculateCost();
 					price = calculatePrice();
@@ -461,6 +458,8 @@ public class AddNew {
 	
 	public void setIsVisible(boolean b){
 		initialize();
+		i = new Item(dm, cdb, cn, cs, df, "", "", 0,0,0,0,0);
+
 		frame.setVisible(b);
 	}
 	

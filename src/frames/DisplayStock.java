@@ -568,7 +568,7 @@ public class DisplayStock {
 	// GETTERS & SETTERS
 	public boolean isVisible(){
 		if(frame != null)
-		return frame.isVisible();
+			return frame.isVisible();
 		return false;
 	}
 	
