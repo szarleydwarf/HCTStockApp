@@ -43,7 +43,7 @@ public class MiscHelper {
 		return sd;
 	}
 
-	public int getXenterXofFrame(JFrame frame, JLabel lbl) {
+	public int getCenterXofFrame(JFrame frame, JLabel lbl) {
 		return ((frame.getWidth() - lbl.getWidth()) / 2);
 	}
 	

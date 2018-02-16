@@ -7,9 +7,12 @@ import java.awt.font.TextAttribute;
 import java.text.DecimalFormat;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
 import org.json.simple.JSONObject;
 
@@ -21,7 +24,7 @@ import managers.StockManager;
 import utility.Logger;
 import utility.MiscHelper;
 
-public class NewInvoice {
+public class InvoiceAddEdit {
 
 	private JFrame frame;
 	
@@ -50,7 +53,7 @@ public class NewInvoice {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					NewInvoice window = new NewInvoice();
+					InvoiceAddEdit window = new InvoiceAddEdit();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -62,11 +65,11 @@ public class NewInvoice {
 	/**
 	 * Create the application.
 	 */
-	public NewInvoice() {
+	public InvoiceAddEdit() {
 		initialize();
 	}
 
-	public NewInvoice(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
+	public InvoiceAddEdit(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
 			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM, DecimalFormat df_3_2) {
 		mainView = main;
 		jl = jLang;
@@ -97,17 +100,58 @@ public class NewInvoice {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		int lblX = 10, lblY = 30; 
+		int xOffset = 580, yOffset = 300;
+		int lblW = 400, tfW = 256;
+		int lbltfH = 20, lblH = 280;
+		
 		frame = new JFrame();
 		frame.getContentPane().setBackground(color);
 		frame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, (msh.getScreenDimension()[0]), (msh.getScreenDimension()[1]));
+		frame.setTitle(jl.get(cs.BTN_INVOICE).toString());
 		frame.getContentPane().setLayout(null);
 
-		JLabel lblTitle = new JLabel(jl.get(cs.BTN_N_INVOICE).toString());
-		lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		JLabel lblTitle = new JLabel(jl.get(cs.BTN_INVOICE).toString());
+		lblTitle.setHorizontalAlignment(SwingConstants.LEFT);
 		lblTitle.setFont(fonts_title);
-		lblTitle.setBounds(msh.getXenterXofFrame(frame, lblTitle), 10, 260, 24);
+		lblTitle.setBounds(msh.getCenterXofFrame(frame, lblTitle), lblY/3, (msh.getScreenDimension()[0]), 20);
 		frame.getContentPane().add(lblTitle);
+		
+		// BORDERS
+		TitledBorder lblTB = createBorders(jl.get(cs.LBL_CUSTOMER).toString());
 
+		// LABELS & TEXTFIELDS
+		JLabel lblCarList = new JLabel("");
+		lblCarList.setBorder(lblTB);
+		lblCarList.setFont(fonts);
+		lblCarList.setBounds(lblX, lblY, lblW, lblH);
+		frame.getContentPane().add(lblCarList);
+
+		lblTB = createBorders(jl.get(cs.LBL_STOCK).toString());
+		int tY = lblY + yOffset;
+		JLabel lblItemsList = new JLabel("");
+		lblItemsList.setBorder(lblTB);
+		lblItemsList.setFont(fonts);
+		lblItemsList.setBounds(lblX, tY, lblW, lblH);
+		frame.getContentPane().add(lblItemsList);
+		
+		lblTB = createBorders(jl.get(cs.LBL_PREVIEW).toString());
+		lblX += xOffset;
+		JLabel lblPreview = new JLabel("");
+		lblPreview.setBorder(lblTB);
+		lblPreview.setFont(fonts);
+		lblPreview.setBounds(lblX, lblY, lblW, lblH*2);
+		frame.getContentPane().add(lblPreview);
+		
+		// TABLES
+		
+		// BUTTONS
+
+	}
+
+	private TitledBorder createBorders(String title) {
+		Border b = BorderFactory.createLineBorder(Color.YELLOW);
+		return BorderFactory.createTitledBorder(b, title);
 	}
 
 	// GETTERS & SETTERS

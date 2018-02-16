@@ -77,7 +77,7 @@ public class ConstStrings {
 	public final String BTN_CLOSE = "close";
 	public final String BTN_DELETE = "delete";
 	public final String BTN_NEW = "new";
-	public final String BTN_N_INVOICE = "new_invoice";
+	public final String BTN_INVOICE = "invoice";
 
 	public final String RB_TYPED_IN = "typed";
 	public final String RB_SUGGESTED = "suggested";
@@ -92,8 +92,10 @@ public class ConstStrings {
 	public final String LBL_VEMC = "vemc";
 	public final String LBL_SUGGESTED_COST = "s_cost";
 	public final String LBL_SUGGESTED_PRICE = "s_price";
+	public final String LBL_CUSTOMER = "customer";
+	public final String LBL_STOCK = "stock_lbl";
+	public final String LBL_PREVIEW = "preview";
 
-	public final String STOCK = "stock_lbl";
 	public final String SEARCH_TEXT_FIELD_FRAZE = "search";
 
 	public final String[] LANG = {"ENGLISH", "POLISH"};

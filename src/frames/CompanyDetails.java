@@ -193,6 +193,7 @@ public class CompanyDetails {
 		Color color = msh.getColor(cs.APP, cs, js);
 		
 		frame = new JFrame();
+		frame.setTitle(js.get(cs.JSON_COMPANY_NAME).toString());
 		frame.getContentPane().setBackground(color);
 		frame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, 704, 410);
 		

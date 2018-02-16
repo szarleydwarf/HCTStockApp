@@ -70,7 +70,7 @@ public class DisplayStock {
 	private boolean itemSaved = false;
 	protected String itemCode;
 	private JButton btnDelete;
-	protected AddNew newItemFrame;
+	protected ItemAddNew newItemFrame;
 
 	/**
 	 * Launch the application.
@@ -111,7 +111,7 @@ public class DisplayStock {
 		initialize();
 	}
 
-	public DisplayStock(MainView main, AddNew AN, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
+	public DisplayStock(MainView main, ItemAddNew AN, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
 			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM, DecimalFormat df_3_2) {
 		mainView = main;
 		this.newItemFrame = AN;
@@ -126,7 +126,6 @@ public class DisplayStock {
 //		cp = cP;
 		
 		msh = mSH;
-		
 		
 		sm = SM;
 		
@@ -148,14 +147,15 @@ public class DisplayStock {
 	private void initialize() {
 		frame = new JFrame();
 //		this.setIsVisible(false);
+		frame.setTitle(jl.get(cs.LBL_STOCK).toString());
 		frame.getContentPane().setBackground(color);
 		frame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, (msh.getScreenDimension()[0]), (msh.getScreenDimension()[1]));
 		frame.getContentPane().setLayout(null);
 
-		JLabel lblTitle = new JLabel(jl.get(cs.STOCK).toString());
+		JLabel lblTitle = new JLabel(jl.get(cs.LBL_STOCK).toString());
 		lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTitle.setFont(fonts_title);
-		lblTitle.setBounds(msh.getXenterXofFrame(frame, lblTitle), 10, 260, 24);
+		lblTitle.setBounds(msh.getCenterXofFrame(frame, lblTitle), 10, 260, 24);
 		frame.getContentPane().add(lblTitle);
 
 		JLabel lblSearch = new JLabel(jl.get(cs.SEARCH_TEXT_FIELD_FRAZE).toString());

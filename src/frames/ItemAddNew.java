@@ -37,7 +37,7 @@ import objects.Item;
 import utility.Logger;
 import utility.MiscHelper;
 
-public class AddNew {
+public class ItemAddNew {
 	private  ConstNums cn;
 	private  ConstStrings cs;
 	private  ConstDB cdb;
@@ -76,7 +76,7 @@ public class AddNew {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AddNew window = new AddNew();
+					ItemAddNew window = new ItemAddNew();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -87,10 +87,10 @@ public class AddNew {
 
 	/**
 	 * Create the application.
-	 */public AddNew(){
+	 */public ItemAddNew(){
 		 
 	 }
-	public AddNew(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
+	public ItemAddNew(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
 			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM, DecimalFormat df_3_2) {
 		mainView = main;
 		jl = jLang;
@@ -136,6 +136,7 @@ public class AddNew {
 		float sHigh = 1.75f;
 		frame = new JFrame();
 		frame.getContentPane().setBackground(color);
+		frame.setTitle(jl.get(cs.LBL_STOCK).toString());
 		frame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, cn.ADD_EDIT_FRAME_WIDTH, cn.ADD_EDIT_FRAME_HEIGHT);
 		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);

@@ -6,10 +6,13 @@
 
 	"back":"Go Back",
 	"delete":"Delete",
-	"new_invoice":"NEW INVOICE",
-	"delete_msg":"You sure you want to delete this item, it is not recoverable process.",
+	"invoice":"INVOICE",
 	"edit":"EDIT",
-	"new":"Add New",
+	"new":"ADD NEW",
+	"customer":"CUSTOMER",
+	"preview":"PREVIEW",
+
+	"delete_msg":"You sure you want to delete this item, it is not recoverable process.",
 	"typed":"Typed in",
 	"suggested":"Suggested",
 

@@ -74,8 +74,8 @@ public class MainView {
 	private static JSONObject jPL;
 	private static boolean isStarting;
 	private static DisplayStock stockFrame;
-	private static AddNew newItemFrame;
-	private static NewInvoice newInvoice;
+	private static ItemAddNew newItemFrame;
+	private static InvoiceAddEdit newInvoice;
 	
 
 	/**
@@ -175,8 +175,8 @@ public class MainView {
 
 	private static void loadClasses() {
 		System.out.println("loadClasses");
-		newItemFrame = new AddNew(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
-		newInvoice = new NewInvoice(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
+		newItemFrame = new ItemAddNew(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
+		newInvoice = new InvoiceAddEdit(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
 		stockFrame = new DisplayStock(window, newItemFrame, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
 	}
 
@@ -279,7 +279,7 @@ public class MainView {
 		frame.getContentPane().setBackground(color);
 		
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(this.cp.ICON_PATH));
-		frame.setTitle("HCT APP");
+		frame.setTitle(jUser.get(cs.JSON_COMPANY_NAME).toString());
 		frame.setBounds(5, 5, frameW, frameH);
 //		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -297,7 +297,7 @@ public class MainView {
 		});
 		frame.getContentPane().setLayout(null);
 
-		JButton nowyRachunekBtn = new JButton(jLang.get(cs.BTN_N_INVOICE).toString());
+		JButton nowyRachunekBtn = new JButton(jLang.get(cs.BTN_INVOICE).toString());
 		nowyRachunekBtn.setBackground(new Color(255, 255, 0));
 		nowyRachunekBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		nowyRachunekBtn.addActionListener(new ActionListener() {
@@ -309,7 +309,7 @@ public class MainView {
 		nowyRachunekBtn.setBounds(btnX, btnX, 200, 36);
 		frame.getContentPane().add(nowyRachunekBtn);
 	
-		JButton stockBtn = new JButton(jLang.get(cs.STOCK).toString());
+		JButton stockBtn = new JButton(jLang.get(cs.LBL_STOCK).toString());
 		stockBtn.setBackground(new Color(135, 206, 235));
 		stockBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		stockBtn.addActionListener(new ActionListener() {
