@@ -168,18 +168,6 @@ public class CompanyDetails {
 		return msh.saveJSON(cp.JSON_SETTINGS_PATH, newJS);
 	}
 
-//	private boolean saveJSON(String path, JSONObject object){
-//        try (FileWriter file = new FileWriter(path)) {
-//            file.write(object.toJSONString());
-//            file.flush();
-//            return true;
-//        } catch (IOException e) {
-//        	log.logError("Fail to save JSON file in "+this.getClass().getName() + ". E: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//        return false;
-//	}
-
 	/**
 	 * Initialize the contents of the frame.
 	 */

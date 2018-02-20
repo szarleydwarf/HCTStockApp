@@ -1,9 +1,6 @@
 {
-	"save":"Save",
-	"company details":"Please enter company details. Fields with '*' are required to proceed.",
-	"fill_up":"Please fill following fields: ",
 	"stock_lbl":"STOCK / SERVICES",
-
+	"save":"Save",
 	"back":"Go Back",
 	"delete":"Delete",
 	"invoice":"INVOICE",
@@ -12,9 +9,12 @@
 	"customer":"CUSTOMER",
 	"preview":"PREVIEW",
 
+	"company details":"Please enter company details. Fields with '*' are required to proceed.",
+	"fill_up":"Please fill following fields: ",
 	"delete_msg":"You sure you want to delete this item, it is not recoverable process.",
 	"typed":"Typed in",
 	"suggested":"Suggested",
+	"enter search fraze":"Enter fraze to search",
 
 	"code":"Item Code:",
 	"name":"Name:",

@@ -26,6 +26,17 @@ public class ConstStrings {
 	public final String CUST_IND_CODE = "C_";
 	public final String CUST_BUS_CODE = "B_";
 
+	// TABLE HEADINGS ETC
+	public final String[] CARS_TABLE_HEADING = {"Cars"};
+	public final String[] STOCK_TB_HEADINGS = {"ID", "Kod", "Nazwa", "Koszt", "Cena", "Qnt", "VAT", "Transport", "VEMC"};
+	public final String[] STOCK_TB_HEADINGS_NO_COST =  {"Towar", "Cena", "Qnt"};
+	public final String[] CUSTOMER_TB_HEADINGS = {"Customer", "B/I", "VAT/TAX"};
+
+	public final String CARS_TB_NAME = "CARS";
+	public final String STOCK_TB_NAME = "STOCK";
+	public final String CUSTOMER_TB_NAME = "CUSTOMER";
+	public final String CHOSEN_TB_NAME = "CHOOSEN";
+
 
 	//PATTERNS AND FORMATS
 	public final String DECIMAL_PATTERN = "^-?([0-9]*)\\.([0-9]*)+$";	
@@ -99,7 +110,7 @@ public class ConstStrings {
 	public final String SEARCH_TEXT_FIELD_FRAZE = "search";
 
 	public final String[] LANG = {"ENGLISH", "POLISH"};
-	public final String[] STOCK_TB_HEADINGS = {"ID", "Kod", "Nazwa", "Koszt", "Cena", "Qnt", "VAT", "Transport", "VEMC"};
+	
 	public final String SAVED_MSG = "saved";
 	public final String DELETE_MSG = "delete_msg";
 	
@@ -108,4 +119,5 @@ public class ConstStrings {
 	public final String ITEM_EDITION_ERROR_MSG = "saving error";
 	public final String ITEM_DELETING_ERROR = "delete_error";
 	public final String NOT_NUMBER_ERROR = "not_number_error";
+	public final String ENTER_TEXT =  "enter search fraze";
 }

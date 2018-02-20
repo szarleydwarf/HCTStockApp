@@ -154,6 +154,14 @@ public class Item {
 		return data;
 	}
  
+	public String[] getItemAsDataShort(){
+		String[] data = new String[3];
+		data[0] = this.name;
+		data[1] = ""+this.price;
+		data[2] = ""+this.qnt;
+		return data;
+	}
+	
 	public boolean saveNewInDatabase(){
 		String q = this.createInsertQuery();
 		return this.dm.addNewRecord(q);

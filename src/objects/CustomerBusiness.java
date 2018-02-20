@@ -174,6 +174,15 @@ public class CustomerBusiness extends Customer {
 	   return false;
 	}
 
+	@Override
+	public String[] getCasData() {
+		String[] data = new String[9];
+		data[0] = this.getCompName();
+		data[1] = "B";
+		data[2] = this.getVATTaxNUM();
+		return data;
+	}
+	
 	//GETTERS & SETTERS
 	public String getVATTaxNUM() {
 		return VATTaxNUM;
@@ -213,4 +222,5 @@ public class CustomerBusiness extends Customer {
 	public void setIdINT(int idINT) {
 		this.idINT = idINT;
 	}
+
 }

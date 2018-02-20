@@ -66,7 +66,7 @@ public class MainView {
 	private static tScanner ts;
 	private static InvoiceManager invmng;
 	private static DecimalFormat df_3_2, df_5_2;
-	private static ArrayList<String> carList;
+	private static ArrayList<String> carBrandList;
 	private static boolean isNew;
 	private static JSONObject jSettings;
 	private static JSONObject jUser;
@@ -158,16 +158,17 @@ public class MainView {
 		
 		loadManagers();
 		loadJsonFiles();
+
+		//		get cars list
+		cars_BI = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_BRAND_ID);
+		cars_IB = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_ID_BRAND);
+		carBrandList = new ArrayList<String>();
+		carBrandList = (ArrayList<String>) dm.selectData("SELECT brand FROM brands ORDER BY brand ASC", carBrandList);
 		
 		loadClasses();
 		//TODO
 		// getLastIDs();
 		
-//		get cars list
-		cars_BI = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_BRAND_ID);
-		cars_IB = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_ID_BRAND);
-		carList = new ArrayList<String>();
-		carList = (ArrayList<String>) dm.selectData("SELECT brand FROM brands", carList);
 
 //		TODO
 //		check last database last backup - do it if necessary
@@ -176,7 +177,7 @@ public class MainView {
 	private static void loadClasses() {
 		System.out.println("loadClasses");
 		newItemFrame = new ItemAddNew(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
-		newInvoice = new InvoiceAddEdit(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
+		newInvoice = new InvoiceAddEdit(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, cmng, invmng, carBrandList, df_3_2);
 		stockFrame = new DisplayStock(window, newItemFrame, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
 	}
 

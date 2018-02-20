@@ -160,6 +160,15 @@ public class CustomerInd extends Customer{
 	}
 	*/
 
+
+	@Override
+	public String[] getCasData() {
+		String[] data = new String[9];
+		data[0] = this.getCar().getRegistration();
+		data[1] = "I";
+		return data;
+	}
+
 	// GETTERS & SETTERS
 	public Car getCar() {
 		return car;

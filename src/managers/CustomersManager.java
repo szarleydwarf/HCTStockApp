@@ -74,7 +74,12 @@ public class CustomersManager {
 			else System.out.println("C = null\nList size: "+this.list.size());
 	}
 
-	
+	public String[][] getDataShort() {
+		String[][] data = new String[this.list.size()][];
+		for (int i = 0; i < list.size(); i++)
+			data[i] = list.get(i).getCasData();
+		return data;	}
+
 	
 	//GETTERS & SETTERS
 	public ArrayList<Customer> getList() {
@@ -107,5 +112,4 @@ public class CustomersManager {
 	public void setCs(ConstStrings cs) {
 		this.cs = cs;
 	}
-
 }

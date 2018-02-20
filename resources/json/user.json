@@ -8,5 +8,14 @@
 	"telephone":"089 24 22 993",
 	"email":"hctballinamore@gmail.com",
 	"www":"http://hct-ireland.business.site/",
-	"fb":"@hct.irl"
+	"fb":"@hct.irl",
+
+	"vat rate":"",
+	"profit rate":"",
+	"recycling charge":"",
+	"transport charge 1":"",
+	"transport charge 2":"",
+	"transport charge 3":"",
+	"transport charge 4":"",
+	"transport charge 5":""
 }

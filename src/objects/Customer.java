@@ -81,6 +81,8 @@ public abstract class Customer {
 	protected abstract String createDeleteQuery();
 	protected abstract String createUpdateQuery();
 
+	public abstract String[] getCasData();
+
 
 	
 }

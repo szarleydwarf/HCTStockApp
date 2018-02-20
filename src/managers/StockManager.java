@@ -114,6 +114,14 @@ public class StockManager {
 		return data;
 	}
 	
+	public String[][] getDataNoCost() {
+		String[][] data = new String[this.list.size()][];
+		for (int i = 0; i < list.size(); i++){
+				data[i] = list.get(i).getItemAsDataShort();
+		}
+		return data;
+	}
+
 	//TODO other searches - by name, stock number, price?	
 	public boolean search(Item i) {
 		for(Item in : this.list){
@@ -163,4 +171,5 @@ public class StockManager {
 			for(int i = 0; i < d[j].length; i++)
 				System.out.println(d[j][i]);
 	}
+
 }

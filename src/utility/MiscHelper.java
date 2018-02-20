@@ -7,6 +7,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -66,6 +67,15 @@ public class MiscHelper {
         return false;
 	}
 
+	public String[][] populateDataArrayString(ArrayList<String> list, String[][] data, int rowNumber) {
+		int j = 0;
+		for(int i = 0; i < rowNumber; i++) {
+			data[i][0] = list.get(j);
+			j++;
+		}		
+		return data;
+	}
+
 	/* Function copied from
 	 * https://stackoverflow.com/questions/1066589/iterate-through-a-hashmap
 	*/
@@ -78,6 +88,7 @@ public class MiscHelper {
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
 	}
+	
 	/* Copied from: 
 	 * https://stackoverflow.com/questions/9151619/how-to-iterate-over-a-jsonobject
 	 * */
