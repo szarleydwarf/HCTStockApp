@@ -55,6 +55,8 @@ public class ConstStrings {
 	// SYMBOLS ETC
 	public final String STAR = "*";
 	public final String EURO = "€ ";
+	public final String PLUS = "+";
+	public final String PERCENT = "%";
 
 	
 	// JSON USER FILE
@@ -93,6 +95,13 @@ public class ConstStrings {
 	public final String RB_TYPED_IN = "typed";
 	public final String RB_SUGGESTED = "suggested";
 
+	public final String CBX_AIRFRESH = "airfreshener";
+
+	public final String LBL_YOU = "you";
+	public final String LBL_LOGO= "logo";
+	public final String LBL_DATE = "date";
+	public final String LBL_INVOICE = "invoice for";
+	
 	public final String LBL_NAME = "name";
 	public final String LBL_CODE = "code";
 	public final String LBL_COST = "cost";
@@ -106,6 +115,8 @@ public class ConstStrings {
 	public final String LBL_CUSTOMER = "customer";
 	public final String LBL_STOCK = "stock_lbl";
 	public final String LBL_PREVIEW = "preview";
+	public final String LBL_GIFTS = "gifts";
+	public final String LBL_TOTAL = "total";
 
 	public final String SEARCH_TEXT_FIELD_FRAZE = "search";
 

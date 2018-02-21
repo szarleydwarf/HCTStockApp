@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.font.TextAttribute;
@@ -13,6 +15,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -28,6 +32,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
@@ -63,6 +69,7 @@ public class InvoiceAddEdit {
 	private Map attributes;
 	private Color color;
 	private DecimalFormat df;
+	private TableModel modTBchosen;
 
 	private CustomersManager cm;
 	private StockManager sm;
@@ -73,6 +80,10 @@ public class InvoiceAddEdit {
 	private TableRowSorter rSortCars, rSortStock, rSortCustomer;
 
 	private JTextField tfSearch;
+
+	private JLabel lblTotal;
+
+	private JTable tbChoosen;
 	private static MiscHelper msh;
 	
 	/**
@@ -134,7 +145,7 @@ public class InvoiceAddEdit {
 	 */
 	private void initialize() {
 		int lblX = 10, lblY = 30; 
-		int xOffset = 600, yOffset = 300;
+		int xOffset = 660, yOffset = 300;
 		int lblW = 540, tfW = 256;
 		int lbltfH = 22, lblH = 280;
 		
@@ -167,6 +178,15 @@ public class InvoiceAddEdit {
 		tfBrands.setBounds(lblX+6, lblY+20, brandW, lbltfH);
 		frame.getContentPane().add(tfBrands);
 
+		JTextField tfCustomers = new JTextField();
+		tfCustomers.setFont(fonts);
+		tfCustomers.setColumns(10);
+		int custW = (int)(lblW*0.7);
+		int custX = lblX+tfBrands.getWidth()+10;
+		int custY = lblY+20;
+		tfCustomers.setBounds(custX, custY, custW, lbltfH);
+		frame.getContentPane().add(tfCustomers);
+		
 		
 		lblTB = createBorders(jl.get(cs.LBL_STOCK).toString());
 		int tY = lblY + yOffset;
@@ -183,51 +203,90 @@ public class InvoiceAddEdit {
 		int stockW = (int) (lblW*0.75);
 		tfSearch.setBounds(lblX+6, tY+20, stockW, lbltfH);
 		frame.getContentPane().add(tfSearch);
+		
+		JLabel lblPriceListed = new JLabel(jl.get(cs.LBL_PRICE).toString());
+		lblPriceListed.setFont(fonts);
+		int lblPX = lblX + tfSearch.getWidth()+10;
+		int lblPY = tY + 20;
+		int tfPQW = 54, tfPQH = 22;
+		lblPriceListed.setBounds(lblPX, lblPY, tfPQW, tfPQH);
+		frame.getContentPane().add(lblPriceListed);
 
-		int custW = (int)(lblW*0.6);
+		JTextField tfPrice = new JTextField();
+		tfPrice.setFont(fonts);
+		int lbltPX = lblPX + lblPriceListed.getWidth()+10;
+		tfPrice.setBounds(lbltPX, lblPY, tfPQW, tfPQH);
+		frame.getContentPane().add(tfPrice);
+
+		JLabel lblQntListed = new JLabel(jl.get(cs.LBL_QNT).toString());
+		lblQntListed.setFont(fonts);
+		lblPY = tY + 60;
+		lblQntListed.setBounds(lblPX, lblPY, tfPQW, tfPQH);
+		frame.getContentPane().add(lblQntListed);
+
+		JTextField tfQnt = new JTextField();
+		tfQnt.setFont(fonts);
+		tfQnt.setBounds(lbltPX, lblPY, tfPQW, tfPQH);
+		frame.getContentPane().add(tfQnt);
 		
-		lblTB = createBorders(jl.get(cs.LBL_PREVIEW).toString());
-		int tx = lblX + xOffset;
-		JLabel lblPreview = new JLabel("");
-		lblPreview.setBorder(lblTB);
-		lblPreview.setFont(fonts);
-		lblPreview.setBounds(tx, lblY, lblW, lblH*2);
-		frame.getContentPane().add(lblPreview);
-		
+	
 		// TABLES
-		createInvoicePreview();
 		int tableH = lblH-60;
-		populateCustomerTable(lblX+tfBrands.getWidth()+10, lblY+50, custW, tableH);
+		createInvoicePreview();
+		populateCustomerTable(custX, custY + 30, custW, tableH);
 		populateStockTable(lblX+6, tY+50, stockW, tableH);
 		populateCarTable(lblX+6, lblY+50, brandW, tableH);
 
 		// BUTTONS
+		JButton btnBack = new JButton(jl.get(cs.BTN_BACK).toString());
+		btnBack.setFont(fonts_title);
+		btnBack.setBounds((frame.getWidth() - cn.BACK_BTN_X_OFFSET), (frame.getHeight() - cn.BACK_BTN_Y_OFFSET), cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
+		frame.getContentPane().add(btnBack);
 
+		JButton btnAddToInvoice = new JButton(cs.PLUS);
+		btnAddToInvoice.setFont(fonts_title);
+		btnAddToInvoice.setBounds(lblPX, lblPY+30, tfPQW*2, tfPQH+6);
+		frame.getContentPane().add(btnAddToInvoice);
+		
+
+		
 		
 		// LISTENERS
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+				setIsVisible(false);
+				if(mainView != null)
+					if(!mainView.isVisible())
+						mainView.setIsVisible(true);
+			}
+		});
+
+		tfBrands.addFocusListener(new FocusListener(){
+	        @Override
+	        public void focusGained(FocusEvent e){
+	        	tfBrands.setText("");
+			}
+			@Override
+			public void focusLost(FocusEvent arg0) {
+			}
+		});
 		
 		tfBrands.getDocument().addDocumentListener(new DocumentListener(){
-
             @Override
             public void insertUpdate(DocumentEvent e) {
                 String text = tfBrands.getText();
 
-                if (text.trim().length() == 0) {
-                	rSortCars.setRowFilter(null);
-                } else {
-                	rSortCars.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                }
+                if (text.trim().length() == 0) rSortCars.setRowFilter(null);
+                else rSortCars.setRowFilter(RowFilter.regexFilter("(?i)" + text));
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 String text = tfBrands.getText();
 
-                if (text.trim().length() == 0) {
-                	rSortCars.setRowFilter(null);
-                } else {
-                	rSortCars.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                }
+                if (text.trim().length() == 0) rSortCars.setRowFilter(null);
+                else rSortCars.setRowFilter(RowFilter.regexFilter("(?i)" + text));
             }
 
             @Override
@@ -235,6 +294,39 @@ public class InvoiceAddEdit {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
+		
+		tfCustomers.addFocusListener(new FocusListener(){
+	        @Override
+	        public void focusGained(FocusEvent e){
+	        	tfCustomers.setText("");
+			}
+			@Override
+			public void focusLost(FocusEvent arg0) {
+			}
+		});
+		
+		tfCustomers.getDocument().addDocumentListener(new DocumentListener(){
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				String text = tfCustomers.getText();
+				
+				if (text.trim().length() == 0) rSortCustomer.setRowFilter(null);
+				else rSortCustomer.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+			}
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				String text = tfCustomers.getText();
+				
+				if (text.trim().length() == 0) rSortCustomer.setRowFilter(null);
+				else  rSortCustomer.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+			}
+		});
 		
 		tfSearch.addFocusListener(new FocusListener(){
 	        @Override
@@ -247,27 +339,20 @@ public class InvoiceAddEdit {
 		});
 	
 		tfSearch.getDocument().addDocumentListener(new DocumentListener(){
-
             @Override
             public void insertUpdate(DocumentEvent e) {
                 String text = tfSearch.getText();
 
-                if (text.trim().length() == 0) {
-                    rSortStock.setRowFilter(null);
-                } else {
-                    rSortStock.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                }
+                if (text.trim().length() == 0) rSortStock.setRowFilter(null);
+                else rSortStock.setRowFilter(RowFilter.regexFilter("(?i)" + text));
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 String text = tfSearch.getText();
 
-                if (text.trim().length() == 0) {
-                    rSortStock.setRowFilter(null);
-                } else {
-                    rSortStock.setRowFilter(RowFilter.regexFilter("(?i)" + text));
-                }
+                if (text.trim().length() == 0) rSortStock.setRowFilter(null);
+                else rSortStock.setRowFilter(RowFilter.regexFilter("(?i)" + text));
             }
 
             @Override
@@ -329,10 +414,125 @@ public class InvoiceAddEdit {
 		spCustomerList.setBounds(x, y, w, h);
 		frame.getContentPane().add(spCustomerList);
 	}
+	
+	private void createChoosenItemsTable(int x, int y, int w, int h) {
+		ArrayList<Item>emptyArray = new ArrayList<Item>();
+		String[][] data = new String [0][this.cs.STOCK_TB_HEADINGS_NO_COST.length];
+		data = populateDataArray(emptyArray, data, 0, 0);
+
+		tbChoosen = new JTable();
+		tbChoosen = createTable(data, this.cs.STOCK_TB_HEADINGS_NO_COST, cs.CHOSEN_TB_NAME, 240);
+	
+		JScrollPane spInvoice = new JScrollPane(tbChoosen);
+		spInvoice.setBounds(x, y, w, h);
+		frame.getContentPane().add(spInvoice);
+		
+		modTBchosen = tbChoosen.getModel();
+		modTBchosen.addTableModelListener(new TableModelListener(){
+			@Override
+			public void tableChanged(TableModelEvent arg0) {
+				double sum = calculateSum();
+				lblTotal.setText("€ "+df.format(sum));
+			}			
+		});
+	}
+	protected double calculateSum() {
+		int rowCount = modTBchosen.getRowCount();
+		double sum = 0;
+		for(int i = 0; i < rowCount;i++) {
+			double price = Double.parseDouble((String) modTBchosen.getValueAt(i, 1));
+			int qnt = Integer.parseInt((String)modTBchosen.getValueAt(i, 2));
+			price = price * qnt;
+			
+			sum += price;
+		}
+		return sum;
+	}
+	
 
 	private void createInvoicePreview() {
-		// TODO Auto-generated method stub
+		int lblX = 10, lblY = 30; 
+		int xOffset = 660;
+		int lblW = 540;
+		int  lblH = 280;
+
+		//PREVIEW
+		TitledBorder lblTB = createBorders(jl.get(cs.LBL_PREVIEW).toString());
+		int tx = lblX + xOffset;
+		JLabel lblPreview = new JLabel("");
+		lblPreview.setBorder(lblTB);
+		lblPreview.setFont(fonts);
+		lblPreview.setBounds(tx, lblY, lblW, lblH*2);
+		frame.getContentPane().add(lblPreview);
+
+		lblTB = createBorders("");
+		int lblPrevX = tx + 10, lblPrevY = lblY+14;
+		JLabel lblCompanyDetails = new JLabel(jl.get(cs.LBL_YOU).toString());
+		lblCompanyDetails.setBorder(lblTB);
+		lblCompanyDetails.setFont(fonts);
+		lblCompanyDetails.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCompanyDetails.setBounds(lblPrevX, lblPrevY, lblW/4, lblH/4);
+		frame.getContentPane().add(lblCompanyDetails);
 		
+		lblTB = createBorders("");
+		JLabel lblLOGO = new JLabel(jl.get(cs.LBL_LOGO).toString());
+		lblLOGO.setBorder(lblTB);
+		lblLOGO.setFont(fonts);
+		lblLOGO.setHorizontalAlignment(SwingConstants.CENTER);
+		lblPrevX = lblPrevX+lblCompanyDetails.getWidth()+10;
+		lblLOGO.setBounds(lblPrevX, lblPrevY, lblW/2, lblH/4);
+		frame.getContentPane().add(lblLOGO);
+		
+		lblTB = createBorders("");
+		JLabel lblDate = new JLabel(jl.get(cs.LBL_DATE).toString());
+		lblDate.setBorder(lblTB);
+		lblDate.setHorizontalAlignment(SwingConstants.CENTER);
+		lblDate.setFont(fonts);
+		lblPrevX = lblPrevX+lblLOGO.getWidth()+10;
+		lblDate.setBounds(lblPrevX, lblPrevY, lblW/6, lblH/4);
+		frame.getContentPane().add(lblDate);
+		
+		lblPrevX = tx + 10;
+		JLabel lblForWho = new JLabel(jl.get(cs.LBL_INVOICE).toString());
+		lblForWho.setBorder(lblTB);
+		lblForWho.setFont(fonts);
+		lblPrevY = lblPrevY + lblDate.getHeight() + 10;
+		lblForWho.setBounds(lblPrevX, lblPrevY, lblW-16, lblH/4);
+		frame.getContentPane().add(lblForWho);
+		
+		lblTotal = new JLabel(jl.get(cs.LBL_TOTAL).toString());
+		lblTotal.setBorder(lblTB);
+		lblTotal.setFont(fonts_title);
+		lblTotal.setHorizontalAlignment(SwingConstants.CENTER);
+		int lblTotX = lblPrevX + 200;
+		lblPrevY = lblPrevY + lblForWho.getHeight() + 240;
+		lblTotal.setBounds(lblTotX, lblPrevY, lblW/2, lblH/4);
+		frame.getContentPane().add(lblTotal);
+		
+		// CHECKBOXES & RADIO BUTTONS
+		JLabel lblFreebies = new JLabel("");
+		int chbW = 160, chbH = 24;
+		lblFreebies.setBounds(lblPrevX, lblPrevY, chbW, chbH*6);
+		Border b7 = BorderFactory.createLineBorder(Color.orange);
+		TitledBorder border7 = BorderFactory.createTitledBorder(b7, jl.get(cs.LBL_GIFTS).toString());
+		lblFreebies.setBorder(border7);
+		frame.getContentPane().add(lblFreebies);
+		
+		JCheckBox chbAirfreshener = new JCheckBox(jl.get(cs.CBX_AIRFRESH).toString());
+		chbAirfreshener.setSelected(true);
+		chbAirfreshener.setBackground(color);
+		chbAirfreshener.setFont(fonts);
+		chbAirfreshener.setBounds(lblPrevX+6, lblPrevY+12,chbW-16, chbH);
+		frame.getContentPane().add(chbAirfreshener);
+		
+		JCheckBox chbTyreShine = new JCheckBox(jl.get(cs.CBX_AIRFRESH).toString());
+		chbTyreShine.setBackground(color);
+		chbTyreShine.setFont(fonts);
+		chbTyreShine.setBounds(lblPrevX+6, lblPrevY+34,chbW-16, chbH);
+		frame.getContentPane().add(chbTyreShine);
+		
+		lblPrevY = lblForWho.getY()+ lblForWho.getHeight()+10;
+		createChoosenItemsTable(lblPrevX+6, lblPrevY ,lblW-80, lblH-60);
 	}
 
 	private JTable createTable(String[][] data, String[] headings, String tbName, int i) {
@@ -361,6 +561,17 @@ public class InvoiceAddEdit {
 		header.setForeground(Color.yellow);
 		
 		return table;
+	}
+
+	private String[][] populateDataArray(ArrayList<Item> list, String[][] data, int startIndex, int rowNumber){
+		int j = 0;
+		for(int i = startIndex; i < rowNumber; i++) {
+			data[i][0] = list.get(j).getName();
+			data[i][1] = ""+list.get(j).getPrice();
+			data[i][2] = ""+list.get(j).getQnt();
+			j++;
+		}		
+		return data;
 	}
 
 	private ListSelectionListener createCarTableListener(JTable table) {
