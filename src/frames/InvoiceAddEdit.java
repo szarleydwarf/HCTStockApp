@@ -15,10 +15,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -84,6 +86,14 @@ public class InvoiceAddEdit {
 	private JLabel lblTotal;
 
 	private JTable tbChoosen;
+
+	private JTextField tfDiscount;
+
+	private JRadioButton rbPercent;
+
+	private JRadioButton rbMoney;
+
+	private ButtonGroup radioGroup;
 	private static MiscHelper msh;
 	
 	/**
@@ -238,18 +248,34 @@ public class InvoiceAddEdit {
 		populateCarTable(lblX+6, lblY+50, brandW, tableH);
 
 		// BUTTONS
+		int btnX = (frame.getWidth() - cn.BACK_BTN_X_OFFSET),
+			btnY = (frame.getHeight() - cn.BACK_BTN_Y_OFFSET);
 		JButton btnBack = new JButton(jl.get(cs.BTN_BACK).toString());
 		btnBack.setFont(fonts_title);
-		btnBack.setBounds((frame.getWidth() - cn.BACK_BTN_X_OFFSET), (frame.getHeight() - cn.BACK_BTN_Y_OFFSET), cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
+		btnBack.setBounds(btnX, btnY, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
 		frame.getContentPane().add(btnBack);
 
 		JButton btnAddToInvoice = new JButton(cs.PLUS);
 		btnAddToInvoice.setFont(fonts_title);
 		btnAddToInvoice.setBounds(lblPX, lblPY+30, tfPQW*2, tfPQH+6);
 		frame.getContentPane().add(btnAddToInvoice);
-		
 
+		JButton btnSave = new JButton(jl.get(cs.BTN_SAVE).toString());
+		btnSave.setForeground(new Color(0, 0, 102));
+		btnSave.setFont(fonts_title);
+		btnSave.setBackground(new Color(102, 204, 0));
+		btnX = btnBack.getX() - cn.BACK_BTN_X_OFFSET;
+		btnSave.setBounds(btnX, btnY, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
+		frame.getContentPane().add(btnSave);
 		
+		JButton btnPrint = new JButton(jl.get(cs.BTN_PRINT).toString());
+		btnPrint.setForeground(Color.YELLOW);
+		btnPrint.setFont(fonts);
+		btnPrint.setBackground(new Color(204, 0, 0));
+		btnX = btnSave.getX() - cn.BACK_BTN_X_OFFSET;
+		btnPrint.setBounds(btnX, btnY, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
+		frame.getContentPane().add(btnPrint);
+
 		
 		// LISTENERS
 		btnBack.addActionListener(new ActionListener() {
@@ -261,6 +287,28 @@ public class InvoiceAddEdit {
 						mainView.setIsVisible(true);
 			}
 		});
+		
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//TODO
+				System.out.println("Saving !");
+			}
+		});
+		
+		btnPrint.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//TODO
+				System.out.println("Printing !");
+			}
+		});
+		
+		btnAddToInvoice.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//TODO
+				System.out.println("Adding to invoice !");
+			}
+		});
+		
 
 		tfBrands.addFocusListener(new FocusListener(){
 	        @Override
@@ -505,19 +553,72 @@ public class InvoiceAddEdit {
 		lblTotal.setFont(fonts_title);
 		lblTotal.setHorizontalAlignment(SwingConstants.CENTER);
 		int lblTotX = lblPrevX + 200;
-		lblPrevY = lblPrevY + lblForWho.getHeight() + 240;
+		lblPrevY = lblPrevY + lblForWho.getHeight() + 300;
 		lblTotal.setBounds(lblTotX, lblPrevY, lblW/2, lblH/4);
 		frame.getContentPane().add(lblTotal);
 		
 		// CHECKBOXES & RADIO BUTTONS
 		JLabel lblFreebies = new JLabel("");
 		int chbW = 160, chbH = 24;
-		lblFreebies.setBounds(lblPrevX, lblPrevY, chbW, chbH*6);
-		Border b7 = BorderFactory.createLineBorder(Color.orange);
-		TitledBorder border7 = BorderFactory.createTitledBorder(b7, jl.get(cs.LBL_GIFTS).toString());
+		lblFreebies.setBounds(lblPrevX, lblPrevY, chbW, chbH*4);
+		Border b7 = BorderFactory.createLineBorder(color);
+		TitledBorder border7 = BorderFactory.createTitledBorder(b7, jl.get(cs.LBL_DISCOUNT).toString());
 		lblFreebies.setBorder(border7);
 		frame.getContentPane().add(lblFreebies);
 		
+		tfDiscount = new JTextField();
+		tfDiscount.setFont(fonts);
+		tfDiscount.setBounds(lblPrevX+8, lblPrevY+16, chbW/2+4, chbH);
+		frame.getContentPane().add(tfDiscount);
+		
+		rbPercent = new JRadioButton(cs.PERCENT, false);
+		rbPercent.setFont(fonts);
+		rbPercent.setBounds(lblPrevX+8, lblPrevY+42, chbW/4, chbH);
+		frame.getContentPane().add(rbPercent);
+		
+		rbMoney = new JRadioButton(cs.EURO, true);
+		rbMoney.setFont(fonts);
+		rbMoney.setBounds(lblPrevX+rbPercent.getWidth()+12, lblPrevY+42, chbW/4, chbH);
+		frame.getContentPane().add(rbMoney);
+		
+		radioGroup = new ButtonGroup();
+		radioGroup.add(rbMoney);
+		radioGroup.add(rbPercent);
+		
+		
+		//TODO BUTTONS
+		JButton btnRemove = new JButton(cs.MINUS);
+		btnRemove.setForeground(Color.YELLOW);
+		btnRemove.setFont(fonts);
+		btnRemove.setBackground(new Color(204, 0, 0));
+		int btnX = (int) (lblPrevX + (lblW*0.88));
+		lblPrevY = lblForWho.getY()+ lblForWho.getHeight()+10;
+		btnRemove.setBounds(btnX, lblPrevY, (int) (cn.BACK_BTN_WIDTH*0.37), (int) (cn.BACK_BTN_HEIGHT*0.8));
+		frame.getContentPane().add(btnRemove);
+		
+		JButton btnRemoveAll = new JButton(cs.MINUS+" "+cs.MINUS);
+		btnRemoveAll.setForeground(Color.YELLOW);
+		btnRemoveAll.setFont(fonts);
+		btnRemoveAll.setBackground(new Color(204, 0, 0));
+		int ty  = lblPrevY +btnRemove.getHeight()+ 10;
+		btnRemoveAll.setBounds(btnX, ty, (int) (cn.BACK_BTN_WIDTH*0.37), (int) (cn.BACK_BTN_HEIGHT*0.8));
+		frame.getContentPane().add(btnRemoveAll);
+		
+		btnRemove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//TODO
+				System.out.println("Remove !");
+			}
+		});
+		
+		btnRemoveAll.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//TODO
+				System.out.println("Clear !");
+			}
+		});
+		
+		/*		
 		JCheckBox chbAirfreshener = new JCheckBox(jl.get(cs.CBX_AIRFRESH).toString());
 		chbAirfreshener.setSelected(true);
 		chbAirfreshener.setBackground(color);
@@ -530,8 +631,9 @@ public class InvoiceAddEdit {
 		chbTyreShine.setFont(fonts);
 		chbTyreShine.setBounds(lblPrevX+6, lblPrevY+34,chbW-16, chbH);
 		frame.getContentPane().add(chbTyreShine);
+	*/
+
 		
-		lblPrevY = lblForWho.getY()+ lblForWho.getHeight()+10;
 		createChoosenItemsTable(lblPrevX+6, lblPrevY ,lblW-80, lblH-60);
 	}
 

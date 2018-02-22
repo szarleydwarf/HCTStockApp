@@ -57,6 +57,7 @@ public class ConstStrings {
 	public final String EURO = "€ ";
 	public final String PLUS = "+";
 	public final String PERCENT = "%";
+	public final String MINUS = "-";
 
 	
 	// JSON USER FILE
@@ -91,7 +92,8 @@ public class ConstStrings {
 	public final String BTN_DELETE = "delete";
 	public final String BTN_NEW = "new";
 	public final String BTN_INVOICE = "invoice";
-
+	public final String BTN_PRINT = "print";
+	
 	public final String RB_TYPED_IN = "typed";
 	public final String RB_SUGGESTED = "suggested";
 
@@ -115,7 +117,7 @@ public class ConstStrings {
 	public final String LBL_CUSTOMER = "customer";
 	public final String LBL_STOCK = "stock_lbl";
 	public final String LBL_PREVIEW = "preview";
-	public final String LBL_GIFTS = "gifts";
+	public final String LBL_DISCOUNT = "discount";
 	public final String LBL_TOTAL = "total";
 
 	public final String SEARCH_TEXT_FIELD_FRAZE = "search";
