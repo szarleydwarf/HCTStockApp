@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -20,6 +21,7 @@ import javax.swing.table.DefaultTableModel;
 import org.json.simple.JSONObject;
 
 import consts.ConstStrings;
+import objects.Item;
 
 
 public class MiscHelper {
@@ -157,6 +159,16 @@ public class MiscHelper {
 	        		return i;
 	        }
 	    }       
+		return -1;
+	}
+
+	public int compareItemKeyMap(Item item, Map<Item, Integer> map) {
+		Set<Item> items = map.keySet();
+		for(Item i : items){
+			if(item.getName().equals(i.getName())){
+				return map.get(i);
+			}
+		}
 		return -1;
 	}
 

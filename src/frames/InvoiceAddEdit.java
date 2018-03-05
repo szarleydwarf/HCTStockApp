@@ -11,6 +11,7 @@ import java.awt.event.FocusListener;
 import java.awt.font.TextAttribute;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -94,6 +95,12 @@ public class InvoiceAddEdit {
 	private String lastInvoice;
 	private static MiscHelper msh;
 	protected Item item;
+
+	private Map<Item, Integer> selectedRowItem;
+
+	protected boolean isDiscount;
+
+	private double discount;
 	
 	/**
 	 * Launch the application.
@@ -147,6 +154,9 @@ public class InvoiceAddEdit {
 		this.attributes = fonts_title.getAttributes();
 		this.attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 		this.color = msh.getColor(cs.APP, cs, js);
+		
+		this.selectedRowItem = new HashMap<Item, Integer>();
+
 	}
 	
 	/**
@@ -487,7 +497,6 @@ public class InvoiceAddEdit {
 	protected double calculateSum() {
 		int rowCount = modTBchosen.getRowCount();
 		double sum = 0;
-		System.out.println("I: "+rowCount);
 		for(int i = 0; i < rowCount;i++) {
 			double price = Double.parseDouble((String) modTBchosen.getValueAt(i, 1));
 			int qnt = Integer.parseInt((String)modTBchosen.getValueAt(i, 2));
@@ -524,7 +533,11 @@ public class InvoiceAddEdit {
 		
 		if(!item.getCode().equals(cs.CARWASH_CODE) || !item.getCode().equals(cs.SERVICE_CODE)){
 			itemQnt = (itemQnt <= 0) ? 0 : itemQnt - tfQntInt;
-			//TODO set reset qnt in stock table
+			if(this.selectedRowItem.containsKey(item)){
+				item.setQnt(itemQnt);
+				int row = this.selectedRowItem.get(item);
+				tbStock.setValueAt(item.getQnt(), row, 2);
+			}	
 		}
 		
 		String[] rowData = new String[this.cs.STOCK_TB_HEADINGS_NO_COST.length];
@@ -624,8 +637,25 @@ public class InvoiceAddEdit {
 		radioGroup.add(rbMoney);
 		radioGroup.add(rbPercent);
 		
-		
-		//TODO BUTTONS
+		rbMoney.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isDiscount = true;
+				double sum = calculateSum();
+				sum = applyDiscount(sum);
+				lblTotal.setText("€ "+df.format(sum));
+			}
+		});
+		rbPercent.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isDiscount = false;
+				double sum = calculateSum();
+				sum = applyDiscount(sum);
+				lblTotal.setText("€ "+df.format(sum));
+			}
+		});
+
+
+		// BUTTONS
 		JButton btnRemove = new JButton(cs.MINUS);
 		btnRemove.setForeground(Color.YELLOW);
 		btnRemove.setFont(fonts);
@@ -645,8 +675,14 @@ public class InvoiceAddEdit {
 		
 		btnRemove.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				TODO
-				System.out.println("Remove !");
+//				TODO 
+				if(item != null && tbChoosen.getSelectedRow() != -1){
+					DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
+					int choosenRow = tbChoosen.getSelectedRow();
+					int row = msh.compareItemKeyMap(item, selectedRowItem);
+					updateStockTableQnt(model, choosenRow, row);
+					model.removeRow(tbChoosen.getSelectedRow());
+				}
 			}
 		});
 		
@@ -686,9 +722,37 @@ public class InvoiceAddEdit {
 		createChoosenItemsTable(lblPrevX+6, lblPrevY ,lblW-80, lblH-60);
 	}
 	
+	protected double applyDiscount(double sum) {
+		if(sum > 0 && !tfDiscount.getText().isEmpty()){
+			discount = Double.parseDouble(tfDiscount.getText());
+			if(!isDiscount){
+				return sum - (sum * (discount/100));
+			}else if(isDiscount){
+				return sum - discount;
+			}
+		}
+		return sum;
+	}
+
 	protected void updateStockTableQnt(DefaultTableModel model, int chosenRow, int stRow) {
-		// TODO Auto-generated method stub
-	
+		if(stRow != -1){
+			int qnt = Integer.parseInt(model.getValueAt(chosenRow, 2).toString());
+			if(qnt <= 0)
+				qnt = 1;
+			int actualQnt = Integer.parseInt(tbStock.getValueAt(stRow, 2).toString());
+			qnt = actualQnt + qnt;
+			tbStock.setValueAt(qnt, stRow, 2);
+		}
+	}
+
+	protected boolean isUpdateRequred() {
+		for(int i = 0; i < modTBchosen.getRowCount(); i++){
+			if(!modTBchosen.getValueAt(i, 0).toString().contains(cs.STAR) 
+					&& !modTBchosen.getValueAt(i, 0).toString().toUpperCase().contains(cs.WASH.toUpperCase())){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private JTable createTable(String[][] data, String[] headings, String tbName, int i) {
@@ -705,7 +769,7 @@ public class InvoiceAddEdit {
 //		
 		table.getColumnModel().getColumn(0).setPreferredWidth(i);
 		ListSelectionListener listener = null;
-		if(tbName == cs.STOCK_TB_NAME)
+		if(tbName == cs.STOCK_TB_NAME || tbName == cs.CHOSEN_TB_NAME)
 			listener = createStockTableListener(table);
 		else if(tbName == cs.CARS_TB_NAME)
 			listener = createCarTableListener(table);
@@ -775,9 +839,9 @@ public class InvoiceAddEdit {
 				int row = table.getSelectedRow();
 				if(row != -1) {
 					item = getItem(table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString());
-//					if(item != null && table.getName().equals(cs.STOCK_TB_NAME)){
-//						selectedRowItem.put(item,row);
-//					}
+					if(item != null && table.getName().equals(cs.STOCK_TB_NAME)){
+						selectedRowItem.put(item,row);
+					}
 				}
 			}
 	    };
