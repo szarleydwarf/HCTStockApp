@@ -14,6 +14,8 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import org.json.simple.JSONObject;
 
@@ -23,9 +25,11 @@ import consts.ConstStrings;
 public class MiscHelper {
 
 	private Logger log;
+	private ConstStrings cs;
 
-	public MiscHelper(Logger logger){
+	public MiscHelper(Logger logger, ConstStrings CS){
 		log = logger;
+		cs = CS;
 	}
 	
 	public void printData(String[][] d) {
@@ -125,6 +129,35 @@ public class MiscHelper {
 		btn.setForeground(foreground_color);
 		btn.setBackground(background_color);
 		btn.setEnabled(toggle);
+	}
+
+	public ArrayList<String> getTableDataToStringArray(JTable table) {
+	    DefaultTableModel dtm = (DefaultTableModel) table.getModel();
+	    int nRow = dtm.getRowCount(), nCol = dtm.getColumnCount();
+	    ArrayList<String> items = new ArrayList<String>();
+	    String temp;
+	    
+	    for (int i = 0 ; i < nRow ; i++){
+	        for (int j = 0 ; j < nCol ; j++){
+	        	temp = dtm.getValueAt(i, j).toString();
+	            if(j == 0)//&& !items.contains(temp))
+	            	items.add(temp);
+	        }
+	    }
+	    return items;
+	}
+
+	public int getSelectedItemRow(DefaultTableModel dtm, String string) {
+	    int nRow = dtm.getRowCount(), nCol = dtm.getColumnCount();
+	    String temp;
+	    for (int i = 0 ; i < nRow ; i++){
+	        for (int j = 0 ; j < nCol ; j++){
+	        	temp = dtm.getValueAt(i, j).toString();
+	        	if(temp.equals(string) && !temp.contains(cs.STAR) && !temp.toUpperCase().contains(cs.WASH.toUpperCase()))
+	        		return i;
+	        }
+	    }       
+		return -1;
 	}
 
 }

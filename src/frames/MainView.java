@@ -195,7 +195,7 @@ public class MainView {
 		fh = new FileHelper();
 
 		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
-		msh = new MiscHelper(logger);
+		msh = new MiscHelper(logger, cs);
 
 		df_3_2 = new DecimalFormat(cs.DECIMAL_FORMAT_3_2);
 		df_5_2 = new DecimalFormat(cs.DECIMAL_FORMAT_5_2);

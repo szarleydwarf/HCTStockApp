@@ -51,15 +51,14 @@ public class ConstStrings {
 	public final String CUSTOMER_B = "customer business";
 	public final String INVOICE = "invoice";
 	public final String ITEM = "item";
+	public final String WASH = "Wash";
 
-	public final String CAR_REPLACE = "@CAR";
-	public final String HASH = "#";
-	public final String AT = "@";
-	public final String AMP = "&";
-	public final String CUSTOMER_REPLACE = "&COMPANY";
 	public final String REPLACE_PATTERN = "#\\?.*?";
 
 	// SYMBOLS ETC
+	public final String HASH = "#";
+	public final String AT = "@";
+	public final String AMP = "&";
 	public final String STAR = "*";
 	public final String EURO = "€ ";
 	public final String PLUS = "+";

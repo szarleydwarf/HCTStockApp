@@ -74,38 +74,26 @@ public class InvoiceAddEdit {
 	private DecimalFormat df;
 	private TableModel modTBchosen;
 
+	private TableRowSorter rSortCars, rSortStock, rSortCustomer;
+	private JTextField tfSearch;
+	private JLabel lblTotal;
+	private JTable tbChoosen;
+	private JTextField tfDiscount;
+	private JRadioButton rbPercent;
+	private JRadioButton rbMoney;
+	private ButtonGroup radioGroup;
+	private JLabel lblForWho;
+	private JTextField tfPrice;
+	private JTextField tfQnt;
+	private JTable tbStock;
+
 	private CustomersManager cm;
 	private StockManager sm;
 	private InvoiceManager im;
-
 	private ArrayList<String> carList;
-
-	private TableRowSorter rSortCars, rSortStock, rSortCustomer;
-
-	private JTextField tfSearch;
-
-	private JLabel lblTotal;
-
-	private JTable tbChoosen;
-
-	private JTextField tfDiscount;
-
-	private JRadioButton rbPercent;
-
-	private JRadioButton rbMoney;
-
-	private ButtonGroup radioGroup;
-
 	private String lastInvoice;
-
-	private JLabel lblForWho;
-
-	private JTextField tfPrice;
-
-	private JTextField tfQnt;
-
-	protected Item item;
 	private static MiscHelper msh;
+	protected Item item;
 	
 	/**
 	 * Launch the application.
@@ -422,47 +410,6 @@ public class InvoiceAddEdit {
 
 	}
 
-	protected void addToInvoice() {
-System.out.println("I: "+item.toString());
-		double productPrice;
-		if(!tfPrice.getText().isEmpty()){
-			String tPrice = tfPrice.getText();
-			if(tPrice.contains(",")){
-				tPrice = tPrice.replace(',', '.');
-			}
-			productPrice = Double.parseDouble(tPrice);
-		} else
-			productPrice = item.getPrice();
-
-		int itemQnt = 0, tfQntInt = 0;
-		if(item.getCode().equals(cs.CARWASH_CODE) || item.getCode().equals(cs.SERVICE_CODE))
-			itemQnt  = 1;
-		else
-			itemQnt = item.getQnt();
-		
-		if(!tfQnt.getText().isEmpty()) tfQntInt = Integer.parseInt(this.tfQnt.getText());
-		else tfQntInt = 1;
-		
-		while(tfQntInt > itemQnt && (!item.getCode().equals(cs.CARWASH_CODE) || !item.getCode().equals(cs.SERVICE_CODE))){
-			JOptionPane.showMessageDialog(frame, "Dostępnych "+itemQnt+"szt.");
-			if(tfQntInt > itemQnt) return;
-		}
-		
-		if(!item.getCode().equals(cs.CARWASH_CODE) || !item.getCode().equals(cs.SERVICE_CODE)){
-			itemQnt = (itemQnt <= 0) ? 0 : itemQnt - tfQntInt;
-			//TODO set reset qnt in stock table
-		}
-		
-		String[] rowData = new String[this.cs.STOCK_TB_HEADINGS_NO_COST.length];
-
-		rowData[0] = item.getName();
-		rowData[1] = ""+productPrice;
-		rowData[2] = ""+tfQntInt;
-		
-		DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
-		model.addRow(rowData);
-	}
-
 	private void populateCarTable(int x, int y, int w, int h) {
 		String[][] data = new String [carList.size()][1];
 		data = msh.populateDataArrayString(carList, data, carList.size());
@@ -494,6 +441,7 @@ System.out.println("I: "+item.toString());
 		rSortStock = new TableRowSorter<>(table.getModel());
 		
 		table.setRowSorter(rSortStock);
+		this.tbStock = table;
 		
 		JScrollPane spStockList = new JScrollPane(table);
 		spStockList.setBounds(x, y, w, h);
@@ -539,16 +487,55 @@ System.out.println("I: "+item.toString());
 	protected double calculateSum() {
 		int rowCount = modTBchosen.getRowCount();
 		double sum = 0;
-//		for(int i = 0; i < rowCount;i++) {
-//			double price = Double.parseDouble((String) modTBchosen.getValueAt(i, 1));
-//			int qnt = Integer.parseInt((String)modTBchosen.getValueAt(i, 2));
-//			price = price * qnt;
-//			
-//			sum += price;
-//		}
+		System.out.println("I: "+rowCount);
+		for(int i = 0; i < rowCount;i++) {
+			double price = Double.parseDouble((String) modTBchosen.getValueAt(i, 1));
+			int qnt = Integer.parseInt((String)modTBchosen.getValueAt(i, 2));
+			price = price * qnt;
+			sum += price;
+		}
 		return sum;
 	}
-	
+
+	protected void addToInvoice() {
+		double productPrice;
+		if(!tfPrice.getText().isEmpty()){
+			String tPrice = tfPrice.getText();
+			if(tPrice.contains(",")){
+				tPrice = tPrice.replace(',', '.');
+			}
+			productPrice = Double.parseDouble(tPrice);
+		} else
+			productPrice = item.getPrice();
+
+		int itemQnt = 0, tfQntInt = 0;
+		if(item.getCode().equals(cs.CARWASH_CODE) || item.getCode().equals(cs.SERVICE_CODE))
+			itemQnt  = 1;
+		else
+			itemQnt = item.getQnt();
+		
+		if(!tfQnt.getText().isEmpty()) tfQntInt = Integer.parseInt(this.tfQnt.getText());
+		else tfQntInt = 1;
+		
+		while(tfQntInt > itemQnt && (!item.getCode().equals(cs.CARWASH_CODE) || !item.getCode().equals(cs.SERVICE_CODE))){
+			JOptionPane.showMessageDialog(frame, "Dostępnych "+itemQnt+"szt.");
+			if(tfQntInt > itemQnt) return;
+		}
+		
+		if(!item.getCode().equals(cs.CARWASH_CODE) || !item.getCode().equals(cs.SERVICE_CODE)){
+			itemQnt = (itemQnt <= 0) ? 0 : itemQnt - tfQntInt;
+			//TODO set reset qnt in stock table
+		}
+		
+		String[] rowData = new String[this.cs.STOCK_TB_HEADINGS_NO_COST.length];
+
+		rowData[0] = item.getName();
+		rowData[1] = ""+productPrice;
+		rowData[2] = ""+tfQntInt;
+		
+		DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
+		model.addRow(rowData);
+	}
 
 	private void createInvoicePreview() {
 		int lblX = 10, lblY = 30; 
@@ -658,15 +645,25 @@ System.out.println("I: "+item.toString());
 		
 		btnRemove.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO
+//				TODO
 				System.out.println("Remove !");
 			}
 		});
 		
 		btnRemoveAll.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO
-				System.out.println("Clear !");
+				DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
+				DefaultTableModel dtm = (DefaultTableModel) tbStock.getModel();
+				ArrayList<String> its = msh.getTableDataToStringArray(tbChoosen);
+				int chosenRow, stRow;
+				for(int j = 0; j < its.size(); j++){
+					chosenRow = msh.getSelectedItemRow(model, its.get(j));
+					stRow = msh.getSelectedItemRow(dtm, its.get(j));
+					if(chosenRow != -1)
+						updateStockTableQnt(model, chosenRow, stRow);
+				}
+				
+				model.setRowCount(0);
 			}
 		});
 		
@@ -685,8 +682,13 @@ System.out.println("I: "+item.toString());
 		frame.getContentPane().add(chbTyreShine);
 	*/
 
-		
+
 		createChoosenItemsTable(lblPrevX+6, lblPrevY ,lblW-80, lblH-60);
+	}
+	
+	protected void updateStockTableQnt(DefaultTableModel model, int chosenRow, int stRow) {
+		// TODO Auto-generated method stub
+	
 	}
 
 	private JTable createTable(String[][] data, String[] headings, String tbName, int i) {
