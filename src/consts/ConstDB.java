@@ -86,7 +86,8 @@ public class ConstDB {
 	public final String SELECT_ALL_CUSTOMERS_I = this.SELECT_STAR  + this.FROM + TableNames.TB_CUSTOMERS.getName();
 	public final String SELECT_ALL_CUSTOMERS_B = this.SELECT + TableNames.TB_BUSINESS.getName() + ".* " + this.FROM + TableNames.TB_BUSINESS.getName();
 	public final String SELECT_ALL_INVOICES = this.SELECT_STAR + this.FROM + TableNames.TB_INVOICES.getName();
-	
+	public final String SELECT_LAST_INVOICE = this.SELECT + "id" + this.FROM + TableNames.TB_INVOICES.getName() + this.ODER_BY  + "id" + this.DESC + this.LIMIT + "1;";
+
 	public final String SELECT_CAR = this.SELECT_STAR + this.FROM + TableNames.TB_CARS.getName() + this.WHERE + this.ID + this.EQUAL;
 	
 }

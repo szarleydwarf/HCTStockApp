@@ -20,6 +20,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -94,6 +95,16 @@ public class InvoiceAddEdit {
 	private JRadioButton rbMoney;
 
 	private ButtonGroup radioGroup;
+
+	private String lastInvoice;
+
+	private JLabel lblForWho;
+
+	private JTextField tfPrice;
+
+	private JTextField tfQnt;
+
+	protected Item item;
 	private static MiscHelper msh;
 	
 	/**
@@ -222,7 +233,7 @@ public class InvoiceAddEdit {
 		lblPriceListed.setBounds(lblPX, lblPY, tfPQW, tfPQH);
 		frame.getContentPane().add(lblPriceListed);
 
-		JTextField tfPrice = new JTextField();
+		tfPrice = new JTextField();
 		tfPrice.setFont(fonts);
 		int lbltPX = lblPX + lblPriceListed.getWidth()+10;
 		tfPrice.setBounds(lbltPX, lblPY, tfPQW, tfPQH);
@@ -234,7 +245,7 @@ public class InvoiceAddEdit {
 		lblQntListed.setBounds(lblPX, lblPY, tfPQW, tfPQH);
 		frame.getContentPane().add(lblQntListed);
 
-		JTextField tfQnt = new JTextField();
+		tfQnt = new JTextField();
 		tfQnt.setFont(fonts);
 		tfQnt.setBounds(lbltPX, lblPY, tfPQW, tfPQH);
 		frame.getContentPane().add(tfQnt);
@@ -304,8 +315,7 @@ public class InvoiceAddEdit {
 		
 		btnAddToInvoice.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO
-				System.out.println("Adding to invoice !");
+				addToInvoice();
 			}
 		});
 		
@@ -412,6 +422,47 @@ public class InvoiceAddEdit {
 
 	}
 
+	protected void addToInvoice() {
+System.out.println("I: "+item.toString());
+		double productPrice;
+		if(!tfPrice.getText().isEmpty()){
+			String tPrice = tfPrice.getText();
+			if(tPrice.contains(",")){
+				tPrice = tPrice.replace(',', '.');
+			}
+			productPrice = Double.parseDouble(tPrice);
+		} else
+			productPrice = item.getPrice();
+
+		int itemQnt = 0, tfQntInt = 0;
+		if(item.getCode().equals(cs.CARWASH_CODE) || item.getCode().equals(cs.SERVICE_CODE))
+			itemQnt  = 1;
+		else
+			itemQnt = item.getQnt();
+		
+		if(!tfQnt.getText().isEmpty()) tfQntInt = Integer.parseInt(this.tfQnt.getText());
+		else tfQntInt = 1;
+		
+		while(tfQntInt > itemQnt && (!item.getCode().equals(cs.CARWASH_CODE) || !item.getCode().equals(cs.SERVICE_CODE))){
+			JOptionPane.showMessageDialog(frame, "Dostępnych "+itemQnt+"szt.");
+			if(tfQntInt > itemQnt) return;
+		}
+		
+		if(!item.getCode().equals(cs.CARWASH_CODE) || !item.getCode().equals(cs.SERVICE_CODE)){
+			itemQnt = (itemQnt <= 0) ? 0 : itemQnt - tfQntInt;
+			//TODO set reset qnt in stock table
+		}
+		
+		String[] rowData = new String[this.cs.STOCK_TB_HEADINGS_NO_COST.length];
+
+		rowData[0] = item.getName();
+		rowData[1] = ""+productPrice;
+		rowData[2] = ""+tfQntInt;
+		
+		DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
+		model.addRow(rowData);
+	}
+
 	private void populateCarTable(int x, int y, int w, int h) {
 		String[][] data = new String [carList.size()][1];
 		data = msh.populateDataArrayString(carList, data, carList.size());
@@ -484,16 +535,17 @@ public class InvoiceAddEdit {
 			}			
 		});
 	}
+	
 	protected double calculateSum() {
 		int rowCount = modTBchosen.getRowCount();
 		double sum = 0;
-		for(int i = 0; i < rowCount;i++) {
-			double price = Double.parseDouble((String) modTBchosen.getValueAt(i, 1));
-			int qnt = Integer.parseInt((String)modTBchosen.getValueAt(i, 2));
-			price = price * qnt;
-			
-			sum += price;
-		}
+//		for(int i = 0; i < rowCount;i++) {
+//			double price = Double.parseDouble((String) modTBchosen.getValueAt(i, 1));
+//			int qnt = Integer.parseInt((String)modTBchosen.getValueAt(i, 2));
+//			price = price * qnt;
+//			
+//			sum += price;
+//		}
 		return sum;
 	}
 	
@@ -541,7 +593,7 @@ public class InvoiceAddEdit {
 		frame.getContentPane().add(lblDate);
 		
 		lblPrevX = tx + 10;
-		JLabel lblForWho = new JLabel(jl.get(cs.LBL_INVOICE).toString());
+		lblForWho = new JLabel(jl.get(cs.LBL_INVOICE).toString());
 		lblForWho.setBorder(lblTB);
 		lblForWho.setFont(fonts);
 		lblPrevY = lblPrevY + lblDate.getHeight() + 10;
@@ -655,6 +707,8 @@ public class InvoiceAddEdit {
 			listener = createStockTableListener(table);
 		else if(tbName == cs.CARS_TB_NAME)
 			listener = createCarTableListener(table);
+		else if(tbName == cs.CUSTOMER_TB_NAME)
+			listener = createCustomerTableListener(table);
 
 		table.getSelectionModel().addListSelectionListener(listener);
 		
@@ -682,7 +736,10 @@ public class InvoiceAddEdit {
 			public void valueChanged(ListSelectionEvent e) {
 				int row = table.getSelectedRow();
 				if(row != -1) {
-//					lblCarBrand.setText(table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString());
+					String car = (table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString());
+					String invFor = lblForWho.getText();
+					invFor = invFor.replace(invFor.substring(invFor.indexOf(cs.AT)+1, invFor.indexOf(cs.AMP)-1), car);
+					lblForWho.setText(invFor);
 				} 
 
 			}
@@ -690,22 +747,54 @@ public class InvoiceAddEdit {
 	    return listener;
 	}
 
+	private ListSelectionListener createCustomerTableListener(JTable table) {
+		ListSelectionListener listener = new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				int row = table.getSelectedRow();
+				if(row != -1) {
+					String customer = (table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString());
+					String invFor = lblForWho.getText();
+					invFor = invFor.replace(invFor.substring(invFor.indexOf(cs.AMP)+1), customer);
+					lblForWho.setText(invFor);
+				} 
+				
+			}
+		};
+		return listener;
+	}
+	
 	private ListSelectionListener createStockTableListener(JTable table) {
 		// TODO Auto-generated method stub
 		ListSelectionListener listener = new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-//				item = null;
+				item = null;
 				int row = table.getSelectedRow();
 				if(row != -1) {
-//					item = getItem(table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString());
-//					if(item != null && (item instanceof StockItem) && table.getName().equals(fv.STOCK_TABLE)){
+					item = getItem(table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString());
+//					if(item != null && table.getName().equals(cs.STOCK_TB_NAME)){
 //						selectedRowItem.put(item,row);
 //					}
 				}
 			}
 	    };
 	    return listener;
+	}
+
+	protected Item getItem(String string) {
+		Item item = null;
+		for(Item i : sm.getList()){
+			if(i.getName().equals(string))
+				item = i;
+		}
+		return item;
+	}
+	
+	private void setLastInvoiceNum() {
+		String invFor = lblForWho.getText();
+		invFor = invFor.replace(invFor.substring(invFor.indexOf(cs.HASH)+1, invFor.indexOf(cs.AT)-1), lastInvoice);
+		lblForWho.setText(invFor);
 	}
 
 	private TitledBorder createBorders(String title) {
@@ -721,10 +810,12 @@ public class InvoiceAddEdit {
 	}
 	
 	public void setIsVisible(boolean b){
+		lastInvoice = dm.selectData(cdb.SELECT_LAST_INVOICE);
 		initialize();
 		frame.setVisible(b);
+		setLastInvoiceNum();
 	}
-	
+
 	public static ConstNums getCn() {
 		return cn;
 	}

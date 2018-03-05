@@ -22,7 +22,7 @@ public class InvoiceManager {
 		this.cn = cn;
 		this.cs = cs;
 		
-		list = (ArrayList<Invoice>) this.dm.selectData(this.cdb.SELECT_ALL_INVOICES, list);
+		list = getList();
 	}
 
 	public boolean add(Invoice i) {
@@ -74,4 +74,9 @@ public class InvoiceManager {
 			System.out.println(""+i.toString());
 		}
 	}
+
+	private ArrayList<Invoice> getList() {
+		return (ArrayList<Invoice>) this.dm.selectData(this.cdb.SELECT_ALL_INVOICES, list);
+	}
+
 }
