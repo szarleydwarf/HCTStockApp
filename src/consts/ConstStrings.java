@@ -29,7 +29,7 @@ public class ConstStrings {
 	// TABLE HEADINGS ETC
 	public final String[] CARS_TABLE_HEADING = {"Cars"};
 	public final String[] STOCK_TB_HEADINGS = {"ID", "Kod", "Nazwa", "Koszt", "Cena", "Qnt", "VAT", "Transport", "VEMC"};
-	public final String[] STOCK_TB_HEADINGS_NO_COST =  {"Towar", "Cena", "Qnt"};
+	public final String[] STOCK_TB_HEADINGS_NO_COST =  {"Kod","Towar", "Cena", "Qnt"};
 	public final String[] CUSTOMER_TB_HEADINGS = {"Customer", "B/I", "VAT/TAX"};
 
 	public final String CARS_TB_NAME = "CARS";

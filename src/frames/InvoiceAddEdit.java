@@ -441,7 +441,7 @@ public class InvoiceAddEdit {
 
 
 	}
-
+//END OF INITIALIZE
 	private void createInvoicePreview() {
 		int lblX = 10, lblY = 30; 
 		int xOffset = 660;
@@ -612,18 +612,22 @@ public class InvoiceAddEdit {
 
 		createChoosenItemsTable(lblPrevX+6, lblPrevY ,lblW-80, lblH-60);
 	}
-	
+//END OF INVOICE PREVIEW
+
 	protected void updateInvoiceLbl(String text) {
-		String invFor = jl.get(cs.LBL_INVOICE).toString();// lblForWho.getText();
+		String car = lblForWho.getText().substring(lblForWho.getText().indexOf(cs.AT)+1, lblForWho.getText().indexOf(cs.AMP)-1);
+		String invFor = jl.get(cs.LBL_INVOICE).toString();
+
 		invFor = invFor.replace(invFor.substring(invFor.indexOf(cs.AMP)+1), text);
 		lblForWho.setText(invFor);
+		this.setLastInvoiceNum();
+		this.setBrandLbl(car);
 	}
 
 	protected void collectDataForInvoice() {
 //		TODO check for customer, add new
 
 		//Create new invoice, add to mng
-		
 		
 	}
 
@@ -632,7 +636,7 @@ public class InvoiceAddEdit {
 		data = msh.populateDataArrayString(carList, data, carList.size());
 
 		JTable table = new JTable();
-		table = createTable(data, cs.CARS_TABLE_HEADING, cs.CARS_TB_NAME, 150);
+		table = createTable(data, cs.CARS_TABLE_HEADING, cs.CARS_TB_NAME, 150, 0);
 		rSortCars = new TableRowSorter<>(table.getModel());
 		table.setRowSorter(rSortCars);
 
@@ -654,7 +658,7 @@ public class InvoiceAddEdit {
 		String[][] data = new String [sm.getList().size()][cs.STOCK_TB_HEADINGS_NO_COST.length];
 		data = sm.getDataNoCost();
 		JTable table = new JTable();
-		table = createTable(data, cs.STOCK_TB_HEADINGS_NO_COST, cs.STOCK_TB_NAME, 240);
+		table = createTable(data, cs.STOCK_TB_HEADINGS_NO_COST, cs.STOCK_TB_NAME, 40, 240);
 		rSortStock = new TableRowSorter<>(table.getModel());
 		
 		table.setRowSorter(rSortStock);
@@ -669,7 +673,7 @@ public class InvoiceAddEdit {
 		String[][] data = new String [cm.getList().size()][cs.CUSTOMER_TB_HEADINGS.length];
 		data = cm.getDataShort();
 		JTable table = new JTable();
-		table = createTable(data, cs.CUSTOMER_TB_HEADINGS, cs.CUSTOMER_TB_NAME, 140);
+		table = createTable(data, cs.CUSTOMER_TB_HEADINGS, cs.CUSTOMER_TB_NAME, 140, 20);
 		rSortCustomer = new TableRowSorter<>(table.getModel());
 		
 		table.setRowSorter(rSortCustomer);
@@ -685,7 +689,7 @@ public class InvoiceAddEdit {
 		data = populateDataArray(emptyArray, data, 0, 0);
 
 		tbChoosen = new JTable();
-		tbChoosen = createTable(data, this.cs.STOCK_TB_HEADINGS_NO_COST, cs.CHOSEN_TB_NAME, 240);
+		tbChoosen = createTable(data, this.cs.STOCK_TB_HEADINGS_NO_COST, cs.CHOSEN_TB_NAME, 40, 240);
 	
 		JScrollPane spInvoice = new JScrollPane(tbChoosen);
 		spInvoice.setBounds(x, y, w, h);
@@ -705,8 +709,8 @@ public class InvoiceAddEdit {
 		int rowCount = modTBchosen.getRowCount();
 		double sum = 0;
 		for(int i = 0; i < rowCount;i++) {
-			double price = Double.parseDouble((String) modTBchosen.getValueAt(i, 1));
-			int qnt = Integer.parseInt((String)modTBchosen.getValueAt(i, 2));
+			double price = Double.parseDouble((String) modTBchosen.getValueAt(i, cn.PRICE_COLUMN));
+			int qnt = Integer.parseInt((String)modTBchosen.getValueAt(i, cn.QNT_COLUMN));
 			price = price * qnt;
 			sum += price;
 		}
@@ -743,15 +747,16 @@ public class InvoiceAddEdit {
 			if(this.selectedRowItem.containsKey(item)){
 				item.setQnt(itemQnt);
 				int row = this.selectedRowItem.get(item);
-				tbStock.setValueAt(item.getQnt(), row, 2);
+				tbStock.setValueAt(item.getQnt(), row, cn.QNT_COLUMN);
 			}	
 		}
 		
 		String[] rowData = new String[this.cs.STOCK_TB_HEADINGS_NO_COST.length];
 
-		rowData[0] = item.getName();
-		rowData[1] = ""+productPrice;
-		rowData[2] = ""+tfQntInt;
+		rowData[0] = item.getCode();
+		rowData[1] = item.getName();
+		rowData[2] = ""+productPrice;
+		rowData[3] = ""+tfQntInt;
 		
 		DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
 		model.addRow(rowData);
@@ -771,12 +776,12 @@ public class InvoiceAddEdit {
 
 	protected void updateStockTableQnt(DefaultTableModel model, int chosenRow, int stRow) {
 		if(stRow != -1){
-			int qnt = Integer.parseInt(model.getValueAt(chosenRow, 2).toString());
+			int qnt = Integer.parseInt(model.getValueAt(chosenRow, cn.QNT_COLUMN).toString());
 			if(qnt <= 0)
 				qnt = 1;
-			int actualQnt = Integer.parseInt(tbStock.getValueAt(stRow, 2).toString());
+			int actualQnt = Integer.parseInt(tbStock.getValueAt(stRow, cn.QNT_COLUMN).toString());
 			qnt = actualQnt + qnt;
-			tbStock.setValueAt(qnt, stRow, 2);
+			tbStock.setValueAt(qnt, stRow, cn.QNT_COLUMN);
 		}
 	}
 
@@ -791,7 +796,7 @@ public class InvoiceAddEdit {
 		return false;
 	}
 
-	private JTable createTable(String[][] data, String[] headings, String tbName, int i) {
+	private JTable createTable(String[][] data, String[] headings, String tbName, int firstCol, int secondCol) {
 		DefaultTableModel dm = new DefaultTableModel(data, headings);
 		JTable table = new JTable();
 		table.setFont(fonts);
@@ -803,7 +808,9 @@ public class InvoiceAddEdit {
 		table.setFillsViewportHeight(true);
 //		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 //		
-		table.getColumnModel().getColumn(0).setPreferredWidth(i);
+		table.getColumnModel().getColumn(0).setPreferredWidth(firstCol);
+		if(secondCol > 0)
+			table.getColumnModel().getColumn(1).setPreferredWidth(secondCol);
 		ListSelectionListener listener = null;
 		if(tbName == cs.STOCK_TB_NAME || tbName == cs.CHOSEN_TB_NAME)
 			listener = createStockTableListener(table);
@@ -824,9 +831,10 @@ public class InvoiceAddEdit {
 	private String[][] populateDataArray(ArrayList<Item> list, String[][] data, int startIndex, int rowNumber){
 		int j = 0;
 		for(int i = startIndex; i < rowNumber; i++) {
-			data[i][0] = list.get(j).getName();
-			data[i][1] = ""+list.get(j).getPrice();
-			data[i][2] = ""+list.get(j).getQnt();
+			data[i][0] = list.get(j).getCode();
+			data[i][1] = list.get(j).getName();
+			data[i][2] = ""+list.get(j).getPrice();
+			data[i][3] = ""+list.get(j).getQnt();
 			j++;
 		}		
 		return data;
@@ -839,14 +847,18 @@ public class InvoiceAddEdit {
 				int row = table.getSelectedRow();
 				if(row != -1) {
 					String car = (table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString());
-					String invFor = lblForWho.getText();
-					invFor = invFor.replace(invFor.substring(invFor.indexOf(cs.AT)+1, invFor.indexOf(cs.AMP)-1), car);
-					lblForWho.setText(invFor);
+					setBrandLbl(car);
 				} 
 
 			}
 	    };
 	    return listener;
+	}
+
+	protected void setBrandLbl(String car) {
+		String invFor = lblForWho.getText();
+		invFor = invFor.replace(invFor.substring(invFor.indexOf(cs.AT)+1, invFor.indexOf(cs.AMP)-1), car);
+		lblForWho.setText(invFor);
 	}
 
 	private ListSelectionListener createCustomerTableListener(JTable table) {
@@ -873,7 +885,7 @@ public class InvoiceAddEdit {
 				item = null;
 				int row = table.getSelectedRow();
 				if(row != -1) {
-					item = getItem(table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString());
+					item = getItem(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.NAME_COLUMN).toString());
 					if(item != null && table.getName().equals(cs.STOCK_TB_NAME)){
 						selectedRowItem.put(item,row);
 					}

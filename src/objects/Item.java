@@ -155,10 +155,11 @@ public class Item {
 	}
  
 	public String[] getItemAsDataShort(){
-		String[] data = new String[3];
-		data[0] = this.name;
-		data[1] = ""+this.price;
-		data[2] = ""+this.qnt;
+		String[] data = new String[cs.STOCK_TB_HEADINGS_NO_COST.length];
+		data[0] = this.code;
+		data[1] = this.name;
+		data[2] = ""+this.price;
+		data[3] = ""+this.qnt;
 		return data;
 	}
 	
