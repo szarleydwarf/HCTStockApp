@@ -53,6 +53,7 @@ import managers.DatabaseManager;
 import managers.InvoiceManager;
 import managers.StockManager;
 import objects.Item;
+import utility.DateHelper;
 import utility.Logger;
 import utility.MiscHelper;
 
@@ -101,6 +102,12 @@ public class InvoiceAddEdit {
 	protected boolean isDiscount;
 
 	private double discount;
+
+	private DateHelper dh;
+
+	private String date;
+
+	private JTextField tfCustomers;
 	
 	/**
 	 * Launch the application.
@@ -127,7 +134,7 @@ public class InvoiceAddEdit {
 	}
 
 	public InvoiceAddEdit(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
-			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM, CustomersManager cMng, InvoiceManager invMng, 
+			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, StockManager SM, CustomersManager cMng, InvoiceManager invMng, 
 			ArrayList<String> carList, DecimalFormat df_3_2) {
 		this.mainView = main;
 		this.jl = jLang;
@@ -141,6 +148,7 @@ public class InvoiceAddEdit {
 //		cp = cP;
 		
 		this.msh = mSH;
+		this.dh = DH;
 		
 		this.sm = SM;
 		this.cm = cMng;
@@ -156,7 +164,7 @@ public class InvoiceAddEdit {
 		this.color = msh.getColor(cs.APP, cs, js);
 		
 		this.selectedRowItem = new HashMap<Item, Integer>();
-
+		this.date = dh.getFormatedDate();
 	}
 	
 	/**
@@ -197,7 +205,7 @@ public class InvoiceAddEdit {
 		tfBrands.setBounds(lblX+6, lblY+20, brandW, lbltfH);
 		frame.getContentPane().add(tfBrands);
 
-		JTextField tfCustomers = new JTextField();
+		tfCustomers = new JTextField();
 		tfCustomers.setFont(fonts);
 		tfCustomers.setColumns(10);
 		int custW = (int)(lblW*0.7);
@@ -301,6 +309,12 @@ public class InvoiceAddEdit {
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO
 				System.out.println("Saving !");
+				boolean update = isUpdateRequred();
+				collectDataForInvoice();
+//				TODO update database
+				
+//				TODO save new invoice to database  - add to invoice manager
+				
 			}
 		});
 		
@@ -308,6 +322,12 @@ public class InvoiceAddEdit {
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO
 				System.out.println("Printing !");
+				boolean update = isUpdateRequred();
+				collectDataForInvoice();
+//				TODO update database
+				
+//				TODO save new invoice to database   - add to invoice manager
+				//print
 			}
 		});
 		
@@ -351,23 +371,24 @@ public class InvoiceAddEdit {
             }
         });
 		
-		tfCustomers.addFocusListener(new FocusListener(){
-	        @Override
-	        public void focusGained(FocusEvent e){
-	        	tfCustomers.setText("");
-			}
-			@Override
-			public void focusLost(FocusEvent arg0) {
-			}
-		});
+//		tfCustomers.addFocusListener(new FocusListener(){
+//	        @Override
+//	        public void focusGained(FocusEvent e){
+//	        	tfCustomers.setText("");
+//			}
+//			@Override
+//			public void focusLost(FocusEvent arg0) {
+//			}
+//		});
 		
 		tfCustomers.getDocument().addDocumentListener(new DocumentListener(){
 			@Override
 			public void insertUpdate(DocumentEvent e) {
 				String text = tfCustomers.getText();
-				
+//		TODO		
 				if (text.trim().length() == 0) rSortCustomer.setRowFilter(null);
 				else rSortCustomer.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+				updateInvoiceLbl(text);
 			}
 			
 			@Override
@@ -376,6 +397,7 @@ public class InvoiceAddEdit {
 				
 				if (text.trim().length() == 0) rSortCustomer.setRowFilter(null);
 				else  rSortCustomer.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+				updateInvoiceLbl(text);
 			}
 			
 			@Override
@@ -418,6 +440,191 @@ public class InvoiceAddEdit {
         });
 
 
+	}
+
+	private void createInvoicePreview() {
+		int lblX = 10, lblY = 30; 
+		int xOffset = 660;
+		int lblW = 540;
+		int  lblH = 280;
+
+		//PREVIEW
+		TitledBorder lblTB = createBorders(jl.get(cs.LBL_PREVIEW).toString());
+		int tx = lblX + xOffset;
+		JLabel lblPreview = new JLabel("");
+		lblPreview.setBorder(lblTB);
+		lblPreview.setFont(fonts);
+		lblPreview.setBounds(tx, lblY, lblW, lblH*2);
+		frame.getContentPane().add(lblPreview);
+
+		lblTB = createBorders("");
+		int lblPrevX = tx + 10, lblPrevY = lblY+14;
+		JLabel lblCompanyDetails = new JLabel(jl.get(cs.LBL_YOU).toString());
+		lblCompanyDetails.setBorder(lblTB);
+		lblCompanyDetails.setFont(fonts);
+		lblCompanyDetails.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCompanyDetails.setBounds(lblPrevX, lblPrevY, lblW/4, lblH/4);
+		frame.getContentPane().add(lblCompanyDetails);
+		
+		lblTB = createBorders("");
+		JLabel lblLOGO = new JLabel(jl.get(cs.LBL_LOGO).toString());
+		lblLOGO.setBorder(lblTB);
+		lblLOGO.setFont(fonts);
+		lblLOGO.setHorizontalAlignment(SwingConstants.CENTER);
+		lblPrevX = lblPrevX+lblCompanyDetails.getWidth()+10;
+		lblLOGO.setBounds(lblPrevX, lblPrevY, lblW/2, lblH/4);
+		frame.getContentPane().add(lblLOGO);
+		
+		lblTB = createBorders("");
+		JLabel lblDate = new JLabel(date);
+		lblDate.setBorder(lblTB);
+		lblDate.setHorizontalAlignment(SwingConstants.CENTER);
+		lblDate.setFont(fonts);
+		lblPrevX = lblPrevX+lblLOGO.getWidth()+10;
+		lblDate.setBounds(lblPrevX, lblPrevY, lblW/6, lblH/4);
+		frame.getContentPane().add(lblDate);
+		
+		lblPrevX = tx + 10;
+		lblForWho = new JLabel(jl.get(cs.LBL_INVOICE).toString());
+		lblForWho.setBorder(lblTB);
+		lblForWho.setFont(fonts);
+		lblPrevY = lblPrevY + lblDate.getHeight() + 10;
+		lblForWho.setBounds(lblPrevX, lblPrevY, lblW-16, lblH/4);
+		frame.getContentPane().add(lblForWho);
+		
+		lblTotal = new JLabel(jl.get(cs.LBL_TOTAL).toString());
+		lblTotal.setBorder(lblTB);
+		lblTotal.setFont(fonts_title);
+		lblTotal.setHorizontalAlignment(SwingConstants.CENTER);
+		int lblTotX = lblPrevX + 200;
+		lblPrevY = lblPrevY + lblForWho.getHeight() + 300;
+		lblTotal.setBounds(lblTotX, lblPrevY, lblW/2, lblH/4);
+		frame.getContentPane().add(lblTotal);
+		
+		// CHECKBOXES & RADIO BUTTONS
+		JLabel lblFreebies = new JLabel("");
+		int chbW = 160, chbH = 24;
+		lblFreebies.setBounds(lblPrevX, lblPrevY, chbW, chbH*4);
+		Border b7 = BorderFactory.createLineBorder(color);
+		TitledBorder border7 = BorderFactory.createTitledBorder(b7, jl.get(cs.LBL_DISCOUNT).toString());
+		lblFreebies.setBorder(border7);
+		frame.getContentPane().add(lblFreebies);
+		
+		tfDiscount = new JTextField();
+		tfDiscount.setFont(fonts);
+		tfDiscount.setBounds(lblPrevX+8, lblPrevY+16, chbW/2+4, chbH);
+		frame.getContentPane().add(tfDiscount);
+		
+		rbPercent = new JRadioButton(cs.PERCENT, false);
+		rbPercent.setFont(fonts);
+		rbPercent.setBounds(lblPrevX+8, lblPrevY+42, chbW/4, chbH);
+		frame.getContentPane().add(rbPercent);
+		
+		rbMoney = new JRadioButton(cs.EURO, true);
+		rbMoney.setFont(fonts);
+		rbMoney.setBounds(lblPrevX+rbPercent.getWidth()+12, lblPrevY+42, chbW/4, chbH);
+		frame.getContentPane().add(rbMoney);
+		
+		radioGroup = new ButtonGroup();
+		radioGroup.add(rbMoney);
+		radioGroup.add(rbPercent);
+		
+		rbMoney.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isDiscount = true;
+				double sum = calculateSum();
+				sum = applyDiscount(sum);
+				lblTotal.setText("€ "+df.format(sum));
+			}
+		});
+		rbPercent.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isDiscount = false;
+				double sum = calculateSum();
+				sum = applyDiscount(sum);
+				lblTotal.setText("€ "+df.format(sum));
+			}
+		});
+
+
+		// BUTTONS
+		JButton btnRemove = new JButton(cs.MINUS);
+		btnRemove.setForeground(Color.YELLOW);
+		btnRemove.setFont(fonts);
+		btnRemove.setBackground(new Color(204, 0, 0));
+		int btnX = (int) (lblPrevX + (lblW*0.88));
+		lblPrevY = lblForWho.getY()+ lblForWho.getHeight()+10;
+		btnRemove.setBounds(btnX, lblPrevY, (int) (cn.BACK_BTN_WIDTH*0.37), (int) (cn.BACK_BTN_HEIGHT*0.8));
+		frame.getContentPane().add(btnRemove);
+		
+		JButton btnRemoveAll = new JButton(cs.MINUS+" "+cs.MINUS);
+		btnRemoveAll.setForeground(Color.YELLOW);
+		btnRemoveAll.setFont(fonts);
+		btnRemoveAll.setBackground(new Color(204, 0, 0));
+		int ty  = lblPrevY +btnRemove.getHeight()+ 10;
+		btnRemoveAll.setBounds(btnX, ty, (int) (cn.BACK_BTN_WIDTH*0.37), (int) (cn.BACK_BTN_HEIGHT*0.8));
+		frame.getContentPane().add(btnRemoveAll);
+		
+		btnRemove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(item != null && tbChoosen.getSelectedRow() != -1){
+					DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
+					int choosenRow = tbChoosen.getSelectedRow();
+					int row = msh.compareItemKeyMap(item, selectedRowItem);
+					updateStockTableQnt(model, choosenRow, row);
+					model.removeRow(tbChoosen.getSelectedRow());
+				}
+			}
+		});
+		
+		btnRemoveAll.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
+				DefaultTableModel dtm = (DefaultTableModel) tbStock.getModel();
+				ArrayList<String> its = msh.getTableDataToStringArray(tbChoosen);
+				int chosenRow, stRow;
+				for(int j = 0; j < its.size(); j++){
+					chosenRow = msh.getSelectedItemRow(model, its.get(j));
+					stRow = msh.getSelectedItemRow(dtm, its.get(j));
+					if(chosenRow != -1)
+						updateStockTableQnt(model, chosenRow, stRow);
+				}
+				
+				model.setRowCount(0);
+			}
+		});
+		
+		/*		
+		JCheckBox chbAirfreshener = new JCheckBox(jl.get(cs.CBX_AIRFRESH).toString());
+		chbAirfreshener.setSelected(true);
+		chbAirfreshener.setBackground(color);
+		chbAirfreshener.setFont(fonts);
+		chbAirfreshener.setBounds(lblPrevX+6, lblPrevY+12,chbW-16, chbH);
+		frame.getContentPane().add(chbAirfreshener);
+		
+		JCheckBox chbTyreShine = new JCheckBox(jl.get(cs.CBX_AIRFRESH).toString());
+		chbTyreShine.setBackground(color);
+		chbTyreShine.setFont(fonts);
+		chbTyreShine.setBounds(lblPrevX+6, lblPrevY+34,chbW-16, chbH);
+		frame.getContentPane().add(chbTyreShine);
+	*/
+
+
+		createChoosenItemsTable(lblPrevX+6, lblPrevY ,lblW-80, lblH-60);
+	}
+	
+	protected void updateInvoiceLbl(String text) {
+		String invFor = jl.get(cs.LBL_INVOICE).toString();// lblForWho.getText();
+		invFor = invFor.replace(invFor.substring(invFor.indexOf(cs.AMP)+1), text);
+		lblForWho.setText(invFor);
+	}
+
+	protected void collectDataForInvoice() {
+//		TODO check for customer, add new
+
+		//Create new invoice, add to mng
+		
+		
 	}
 
 	private void populateCarTable(int x, int y, int w, int h) {
@@ -550,178 +757,6 @@ public class InvoiceAddEdit {
 		model.addRow(rowData);
 	}
 
-	private void createInvoicePreview() {
-		int lblX = 10, lblY = 30; 
-		int xOffset = 660;
-		int lblW = 540;
-		int  lblH = 280;
-
-		//PREVIEW
-		TitledBorder lblTB = createBorders(jl.get(cs.LBL_PREVIEW).toString());
-		int tx = lblX + xOffset;
-		JLabel lblPreview = new JLabel("");
-		lblPreview.setBorder(lblTB);
-		lblPreview.setFont(fonts);
-		lblPreview.setBounds(tx, lblY, lblW, lblH*2);
-		frame.getContentPane().add(lblPreview);
-
-		lblTB = createBorders("");
-		int lblPrevX = tx + 10, lblPrevY = lblY+14;
-		JLabel lblCompanyDetails = new JLabel(jl.get(cs.LBL_YOU).toString());
-		lblCompanyDetails.setBorder(lblTB);
-		lblCompanyDetails.setFont(fonts);
-		lblCompanyDetails.setHorizontalAlignment(SwingConstants.CENTER);
-		lblCompanyDetails.setBounds(lblPrevX, lblPrevY, lblW/4, lblH/4);
-		frame.getContentPane().add(lblCompanyDetails);
-		
-		lblTB = createBorders("");
-		JLabel lblLOGO = new JLabel(jl.get(cs.LBL_LOGO).toString());
-		lblLOGO.setBorder(lblTB);
-		lblLOGO.setFont(fonts);
-		lblLOGO.setHorizontalAlignment(SwingConstants.CENTER);
-		lblPrevX = lblPrevX+lblCompanyDetails.getWidth()+10;
-		lblLOGO.setBounds(lblPrevX, lblPrevY, lblW/2, lblH/4);
-		frame.getContentPane().add(lblLOGO);
-		
-		lblTB = createBorders("");
-		JLabel lblDate = new JLabel(jl.get(cs.LBL_DATE).toString());
-		lblDate.setBorder(lblTB);
-		lblDate.setHorizontalAlignment(SwingConstants.CENTER);
-		lblDate.setFont(fonts);
-		lblPrevX = lblPrevX+lblLOGO.getWidth()+10;
-		lblDate.setBounds(lblPrevX, lblPrevY, lblW/6, lblH/4);
-		frame.getContentPane().add(lblDate);
-		
-		lblPrevX = tx + 10;
-		lblForWho = new JLabel(jl.get(cs.LBL_INVOICE).toString());
-		lblForWho.setBorder(lblTB);
-		lblForWho.setFont(fonts);
-		lblPrevY = lblPrevY + lblDate.getHeight() + 10;
-		lblForWho.setBounds(lblPrevX, lblPrevY, lblW-16, lblH/4);
-		frame.getContentPane().add(lblForWho);
-		
-		lblTotal = new JLabel(jl.get(cs.LBL_TOTAL).toString());
-		lblTotal.setBorder(lblTB);
-		lblTotal.setFont(fonts_title);
-		lblTotal.setHorizontalAlignment(SwingConstants.CENTER);
-		int lblTotX = lblPrevX + 200;
-		lblPrevY = lblPrevY + lblForWho.getHeight() + 300;
-		lblTotal.setBounds(lblTotX, lblPrevY, lblW/2, lblH/4);
-		frame.getContentPane().add(lblTotal);
-		
-		// CHECKBOXES & RADIO BUTTONS
-		JLabel lblFreebies = new JLabel("");
-		int chbW = 160, chbH = 24;
-		lblFreebies.setBounds(lblPrevX, lblPrevY, chbW, chbH*4);
-		Border b7 = BorderFactory.createLineBorder(color);
-		TitledBorder border7 = BorderFactory.createTitledBorder(b7, jl.get(cs.LBL_DISCOUNT).toString());
-		lblFreebies.setBorder(border7);
-		frame.getContentPane().add(lblFreebies);
-		
-		tfDiscount = new JTextField();
-		tfDiscount.setFont(fonts);
-		tfDiscount.setBounds(lblPrevX+8, lblPrevY+16, chbW/2+4, chbH);
-		frame.getContentPane().add(tfDiscount);
-		
-		rbPercent = new JRadioButton(cs.PERCENT, false);
-		rbPercent.setFont(fonts);
-		rbPercent.setBounds(lblPrevX+8, lblPrevY+42, chbW/4, chbH);
-		frame.getContentPane().add(rbPercent);
-		
-		rbMoney = new JRadioButton(cs.EURO, true);
-		rbMoney.setFont(fonts);
-		rbMoney.setBounds(lblPrevX+rbPercent.getWidth()+12, lblPrevY+42, chbW/4, chbH);
-		frame.getContentPane().add(rbMoney);
-		
-		radioGroup = new ButtonGroup();
-		radioGroup.add(rbMoney);
-		radioGroup.add(rbPercent);
-		
-		rbMoney.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				isDiscount = true;
-				double sum = calculateSum();
-				sum = applyDiscount(sum);
-				lblTotal.setText("€ "+df.format(sum));
-			}
-		});
-		rbPercent.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				isDiscount = false;
-				double sum = calculateSum();
-				sum = applyDiscount(sum);
-				lblTotal.setText("€ "+df.format(sum));
-			}
-		});
-
-
-		// BUTTONS
-		JButton btnRemove = new JButton(cs.MINUS);
-		btnRemove.setForeground(Color.YELLOW);
-		btnRemove.setFont(fonts);
-		btnRemove.setBackground(new Color(204, 0, 0));
-		int btnX = (int) (lblPrevX + (lblW*0.88));
-		lblPrevY = lblForWho.getY()+ lblForWho.getHeight()+10;
-		btnRemove.setBounds(btnX, lblPrevY, (int) (cn.BACK_BTN_WIDTH*0.37), (int) (cn.BACK_BTN_HEIGHT*0.8));
-		frame.getContentPane().add(btnRemove);
-		
-		JButton btnRemoveAll = new JButton(cs.MINUS+" "+cs.MINUS);
-		btnRemoveAll.setForeground(Color.YELLOW);
-		btnRemoveAll.setFont(fonts);
-		btnRemoveAll.setBackground(new Color(204, 0, 0));
-		int ty  = lblPrevY +btnRemove.getHeight()+ 10;
-		btnRemoveAll.setBounds(btnX, ty, (int) (cn.BACK_BTN_WIDTH*0.37), (int) (cn.BACK_BTN_HEIGHT*0.8));
-		frame.getContentPane().add(btnRemoveAll);
-		
-		btnRemove.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-//				TODO 
-				if(item != null && tbChoosen.getSelectedRow() != -1){
-					DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
-					int choosenRow = tbChoosen.getSelectedRow();
-					int row = msh.compareItemKeyMap(item, selectedRowItem);
-					updateStockTableQnt(model, choosenRow, row);
-					model.removeRow(tbChoosen.getSelectedRow());
-				}
-			}
-		});
-		
-		btnRemoveAll.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
-				DefaultTableModel dtm = (DefaultTableModel) tbStock.getModel();
-				ArrayList<String> its = msh.getTableDataToStringArray(tbChoosen);
-				int chosenRow, stRow;
-				for(int j = 0; j < its.size(); j++){
-					chosenRow = msh.getSelectedItemRow(model, its.get(j));
-					stRow = msh.getSelectedItemRow(dtm, its.get(j));
-					if(chosenRow != -1)
-						updateStockTableQnt(model, chosenRow, stRow);
-				}
-				
-				model.setRowCount(0);
-			}
-		});
-		
-		/*		
-		JCheckBox chbAirfreshener = new JCheckBox(jl.get(cs.CBX_AIRFRESH).toString());
-		chbAirfreshener.setSelected(true);
-		chbAirfreshener.setBackground(color);
-		chbAirfreshener.setFont(fonts);
-		chbAirfreshener.setBounds(lblPrevX+6, lblPrevY+12,chbW-16, chbH);
-		frame.getContentPane().add(chbAirfreshener);
-		
-		JCheckBox chbTyreShine = new JCheckBox(jl.get(cs.CBX_AIRFRESH).toString());
-		chbTyreShine.setBackground(color);
-		chbTyreShine.setFont(fonts);
-		chbTyreShine.setBounds(lblPrevX+6, lblPrevY+34,chbW-16, chbH);
-		frame.getContentPane().add(chbTyreShine);
-	*/
-
-
-		createChoosenItemsTable(lblPrevX+6, lblPrevY ,lblW-80, lblH-60);
-	}
-	
 	protected double applyDiscount(double sum) {
 		if(sum > 0 && !tfDiscount.getText().isEmpty()){
 			discount = Double.parseDouble(tfDiscount.getText());
@@ -746,6 +781,7 @@ public class InvoiceAddEdit {
 	}
 
 	protected boolean isUpdateRequred() {
+		//TODO check if this method doesn't need any improvements, check by codes?
 		for(int i = 0; i < modTBchosen.getRowCount(); i++){
 			if(!modTBchosen.getValueAt(i, 0).toString().contains(cs.STAR) 
 					&& !modTBchosen.getValueAt(i, 0).toString().toUpperCase().contains(cs.WASH.toUpperCase())){
@@ -818,20 +854,19 @@ public class InvoiceAddEdit {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				int row = table.getSelectedRow();
+				String customer = "";
 				if(row != -1) {
-					String customer = (table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString());
-					String invFor = lblForWho.getText();
-					invFor = invFor.replace(invFor.substring(invFor.indexOf(cs.AMP)+1), customer);
-					lblForWho.setText(invFor);
-				} 
-				
+					if(!(table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString()).isEmpty())
+						customer = (table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString());
+					if(!customer.isEmpty())
+						updateInvoiceLbl(customer);
+				} 			
 			}
 		};
 		return listener;
 	}
 	
 	private ListSelectionListener createStockTableListener(JTable table) {
-		// TODO Auto-generated method stub
 		ListSelectionListener listener = new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
@@ -877,6 +912,9 @@ public class InvoiceAddEdit {
 	
 	public void setIsVisible(boolean b){
 		lastInvoice = dm.selectData(cdb.SELECT_LAST_INVOICE);
+		int li = Integer.parseInt(lastInvoice);
+		li++;
+		lastInvoice = ""+(li);
 		initialize();
 		frame.setVisible(b);
 		setLastInvoiceNum();
