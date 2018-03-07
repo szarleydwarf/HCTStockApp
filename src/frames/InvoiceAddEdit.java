@@ -52,6 +52,7 @@ import managers.CustomersManager;
 import managers.DatabaseManager;
 import managers.InvoiceManager;
 import managers.StockManager;
+import objects.Customer;
 import objects.Item;
 import utility.DateHelper;
 import utility.Logger;
@@ -108,6 +109,8 @@ public class InvoiceAddEdit {
 	private String date;
 
 	private JTextField tfCustomers;
+
+	protected Customer customer;
 	
 	/**
 	 * Launch the application.
@@ -354,7 +357,7 @@ public class InvoiceAddEdit {
                 String text = tfBrands.getText();
 
                 if (text.trim().length() == 0) rSortCars.setRowFilter(null);
-                else rSortCars.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                else rSortCars.setRowFilter(RowFilter.regexFilter(cs.REGEX_FILTER + text));
             }
 
             @Override
@@ -362,7 +365,7 @@ public class InvoiceAddEdit {
                 String text = tfBrands.getText();
 
                 if (text.trim().length() == 0) rSortCars.setRowFilter(null);
-                else rSortCars.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                else rSortCars.setRowFilter(RowFilter.regexFilter(cs.REGEX_FILTER + text));
             }
 
             @Override
@@ -387,7 +390,7 @@ public class InvoiceAddEdit {
 				String text = tfCustomers.getText();
 //		TODO		
 				if (text.trim().length() == 0) rSortCustomer.setRowFilter(null);
-				else rSortCustomer.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+				else rSortCustomer.setRowFilter(RowFilter.regexFilter(cs.REGEX_FILTER + text));
 				updateInvoiceLbl(text);
 			}
 			
@@ -396,7 +399,7 @@ public class InvoiceAddEdit {
 				String text = tfCustomers.getText();
 				
 				if (text.trim().length() == 0) rSortCustomer.setRowFilter(null);
-				else  rSortCustomer.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+				else  rSortCustomer.setRowFilter(RowFilter.regexFilter(cs.REGEX_FILTER + text));
 				updateInvoiceLbl(text);
 			}
 			
@@ -422,7 +425,7 @@ public class InvoiceAddEdit {
                 String text = tfSearch.getText();
 
                 if (text.trim().length() == 0) rSortStock.setRowFilter(null);
-                else rSortStock.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                else rSortStock.setRowFilter(RowFilter.regexFilter(cs.REGEX_FILTER + text));
             }
 
             @Override
@@ -430,7 +433,7 @@ public class InvoiceAddEdit {
                 String text = tfSearch.getText();
 
                 if (text.trim().length() == 0) rSortStock.setRowFilter(null);
-                else rSortStock.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                else rSortStock.setRowFilter(RowFilter.regexFilter(cs.REGEX_FILTER + text));
             }
 
             @Override
@@ -626,7 +629,18 @@ public class InvoiceAddEdit {
 
 	protected void collectDataForInvoice() {
 //		TODO check for customer, add new
-
+		System.out.println("collect ");	
+		if(customer != null){
+		System.out.println("C1: "+customer.toString());	
+		}else{
+			String str = lblForWho.getText();
+			str = str.substring(str.indexOf(cs.AMP)+1);
+			System.out.println("Str: "+str);	
+			String[] t = msh.splitString(str, cs.COMA);
+			for(String s : t)
+				System.out.println("s: "+s);
+			
+		}
 		//Create new invoice, add to mng
 		
 	}
@@ -849,16 +863,9 @@ public class InvoiceAddEdit {
 					String car = (table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString());
 					setBrandLbl(car);
 				} 
-
 			}
 	    };
 	    return listener;
-	}
-
-	protected void setBrandLbl(String car) {
-		String invFor = lblForWho.getText();
-		invFor = invFor.replace(invFor.substring(invFor.indexOf(cs.AT)+1, invFor.indexOf(cs.AMP)-1), car);
-		lblForWho.setText(invFor);
 	}
 
 	private ListSelectionListener createCustomerTableListener(JTable table) {
@@ -866,18 +873,38 @@ public class InvoiceAddEdit {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				int row = table.getSelectedRow();
-				String customer = "";
+				String customerStr = "";
 				if(row != -1) {
-					if(!(table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString()).isEmpty())
-						customer = (table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString());
-					if(!customer.isEmpty())
-						updateInvoiceLbl(customer);
+					if(!(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.NAME_C_COLUMN).toString()).isEmpty()){
+						customerStr = (table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.NAME_C_COLUMN).toString()) + ",";
+					}
+					
+					if(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.VAT_COLUMN) != null &&
+							!(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.VAT_COLUMN).toString()).isEmpty()){
+						customerStr += (table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.VAT_COLUMN).toString());
+					}
+					
+					if(!customerStr.isEmpty()){
+						customerStr = msh.removeLastChar(customerStr, cs.COMA);
+						updateInvoiceLbl(customerStr);
+						customer = null;
+						customer = getCustomer(customerStr);
+					}
 				} 			
 			}
 		};
 		return listener;
 	}
 	
+	protected Customer getCustomer(String customerStr) {
+		String[] t = msh.splitString(customerStr, cs.COMA);
+		Customer c = null;
+
+		if(t != null)
+			c = cm.find(t);
+		return c;
+	}
+
 	private ListSelectionListener createStockTableListener(JTable table) {
 		ListSelectionListener listener = new ListSelectionListener() {
 			@Override
@@ -893,6 +920,12 @@ public class InvoiceAddEdit {
 			}
 	    };
 	    return listener;
+	}
+
+	protected void setBrandLbl(String car) {
+		String invFor = lblForWho.getText();
+		invFor = invFor.replace(invFor.substring(invFor.indexOf(cs.AT)+1, invFor.indexOf(cs.AMP)-1), car);
+		lblForWho.setText(invFor);
 	}
 
 	protected Item getItem(String string) {

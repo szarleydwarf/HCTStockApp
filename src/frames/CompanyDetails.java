@@ -350,7 +350,7 @@ public class CompanyDetails {
 					frame.dispose();
 					MainView.main(null);
 				} else{
-		        	info = msh.removeLastChar(info, ',');
+		        	info = msh.removeLastChar(info, cs.COMA);
 		        	JOptionPane.showMessageDialog(frame, info);
 				}
 			}

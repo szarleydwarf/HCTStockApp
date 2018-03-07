@@ -21,6 +21,7 @@ import javax.swing.table.DefaultTableModel;
 import org.json.simple.JSONObject;
 
 import consts.ConstStrings;
+import objects.Customer;
 import objects.Item;
 
 
@@ -113,8 +114,9 @@ public class MiscHelper {
 	    }
 	}
 
-	public String removeLastChar(String str, char c) {
-		return str.substring(0, str.lastIndexOf(c));
+	public String removeLastChar(String str, String c) {
+//		return str.substring(0, str.lastIndexOf(c));
+		return str.replaceAll("("+c+")*$", "");
 	}
 
 	public Color getColor(String str, ConstStrings cs, JSONObject js) {
@@ -170,6 +172,24 @@ public class MiscHelper {
 			}
 		}
 		return -1;
+	}
+
+	public String[] splitString(String str, String c) {
+		String[] t = new String[2];
+		if(str.contains(c)){
+			System.out.println("1. "+str.matches(cs.SPECIAL_CHAR_PATTERN));
+			
+			if(str.matches(cs.SPECIAL_CHAR_PATTERN)){
+				System.out.println("2. "+str);
+				str = str.replaceAll(cs.REPLACE_CHAR_PATTERN, "");
+						System.out.println("3. "+str);
+//				str = str.substring(str.indexOf(cs.SPECIAL_CHAR_PATTERN)+1);
+			}
+			t = str.split(c, -1);
+		} else {
+			t[0] = str;
+		}	
+		return t;
 	}
 
 }

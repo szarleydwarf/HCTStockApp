@@ -65,6 +65,20 @@ public class CustomersManager {
 		return false;
 	}
 	
+	public Customer find(String[] str){
+		for(Customer c : this.list){
+			if(c instanceof CustomerBusiness){
+				if(((CustomerBusiness) c).find(str[0], str[1]))
+					return c;
+			}
+
+			if(c instanceof CustomerInd){
+				if(((CustomerInd) c).find(str[0]))
+					return c;
+			}
+		}
+		return null;
+	}
 	//edit
 	
 	//print

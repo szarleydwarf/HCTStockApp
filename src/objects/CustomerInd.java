@@ -140,35 +140,19 @@ public class CustomerInd extends Customer{
 	   }
        return false;
    }
-/*Not sure yet if I will need this
- * 	@Override
-	public int compare(Player p1, Player p2) 
-	{
-		if(sortType == SORT_BY_NAME)
-		{
-			return sortOrder * p1.getName().compareTo(p2.getName());
-		}
-		else
-		{
-			if(p1.getDob().before(p2.getDob()))
-				return -sortOrder;
-			else if(p1.getDob().after(p2.getDob()))
-				return sortOrder;
-			else
-				return 0;
-		}
-	}
-	*/
-
 
 	@Override
 	public String[] getCasData() {
-		String[] data = new String[9];
+		String[] data = new String[2];
 		data[0] = this.getCar().getRegistration();
 		data[1] = "I";
 		return data;
 	}
 
+	public boolean find(String string) {
+		return this.getCar().getRegistration().equals(string);
+	}
+	
 	// GETTERS & SETTERS
 	public Car getCar() {
 		return car;
@@ -185,4 +169,5 @@ public class CustomerInd extends Customer{
 	public void setIdINT(int idINT) {
 		this.idINT = idINT;
 	}
+
 }

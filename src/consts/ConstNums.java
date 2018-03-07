@@ -6,9 +6,14 @@ public class ConstNums {
 	public static final int FRAME_Y_BOUND = 10;
 
 	public final long SPLASHSCREEN_TIME = 5000;
+	
 	public final int NAME_COLUMN = 1;
 	public final int PRICE_COLUMN = 2;
 	public final int QNT_COLUMN = 3;
+
+	public final int NAME_C_COLUMN = 0;
+	public final int TYPE_C_COLUMN = 1;
+	public final int VAT_COLUMN = 2;
 	
 	// costs and charges
 	public final double VAT = 1.23;

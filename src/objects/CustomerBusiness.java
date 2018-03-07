@@ -144,6 +144,10 @@ public class CustomerBusiness extends Customer {
     	return this.getId() + " '" + this.getCompName() + "', '" + this.getCompAddress() + "', " + this.getVATTaxNUM() + ", ns: " + this.getNumOfServices() + ", cID: " + cars;
     }
 
+    public boolean find(String str1, String str2) {
+		return (this.getCompName().equals(str1) && this.getVATTaxNUM().equals(str2));
+	}
+
 	@Override
 	public boolean compare(Object c) {
   	   if (c == null) return false;

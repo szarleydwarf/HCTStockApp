@@ -40,6 +40,9 @@ public class ConstStrings {
 
 	//PATTERNS AND FORMATS
 	public final String DECIMAL_PATTERN = "^-?([0-9]*)\\.([0-9]*)+$";	
+	public final String REGEX_FILTER = "(?i).*\\Q";	
+	public final String REPLACE_CHAR_PATTERN = "[^a-zA-Z0-9\\d\\s,]";	
+	public final String SPECIAL_CHAR_PATTERN = "^.*[^a-zA-Z0-9\\d\\s,].*$";	
 	public final String INTEGER_PATTERN = "^-?\\d+$";
 	public final String DECIMAL_FORMAT_3_2 = "000.00";
 	public final String DECIMAL_FORMAT_5_2 = "00000.00";
@@ -64,6 +67,8 @@ public class ConstStrings {
 	public final String PLUS = "+";
 	public final String PERCENT = "%";
 	public final String MINUS = "-";
+	public final String COMA = ",";
+	public final String DOT = ".";
 
 	
 	// JSON USER FILE
@@ -77,6 +82,7 @@ public class ConstStrings {
 	public final String JSON_EMAIL = "email";
 	public final String JSON_WWW = "wwww";
 	public final String JSON_FB = "fb";
+	public final String LOGO_PATH = "logo path";
 	
 	// JSON SETTINGS FILE
 	public final String APP_COLOR_R = "app color R";
