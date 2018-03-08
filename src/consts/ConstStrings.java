@@ -1,10 +1,12 @@
 package consts;
 
 import javax.swing.ComboBoxModel;
+import javax.swing.Icon;
 
 public class ConstStrings {
 	public final String ENTER_DETAILS = "company details";
 	public final String APP = "app";
+	public final String CHECKBOX_LBL = "I/B";
 
 	//DATE RELATED
 	public final String[] YEARS_NO_STRING = {"2017", "2018", "2019", "2020"};
@@ -83,6 +85,7 @@ public class ConstStrings {
 	public final String JSON_WWW = "wwww";
 	public final String JSON_FB = "fb";
 	public final String LOGO_PATH = "logo path";
+	public final String NUMBER_OF_SERVICES = "number of services";
 	
 	// JSON SETTINGS FILE
 	public final String APP_COLOR_R = "app color R";
@@ -114,7 +117,7 @@ public class ConstStrings {
 	public final String LBL_YOU = "you";
 	public final String LBL_LOGO= "logo";
 	public final String LBL_DATE = "date";
-	public final String LBL_INVOICE = "invoice for";
+	public final String LBL_INVOICE_FOR = "invoice for";
 	
 	public final String LBL_NAME = "name";
 	public final String LBL_CODE = "code";
@@ -127,12 +130,16 @@ public class ConstStrings {
 	public final String LBL_SUGGESTED_COST = "s_cost";
 	public final String LBL_SUGGESTED_PRICE = "s_price";
 	public final String LBL_CUSTOMER = "customer";
+	public final String LBL_COMPANY = "company";
 	public final String LBL_STOCK = "stock_lbl";
 	public final String LBL_PREVIEW = "preview";
 	public final String LBL_DISCOUNT = "discount";
 	public final String LBL_TOTAL = "total";
 
+	public final String TF_CUST_HINT = "tf cust hint";
+
 	public final String SEARCH_TEXT_FIELD_FRAZE = "search";
+	public final String BRAND = "brand";
 
 	public final String[] LANG = {"ENGLISH", "POLISH"};
 	

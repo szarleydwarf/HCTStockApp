@@ -12,9 +12,11 @@
 
 	"logo path":"resources\\img\\HCT LOGO up 360x180.png",
 
-	"vat rate":"",
-	"profit rate":"",
-	"recycling charge":"",
+	"number of services":"10",
+
+	"vat rate":"1.23",
+	"profit rate":"1.35",
+	"recycling charge":"3.50",
 	"transport charge 1":"",
 	"transport charge 2":"",
 	"transport charge 3":"",

@@ -177,7 +177,7 @@ public class MainView {
 	private static void loadClasses() {
 		System.out.println("loadClasses");
 		newItemFrame = new ItemAddNew(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
-		newInvoice = new InvoiceAddEdit(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, dh, stmng, cmng, invmng, carBrandList, df_3_2);
+		newInvoice = new InvoiceAddEdit(window, dm, cdb, cs, cn, logger, jSettings , jLang, jUser, msh, dh, stmng, cmng, invmng, carBrandList, df_3_2);
 		stockFrame = new DisplayStock(window, newItemFrame, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
 	}
 
@@ -450,6 +450,14 @@ public class MainView {
 	
 	public void setIsVisible(boolean b){
 		frame.setVisible(b);
+	}
+
+	public static HashMap<String, String> getCars_BI() {
+		return cars_BI;
+	}
+
+	public static HashMap<String, String> getCars_IB() {
+		return cars_IB;
 	}
 
 }

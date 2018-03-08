@@ -53,6 +53,8 @@ import managers.DatabaseManager;
 import managers.InvoiceManager;
 import managers.StockManager;
 import objects.Customer;
+import objects.CustomerBusiness;
+import objects.CustomerInd;
 import objects.Item;
 import utility.DateHelper;
 import utility.Logger;
@@ -111,6 +113,10 @@ public class InvoiceAddEdit {
 	private JTextField tfCustomers;
 
 	protected Customer customer;
+
+	private JCheckBox chbInd;
+
+	private JSONObject ju;
 	
 	/**
 	 * Launch the application.
@@ -137,11 +143,13 @@ public class InvoiceAddEdit {
 	}
 
 	public InvoiceAddEdit(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
-			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, StockManager SM, CustomersManager cMng, InvoiceManager invMng, 
+			JSONObject jSettings, JSONObject jLang, JSONObject jUser, 
+			MiscHelper mSH, DateHelper DH, StockManager SM, CustomersManager cMng, InvoiceManager invMng, 
 			ArrayList<String> carList, DecimalFormat df_3_2) {
 		this.mainView = main;
 		this.jl = jLang;
 		this.js = jSettings;
+		this.ju = jUser;
 
 		this.dm = dmn;
 		this.log = logger;
@@ -208,15 +216,22 @@ public class InvoiceAddEdit {
 		tfBrands.setBounds(lblX+6, lblY+20, brandW, lbltfH);
 		frame.getContentPane().add(tfBrands);
 
-		tfCustomers = new JTextField();
+		tfCustomers = new JTextField(jl.get(cs.TF_CUST_HINT).toString());
 		tfCustomers.setFont(fonts);
 		tfCustomers.setColumns(10);
-		int custW = (int)(lblW*0.7);
+		int custW = (int)(lblW*0.6);
 		int custX = lblX+tfBrands.getWidth()+10;
 		int custY = lblY+20;
 		tfCustomers.setBounds(custX, custY, custW, lbltfH);
 		frame.getContentPane().add(tfCustomers);
 		
+		chbInd = new JCheckBox(cs.CHECKBOX_LBL);
+		chbInd.setFont(fonts);
+		chbInd.setBackground(color);
+		chbInd.setSelected(true);
+		int chbX = custX + tfCustomers.getWidth()+10;
+		chbInd.setBounds(chbX, custY, 50, lbltfH);
+		frame.getContentPane().add(chbInd);
 		
 		lblTB = createBorders(jl.get(cs.LBL_STOCK).toString());
 		int tY = lblY + yOffset;
@@ -262,6 +277,8 @@ public class InvoiceAddEdit {
 	
 		// TABLES
 		int tableH = lblH-60;
+		custW = (int)(lblW*0.7);
+
 		createInvoicePreview();
 		populateCustomerTable(custX, custY + 30, custW, tableH);
 		populateStockTable(lblX+6, tY+50, stockW, tableH);
@@ -312,18 +329,26 @@ public class InvoiceAddEdit {
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO
 				System.out.println("Saving !");
-				boolean update = isUpdateRequred();
-				collectDataForInvoice();
+				if(!checkInvoiceForString()){
+					String toFill = getFieldsToFill();
+					JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
+				} else {
+					boolean update = isUpdateRequred();
+					collectDataForInvoice();
 //				TODO update database
 				
 //				TODO save new invoice to database  - add to invoice manager
-				
+				}
 			}
 		});
 		
 		btnPrint.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO
+				if(!checkInvoiceForString()){
+					String toFill = getFieldsToFill();
+					JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
+				}
 				System.out.println("Printing !");
 				boolean update = isUpdateRequred();
 				collectDataForInvoice();
@@ -388,7 +413,6 @@ public class InvoiceAddEdit {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
 				String text = tfCustomers.getText();
-//		TODO		
 				if (text.trim().length() == 0) rSortCustomer.setRowFilter(null);
 				else rSortCustomer.setRowFilter(RowFilter.regexFilter(cs.REGEX_FILTER + text));
 				updateInvoiceLbl(text);
@@ -397,7 +421,6 @@ public class InvoiceAddEdit {
 			@Override
 			public void removeUpdate(DocumentEvent e) {
 				String text = tfCustomers.getText();
-				
 				if (text.trim().length() == 0) rSortCustomer.setRowFilter(null);
 				else  rSortCustomer.setRowFilter(RowFilter.regexFilter(cs.REGEX_FILTER + text));
 				updateInvoiceLbl(text);
@@ -444,7 +467,8 @@ public class InvoiceAddEdit {
 
 
 	}
-//END OF INITIALIZE
+
+	//END OF INITIALIZE
 	private void createInvoicePreview() {
 		int lblX = 10, lblY = 30; 
 		int xOffset = 660;
@@ -488,7 +512,7 @@ public class InvoiceAddEdit {
 		frame.getContentPane().add(lblDate);
 		
 		lblPrevX = tx + 10;
-		lblForWho = new JLabel(jl.get(cs.LBL_INVOICE).toString());
+		lblForWho = new JLabel(jl.get(cs.LBL_INVOICE_FOR).toString());
 		lblForWho.setBorder(lblTB);
 		lblForWho.setFont(fonts);
 		lblPrevY = lblPrevY + lblDate.getHeight() + 10;
@@ -617,32 +641,48 @@ public class InvoiceAddEdit {
 	}
 //END OF INVOICE PREVIEW
 
-	protected void updateInvoiceLbl(String text) {
-		String car = lblForWho.getText().substring(lblForWho.getText().indexOf(cs.AT)+1, lblForWho.getText().indexOf(cs.AMP)-1);
-		String invFor = jl.get(cs.LBL_INVOICE).toString();
-
-		invFor = invFor.replace(invFor.substring(invFor.indexOf(cs.AMP)+1), text);
-		lblForWho.setText(invFor);
-		this.setLastInvoiceNum();
-		this.setBrandLbl(car);
-	}
-
 	protected void collectDataForInvoice() {
 //		TODO check for customer, add new
 		System.out.println("collect ");	
 		if(customer != null){
-		System.out.println("C1: "+customer.toString());	
+			//update no of services
+			if(customer.getNumOfServices()>= Integer.parseInt(ju.get(cs.NUMBER_OF_SERVICES).toString())){
+				customer.setNumOfServices(0);
+				customer.updateRecord();
+			}
+			//if no of services >=10??? reset and display msg to user
+			System.out.println("C1: "+customer.toString());	
 		}else{
 			String str = lblForWho.getText();
+			String car = str.substring(str.indexOf(cs.AT)+1, str.indexOf(cs.AMP)-1);
 			str = str.substring(str.indexOf(cs.AMP)+1);
-			System.out.println("Str: "+str);	
-			String[] t = msh.splitString(str, cs.COMA);
-			for(String s : t)
-				System.out.println("s: "+s);
+			int brand = findBrand(car);
+			if(this.chbInd.isSelected()){
+				System.out.println("ind");
+				customer =  new CustomerInd(this.dm, this.cdb, this.cn, this.cs, 1, str, brand);
+			}else{
+				System.out.println("bis");
+				String[] t = msh.splitString(str, cs.COMA);
+				String vat="", name="", address="";
+				if(t!=null){
+					if(t[0]!= null && !t[0].isEmpty()) vat = t[0];
+					if(t[1]!= null && !t[1].isEmpty()) name = t[1];
+					if(t[2]!= null && !t[2].isEmpty()) address = t[2];
+				}
+				customer =  new CustomerBusiness(this.dm, this.cdb, this.cn, this.cs, 1, vat, name, address);
+			}
+			
+			this.cm.addCustomer(customer);
+			
+			System.out.println("Str: "+customer.toString());	
 			
 		}
 		//Create new invoice, add to mng
 		
+	}
+
+	private int findBrand(String car) {
+		return Integer.parseInt(this.mainView.getCars_BI().get(car));
 	}
 
 	private void populateCarTable(int x, int y, int w, int h) {
@@ -717,6 +757,109 @@ public class InvoiceAddEdit {
 				lblTotal.setText("€ "+df.format(sum));
 			}			
 		});
+	}
+
+	private JTable createTable(String[][] data, String[] headings, String tbName, int firstCol, int secondCol) {
+		DefaultTableModel dm = new DefaultTableModel(data, headings);
+		JTable table = new JTable();
+		table.setFont(fonts);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.setModel(dm);
+		table.setName(tbName);
+
+		table.setPreferredScrollableViewportSize(new Dimension(500, 150));
+		table.setFillsViewportHeight(true);
+//		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+//		
+		table.getColumnModel().getColumn(0).setPreferredWidth(firstCol);
+		if(secondCol > 0)
+			table.getColumnModel().getColumn(1).setPreferredWidth(secondCol);
+		ListSelectionListener listener = null;
+		if(tbName == cs.STOCK_TB_NAME || tbName == cs.CHOSEN_TB_NAME)
+			listener = createStockTableListener(table);
+		else if(tbName == cs.CARS_TB_NAME)
+			listener = createCarTableListener(table);
+		else if(tbName == cs.CUSTOMER_TB_NAME)
+			listener = createCustomerTableListener(table);
+
+		table.getSelectionModel().addListSelectionListener(listener);
+		
+		JTableHeader header = table.getTableHeader();
+		header.setBackground(Color.black);
+		header.setForeground(Color.yellow);
+		
+		return table;
+	}
+
+	private String[][] populateDataArray(ArrayList<Item> list, String[][] data, int startIndex, int rowNumber){
+		int j = 0;
+		for(int i = startIndex; i < rowNumber; i++) {
+			data[i][0] = list.get(j).getCode();
+			data[i][1] = list.get(j).getName();
+			data[i][2] = ""+list.get(j).getPrice();
+			data[i][3] = ""+list.get(j).getQnt();
+			j++;
+		}		
+		return data;
+	}
+
+	private ListSelectionListener createCarTableListener(JTable table) {
+			ListSelectionListener listener = new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				int row = table.getSelectedRow();
+				if(row != -1) {
+					String car = (table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString());
+					setBrandLbl(car);
+				} 
+			}
+	    };
+	    return listener;
+	}
+
+	private ListSelectionListener createCustomerTableListener(JTable table) {
+		ListSelectionListener listener = new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				int row = table.getSelectedRow();
+				String customerStr = "";
+				if(row != -1) {
+					if(!(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.NAME_C_COLUMN).toString()).isEmpty()){
+						customerStr = (table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.NAME_C_COLUMN).toString()) + ",";
+					}
+					
+					if(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.VAT_COLUMN) != null &&
+							!(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.VAT_COLUMN).toString()).isEmpty()){
+						customerStr += (table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.VAT_COLUMN).toString());
+					}
+					
+					if(!customerStr.isEmpty()){
+						customerStr = msh.removeLastChar(customerStr, cs.COMA);
+						updateInvoiceLbl(customerStr);
+						customer = null;
+						customer = getCustomer(customerStr);
+					}
+				} 			
+			}
+		};
+		return listener;
+	}
+
+	private ListSelectionListener createStockTableListener(JTable table) {
+		ListSelectionListener listener = new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				item = null;
+				int row = table.getSelectedRow();
+				if(row != -1) {
+					item = getItem(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.NAME_COLUMN).toString());
+					if(item != null && table.getName().equals(cs.STOCK_TB_NAME)){
+						selectedRowItem.put(item,row);
+					}
+				}
+			}
+	    };
+	    return listener;
 	}
 	
 	protected double calculateSum() {
@@ -810,116 +953,40 @@ public class InvoiceAddEdit {
 		return false;
 	}
 
-	private JTable createTable(String[][] data, String[] headings, String tbName, int firstCol, int secondCol) {
-		DefaultTableModel dm = new DefaultTableModel(data, headings);
-		JTable table = new JTable();
-		table.setFont(fonts);
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.setModel(dm);
-		table.setName(tbName);
-
-		table.setPreferredScrollableViewportSize(new Dimension(500, 150));
-		table.setFillsViewportHeight(true);
-//		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-//		
-		table.getColumnModel().getColumn(0).setPreferredWidth(firstCol);
-		if(secondCol > 0)
-			table.getColumnModel().getColumn(1).setPreferredWidth(secondCol);
-		ListSelectionListener listener = null;
-		if(tbName == cs.STOCK_TB_NAME || tbName == cs.CHOSEN_TB_NAME)
-			listener = createStockTableListener(table);
-		else if(tbName == cs.CARS_TB_NAME)
-			listener = createCarTableListener(table);
-		else if(tbName == cs.CUSTOMER_TB_NAME)
-			listener = createCustomerTableListener(table);
-
-		table.getSelectionModel().addListSelectionListener(listener);
-		
-		JTableHeader header = table.getTableHeader();
-		header.setBackground(Color.black);
-		header.setForeground(Color.yellow);
-		
-		return table;
-	}
-
-	private String[][] populateDataArray(ArrayList<Item> list, String[][] data, int startIndex, int rowNumber){
-		int j = 0;
-		for(int i = startIndex; i < rowNumber; i++) {
-			data[i][0] = list.get(j).getCode();
-			data[i][1] = list.get(j).getName();
-			data[i][2] = ""+list.get(j).getPrice();
-			data[i][3] = ""+list.get(j).getQnt();
-			j++;
-		}		
-		return data;
-	}
-
-	private ListSelectionListener createCarTableListener(JTable table) {
-			ListSelectionListener listener = new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				int row = table.getSelectedRow();
-				if(row != -1) {
-					String car = (table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString());
-					setBrandLbl(car);
-				} 
-			}
-	    };
-	    return listener;
-	}
-
-	private ListSelectionListener createCustomerTableListener(JTable table) {
-		ListSelectionListener listener = new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				int row = table.getSelectedRow();
-				String customerStr = "";
-				if(row != -1) {
-					if(!(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.NAME_C_COLUMN).toString()).isEmpty()){
-						customerStr = (table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.NAME_C_COLUMN).toString()) + ",";
-					}
-					
-					if(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.VAT_COLUMN) != null &&
-							!(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.VAT_COLUMN).toString()).isEmpty()){
-						customerStr += (table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.VAT_COLUMN).toString());
-					}
-					
-					if(!customerStr.isEmpty()){
-						customerStr = msh.removeLastChar(customerStr, cs.COMA);
-						updateInvoiceLbl(customerStr);
-						customer = null;
-						customer = getCustomer(customerStr);
-					}
-				} 			
-			}
-		};
-		return listener;
-	}
-	
 	protected Customer getCustomer(String customerStr) {
 		String[] t = msh.splitString(customerStr, cs.COMA);
 		Customer c = null;
-
+//TODO - need to improve
 		if(t != null)
 			c = cm.find(t);
 		return c;
 	}
 
-	private ListSelectionListener createStockTableListener(JTable table) {
-		ListSelectionListener listener = new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				item = null;
-				int row = table.getSelectedRow();
-				if(row != -1) {
-					item = getItem(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.NAME_COLUMN).toString());
-					if(item != null && table.getName().equals(cs.STOCK_TB_NAME)){
-						selectedRowItem.put(item,row);
-					}
-				}
-			}
-	    };
-	    return listener;
+	protected boolean checkInvoiceForString() {
+		if(!lblForWho.getText().contains(jl.get(cs.LBL_CUSTOMER).toString()) && ! lblForWho.getText().contains(jl.get(cs.LBL_COMPANY).toString()))
+			return true;
+		return false;
+	}
+
+	protected String getFieldsToFill() {
+		String s = "";
+		if(lblForWho.getText().contains(jl.get(cs.LBL_CUSTOMER).toString()) )
+			s += jl.get(cs.BRAND).toString()+ " ";
+		
+		if(lblForWho.getText().contains(jl.get(cs.LBL_COMPANY).toString()) )
+			s +=jl.get(cs.LBL_COMPANY).toString();
+		
+		return s;
+	}
+
+	protected void updateInvoiceLbl(String text) {
+		String car = lblForWho.getText().substring(lblForWho.getText().indexOf(cs.AT)+1, lblForWho.getText().indexOf(cs.AMP)-1);
+		String invFor = jl.get(cs.LBL_INVOICE_FOR).toString();
+
+		invFor = invFor.replace(invFor.substring(invFor.indexOf(cs.AMP)+1), text);
+		lblForWho.setText(invFor);
+		this.setLastInvoiceNum();
+		this.setBrandLbl(car);
 	}
 
 	protected void setBrandLbl(String car) {
@@ -960,6 +1027,7 @@ public class InvoiceAddEdit {
 		int li = Integer.parseInt(lastInvoice);
 		li++;
 		lastInvoice = ""+(li);
+		customer = null;
 		initialize();
 		frame.setVisible(b);
 		setLastInvoiceNum();
