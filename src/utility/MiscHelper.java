@@ -12,10 +12,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import org.json.simple.JSONObject;
@@ -191,5 +194,11 @@ public class MiscHelper {
 		}	
 		return t;
 	}
+	
+	public TitledBorder createBorders(String title, Color color) {
+		Border b = BorderFactory.createLineBorder(color);
+		return BorderFactory.createTitledBorder(b, title);
+	}
+
 
 }

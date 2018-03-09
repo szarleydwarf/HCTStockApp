@@ -12,9 +12,10 @@ public class Car {
 	private DatabaseManager dm;
 	private ConstDB cdb;
 
-	int brand;
+	int brandID;
 	private String registration;
 	private int id;
+	private String brandS;
 	
 	/**
 	 * Constructor which will be used only for new  cars
@@ -28,7 +29,9 @@ public class Car {
 		this.dm = dm;
 		this.cdb = cdb;
 		
-		this.brand = brand;
+		this.brandID = brand;
+		this.brandS = this.dm.selectData(cdb.SELECT+cdb.TB_BRANDS_NAME+cdb.FROM+ConstDB.TableNames.TB_BRANDS.getName()+cdb.WHERE+cdb.ID+cdb.EQUAL+this.brandID);
+
 		this.registration = registration;
 		String q = this.cdb.SELECT + this.cdb.ID + this.cdb.FROM + ConstDB.TableNames.TB_CARS.getName() + this.cdb.ODER_BY + this.cdb.ID + this.cdb.DESC + this.cdb.LIMIT + " 1";
 		String s = this.dm.selectData(q);
@@ -51,14 +54,14 @@ public class Car {
 		this.dm = dm;
 		this.cdb = cdb;
 		
-		this.brand = brand;
+		this.brandID = brand;
+		this.brandS = this.dm.selectData(cdb.SELECT+cdb.TB_BRANDS_NAME+cdb.FROM+ConstDB.TableNames.TB_BRANDS.getName()+cdb.WHERE+cdb.ID+cdb.EQUAL+this.brandID);
 		this.registration = registration;
 		this.id = id;
 	}
 
 	public boolean saveNewInDatabase(){
 		String q = this.createInsertQuery();
-		System.out.println("car "+q);
 		return this.dm.addNewRecord(q);
 	}
 	
@@ -95,7 +98,7 @@ public class Car {
 	private String createUpdateQuery() {
 		return  cdb.UPDATE + "`"+ConstDB.TableNames.TB_CARS.getName()+"`" + cdb.SET 
 				+ "`"+cdb.TB_CARS_REGISTRATION+"`"+cdb.EQUAL+"'"+this.registration+"'" +","
-				+ "`"+cdb.TB_CARS_BRAND_ID+"`"+cdb.EQUAL+this.brand
+				+ "`"+cdb.TB_CARS_BRAND_ID+"`"+cdb.EQUAL+this.brandID
 				+ cdb.WHERE + "`"+ConstDB.TableNames.TB_CARS.getName()+"`.`"+cdb.ID+"` = '"+this.id+"'";
 	}
 
@@ -106,20 +109,25 @@ public class Car {
 
 	@Override
 	public String toString(){
-		String q = this.cdb.SELECT+this.cdb.TB_BRANDS_NAME + this.cdb.FROM+ConstDB.TableNames.TB_BRANDS.getName()
-		+this.cdb.WHERE+this.cdb.ID+this.cdb.EQUAL+this.brand;
-		String brand = this.dm.selectData(q);
-		return brand + " "  + this.registration;
+		return this.brandS + " "  + this.registration;
 	}
 
 	public int getBrand() {
-		return brand;
+		return brandID;
 	}
 
 	public void setBrand(int brand) {
-		this.brand = brand;
+		this.brandID = brand;
 	}
 
+	public String getBrandString() {
+		return this.brandS;
+	}
+	
+	public void setBrandString(String brand) {
+		this.brandS = brand;
+	}
+	
 	public String getRegistration() {
 		return registration;
 	}

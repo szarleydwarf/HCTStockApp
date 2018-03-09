@@ -41,6 +41,37 @@ public class CustomerBusiness extends Customer {
 	}
 
 	/**
+	 * Constructor for new business customers
+	 * @param dm
+	 * @param cdb
+	 * @param ci
+	 * @param cs
+	 * @param numOfServices
+	 * @param vatTaxNum
+	 * @param name
+	 * @param address
+	 */
+	public CustomerBusiness(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs,int numOfServices,
+			String vatTaxNum, String name, String address, int carBrand) {
+		super(dm, cdb, ci, cs, cs.CUST_BUS_CODE + "1", numOfServices);
+		
+		String q = cdb.SELECT + cdb.ID + cdb.FROM + ConstDB.TableNames.TB_BUSINESS.getName() + cdb.ODER_BY + cdb.ID + cdb.DESC + cdb.LIMIT + " 1";
+		String s = dm.selectData(q);
+		this.idINT = (!s.isEmpty()) ? Integer.parseInt(s) : 1;
+		this.idINT++;
+		String id = cs.CUST_BUS_CODE + this.idINT;
+		this.setId(id);
+		
+		this.setVATTaxNUM(vatTaxNum);
+		this.setCompName(name);
+		this.setCompAddress(address);
+		this.setCarIdList("");
+		
+//		TODO this should be handled by manager
+//this.saveNewInDatabase();
+	}
+	
+	/**
 	 * Constructor for customers saved in database
 	 * @param dm
 	 * @param cdb
@@ -141,7 +172,8 @@ public class CustomerBusiness extends Customer {
     			}
     		}
     	}
-    	return this.getId() + " '" + this.getCompName() + "', '" + this.getCompAddress() + "', " + this.getVATTaxNUM() + ", ns: " + this.getNumOfServices() + ", cID: " + cars;
+    	return this.getId() + " '" + this.getCompName() + "', '" + this.getCompAddress() + "', " + this.getVATTaxNUM() 
+    	+ ", ns: " + this.getNumOfServices() + ", car ID's: " + cars;
     }
 
     public boolean find(String str1, String str2) {

@@ -22,6 +22,13 @@ public class Invoice {
 	private String date;
 	private String file;
 
+	
+	/**
+	 * Constructor which will be used only for new  invoices
+	 * @param dm
+	 * @param cdb
+	 * @param cs
+	 */
 	public Invoice(DatabaseManager dm, ConstDB cdb, ConstStrings cs, ConstNums cn, 
 			String custID, boolean isBusiness, String list, double discount, boolean isPercent, double total, String date, String file){
 		this.dm = dm;
@@ -43,10 +50,14 @@ public class Invoice {
 		this.total = total;
 		this.date = date;
 		this.file = file;
-		
-//		this.addNew();
 	}
 
+	/**
+	 * Constructor which will be used for invoices list from database
+	 * @param dm
+	 * @param cdb
+	 * @param cs
+	 */
 	public Invoice(DatabaseManager dm, ConstDB cdb, ConstStrings cs, ConstNums cn, int id,
 			String custID, boolean isBusiness, String list, double discount, boolean isPercent, double total, String date, String file){
 		this.dm = dm;

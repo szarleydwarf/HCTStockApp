@@ -155,7 +155,7 @@ public class Item {
 	}
  
 	public String[] getItemAsDataShort(){
-		String[] data = new String[cs.STOCK_TB_HEADINGS_NO_COST.length];
+		String[] data = new String[cs.STOCK_TB_HEADINGS_SHORT.length];
 		data[0] = this.code;
 		data[1] = this.name;
 		data[2] = ""+this.price;

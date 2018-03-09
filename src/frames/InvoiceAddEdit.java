@@ -200,7 +200,7 @@ public class InvoiceAddEdit {
 		frame.getContentPane().add(lblTitle);
 		
 		// BORDERS
-		TitledBorder lblTB = createBorders(jl.get(cs.LBL_CUSTOMER).toString());
+		TitledBorder lblTB = msh.createBorders(jl.get(cs.LBL_CUSTOMER).toString(), Color.YELLOW);
 
 		// LABELS & TEXTFIELDS
 		JLabel lblCarList = new JLabel("");
@@ -233,7 +233,7 @@ public class InvoiceAddEdit {
 		chbInd.setBounds(chbX, custY, 50, lbltfH);
 		frame.getContentPane().add(chbInd);
 		
-		lblTB = createBorders(jl.get(cs.LBL_STOCK).toString());
+		lblTB = msh.createBorders(jl.get(cs.LBL_STOCK).toString(), Color.RED);
 		int tY = lblY + yOffset;
 		JLabel lblItemsList = new JLabel("");
 		lblItemsList.setBorder(lblTB);
@@ -332,6 +332,8 @@ public class InvoiceAddEdit {
 				if(!checkInvoiceForString()){
 					String toFill = getFieldsToFill();
 					JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
+				} else if (!tableHasElements()){
+					JOptionPane.showMessageDialog(frame, jl.get(cs.TABLE_EMPTY).toString());
 				} else {
 					boolean update = isUpdateRequred();
 					collectDataForInvoice();
@@ -467,8 +469,7 @@ public class InvoiceAddEdit {
 
 
 	}
-
-	//END OF INITIALIZE
+//END OF INITIALIZE
 	private void createInvoicePreview() {
 		int lblX = 10, lblY = 30; 
 		int xOffset = 660;
@@ -476,7 +477,7 @@ public class InvoiceAddEdit {
 		int  lblH = 280;
 
 		//PREVIEW
-		TitledBorder lblTB = createBorders(jl.get(cs.LBL_PREVIEW).toString());
+		TitledBorder lblTB = msh.createBorders(jl.get(cs.LBL_PREVIEW).toString(), Color.ORANGE);
 		int tx = lblX + xOffset;
 		JLabel lblPreview = new JLabel("");
 		lblPreview.setBorder(lblTB);
@@ -484,7 +485,7 @@ public class InvoiceAddEdit {
 		lblPreview.setBounds(tx, lblY, lblW, lblH*2);
 		frame.getContentPane().add(lblPreview);
 
-		lblTB = createBorders("");
+		lblTB = msh.createBorders("", Color.GRAY);
 		int lblPrevX = tx + 10, lblPrevY = lblY+14;
 		JLabel lblCompanyDetails = new JLabel(jl.get(cs.LBL_YOU).toString());
 		lblCompanyDetails.setBorder(lblTB);
@@ -493,7 +494,7 @@ public class InvoiceAddEdit {
 		lblCompanyDetails.setBounds(lblPrevX, lblPrevY, lblW/4, lblH/4);
 		frame.getContentPane().add(lblCompanyDetails);
 		
-		lblTB = createBorders("");
+		lblTB = msh.createBorders("", Color.GRAY);
 		JLabel lblLOGO = new JLabel(jl.get(cs.LBL_LOGO).toString());
 		lblLOGO.setBorder(lblTB);
 		lblLOGO.setFont(fonts);
@@ -502,7 +503,7 @@ public class InvoiceAddEdit {
 		lblLOGO.setBounds(lblPrevX, lblPrevY, lblW/2, lblH/4);
 		frame.getContentPane().add(lblLOGO);
 		
-		lblTB = createBorders("");
+		lblTB = msh.createBorders("", Color.GRAY);
 		JLabel lblDate = new JLabel(date);
 		lblDate.setBorder(lblTB);
 		lblDate.setHorizontalAlignment(SwingConstants.CENTER);
@@ -644,20 +645,76 @@ public class InvoiceAddEdit {
 	protected void collectDataForInvoice() {
 //		TODO check for customer, add new
 		System.out.println("collect ");	
-		if(customer != null){
-			//update no of services
-			if(customer.getNumOfServices()>= Integer.parseInt(ju.get(cs.NUMBER_OF_SERVICES).toString())){
-				customer.setNumOfServices(0);
-				customer.updateRecord();
+		checkCustomer();
+		boolean isBusiness = !this.chbInd.isSelected();
+		String listOfServices = getChoosenList();
+		if(!listOfServices.equals(""))
+			System.out.println("list "+listOfServices);
+		
+		createNewInvoice();
+//		boolean isBusiness, String list, 
+//		double discount, 
+//		boolean isPercent, double total, String date, String file
+	}
+
+	protected boolean tableHasElements() {
+		return this.tbChoosen.getRowCount() > 0 ? true : false;
+	}
+
+	private String getChoosenList() {
+		String s = "";
+		if(this.tableHasElements()){
+			int rc = this.tbChoosen.getRowCount();
+			int cc = this.tbChoosen.getColumnCount();
+			for(int i = 0; i < rc; i++){
+				//1*TR_225/45/18 GOALSTAR V78#@134.74;
+				s += this.tbChoosen.getModel().getValueAt(i, 3);
+				s += cs.STAR;
+				s += this.tbChoosen.getModel().getValueAt(i, 0);
+				s += cs.UNDERSCORE;
+				s += this.tbChoosen.getModel().getValueAt(i, 1);
+				s += cs.HASH;
+				s += this.tbChoosen.getModel().getValueAt(i, 4);
+				
+				s += cs.AT;
+				s += this.tbChoosen.getModel().getValueAt(i, 2);
+
+				s += ";";
 			}
-			//if no of services >=10??? reset and display msg to user
+		}
+		return s;
+	}
+
+	private void createNewInvoice() {
+	// TODO Auto-generated method stub
+		//Create new invoice, add to mng
+//		dm, ConstDB cdb, ConstStrings cs, ConstNums cn, 
+		
+	}
+
+	private void checkCustomer() {
+		if(customer != null){
+			int n;
+			if(customer.getNumOfServices()>= Integer.parseInt(ju.get(cs.NUMBER_OF_SERVICES).toString())){
+				n = 0;
+			} else {
+				n = customer.getNumOfServices();
+				n++;
+			}
+			customer.setNumOfServices(n);
+			customer.updateRecord();
 			System.out.println("C1: "+customer.toString());	
 		}else{
 			String str = lblForWho.getText();
 			String car = str.substring(str.indexOf(cs.AT)+1, str.indexOf(cs.AMP)-1);
 			str = str.substring(str.indexOf(cs.AMP)+1);
 			int brand = findBrand(car);
-			if(this.chbInd.isSelected()){
+			//TODO - add maybe checkup for comma in str?
+//			 add checkups for busines/indyvidual customer
+			if(str.contains(cs.COMA) && this.chbInd.isSelected() ){
+				JOptionPane.showMessageDialog(frame, jl.get(cs.COMA_ERROR).toString());
+				return;
+			}else if(this.chbInd.isSelected() && !str.contains(cs.COMA)){
 				System.out.println("ind");
 				customer =  new CustomerInd(this.dm, this.cdb, this.cn, this.cs, 1, str, brand);
 			}else{
@@ -669,20 +726,15 @@ public class InvoiceAddEdit {
 					if(t[1]!= null && !t[1].isEmpty()) name = t[1];
 					if(t[2]!= null && !t[2].isEmpty()) address = t[2];
 				}
-				customer =  new CustomerBusiness(this.dm, this.cdb, this.cn, this.cs, 1, vat, name, address);
+				if(brand > 0)
+					customer =  new CustomerBusiness(this.dm, this.cdb, this.cn, this.cs, 1, vat, name, address, brand);
+				else
+					customer =  new CustomerBusiness(this.dm, this.cdb, this.cn, this.cs, 1, vat, name, address);
+					
 			}
-			
 			this.cm.addCustomer(customer);
-			
 			System.out.println("Str: "+customer.toString());	
-			
-		}
-		//Create new invoice, add to mng
-		
-	}
-
-	private int findBrand(String car) {
-		return Integer.parseInt(this.mainView.getCars_BI().get(car));
+		}		
 	}
 
 	private void populateCarTable(int x, int y, int w, int h) {
@@ -709,10 +761,10 @@ public class InvoiceAddEdit {
 			}
 		}
 
-		String[][] data = new String [sm.getList().size()][cs.STOCK_TB_HEADINGS_NO_COST.length];
+		String[][] data = new String [sm.getList().size()][cs.STOCK_TB_HEADINGS_SHORT.length];
 		data = sm.getDataNoCost();
 		JTable table = new JTable();
-		table = createTable(data, cs.STOCK_TB_HEADINGS_NO_COST, cs.STOCK_TB_NAME, 40, 240);
+		table = createTable(data, cs.STOCK_TB_HEADINGS_SHORT, cs.STOCK_TB_NAME, 40, 240);
 		rSortStock = new TableRowSorter<>(table.getModel());
 		
 		table.setRowSorter(rSortStock);
@@ -739,11 +791,11 @@ public class InvoiceAddEdit {
 	
 	private void createChoosenItemsTable(int x, int y, int w, int h) {
 		ArrayList<Item>emptyArray = new ArrayList<Item>();
-		String[][] data = new String [0][this.cs.STOCK_TB_HEADINGS_NO_COST.length];
+		String[][] data = new String [0][this.cs.STOCK_TB_HEADINGS_SHORT.length];
 		data = populateDataArray(emptyArray, data, 0, 0);
 
 		tbChoosen = new JTable();
-		tbChoosen = createTable(data, this.cs.STOCK_TB_HEADINGS_NO_COST, cs.CHOSEN_TB_NAME, 40, 240);
+		tbChoosen = createTable(data, this.cs.STOCK_TB_HEADINGS_SHORT, cs.CHOSEN_TB_NAME, 40, 240);
 	
 		JScrollPane spInvoice = new JScrollPane(tbChoosen);
 		spInvoice.setBounds(x, y, w, h);
@@ -775,9 +827,10 @@ public class InvoiceAddEdit {
 		if(secondCol > 0)
 			table.getColumnModel().getColumn(1).setPreferredWidth(secondCol);
 		ListSelectionListener listener = null;
-		if(tbName == cs.STOCK_TB_NAME || tbName == cs.CHOSEN_TB_NAME)
+		if(tbName == cs.STOCK_TB_NAME || tbName == cs.CHOSEN_TB_NAME){
 			listener = createStockTableListener(table);
-		else if(tbName == cs.CARS_TB_NAME)
+			table.removeColumn(table.getColumnModel().getColumn(4));
+		}else if(tbName == cs.CARS_TB_NAME)
 			listener = createCarTableListener(table);
 		else if(tbName == cs.CUSTOMER_TB_NAME)
 			listener = createCustomerTableListener(table);
@@ -798,6 +851,7 @@ public class InvoiceAddEdit {
 			data[i][1] = list.get(j).getName();
 			data[i][2] = ""+list.get(j).getPrice();
 			data[i][3] = ""+list.get(j).getQnt();
+			data[i][4] = ""+list.get(j).getCost();
 			j++;
 		}		
 		return data;
@@ -838,6 +892,14 @@ public class InvoiceAddEdit {
 						updateInvoiceLbl(customerStr);
 						customer = null;
 						customer = getCustomer(customerStr);
+						if(customer != null){
+							if(customer instanceof CustomerInd){
+								String car = (((CustomerInd) customer).getCar().getBrandString());
+								setBrandLbl(car);
+							} else if(customer instanceof CustomerBusiness){
+								setBrandLbl("OTHER");
+							}
+						}
 					}
 				} 			
 			}
@@ -908,12 +970,13 @@ public class InvoiceAddEdit {
 			}	
 		}
 		
-		String[] rowData = new String[this.cs.STOCK_TB_HEADINGS_NO_COST.length];
+		String[] rowData = new String[this.cs.STOCK_TB_HEADINGS_SHORT.length+1];
 
 		rowData[0] = item.getCode();
 		rowData[1] = item.getName();
 		rowData[2] = ""+productPrice;
 		rowData[3] = ""+tfQntInt;
+		rowData[4] = ""+item.getCost();
 		
 		DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
 		model.addRow(rowData);
@@ -1010,9 +1073,8 @@ public class InvoiceAddEdit {
 		lblForWho.setText(invFor);
 	}
 
-	private TitledBorder createBorders(String title) {
-		Border b = BorderFactory.createLineBorder(Color.YELLOW);
-		return BorderFactory.createTitledBorder(b, title);
+	private int findBrand(String car) {
+		return Integer.parseInt(this.mainView.getCars_BI().get(car));
 	}
 
 	// GETTERS & SETTERS

@@ -21,6 +21,7 @@
 
 	"company details":"Please enter company details. Fields with '*' are required to proceed.",
 	"fill_up":"Please fill following fields: ",
+	"empty table":"Please enter some products/services. ",
 	"delete_msg":"You sure you want to delete this item, it is not recoverable process.",
 	"typed":"Typed in",
 	"suggested":"Suggested",
@@ -37,13 +38,14 @@
 	"s_cost":"Calc.cost",
 	"s_price":"Rec.Price",
 
-	"tf cust hint":"Business type as follow:VAT,NAME,ADDRESS",
+	"tf cust hint":"Business,type as follow:VAT,NAME,ADDRESS",
 	
 	"item_add_error":"There was an error when trying add an item. Most likely, item selection return null.",
 	"item_edition_error":"There was an error when trying edit an item. Most likely, item selection return null.",
 	"not_number_error":"This is not a number. Please try again.",
 	"delete_error":"There was an error when trying to delete an item. Most likely, item selection return null.",
 	"saving error":"There was an error when trying save an item. Save unsucessful",
+	"coma error":"Your registration contains 'comma'. Delete it or check if you not missing any information.(Business customer format: VAT,NAME,ADDRESS",
 	"saved":"Item saved sucessfully",
 	"close":"Are you really want to close this window?",
 	"search":"Enter frease you looking for:"

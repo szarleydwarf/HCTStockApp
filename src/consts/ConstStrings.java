@@ -31,7 +31,7 @@ public class ConstStrings {
 	// TABLE HEADINGS ETC
 	public final String[] CARS_TABLE_HEADING = {"Cars"};
 	public final String[] STOCK_TB_HEADINGS = {"ID", "Kod", "Nazwa", "Koszt", "Cena", "Qnt", "VAT", "Transport", "VEMC"};
-	public final String[] STOCK_TB_HEADINGS_NO_COST =  {"Kod","Towar", "Cena", "Qnt"};
+	public final String[] STOCK_TB_HEADINGS_SHORT =  {"Kod","Towar", "Cena", "Qnt", "Cost"};
 	public final String[] CUSTOMER_TB_HEADINGS = {"Customer", "B/I", "VAT/TAX"};
 
 	public final String CARS_TB_NAME = "CARS";
@@ -71,7 +71,7 @@ public class ConstStrings {
 	public final String MINUS = "-";
 	public final String COMA = ",";
 	public final String DOT = ".";
-
+	public final String UNDERSCORE = "_";
 	
 	// JSON USER FILE
 	public final String JSON_COMPANY_NAME = "company";
@@ -152,4 +152,6 @@ public class ConstStrings {
 	public final String ITEM_DELETING_ERROR = "delete_error";
 	public final String NOT_NUMBER_ERROR = "not_number_error";
 	public final String ENTER_TEXT =  "enter search fraze";
+	public final String TABLE_EMPTY = "empty table";
+	public final String COMA_ERROR = "coma error";
 }
