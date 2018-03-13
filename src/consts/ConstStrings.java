@@ -7,6 +7,7 @@ public class ConstStrings {
 	public final String ENTER_DETAILS = "company details";
 	public final String APP = "app";
 	public final String CHECKBOX_LBL = "I/B";
+	public final String PDF_EXT = ".pdf";
 
 	//DATE RELATED
 	public final String[] YEARS_NO_STRING = {"2017", "2018", "2019", "2020"};
@@ -72,6 +73,7 @@ public class ConstStrings {
 	public final String COMA = ",";
 	public final String DOT = ".";
 	public final String UNDERSCORE = "_";
+	public final String SEMICOLON = ";";
 	
 	// JSON USER FILE
 	public final String JSON_COMPANY_NAME = "company";

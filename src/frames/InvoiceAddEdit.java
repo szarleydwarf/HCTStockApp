@@ -55,6 +55,7 @@ import managers.StockManager;
 import objects.Customer;
 import objects.CustomerBusiness;
 import objects.CustomerInd;
+import objects.Invoice;
 import objects.Item;
 import utility.DateHelper;
 import utility.Logger;
@@ -102,7 +103,7 @@ public class InvoiceAddEdit {
 
 	private Map<Item, Integer> selectedRowItem;
 
-	protected boolean isDiscount;
+	protected boolean isPercent;
 
 	private double discount;
 
@@ -117,6 +118,8 @@ public class InvoiceAddEdit {
 	private JCheckBox chbInd;
 
 	private JSONObject ju;
+
+	private boolean isBusiness;
 	
 	/**
 	 * Launch the application.
@@ -328,8 +331,9 @@ public class InvoiceAddEdit {
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO
-				System.out.println("Saving !");
-				if(!checkInvoiceForString()){
+				checkIsBusiness();
+				System.out.println("Saving !"+isBusiness);
+				if(!isBusiness && !checkInvoiceForString()){
 					String toFill = getFieldsToFill();
 					JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
 				} else if (!tableHasElements()){
@@ -339,7 +343,6 @@ public class InvoiceAddEdit {
 					collectDataForInvoice();
 //				TODO update database
 				
-//				TODO save new invoice to database  - add to invoice manager
 				}
 			}
 		});
@@ -356,7 +359,6 @@ public class InvoiceAddEdit {
 				collectDataForInvoice();
 //				TODO update database
 				
-//				TODO save new invoice to database   - add to invoice manager
 				//print
 			}
 		});
@@ -559,7 +561,7 @@ public class InvoiceAddEdit {
 		
 		rbMoney.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				isDiscount = true;
+				isPercent = false;
 				double sum = calculateSum();
 				sum = applyDiscount(sum);
 				lblTotal.setText("€ "+df.format(sum));
@@ -567,7 +569,7 @@ public class InvoiceAddEdit {
 		});
 		rbPercent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				isDiscount = false;
+				isPercent = true;
 				double sum = calculateSum();
 				sum = applyDiscount(sum);
 				lblTotal.setText("€ "+df.format(sum));
@@ -646,50 +648,60 @@ public class InvoiceAddEdit {
 //		TODO check for customer, add new
 		System.out.println("collect ");	
 		checkCustomer();
-		boolean isBusiness = !this.chbInd.isSelected();
-		String listOfServices = getChoosenList();
+		checkIsBusiness();
+//check if selected from table is not a b customer 
+		String listOfServices = getSalesList();
 		if(!listOfServices.equals(""))
-			System.out.println("list "+listOfServices);
+			System.out.println("list "+listOfServices+" / "+discount+" / "+isPercent);
 		
-		createNewInvoice();
-//		boolean isBusiness, String list, 
-//		double discount, 
-//		boolean isPercent, double total, String date, String file
+		double sum = calculateSum();
+		sum = applyDiscount(sum);
+		createNewInvoice(listOfServices, Double.parseDouble(df.format(sum)));
+	}
+
+	private void checkIsBusiness() {
+//		System.out.println("???"+customer.getId());
+		if(customer != null)
+			isBusiness = customer.getId().contains(cs.CUST_BUS_CODE) ? true : false;
+		else
+			isBusiness = !this.chbInd.isSelected();
 	}
 
 	protected boolean tableHasElements() {
 		return this.tbChoosen.getRowCount() > 0 ? true : false;
 	}
 
-	private String getChoosenList() {
+	private String getSalesList() {
 		String s = "";
 		if(this.tableHasElements()){
 			int rc = this.tbChoosen.getRowCount();
 			int cc = this.tbChoosen.getColumnCount();
 			for(int i = 0; i < rc; i++){
 				//1*TR_225/45/18 GOALSTAR V78#@134.74;
+				//qnt
 				s += this.tbChoosen.getModel().getValueAt(i, 3);
 				s += cs.STAR;
+				//code of product/service
 				s += this.tbChoosen.getModel().getValueAt(i, 0);
 				s += cs.UNDERSCORE;
+				//name of product/service
 				s += this.tbChoosen.getModel().getValueAt(i, 1);
 				s += cs.HASH;
+				//cost of item
 				s += this.tbChoosen.getModel().getValueAt(i, 4);
-				
 				s += cs.AT;
+				//sale price
 				s += this.tbChoosen.getModel().getValueAt(i, 2);
-
-				s += ";";
+				s += cs.SEMICOLON;
 			}
 		}
 		return s;
 	}
 
-	private void createNewInvoice() {
-	// TODO Auto-generated method stub
-		//Create new invoice, add to mng
-//		dm, ConstDB cdb, ConstStrings cs, ConstNums cn, 
-		
+	private void createNewInvoice(String listOfServices, double sum) {
+		Invoice in = new Invoice(dm, cdb, cs, cn, customer.getId(),isBusiness, listOfServices, discount, isPercent, sum, date, date+cs.PDF_EXT);
+		this.im.add(in);
+		System.out.println("in "+in);
 	}
 
 	private void checkCustomer() {
@@ -703,22 +715,17 @@ public class InvoiceAddEdit {
 			}
 			customer.setNumOfServices(n);
 			customer.updateRecord();
-			System.out.println("C1: "+customer.toString());	
 		}else{
 			String str = lblForWho.getText();
 			String car = str.substring(str.indexOf(cs.AT)+1, str.indexOf(cs.AMP)-1);
 			str = str.substring(str.indexOf(cs.AMP)+1);
 			int brand = findBrand(car);
-			//TODO - add maybe checkup for comma in str?
-//			 add checkups for busines/indyvidual customer
 			if(str.contains(cs.COMA) && this.chbInd.isSelected() ){
 				JOptionPane.showMessageDialog(frame, jl.get(cs.COMA_ERROR).toString());
 				return;
 			}else if(this.chbInd.isSelected() && !str.contains(cs.COMA)){
-				System.out.println("ind");
 				customer =  new CustomerInd(this.dm, this.cdb, this.cn, this.cs, 1, str, brand);
 			}else{
-				System.out.println("bis");
 				String[] t = msh.splitString(str, cs.COMA);
 				String vat="", name="", address="";
 				if(t!=null){
@@ -726,6 +733,7 @@ public class InvoiceAddEdit {
 					if(t[1]!= null && !t[1].isEmpty()) name = t[1];
 					if(t[2]!= null && !t[2].isEmpty()) address = t[2];
 				}
+				System.out.println("brand "+brand);
 				if(brand > 0)
 					customer =  new CustomerBusiness(this.dm, this.cdb, this.cn, this.cs, 1, vat, name, address, brand);
 				else
@@ -985,9 +993,9 @@ public class InvoiceAddEdit {
 	protected double applyDiscount(double sum) {
 		if(sum > 0 && !tfDiscount.getText().isEmpty()){
 			discount = Double.parseDouble(tfDiscount.getText());
-			if(!isDiscount){
+			if(!isPercent){
 				return sum - (sum * (discount/100));
-			}else if(isDiscount){
+			}else if(isPercent){
 				return sum - discount;
 			}
 		}
@@ -1026,7 +1034,7 @@ public class InvoiceAddEdit {
 	}
 
 	protected boolean checkInvoiceForString() {
-		if(!lblForWho.getText().contains(jl.get(cs.LBL_CUSTOMER).toString()) && ! lblForWho.getText().contains(jl.get(cs.LBL_COMPANY).toString()))
+		if(!lblForWho.getText().contains(jl.get(cs.LBL_CUSTOMER).toString()) && !lblForWho.getText().contains(jl.get(cs.LBL_COMPANY).toString()))
 			return true;
 		return false;
 	}
@@ -1074,7 +1082,9 @@ public class InvoiceAddEdit {
 	}
 
 	private int findBrand(String car) {
-		return Integer.parseInt(this.mainView.getCars_BI().get(car));
+		if(!car.equals(jl.get(cs.LBL_CUSTOMER).toString()))
+			return Integer.parseInt(this.mainView.getCars_BI().get(car));
+		return cn.DEFAULT_CAR_BRAND_ID;
 	}
 
 	// GETTERS & SETTERS
@@ -1090,6 +1100,8 @@ public class InvoiceAddEdit {
 		li++;
 		lastInvoice = ""+(li);
 		customer = null;
+		isBusiness = false;
+
 		initialize();
 		frame.setVisible(b);
 		setLastInvoiceNum();

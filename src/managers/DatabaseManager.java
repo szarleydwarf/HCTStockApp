@@ -40,9 +40,16 @@ public class DatabaseManager {
 		this.cn = cn;
 		this.log = logger;
 		this.df = df;
-		this.date = date;		
+		this.date = date;	
+		
+		this.checkIfDatabaseExists();
 	}
 		
+	private void checkIfDatabaseExists() {
+		Connection con = this.connect();
+		
+	}
+
 	private Connection connect() {
 		try {
 			Class.forName(cdb.JDBC_DRIVER);

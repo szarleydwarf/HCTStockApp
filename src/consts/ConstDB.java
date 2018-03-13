@@ -5,12 +5,15 @@ public class ConstDB {
 		
 	}
 	public  final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-	public  final String DB_URL = "jdbc:mysql://127.0.0.1:3306/hct_stock";
-//	public final String DEFAULT_DATABASE_PATH = "https:\\sqliteonline.com\\#fiddle-5a53891a14ced1h9jc6cc66a";
 
     //  Database credentials
-	public  final String USER = "hct";
-	public  final String PASS = "pass1234";
+//	public  final String DB_URL = "jdbc:mysql://127.0.0.1:3306/hct_stock";
+//	public  final String USER = "hct";
+//	public  final String PASS = "pass1234";
+// life
+	public  final String DB_URL = "jdbc:mysql://https:3306//serwer1671521.home.pl/sql/";
+	public  final String USER = "19519373_hct";
+	public  final String PASS = "Pa55W0rd1!";
 
 	//database query parts
 	public  final String VALUES = " VALUES ";

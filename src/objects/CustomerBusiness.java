@@ -65,7 +65,7 @@ public class CustomerBusiness extends Customer {
 		this.setVATTaxNUM(vatTaxNum);
 		this.setCompName(name);
 		this.setCompAddress(address);
-		this.setCarIdList("");
+		this.setCarIdList(""+carBrand);
 		
 //		TODO this should be handled by manager
 //this.saveNewInDatabase();
