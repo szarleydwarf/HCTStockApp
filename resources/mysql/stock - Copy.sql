@@ -1,11 +1,13 @@
-USE `sql2226361`;
+
+CREATE DATABASE IF NOT EXISTS `the_stock` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `the_stock`;
 
 
 CREATE TABLE IF NOT EXISTS `brands` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `brand` varchar(64) NOT NULL,
   PRIMARY KEY (`id`)
-);
+) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=latin1;
 
 
 INSERT INTO `brands` (`id`, `brand`) VALUES
@@ -65,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `business` (
   `no_of_services` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `vat_tax` (`vat_tax`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `car` (
   `id` int(11) NOT NULL,
@@ -73,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `car` (
   `brand_id` int(11) NOT NULL DEFAULT '45',
   PRIMARY KEY (`id`),
   KEY `brand_id` (`brand_id`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `customers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -81,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `customers` (
   `no_of_services` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `car_id` (`car_id`)
-);
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `invoices` (
   `id` int(11) NOT NULL,
@@ -93,7 +95,7 @@ CREATE TABLE IF NOT EXISTS `invoices` (
   `date` varchar(16) NOT NULL,
   `file_name` varchar(256) CHARACTER SET utf16 COLLATE utf16_polish_ci NOT NULL,
   PRIMARY KEY (`id`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `repak_report` (
   `id` int(11) NOT NULL,
@@ -105,13 +107,13 @@ CREATE TABLE IF NOT EXISTS `repak_report` (
   `fitted_agri` int(11) NOT NULL,
   `bought_agri` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `settings` (
   `id` int(11) NOT NULL,
   `path` varchar(256) NOT NULL,
   PRIMARY KEY (`id`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `stock` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -124,7 +126,7 @@ CREATE TABLE IF NOT EXISTS `stock` (
   `price` decimal(6,2) DEFAULT NULL,
   `qnt` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-);
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
 
 ALTER TABLE `car`
   ADD CONSTRAINT `car_ibfk_1` FOREIGN KEY (`brand_id`) REFERENCES `brands` (`id`);

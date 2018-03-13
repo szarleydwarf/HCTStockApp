@@ -11,5 +11,6 @@ public class ConstPaths {
 	public final String JSON_LANG_PATH = "resources\\json\\";
 	public final String JSON_ENG = "eng.json";
 	public final String JSON_PL = "pl.json";
+	public final String CREATE_DB_FILE = "resources\\mysql\\stock.sql";
 
 }

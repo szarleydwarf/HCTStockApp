@@ -203,7 +203,12 @@ public class MainView {
 
 	private static void loadManagers() {
 		System.out.println("loadManagers");
-		dm = new DatabaseManager(logger, todayL, cdb, cn, cs, df_3_2);
+		try {
+			dm = new DatabaseManager(logger, todayL, cdb, cn, cs, cp, df_3_2);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 //		get customer list
 		cmng = new CustomersManager(dm, cdb, cn, cs);
 //		get stock

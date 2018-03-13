@@ -11,9 +11,9 @@ public class ConstDB {
 //	public  final String USER = "hct";
 //	public  final String PASS = "pass1234";
 // life
-	public  final String DB_URL = "jdbc:mysql://https:3306//serwer1671521.home.pl/sql/";
-	public  final String USER = "19519373_hct";
-	public  final String PASS = "Pa55W0rd1!";
+	public  final String DB_URL = "jdbc:mysql://sql2.freemysqlhosting.net";
+	public  final String USER = "sql2226361";
+	public  final String PASS = "hB7%wY5!";
 
 	//database query parts
 	public  final String VALUES = " VALUES ";

@@ -1,5 +1,7 @@
 package managers;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,11 +13,13 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
 import consts.ConstDB;
 import consts.ConstNums;
+import consts.ConstPaths;
 import consts.ConstStrings;
 import objects.Car;
 import objects.Customer;
@@ -32,12 +36,14 @@ public class DatabaseManager {
 	private ConstNums cn;
 	private ConstStrings cs;
 	private DecimalFormat df;
+	private ConstPaths cp;
 	
 	
-	public DatabaseManager (Logger logger, String date, ConstDB cdbm, ConstNums cn, ConstStrings cs, DecimalFormat df) {
+	public DatabaseManager (Logger logger, String date, ConstDB cdbm, ConstNums cn, ConstStrings cs, ConstPaths CP, DecimalFormat df) throws FileNotFoundException {
 		this.cdb = cdbm;
 		this.cs = cs;
 		this.cn = cn;
+		this.cp = CP;
 		this.log = logger;
 		this.df = df;
 		this.date = date;	
@@ -45,9 +51,13 @@ public class DatabaseManager {
 		this.checkIfDatabaseExists();
 	}
 		
-	private void checkIfDatabaseExists() {
+	private void checkIfDatabaseExists() throws FileNotFoundException {
 		Connection con = this.connect();
-		
+		File ndb = new File(cp.CREATE_DB_FILE);
+		Scanner scanner = new Scanner( ndb, "UTF-8" );
+		String text = scanner.useDelimiter("\\A").next();
+		scanner.close();
+		this.createTables(con, text);
 	}
 
 	private Connection connect() {
@@ -79,6 +89,19 @@ public class DatabaseManager {
 		}
 	}
 
+	private boolean createTables(Connection dbConnection, String q) {
+	    boolean bCreatedTables = false;
+	    Statement statement = null;
+	    try {
+	        statement = dbConnection.createStatement();
+	        statement.execute(q);
+	        bCreatedTables = true;
+	    } catch (SQLException ex) {
+	        ex.printStackTrace();
+	    }
+	    
+	    return bCreatedTables;
+	}
 
 	public boolean addNewRecord(String query) {
 		PreparedStatement pst = null;
