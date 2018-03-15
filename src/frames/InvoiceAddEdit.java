@@ -764,7 +764,8 @@ public class InvoiceAddEdit {
 	private void populateStockTable(int x, int y, int w, int h) {
 		Iterator<Item> it = sm.getList().iterator();
 		while(it.hasNext()){
-			if (it.next().getQnt() == 0 && it.next().getCode().equals(cs.TYRE_CODE)){
+			Item itit = it.next();
+			if (itit.getQnt() == 0 && itit.getCode().equals(cs.TYRE_CODE)){
 				it.remove();
 			}
 		}
@@ -1096,6 +1097,8 @@ public class InvoiceAddEdit {
 	
 	public void setIsVisible(boolean b){
 		lastInvoice = dm.selectData(cdb.SELECT_LAST_INVOICE);
+		if(lastInvoice.equals(""))
+			lastInvoice = "0";
 		int li = Integer.parseInt(lastInvoice);
 		li++;
 		lastInvoice = ""+(li);

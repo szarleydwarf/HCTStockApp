@@ -1,7 +1,12 @@
 package managers;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -39,7 +44,8 @@ public class DatabaseManager {
 	private ConstPaths cp;
 	
 	
-	public DatabaseManager (Logger logger, String date, ConstDB cdbm, ConstNums cn, ConstStrings cs, ConstPaths CP, DecimalFormat df) throws FileNotFoundException {
+	public DatabaseManager (Logger logger, String date, ConstDB cdbm, ConstNums cn, ConstStrings cs, ConstPaths CP, 
+			DecimalFormat df) throws IOException {
 		this.cdb = cdbm;
 		this.cs = cs;
 		this.cn = cn;
@@ -48,22 +54,30 @@ public class DatabaseManager {
 		this.df = df;
 		this.date = date;	
 		
-		this.checkIfDatabaseExists();
+//		this.checkIfDatabaseExists();
 	}
 		
-	private void checkIfDatabaseExists() throws FileNotFoundException {
+	public void checkIfDatabaseExists() throws IOException {
 		Connection con = this.connect();
-		File ndb = new File(cp.CREATE_DB_FILE);
-		Scanner scanner = new Scanner( ndb, "UTF-8" );
-		String text = scanner.useDelimiter("\\A").next();
-		scanner.close();
-		this.createTables(con, text);
+		this.executeQuery(con, cdb.CREATE_BRANDS_TABLE);
+		this.executeQuery(con, cdb.CREATE_BUSINESS_TABLE);
+		this.executeQuery(con, cdb.CREATE_CAR_TABLE);
+		this.executeQuery(con, cdb.CREATE_CUSTOMER_TABLE);
+		this.executeQuery(con, cdb.CREATE_INVOICE_TABLE);
+		this.executeQuery(con, cdb.CREATE_REPAK_REPORT_TABLE);
+		this.executeQuery(con, cdb.CREATE_SETTINGS_TABLE);
+		this.executeQuery(con, cdb.CREATE_STOCK_TABLE);
+		this.executeQuery(con, cdb.POPULATE_BRANDS);
+		this.executeQuery(con, cdb.ALTER_CAR_TABLE);
+		this.executeQuery(con, cdb.ALTER_CUSTOMER_TABLE);
 	}
 
 	private Connection connect() {
 		try {
 			Class.forName(cdb.JDBC_DRIVER);
 			Connection conn = DriverManager.getConnection(cdb.DB_URL, cdb.USER, cdb.PASS);
+			String q = cdb.USE_DATABASE;
+			executeQuery(conn, q);
 //			JOptionPane.showMessageDialog(null, "Connected!");
 			return conn;
 		} catch (Exception ex) {
@@ -89,7 +103,7 @@ public class DatabaseManager {
 		}
 	}
 
-	private boolean createTables(Connection dbConnection, String q) {
+	private boolean executeQuery(Connection dbConnection, String q) {
 	    boolean bCreatedTables = false;
 	    Statement statement = null;
 	    try {

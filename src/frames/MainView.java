@@ -86,6 +86,14 @@ public class MainView {
 		//TODO - not sure if I should load all the classes again every time, do some research
 		loader();
 	    isNew = checkInstallation();
+	    if(isNew){
+			try {
+				dm.checkIfDatabaseExists();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+	    }
 //		test();
 		try {
 	      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -206,6 +214,9 @@ public class MainView {
 		try {
 			dm = new DatabaseManager(logger, todayL, cdb, cn, cs, cp, df_3_2);
 		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
