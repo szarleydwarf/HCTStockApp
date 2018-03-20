@@ -39,6 +39,7 @@
 	"s_price":"Rec.Price",
 
 	"tf cust hint":"Business,type as follow:VAT,NAME,ADDRESS",
+	"save pdf":"Would You Like to Save an invoice as PDF as well?",
 	
 	"item_add_error":"There was an error when trying add an item. Most likely, item selection return null.",
 	"item_edition_error":"There was an error when trying edit an item. Most likely, item selection return null.",

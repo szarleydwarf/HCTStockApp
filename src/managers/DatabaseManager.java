@@ -22,6 +22,8 @@ import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
+import org.json.simple.JSONObject;
+
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstPaths;
@@ -42,10 +44,11 @@ public class DatabaseManager {
 	private ConstStrings cs;
 	private DecimalFormat df;
 	private ConstPaths cp;
+	private JSONObject js;
 	
 	
 	public DatabaseManager (Logger logger, String date, ConstDB cdbm, ConstNums cn, ConstStrings cs, ConstPaths CP, 
-			DecimalFormat df) throws IOException {
+			JSONObject JS,DecimalFormat df) throws IOException {
 		this.cdb = cdbm;
 		this.cs = cs;
 		this.cn = cn;
@@ -53,7 +56,7 @@ public class DatabaseManager {
 		this.log = logger;
 		this.df = df;
 		this.date = date;	
-		
+		this.js = JS;
 //		this.checkIfDatabaseExists();
 	}
 		
@@ -75,9 +78,9 @@ public class DatabaseManager {
 	private Connection connect() {
 		try {
 			Class.forName(cdb.JDBC_DRIVER);
-			Connection conn = DriverManager.getConnection(cdb.DB_URL, cdb.USER, cdb.PASS);
-			String q = cdb.USE_DATABASE;
-			executeQuery(conn, q);
+//			Connection conn = DriverManager.getConnection(cdb.DB_URL, cdb.USER, cdb.PASS);
+			Connection conn = DriverManager.getConnection(js.get(cs.DB_URL).toString(), js.get(cs.DB_USER).toString(), js.get(cs.DB_PASS).toString());
+
 //			JOptionPane.showMessageDialog(null, "Connected!");
 			return conn;
 		} catch (Exception ex) {

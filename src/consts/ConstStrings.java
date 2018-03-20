@@ -21,9 +21,10 @@ public class ConstStrings {
 	public final String TYRE_CODE = "TR";
 	public final String TUBE_CODE = "TB";
 	public final String SERVICE_CODE = "SR";
+	public final String SHOP_CODE = "SH";
 	public final String OTHER_CODE = "OT";
 	public final String CARWASH_CODE = "CW";
-	public final String[] ITEM_CODES = {"TR", "TB", "SR", "OT", "CW"};
+	public final String[] ITEM_CODES = {"TR", "TB", "SR", "SH", "OT", "CW"};
 	
 	// CUSTOMER CODES
 	public final String CUST_IND_CODE = "C_";
@@ -98,7 +99,11 @@ public class ConstStrings {
 	public final String FONT = "font";
 	public final String JLANG = "lang";
 	public final String JSTART = "starting";
-	
+
+	public  final String DB_URL = "database host";
+	public  final String DB_USER = "db user";
+	public  final String DB_PASS = "db pass";
+
 	// JSON LANG PACKET
 	public final String BTN_NEXT = "next";
 	public final String BTN_SAVE = "save";
@@ -156,4 +161,5 @@ public class ConstStrings {
 	public final String ENTER_TEXT =  "enter search fraze";
 	public final String TABLE_EMPTY = "empty table";
 	public final String COMA_ERROR = "coma error";
+	public final String SAVE_PDF = "save pdf";
 }

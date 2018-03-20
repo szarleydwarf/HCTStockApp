@@ -332,17 +332,32 @@ public class InvoiceAddEdit {
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO
 				checkIsBusiness();
-				System.out.println("Saving !"+isBusiness);
+				System.out.println("Saving !"+isBusiness + " " + !checkBusinesFields());
 				if(!isBusiness && !checkInvoiceForString()){
 					String toFill = getFieldsToFill();
 					JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
-				} else if (!tableHasElements()){
-					JOptionPane.showMessageDialog(frame, jl.get(cs.TABLE_EMPTY).toString());
+				} else if(isBusiness && !checkBusinesFields()) {
+					String toFill = getBFieldsToFill();
+					JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
 				} else {
-					boolean update = isUpdateRequred();
-					collectDataForInvoice();
-//				TODO update database
-				
+					if (!tableHasElements()){
+						JOptionPane.showMessageDialog(frame, jl.get(cs.TABLE_EMPTY).toString());
+					} else {
+						boolean update = isUpdateRequred();
+						System.out.println("update "+update);
+						String listOfServices = getSalesList();
+						collectDataForInvoice(listOfServices);
+						int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
+						if(dialogResult == JOptionPane.YES_OPTION){
+							System.out.println("in ");
+							//save pdf
+						}
+	//				TODO update database
+						if(update){
+							updateDBStock(listOfServices);
+						}
+						//save 
+					}
 				}
 			}
 		});
@@ -356,7 +371,7 @@ public class InvoiceAddEdit {
 				}
 				System.out.println("Printing !");
 				boolean update = isUpdateRequred();
-				collectDataForInvoice();
+//				collectDataForInvoice();
 //				TODO update database
 				
 				//print
@@ -403,15 +418,15 @@ public class InvoiceAddEdit {
             }
         });
 		
-//		tfCustomers.addFocusListener(new FocusListener(){
-//	        @Override
-//	        public void focusGained(FocusEvent e){
-//	        	tfCustomers.setText("");
-//			}
-//			@Override
-//			public void focusLost(FocusEvent arg0) {
-//			}
-//		});
+		tfCustomers.addFocusListener(new FocusListener(){
+	        @Override
+	        public void focusGained(FocusEvent e){
+	        	tfCustomers.setText("");
+			}
+			@Override
+			public void focusLost(FocusEvent arg0) {
+			}
+		});
 		
 		tfCustomers.getDocument().addDocumentListener(new DocumentListener(){
 			@Override
@@ -615,6 +630,7 @@ public class InvoiceAddEdit {
 				int chosenRow, stRow;
 				for(int j = 0; j < its.size(); j++){
 					chosenRow = msh.getSelectedItemRow(model, its.get(j));
+					//TODO NULL POINTER
 					stRow = msh.getSelectedItemRow(dtm, its.get(j));
 					if(chosenRow != -1)
 						updateStockTableQnt(model, chosenRow, stRow);
@@ -644,23 +660,36 @@ public class InvoiceAddEdit {
 	}
 //END OF INVOICE PREVIEW
 
-	protected void collectDataForInvoice() {
+	protected void collectDataForInvoice(String listOfServices) {
 //		TODO check for customer, add new
 		System.out.println("collect ");	
 		checkCustomer();
 		checkIsBusiness();
-//check if selected from table is not a b customer 
-		String listOfServices = getSalesList();
-		if(!listOfServices.equals(""))
-			System.out.println("list "+listOfServices+" / "+discount+" / "+isPercent);
 		
-		double sum = calculateSum();
-		sum = applyDiscount(sum);
-		createNewInvoice(listOfServices, Double.parseDouble(df.format(sum)));
+		if(!listOfServices.equals("")){
+			System.out.println("list "+listOfServices+" / "+discount+" / "+isPercent);
+			
+			double sum = calculateSum();
+			sum = applyDiscount(sum);
+			createNewInvoice(listOfServices, Double.parseDouble(df.format(sum)));
+		}
+	}
+
+	protected void updateDBStock(String listOfServices) {
+		for(int i = 0; i < modTBchosen.getRowCount(); i++){
+			Item it = null;
+			if(modTBchosen.getValueAt(i, 0).toString().equals(cs.SHOP_CODE)
+					|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TUBE_CODE)
+					|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE)){
+				it = this.getItemByName(this.modTBchosen.getValueAt(i, cn.NAME_COLUMN).toString());
+			}
+			if(it != null){
+				it.updateRecord();
+			}
+		}
 	}
 
 	private void checkIsBusiness() {
-//		System.out.println("???"+customer.getId());
 		if(customer != null)
 			isBusiness = customer.getId().contains(cs.CUST_BUS_CODE) ? true : false;
 		else
@@ -701,7 +730,6 @@ public class InvoiceAddEdit {
 	private void createNewInvoice(String listOfServices, double sum) {
 		Invoice in = new Invoice(dm, cdb, cs, cn, customer.getId(),isBusiness, listOfServices, discount, isPercent, sum, date, date+cs.PDF_EXT);
 		this.im.add(in);
-		System.out.println("in "+in);
 	}
 
 	private void checkCustomer() {
@@ -741,7 +769,6 @@ public class InvoiceAddEdit {
 					
 			}
 			this.cm.addCustomer(customer);
-			System.out.println("Str: "+customer.toString());	
 		}		
 	}
 
@@ -923,7 +950,7 @@ public class InvoiceAddEdit {
 				item = null;
 				int row = table.getSelectedRow();
 				if(row != -1) {
-					item = getItem(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.NAME_COLUMN).toString());
+					item = getItemByName(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.NAME_COLUMN).toString());
 					if(item != null && table.getName().equals(cs.STOCK_TB_NAME)){
 						selectedRowItem.put(item,row);
 					}
@@ -1017,8 +1044,10 @@ public class InvoiceAddEdit {
 	protected boolean isUpdateRequred() {
 		//TODO check if this method doesn't need any improvements, check by codes?
 		for(int i = 0; i < modTBchosen.getRowCount(); i++){
-			if(!modTBchosen.getValueAt(i, 0).toString().contains(cs.STAR) 
-					&& !modTBchosen.getValueAt(i, 0).toString().toUpperCase().contains(cs.WASH.toUpperCase())){
+			System.out.println("mod "+modTBchosen.getValueAt(i, 0).toString());
+			if(modTBchosen.getValueAt(i, 0).toString().equals(cs.SHOP_CODE)
+				|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TUBE_CODE)
+				|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE)){
 				return true;
 			}
 		}
@@ -1050,6 +1079,19 @@ public class InvoiceAddEdit {
 		
 		return s;
 	}
+	
+	protected String getBFieldsToFill() {
+		String s = "";
+		if(lblForWho.getText().contains(jl.get(cs.TF_CUST_HINT).toString()) )
+			s += jl.get(cs.ENTER_DETAILS).toString()+ " ";
+		return s;
+	}
+
+	protected boolean checkBusinesFields() {
+		if(!lblForWho.getText().contains(jl.get(cs.TF_CUST_HINT).toString()))
+				return true;
+		return false;
+	}
 
 	protected void updateInvoiceLbl(String text) {
 		String car = lblForWho.getText().substring(lblForWho.getText().indexOf(cs.AT)+1, lblForWho.getText().indexOf(cs.AMP)-1);
@@ -1067,7 +1109,7 @@ public class InvoiceAddEdit {
 		lblForWho.setText(invFor);
 	}
 
-	protected Item getItem(String string) {
+	protected Item getItemByName(String string) {
 		Item item = null;
 		for(Item i : sm.getList()){
 			if(i.getName().equals(string))

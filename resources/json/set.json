@@ -1,6 +1,10 @@
 {
 	"lang":"eng.json",
 	"starting":"true",
+
+	"database host":"jdbc:mysql://127.0.0.1:3306/hct_stock",
+	"db user":"hct",
+	"db pass":"pass1234",
 	
 	"app color R":"0",
 	"app color G":"153",

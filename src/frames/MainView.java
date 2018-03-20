@@ -164,8 +164,8 @@ public class MainView {
 		todayS = dh.getFormatedDate();
 		logger.setShortDate(todayS);
 		
-		loadManagers();
 		loadJsonFiles();
+		loadManagers();
 
 		//		get cars list
 		cars_BI = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_BRAND_ID);
@@ -212,7 +212,7 @@ public class MainView {
 	private static void loadManagers() {
 		System.out.println("loadManagers");
 		try {
-			dm = new DatabaseManager(logger, todayL, cdb, cn, cs, cp, df_3_2);
+			dm = new DatabaseManager(logger, todayL, cdb, cn, cs, cp, jSettings, df_3_2);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
