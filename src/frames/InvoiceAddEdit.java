@@ -60,6 +60,7 @@ import objects.Item;
 import utility.DateHelper;
 import utility.Logger;
 import utility.MiscHelper;
+import utility.Printer;
 
 public class InvoiceAddEdit {
 
@@ -120,6 +121,8 @@ public class InvoiceAddEdit {
 	private JSONObject ju;
 
 	private boolean isBusiness;
+
+	private Printer printer;
 	
 	/**
 	 * Launch the application.
@@ -145,7 +148,7 @@ public class InvoiceAddEdit {
 		initialize();
 	}
 
-	public InvoiceAddEdit(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
+	public InvoiceAddEdit(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger, Printer printer,
 			JSONObject jSettings, JSONObject jLang, JSONObject jUser, 
 			MiscHelper mSH, DateHelper DH, StockManager SM, CustomersManager cMng, InvoiceManager invMng, 
 			ArrayList<String> carList, DecimalFormat df_3_2) {
@@ -163,7 +166,8 @@ public class InvoiceAddEdit {
 		
 		this.msh = mSH;
 		this.dh = DH;
-		
+		this.printer = printer;
+
 		this.sm = SM;
 		this.cm = cMng;
 		this.im = invMng;
@@ -330,7 +334,6 @@ public class InvoiceAddEdit {
 		
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO
 				checkIsBusiness();
 				System.out.println("Saving !"+isBusiness + " " + !checkBusinesFields());
 				if(!isBusiness && !checkInvoiceForString()){
@@ -349,14 +352,14 @@ public class InvoiceAddEdit {
 						collectDataForInvoice(listOfServices);
 						int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
 						if(dialogResult == JOptionPane.YES_OPTION){
-							System.out.println("in ");
-							//save pdf
+							System.out.println("pdf save ");
+							//TODO
+							//save pdf - invoice #, customer, table of items, prices, qnt, discount, percent/€, total, date?, no of srevices?
+							printer.saveDoc();
 						}
-	//				TODO update database
 						if(update){
 							updateDBStock(listOfServices);
 						}
-						//save 
 					}
 				}
 			}
@@ -364,7 +367,6 @@ public class InvoiceAddEdit {
 		
 		btnPrint.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO
 				if(!checkInvoiceForString()){
 					String toFill = getFieldsToFill();
 					JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);

@@ -41,6 +41,7 @@ import utility.FileHelper;
 import utility.LoadScreen;
 import utility.Logger;
 import utility.MiscHelper;
+import utility.Printer;
 import utility.tScanner;
 
 public class MainView {
@@ -76,6 +77,7 @@ public class MainView {
 	private static DisplayStock stockFrame;
 	private static ItemAddNew newItemFrame;
 	private static InvoiceAddEdit newInvoice;
+	private static Printer printer;
 	
 
 	/**
@@ -84,16 +86,9 @@ public class MainView {
 	 */
 	public static void main(String[] args) {
 		//TODO - not sure if I should load all the classes again every time, do some research
-		loader();
-	    isNew = checkInstallation();
-	    if(isNew){
-			try {
-				dm.checkIfDatabaseExists();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-	    }
+		loadConst();
+		loadJsonFiles();
+
 //		test();
 		try {
 	      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -105,6 +100,17 @@ public class MainView {
 		if(isStarting){
 			ls = new LoadScreen(cp, cn);
 //			updateJSONSettings(false);TODO
+		}
+
+		loader();
+		isNew = checkInstallation();
+		if(isNew){
+			try {
+				dm.checkIfDatabaseExists();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -155,7 +161,6 @@ public class MainView {
 		System.out.println("loader");
 		ts = new tScanner();
 
-		loadConst();
 		loadHelpers();
 
 		todayL = dh.getFormatedDateAndTime();
@@ -164,7 +169,6 @@ public class MainView {
 		todayS = dh.getFormatedDate();
 		logger.setShortDate(todayS);
 		
-		loadJsonFiles();
 		loadManagers();
 
 		//		get cars list
@@ -184,9 +188,12 @@ public class MainView {
 
 	private static void loadClasses() {
 		System.out.println("loadClasses");
+		printer = new Printer(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh, df_3_2);
+
 		newItemFrame = new ItemAddNew(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
-		newInvoice = new InvoiceAddEdit(window, dm, cdb, cs, cn, logger, jSettings , jLang, jUser, msh, dh, stmng, cmng, invmng, carBrandList, df_3_2);
-		stockFrame = new DisplayStock(window, newItemFrame, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
+		newInvoice = new InvoiceAddEdit(window, dm, cdb, cs, cn, logger, printer, jSettings , jLang, jUser, msh, dh, stmng, cmng, invmng, carBrandList, df_3_2);
+		stockFrame = new DisplayStock(window, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_3_2);
+
 	}
 
 	private static void loadConst() {
