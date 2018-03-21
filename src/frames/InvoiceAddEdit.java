@@ -776,7 +776,7 @@ public class InvoiceAddEdit {
 			}else if(this.chbInd.isSelected() && !str.contains(cs.COMA)){
 				customer =  new CustomerInd(this.dm, this.cdb, this.cn, this.cs, 1, str, brand);
 			}else{
-				String[] t = msh.splitString(str, cs.COMA);
+				String[] t = msh.splitStringRemoveSpecialChars(str, cs.COMA);
 				String vat="", name="", address="";
 				if(t!=null){
 					if(t[0]!= null && !t[0].isEmpty()) vat = t[0];
@@ -1075,7 +1075,7 @@ public class InvoiceAddEdit {
 	}
 
 	protected Customer getCustomer(String customerStr) {
-		String[] t = msh.splitString(customerStr, cs.COMA);
+		String[] t = msh.splitStringRemoveSpecialChars(customerStr, cs.COMA);
 		Customer c = null;
 //TODO - need to improve
 		if(t != null)

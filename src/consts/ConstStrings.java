@@ -176,4 +176,5 @@ public class ConstStrings {
 	public final String PDF_CREATION_ERROR = "pdf creation error";
 	public final String OTHER_STRING = "other";
 	public final String PRINTER_NAME = "Canon MP620 series Printer WS";
+	public final String PDF_SALES_HEADER = "pdf sales header";
 }

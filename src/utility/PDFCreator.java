@@ -117,17 +117,59 @@ public class PDFCreator {
 		// fill for who
 		fillCustomerDetails(cst, i, customer);
 		// fill what sold
+		fillSales(cst, i);
 		// fill customer msg
 		
 		cst.close();
 		return pdd;
 	}
 
+	private void fillSales(PDPageContentStream cst, Invoice i) throws IOException {
+		cst.beginText();
+		cst.setNonStrokingColor(Color.WHITE);
+		cst.setFont(PDType1Font.COURIER_BOLD, this.fonts_title);
+		cst.newLineAtOffset(cn.PDF_DOC_X_OFFSET,  440f);
+		cst.setLeading(cn.LEADING_LINE_SIZE);
+		cst.showText(jl.get(cs.PDF_SALES_HEADER).toString());
+		cst.newLine();
+		cst.newLine();
+		cst.setNonStrokingColor(Color.BLACK);
+		cst.setFont(PDType1Font.COURIER, fonts);
+		String[] salesList = msh.splitString(i.getList(), cs.SEMICOLON);
+		if(salesList.length > 0){
+			int count = 1;
+			for (int j = 0; j < salesList.length-1; j++) {
+				int qnt = Integer.parseInt(salesList[j].substring(0, salesList[j].indexOf(cs.STAR)));
+				String description = salesList[j].substring(salesList[j].indexOf(cs.STAR)+1, salesList[j].indexOf(cs.HASH));
+				double price = Double.parseDouble(salesList[j].substring(salesList[j].indexOf(cs.AT)+1));
+				cst.showText(count + ". " + description + "  -  " + cs.EURO  + price + " * " + qnt);
+				cst.newLine();
+				count++;
+			}
+		}
+		cst.newLine();	
+		cst.setFont(PDType1Font.COURIER, this.fonts_title);
+		
+		String symbol = cs.EURO;
+		if(i.isPercent() == 0)
+			symbol = cs.PERCENT;
+		
+		if(i.getDiscount()>0)
+		cst.showText("                         Discount          "+symbol+" "+i.getDiscount());
+		cst.newLine();	
+		double sumDiscounted = i.getTotal() - i.getDiscount();
+		cst.showText("                         TOTAL            € "+df.format(sumDiscounted ));
+				
+		cst.newLine();	
+//TODO customer message
+		cst.endText();
+	}
+
 	private void fillCustomerDetails(PDPageContentStream cst, Invoice i, Customer customer) throws IOException {
 		cst.beginText();
 		cst.setNonStrokingColor(Color.BLACK);
 		cst.setFont(PDType1Font.COURIER_BOLD, this.fonts_title);
-		cst.setLeading(20.5f);
+		cst.setLeading(cn.LEADING_LINE_SIZE);
 		
 		cst.newLineAtOffset(20, 530);
 		if(!i.isBusiness()){
@@ -155,8 +197,8 @@ public class PDFCreator {
 		cst.beginText();
 		cst.setNonStrokingColor(Color.BLACK);
 		cst.setFont(PDType1Font.COURIER, this.fonts_title);
-		cst.newLineAtOffset(25f,  740);
-		cst.setLeading(20.5f);
+		cst.newLineAtOffset(cn.PDF_DOC_X_OFFSET,  740);
+		cst.setLeading(cn.LEADING_LINE_SIZE);
 		
 		cst.showText(ju.get(cs.JSON_COMPANY_NAME).toString() + "                                       " + date);
 		cst.newLine();

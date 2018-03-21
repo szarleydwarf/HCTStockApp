@@ -177,17 +177,26 @@ public class MiscHelper {
 		return -1;
 	}
 
+	public String[] splitStringRemoveSpecialChars(String str, String c) {
+		String[] t = new String[2];
+		if(str.contains(c)){
+			System.out.println("msh 1. "+str.matches(cs.SPECIAL_CHAR_PATTERN));
+			
+			if(str.matches(cs.SPECIAL_CHAR_PATTERN)){
+				System.out.println("msh 2. "+str);
+				str = str.replaceAll(cs.REPLACE_CHAR_PATTERN, "");
+						System.out.println("msh 3. "+str);
+//				str = str.substring(str.indexOf(cs.SPECIAL_CHAR_PATTERN)+1);
+			}
+			t = str.split(c, -1);
+		} else {
+			t[0] = str;
+		}	
+		return t;
+	}
 	public String[] splitString(String str, String c) {
 		String[] t = new String[2];
 		if(str.contains(c)){
-			System.out.println("1. "+str.matches(cs.SPECIAL_CHAR_PATTERN));
-			
-			if(str.matches(cs.SPECIAL_CHAR_PATTERN)){
-				System.out.println("2. "+str);
-				str = str.replaceAll(cs.REPLACE_CHAR_PATTERN, "");
-						System.out.println("3. "+str);
-//				str = str.substring(str.indexOf(cs.SPECIAL_CHAR_PATTERN)+1);
-			}
 			t = str.split(c, -1);
 		} else {
 			t[0] = str;
