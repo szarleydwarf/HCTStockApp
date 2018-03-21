@@ -1,9 +1,10 @@
 package consts;
 
-import javax.swing.ComboBoxModel;
-import javax.swing.Icon;
-
 public class ConstStrings {
+	public static final String PDF_INVOICE = "invoice pdf";
+	public static final String PDF_SALE_REPORT = "sale pdf";
+	public static final String PDF_STOCK_REPORT = "stock pdf";
+	public static final String PDF_REPAK_REPORT = "repak pdf";
 	public final String ENTER_DETAILS = "company details";
 	public final String APP = "app";
 	public final String CHECKBOX_LBL = "I/B";
@@ -75,6 +76,7 @@ public class ConstStrings {
 	public final String DOT = ".";
 	public final String UNDERSCORE = "_";
 	public final String SEMICOLON = ";";
+	public final String SLASH = "\\";
 	
 	// JSON USER FILE
 	public final String JSON_COMPANY_NAME = "company";
@@ -85,10 +87,11 @@ public class ConstStrings {
 	public final String JSON_POST_CODE = "post code";
 	public final String JSON_TELEPHONE = "telephone";
 	public final String JSON_EMAIL = "email";
-	public final String JSON_WWW = "wwww";
+	public final String JSON_WWW = "www";
 	public final String JSON_FB = "fb";
 	public final String LOGO_PATH = "logo path";
 	public final String NUMBER_OF_SERVICES = "number of services";
+	//TODO add rest from json file
 	
 	// JSON SETTINGS FILE
 	public final String APP_COLOR_R = "app color R";
@@ -103,6 +106,13 @@ public class ConstStrings {
 	public  final String DB_URL = "database host";
 	public  final String DB_USER = "db user";
 	public  final String DB_PASS = "db pass";
+	
+	public  final String INVOICE_PATH = "invoice folder path";
+	public  final String SALES_PATH = "sales folder path";
+	public  final String STOCK_REP_PATH = "stock folder path";
+	public  final String REPAK_REP_PATH = "repak folder path";
+	public  final String DOC_SUB_PATH = "doc subfolder path";
+
 
 	// JSON LANG PACKET
 	public final String BTN_NEXT = "next";
@@ -162,4 +172,8 @@ public class ConstStrings {
 	public final String TABLE_EMPTY = "empty table";
 	public final String COMA_ERROR = "coma error";
 	public final String SAVE_PDF = "save pdf";
+	public final String PDF_SAVE_ERROR = "save pdf error";
+	public final String PDF_CREATION_ERROR = "pdf creation error";
+	public final String OTHER_STRING = "other";
+	public final String PRINTER_NAME = "Canon MP620 series Printer WS";
 }

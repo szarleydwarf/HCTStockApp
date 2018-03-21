@@ -3,9 +3,19 @@ package utility;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.font.TextAttribute;
+import java.awt.print.PrinterJob;
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Map;
 
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.attribute.PrintServiceAttributeSet;
+import javax.swing.JOptionPane;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.printing.PDFPageable;
 import org.json.simple.JSONObject;
 
 import consts.ConstNums;
@@ -29,6 +39,7 @@ public class Printer {
 	private Color color;
 	private String date;
 	private JSONObject ju;
+	private String printerName;
 
 	public Printer (ConstStrings cS, ConstNums cN, ConstPaths CP, Logger logger,
 			JSONObject jSettings, JSONObject jLang, JSONObject jUser,
@@ -53,13 +64,37 @@ public class Printer {
 		this.attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 		this.color = msh.getColor(cs.APP, cs, js);
 		this.date = dh.getFormatedDate();
-	}
+		System.out.println("printer creator");
+}
 	
-	public boolean saveDoc(){
-		return false;
-	}
 
-	public boolean printDoc(){
-		return false;
-	}
+	public void printDoc(String docPath) throws IOException, Exception{
+		System.out.println("printpdf "+docPath);
+		PDDocument document = PDDocument.load(new File(docPath));
+
+		if(this.printerName.isEmpty() || this.printerName == "")
+        	this.printerName = this.cs.PRINTER_NAME;
+
+        PrintService myPrintService = findPrintService(this.printerName);//this.fv.PRINTER_NAME
+        PrintServiceAttributeSet set = myPrintService.getAttributes();
+                
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPageable(new PDFPageable(document));
+        job.setPrintService(myPrintService);
+
+        //TODO /Uncomment bellow before export to app
+//        job.print();
+        
+        document.close();
+   }
+	
+	private static PrintService findPrintService(String printerName) {
+        PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
+        for (PrintService printService : printServices) {
+            if (printService.getName().trim().equals(printerName)) {
+                return printService;
+            }
+        }
+        return null;
+    }
 }

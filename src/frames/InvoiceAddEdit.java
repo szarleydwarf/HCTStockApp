@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.font.TextAttribute;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +44,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.json.simple.JSONObject;
 
 import consts.ConstDB;
@@ -58,8 +60,10 @@ import objects.CustomerInd;
 import objects.Invoice;
 import objects.Item;
 import utility.DateHelper;
+import utility.FileHelper;
 import utility.Logger;
 import utility.MiscHelper;
+import utility.PDFCreator;
 import utility.Printer;
 
 public class InvoiceAddEdit {
@@ -93,36 +97,34 @@ public class InvoiceAddEdit {
 	private JTextField tfPrice;
 	private JTextField tfQnt;
 	private JTable tbStock;
+	private JTextField tfCustomers;
+	private JCheckBox chbInd;
+	private JSONObject ju;
 
 	private CustomersManager cm;
+	protected Customer customer;
 	private StockManager sm;
 	private InvoiceManager im;
-	private ArrayList<String> carList;
-	private String lastInvoice;
+	private DateHelper dh;
 	private static MiscHelper msh;
 	protected Item item;
 
+	private ArrayList<String> carList;
 	private Map<Item, Integer> selectedRowItem;
 
+	private String lastInvoice;
+	private String date;
 	protected boolean isPercent;
-
+	private boolean isBusiness;
+	protected double total;
+	protected int noOfServices;
 	private double discount;
 
-	private DateHelper dh;
-
-	private String date;
-
-	private JTextField tfCustomers;
-
-	protected Customer customer;
-
-	private JCheckBox chbInd;
-
-	private JSONObject ju;
-
-	private boolean isBusiness;
-
 	private Printer printer;
+	private PDFCreator pdfCreator;
+
+	private FileHelper fh;
+
 	
 	/**
 	 * Launch the application.
@@ -148,9 +150,11 @@ public class InvoiceAddEdit {
 		initialize();
 	}
 
-	public InvoiceAddEdit(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger, Printer printer,
+	public InvoiceAddEdit(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger, 
+			PDFCreator PDFCreator, Printer printer,
 			JSONObject jSettings, JSONObject jLang, JSONObject jUser, 
-			MiscHelper mSH, DateHelper DH, StockManager SM, CustomersManager cMng, InvoiceManager invMng, 
+			MiscHelper mSH, DateHelper DH, FileHelper FH,
+			StockManager SM, CustomersManager cMng, InvoiceManager invMng, 
 			ArrayList<String> carList, DecimalFormat df_3_2) {
 		this.mainView = main;
 		this.jl = jLang;
@@ -165,7 +169,9 @@ public class InvoiceAddEdit {
 //		cp = cP;
 		
 		this.msh = mSH;
+		this.fh = FH;
 		this.dh = DH;
+		this.pdfCreator = PDFCreator;
 		this.printer = printer;
 
 		this.sm = SM;
@@ -324,18 +330,15 @@ public class InvoiceAddEdit {
 		// LISTENERS
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-				setIsVisible(false);
-				if(mainView != null)
-					if(!mainView.isVisible())
-						mainView.setIsVisible(true);
+				goBack();
 			}
 		});
 		
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				checkIsBusiness();
-				System.out.println("Saving !"+isBusiness + " " + !checkBusinesFields());
+				PDDocument pdf = null;
+				System.out.println("Saving !");
 				if(!isBusiness && !checkInvoiceForString()){
 					String toFill = getFieldsToFill();
 					JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
@@ -347,18 +350,33 @@ public class InvoiceAddEdit {
 						JOptionPane.showMessageDialog(frame, jl.get(cs.TABLE_EMPTY).toString());
 					} else {
 						boolean update = isUpdateRequred();
-						System.out.println("update "+update);
 						String listOfServices = getSalesList();
-						collectDataForInvoice(listOfServices);
+						Invoice i = collectDataForInvoice(listOfServices);
 						int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
 						if(dialogResult == JOptionPane.YES_OPTION){
-							System.out.println("pdf save ");
 							//TODO
 							//save pdf - invoice #, customer, table of items, prices, qnt, discount, percent/€, total, date?, no of srevices?
-							printer.saveDoc();
+							pdf = pdfCreator.createPDF(cs.PDF_INVOICE, i, customer);
 						}
 						if(update){
 							updateDBStock(listOfServices);
+						}
+						if(pdf != null){
+							String invoicePath = js.get(cs.INVOICE_PATH).toString()+date;
+							fh.createFolderIfNotExist(invoicePath);
+							invoicePath+=cs.SLASH + date + cs.PDF_EXT;
+							try {
+								pdf.save(invoicePath);
+								pdf.close();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+								log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
+								e.printStackTrace();
+							}
+							goBack();
+						} else {
+							JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
 						}
 					}
 				}
@@ -662,19 +680,20 @@ public class InvoiceAddEdit {
 	}
 //END OF INVOICE PREVIEW
 
-	protected void collectDataForInvoice(String listOfServices) {
+	protected Invoice collectDataForInvoice(String listOfServices) {
 //		TODO check for customer, add new
-		System.out.println("collect ");	
 		checkCustomer();
 		checkIsBusiness();
-		
+		Invoice i= null;
 		if(!listOfServices.equals("")){
-			System.out.println("list "+listOfServices+" / "+discount+" / "+isPercent);
+//			System.out.println("list "+listOfServices+" / "+discount+" / "+isPercent);
 			
 			double sum = calculateSum();
 			sum = applyDiscount(sum);
-			createNewInvoice(listOfServices, Double.parseDouble(df.format(sum)));
+			total = Double.parseDouble(df.format(sum));
+			i = createNewInvoice(listOfServices, total);
 		}
+		return i;
 	}
 
 	protected void updateDBStock(String listOfServices) {
@@ -729,9 +748,10 @@ public class InvoiceAddEdit {
 		return s;
 	}
 
-	private void createNewInvoice(String listOfServices, double sum) {
+	private Invoice createNewInvoice(String listOfServices, double sum) {
 		Invoice in = new Invoice(dm, cdb, cs, cn, customer.getId(),isBusiness, listOfServices, discount, isPercent, sum, date, date+cs.PDF_EXT);
 		this.im.add(in);
+		return in;
 	}
 
 	private void checkCustomer() {
@@ -763,7 +783,6 @@ public class InvoiceAddEdit {
 					if(t[1]!= null && !t[1].isEmpty()) name = t[1];
 					if(t[2]!= null && !t[2].isEmpty()) address = t[2];
 				}
-				System.out.println("brand "+brand);
 				if(brand > 0)
 					customer =  new CustomerBusiness(this.dm, this.cdb, this.cn, this.cs, 1, vat, name, address, brand);
 				else
@@ -1046,7 +1065,6 @@ public class InvoiceAddEdit {
 	protected boolean isUpdateRequred() {
 		//TODO check if this method doesn't need any improvements, check by codes?
 		for(int i = 0; i < modTBchosen.getRowCount(); i++){
-			System.out.println("mod "+modTBchosen.getValueAt(i, 0).toString());
 			if(modTBchosen.getValueAt(i, 0).toString().equals(cs.SHOP_CODE)
 				|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TUBE_CODE)
 				|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE)){
@@ -1130,6 +1148,14 @@ public class InvoiceAddEdit {
 		if(!car.equals(jl.get(cs.LBL_CUSTOMER).toString()))
 			return Integer.parseInt(this.mainView.getCars_BI().get(car));
 		return cn.DEFAULT_CAR_BRAND_ID;
+	}
+
+	protected void goBack() {
+		frame.dispose();
+		setIsVisible(false);
+		if(mainView != null)
+			if(!mainView.isVisible())
+				mainView.setIsVisible(true);		
 	}
 
 	// GETTERS & SETTERS

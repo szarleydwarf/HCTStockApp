@@ -41,6 +41,7 @@ import utility.FileHelper;
 import utility.LoadScreen;
 import utility.Logger;
 import utility.MiscHelper;
+import utility.PDFCreator;
 import utility.Printer;
 import utility.tScanner;
 
@@ -78,6 +79,7 @@ public class MainView {
 	private static ItemAddNew newItemFrame;
 	private static InvoiceAddEdit newInvoice;
 	private static Printer printer;
+	private static PDFCreator pdfCreator;
 	
 
 	/**
@@ -188,10 +190,11 @@ public class MainView {
 
 	private static void loadClasses() {
 		System.out.println("loadClasses");
+		pdfCreator = new PDFCreator(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh, df_3_2);
 		printer = new Printer(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh, df_3_2);
 
 		newItemFrame = new ItemAddNew(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
-		newInvoice = new InvoiceAddEdit(window, dm, cdb, cs, cn, logger, printer, jSettings , jLang, jUser, msh, dh, stmng, cmng, invmng, carBrandList, df_3_2);
+		newInvoice = new InvoiceAddEdit(window, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, jUser, msh, dh, fh, stmng, cmng, invmng, carBrandList, df_3_2);
 		stockFrame = new DisplayStock(window, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_3_2);
 
 	}
