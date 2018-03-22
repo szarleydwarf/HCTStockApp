@@ -80,6 +80,7 @@ public class MainView {
 	private static InvoiceAddEdit newInvoice;
 	private static Printer printer;
 	private static PDFCreator pdfCreator;
+	private static DecimalFormat df_4_2;
 	
 
 	/**
@@ -190,12 +191,12 @@ public class MainView {
 
 	private static void loadClasses() {
 		System.out.println("loadClasses");
-		pdfCreator = new PDFCreator(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh, df_3_2);
-		printer = new Printer(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh, df_3_2);
+		pdfCreator = new PDFCreator(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh, df_4_2);
+		printer = new Printer(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh, df_4_2);
 
-		newItemFrame = new ItemAddNew(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2);
+		newItemFrame = new ItemAddNew(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_4_2);
 		newInvoice = new InvoiceAddEdit(window, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, jUser, msh, dh, fh, stmng, cmng, invmng, carBrandList, df_3_2);
-		stockFrame = new DisplayStock(window, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_3_2);
+		stockFrame = new DisplayStock(window, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
 
 	}
 
@@ -216,6 +217,7 @@ public class MainView {
 		msh = new MiscHelper(logger, cs);
 
 		df_3_2 = new DecimalFormat(cs.DECIMAL_FORMAT_3_2);
+		df_4_2 = new DecimalFormat(cs.DECIMAL_FORMAT_4_2);
 		df_5_2 = new DecimalFormat(cs.DECIMAL_FORMAT_5_2);
 	}
 

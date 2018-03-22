@@ -50,6 +50,7 @@ public class ConstStrings {
 	public final String SPECIAL_CHAR_PATTERN = "^.*[^a-zA-Z0-9\\d\\s,].*$";	
 	public final String INTEGER_PATTERN = "^-?\\d+$";
 	public final String DECIMAL_FORMAT_3_2 = "000.00";
+	public final String DECIMAL_FORMAT_4_2 = "0000.00";
 	public final String DECIMAL_FORMAT_5_2 = "00000.00";
 
 	public final String DEFAULT_REGISTRATION = "00AA0000";
@@ -177,4 +178,7 @@ public class ConstStrings {
 	public final String OTHER_STRING = "other";
 	public final String PRINTER_NAME = "Canon MP620 series Printer WS";
 	public final String PDF_SALES_HEADER = "pdf sales header";
+	public final String TYRE_CHECK_MESSAGE_1 = "tyre check msg1";
+	public final String TYRE_CHECK_MESSAGE_2 = "tyre check msg2";
+	public final String TYRE_CHECK_MESSAGE_3 = "tyre check msg3";
 }

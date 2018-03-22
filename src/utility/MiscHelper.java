@@ -209,5 +209,18 @@ public class MiscHelper {
 		return BorderFactory.createTitledBorder(b, title);
 	}
 
+	public String paddStringRight(String string2Padd, int stringLength, String paddingChar){
+		if(stringLength <= 0)
+			return string2Padd;
+		
+		StringBuilder sb = new StringBuilder(string2Padd);
+		stringLength = stringLength - sb.length() - 1;
+		while(stringLength-- >= 0){
+			sb.append(paddingChar);
+		}
+		return sb.toString();
+		
+	}
+
 
 }

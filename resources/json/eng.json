@@ -39,7 +39,7 @@
 	"s_price":"Rec.Price",
 
 	"other":"OTHER",
-	"pdf sales header":"No.     Description         Price        Qnt",
+	"pdf sales header":"No.     Description                  Price   Qnt",
 
 	"tf cust hint":"Business,type as follow:VAT,NAME,ADDRESS",
 	"save pdf":"Would You Like to Save an invoice as PDF as well?",
@@ -55,5 +55,9 @@
 
 	"saved":"Item saved sucessfully",
 	"close":"Are you really want to close this window?",
-	"search":"Enter frease you looking for:"
+	"search":"Enter frease you looking for:",
+
+	"tyre check msg1":"IMPORTANT !!!",
+	"tyre check msg2":"Check that Your nuts/screws are fastened properly,",
+	"tyre check msg3":"after driving about 10 miles after tyre change."
 }

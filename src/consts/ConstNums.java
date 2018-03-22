@@ -35,4 +35,5 @@ public class ConstNums {
 	// PDF DOCUMENT VALUES
 	public final float LEADING_LINE_SIZE = 20.5f;
 	public final float PDF_DOC_X_OFFSET = 25f;
+	public final int DESCRPTION_LENGTH = 48;
 }

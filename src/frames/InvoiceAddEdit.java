@@ -155,7 +155,7 @@ public class InvoiceAddEdit {
 			JSONObject jSettings, JSONObject jLang, JSONObject jUser, 
 			MiscHelper mSH, DateHelper DH, FileHelper FH,
 			StockManager SM, CustomersManager cMng, InvoiceManager invMng, 
-			ArrayList<String> carList, DecimalFormat df_3_2) {
+			ArrayList<String> carList, DecimalFormat DF) {
 		this.mainView = main;
 		this.jl = jLang;
 		this.js = jSettings;
@@ -179,7 +179,7 @@ public class InvoiceAddEdit {
 		this.im = invMng;
 		this.carList = carList;
 
-		this.df = df_3_2;
+		this.df = DF;
 		
 		this.fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
 		this.fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
@@ -906,7 +906,7 @@ public class InvoiceAddEdit {
 		for(int i = startIndex; i < rowNumber; i++) {
 			data[i][0] = list.get(j).getCode();
 			data[i][1] = list.get(j).getName();
-			data[i][2] = ""+list.get(j).getPrice();
+			data[i][2] = ""+df.format(list.get(j).getPrice());
 			data[i][3] = ""+list.get(j).getQnt();
 			data[i][4] = ""+list.get(j).getCost();
 			j++;
@@ -1031,7 +1031,7 @@ public class InvoiceAddEdit {
 
 		rowData[0] = item.getCode();
 		rowData[1] = item.getName();
-		rowData[2] = ""+productPrice;
+		rowData[2] = ""+df.format(productPrice);
 		rowData[3] = ""+tfQntInt;
 		rowData[4] = ""+item.getCost();
 		
@@ -1043,9 +1043,9 @@ public class InvoiceAddEdit {
 		if(sum > 0 && !tfDiscount.getText().isEmpty()){
 			discount = Double.parseDouble(tfDiscount.getText());
 			if(!isPercent){
-				return sum - (sum * (discount/100));
-			}else if(isPercent){
 				return sum - discount;
+			}else if(isPercent){
+				return sum - (sum * (discount/100));
 			}
 		}
 		return sum;

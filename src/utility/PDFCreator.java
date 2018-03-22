@@ -119,9 +119,30 @@ public class PDFCreator {
 		// fill what sold
 		fillSales(cst, i);
 		// fill customer msg
+		if(saleListContainTyres(i))
+		addMessage(cst);
 		
 		cst.close();
 		return pdd;
+	}
+
+	private boolean saleListContainTyres(Invoice i) {
+		return i.getList().contains(cs.TYRE_CODE) ? true : false;
+	}
+
+	private void addMessage(PDPageContentStream cst) throws IOException {
+		cst.beginText();
+		cst.newLineAtOffset(cn.PDF_DOC_X_OFFSET,  100f);
+		cst.setLeading(cn.LEADING_LINE_SIZE);
+		cst.setNonStrokingColor(Color.BLACK);
+		cst.setFont(PDType1Font.COURIER, fonts);
+		
+		cst.showText(jl.get(cs.TYRE_CHECK_MESSAGE_1).toString());
+		cst.newLine();
+		cst.showText(jl.get(cs.TYRE_CHECK_MESSAGE_2).toString());
+		cst.newLine();
+		cst.showText(jl.get(cs.TYRE_CHECK_MESSAGE_3).toString());
+		cst.endText();
 	}
 
 	private void fillSales(PDPageContentStream cst, Invoice i) throws IOException {
@@ -133,6 +154,7 @@ public class PDFCreator {
 		cst.showText(jl.get(cs.PDF_SALES_HEADER).toString());
 		cst.newLine();
 		cst.newLine();
+		float yPos = 440f+cn.LEADING_LINE_SIZE;
 		cst.setNonStrokingColor(Color.BLACK);
 		cst.setFont(PDType1Font.COURIER, fonts);
 		String[] salesList = msh.splitString(i.getList(), cs.SEMICOLON);
@@ -141,8 +163,9 @@ public class PDFCreator {
 			for (int j = 0; j < salesList.length-1; j++) {
 				int qnt = Integer.parseInt(salesList[j].substring(0, salesList[j].indexOf(cs.STAR)));
 				String description = salesList[j].substring(salesList[j].indexOf(cs.STAR)+1, salesList[j].indexOf(cs.HASH));
+				description = msh.paddStringRight(description, cn.DESCRPTION_LENGTH, cs.DOT);
 				double price = Double.parseDouble(salesList[j].substring(salesList[j].indexOf(cs.AT)+1));
-				cst.showText(count + ". " + description + "  -  " + cs.EURO  + price + " * " + qnt);
+				cst.showText(count + ". " + description + "  -  " + cs.EURO  + df.format(price) + " * " + qnt);
 				cst.newLine();
 				count++;
 			}
@@ -151,20 +174,18 @@ public class PDFCreator {
 		cst.setFont(PDType1Font.COURIER, this.fonts_title);
 		
 		String symbol = cs.EURO;
-		if(i.isPercent() == 0)
+		if(i.isPercent() == 1)
 			symbol = cs.PERCENT;
 		
 		if(i.getDiscount()>0)
 		cst.showText("                         Discount          "+symbol+" "+i.getDiscount());
 		cst.newLine();	
-		double sumDiscounted = i.getTotal() - i.getDiscount();
-		cst.showText("                         TOTAL            € "+df.format(sumDiscounted ));
+		cst.showText("                         TOTAL            € "+df.format(i.getTotal()));
 				
 		cst.newLine();	
-//TODO customer message
 		cst.endText();
 	}
-
+//TODO add accountancy copy boolean
 	private void fillCustomerDetails(PDPageContentStream cst, Invoice i, Customer customer) throws IOException {
 		cst.beginText();
 		cst.setNonStrokingColor(Color.BLACK);
@@ -177,9 +198,9 @@ public class PDFCreator {
 			if(customer != null)
 				c = (CustomerInd) customer;
 			if(c != null)
-				cst.showText("Invoice # "+i.getId()+" for "+c.getCar().getBrandString());
+				cst.showText("Invoice No: "+i.getId()+" for "+c.getCar().getBrandString());
 			else
-				cst.showText("Invoice # "+i.getId()+" for "+jl.get(cs.OTHER_STRING).toString());
+				cst.showText("Invoice No: "+i.getId()+" for "+jl.get(cs.OTHER_STRING).toString());
 		} else {
 			CustomerBusiness c = null;
 			if(customer != null)
