@@ -31,4 +31,9 @@ public class ConstNums {
 	public final int BACK_BTN_HEIGHT = 24;
 	public final int ADD_EDIT_FRAME_WIDTH = 528;
 	public final int ADD_EDIT_FRAME_HEIGHT = 320;
+	
+	// PDF DOCUMENT VALUES
+	public final float LEADING_LINE_SIZE = 20.5f;
+	public final float PDF_DOC_X_OFFSET = 25f;
+	public final int DESCRPTION_LENGTH = 48;
 }

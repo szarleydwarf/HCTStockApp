@@ -27,11 +27,11 @@ public class ConstDB {
 //	public  final String PASS = "pass1234";
 
 // life
-//	public  final String DB_URL = "jdbc:mysql://https//188.128.207.140/sql/";
+//	public  final String DB_URL = "jdbc:mysql://https//188.128.207.140/sql/19519373_hct";
 //	public  final String USER = "19519373_hct";
 //	public  final String PASS = "Pa55W0rd1!";
 
-	public  final String DB_URL = "jdbc:mysql://sql2.freemysqlhosting.net";
+	public  final String DB_URL = "jdbc:mysql://sql2.freemysqlhosting.net/sql2226361";
 	public  final String USER = "sql2226361";
 	public  final String PASS = "hB7%wY5!";
 

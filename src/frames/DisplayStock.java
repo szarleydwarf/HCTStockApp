@@ -43,6 +43,7 @@ import managers.StockManager;
 import objects.Item;
 import utility.Logger;
 import utility.MiscHelper;
+import utility.Printer;
 
 public class DisplayStock {
 
@@ -71,6 +72,7 @@ public class DisplayStock {
 	protected String itemCode;
 	private JButton btnDelete;
 	protected ItemAddNew newItemFrame;
+	private Printer printer;
 
 	/**
 	 * Launch the application.
@@ -111,7 +113,7 @@ public class DisplayStock {
 		initialize();
 	}
 
-	public DisplayStock(MainView main, ItemAddNew AN, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
+	public DisplayStock(MainView main, ItemAddNew AN, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger, Printer printer,
 			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM, DecimalFormat df_3_2) {
 		mainView = main;
 		this.newItemFrame = AN;
@@ -126,6 +128,7 @@ public class DisplayStock {
 //		cp = cP;
 		
 		msh = mSH;
+		this.printer = printer;
 		
 		sm = SM;
 		

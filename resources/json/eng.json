@@ -38,15 +38,28 @@
 	"s_cost":"Calc.cost",
 	"s_price":"Rec.Price",
 
+	"other":"OTHER",
+	"pdf sales header":"No.     Description                  Price   Qnt",
+
 	"tf cust hint":"Business,type as follow:VAT,NAME,ADDRESS",
+	"save pdf":"Would You Like to Save an invoice as PDF as well?",
 	
 	"item_add_error":"There was an error when trying add an item. Most likely, item selection return null.",
 	"item_edition_error":"There was an error when trying edit an item. Most likely, item selection return null.",
-	"not_number_error":"This is not a number. Please try again.",
-	"delete_error":"There was an error when trying to delete an item. Most likely, item selection return null.",
 	"saving error":"There was an error when trying save an item. Save unsucessful",
+	"save pdf error":"There was an error when trying to save a PDF document.",
+	"not_number_error":"This is not a number. Please try again.",
+	"pdf creation error":"There was an error when trying to create a PDF document. Wrong document type passed.",
+	"delete_error":"There was an error when trying to delete an item. Most likely, item selection return null.",
+	"pdf print error":"There was an error when trying to print a PDF document. Most likely, document not found. Check paths to it.",
+	"printer name error":"There was an error when trying to get default printer name.",
 	"coma error":"Your registration contains 'comma'. Delete it or check if you not missing any information.(Business customer format: VAT,NAME,ADDRESS",
+
 	"saved":"Item saved sucessfully",
 	"close":"Are you really want to close this window?",
-	"search":"Enter frease you looking for:"
+	"search":"Enter frease you looking for:",
+
+	"tyre check msg1":"IMPORTANT !!!",
+	"tyre check msg2":"After tyre change, check the tightening of your tyres,",
+	"tyre check msg3":"after driving around 10 miles."
 }

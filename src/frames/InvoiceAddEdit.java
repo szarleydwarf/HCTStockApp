@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.font.TextAttribute;
+import java.awt.print.PrinterException;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +45,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.json.simple.JSONObject;
 
 import consts.ConstDB;
@@ -58,8 +61,11 @@ import objects.CustomerInd;
 import objects.Invoice;
 import objects.Item;
 import utility.DateHelper;
+import utility.FileHelper;
 import utility.Logger;
 import utility.MiscHelper;
+import utility.PDFCreator;
+import utility.Printer;
 
 public class InvoiceAddEdit {
 
@@ -92,34 +98,34 @@ public class InvoiceAddEdit {
 	private JTextField tfPrice;
 	private JTextField tfQnt;
 	private JTable tbStock;
+	private JTextField tfCustomers;
+	private JCheckBox chbInd;
+	private JSONObject ju;
 
 	private CustomersManager cm;
+	protected Customer customer;
 	private StockManager sm;
 	private InvoiceManager im;
-	private ArrayList<String> carList;
-	private String lastInvoice;
+	private DateHelper dh;
 	private static MiscHelper msh;
 	protected Item item;
 
+	private ArrayList<String> carList;
 	private Map<Item, Integer> selectedRowItem;
 
+	private String lastInvoice;
+	private String date;
 	protected boolean isPercent;
-
+	private boolean isBusiness;
+	protected double total;
+	protected int noOfServices;
 	private double discount;
 
-	private DateHelper dh;
+	private Printer printer;
+	private PDFCreator pdfCreator;
 
-	private String date;
+	private FileHelper fh;
 
-	private JTextField tfCustomers;
-
-	protected Customer customer;
-
-	private JCheckBox chbInd;
-
-	private JSONObject ju;
-
-	private boolean isBusiness;
 	
 	/**
 	 * Launch the application.
@@ -145,10 +151,12 @@ public class InvoiceAddEdit {
 		initialize();
 	}
 
-	public InvoiceAddEdit(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
+	public InvoiceAddEdit(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger, 
+			PDFCreator PDFCreator, Printer printer,
 			JSONObject jSettings, JSONObject jLang, JSONObject jUser, 
-			MiscHelper mSH, DateHelper DH, StockManager SM, CustomersManager cMng, InvoiceManager invMng, 
-			ArrayList<String> carList, DecimalFormat df_3_2) {
+			MiscHelper mSH, DateHelper DH, FileHelper FH,
+			StockManager SM, CustomersManager cMng, InvoiceManager invMng, 
+			ArrayList<String> carList, DecimalFormat DF) {
 		this.mainView = main;
 		this.jl = jLang;
 		this.js = jSettings;
@@ -162,14 +170,17 @@ public class InvoiceAddEdit {
 //		cp = cP;
 		
 		this.msh = mSH;
+		this.fh = FH;
 		this.dh = DH;
-		
+		this.pdfCreator = PDFCreator;
+		this.printer = printer;
+
 		this.sm = SM;
 		this.cm = cMng;
 		this.im = invMng;
 		this.carList = carList;
 
-		this.df = df_3_2;
+		this.df = DF;
 		
 		this.fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
 		this.fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
@@ -320,45 +331,37 @@ public class InvoiceAddEdit {
 		// LISTENERS
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-				setIsVisible(false);
-				if(mainView != null)
-					if(!mainView.isVisible())
-						mainView.setIsVisible(true);
+				goBack();
 			}
 		});
 		
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO
 				checkIsBusiness();
-				System.out.println("Saving !"+isBusiness);
-				if(!isBusiness && !checkInvoiceForString()){
-					String toFill = getFieldsToFill();
-					JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
-				} else if (!tableHasElements()){
-					JOptionPane.showMessageDialog(frame, jl.get(cs.TABLE_EMPTY).toString());
-				} else {
-					boolean update = isUpdateRequred();
-					collectDataForInvoice();
-//				TODO update database
-				
-				}
+				PDDocument pdf = null;
+				System.out.println("Saving !");
+				String invPath = getInvoicePath();
+				pdf = createPDFDInvoice(invPath);
 			}
 		});
 		
 		btnPrint.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO
-				if(!checkInvoiceForString()){
-					String toFill = getFieldsToFill();
-					JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
-				}
 				System.out.println("Printing !");
-				boolean update = isUpdateRequred();
-				collectDataForInvoice();
-//				TODO update database
-				
+				checkIsBusiness();
+				PDDocument pdf = null;
+				String invPath = getInvoicePath();
+				pdf = createPDFDInvoice(invPath);
+				try {
+					printer.printDoc(invPath);
+				} catch (IOException e) {
+					log.logError(js.get(cs.PRINTER_NAME_ERROR).toString());
+					e.printStackTrace();
+				} catch (PrinterException e) {
+					log.logError(js.get(cs.PRINTER_NAME_ERROR).toString());
+					e.printStackTrace();
+				}
+				//TODO
 				//print
 			}
 		});
@@ -403,15 +406,15 @@ public class InvoiceAddEdit {
             }
         });
 		
-//		tfCustomers.addFocusListener(new FocusListener(){
-//	        @Override
-//	        public void focusGained(FocusEvent e){
-//	        	tfCustomers.setText("");
-//			}
-//			@Override
-//			public void focusLost(FocusEvent arg0) {
-//			}
-//		});
+		tfCustomers.addFocusListener(new FocusListener(){
+	        @Override
+	        public void focusGained(FocusEvent e){
+	        	tfCustomers.setText("");
+			}
+			@Override
+			public void focusLost(FocusEvent arg0) {
+			}
+		});
 		
 		tfCustomers.getDocument().addDocumentListener(new DocumentListener(){
 			@Override
@@ -471,6 +474,57 @@ public class InvoiceAddEdit {
 
 
 	}
+	protected String getInvoicePath() {
+		String invoicePath = js.get(cs.INVOICE_PATH).toString()+date;
+		fh.createFolderIfNotExist(invoicePath);
+		invoicePath+=cs.SLASH + date + cs.UNDERSCORE + lastInvoice + cs.PDF_EXT;
+		return invoicePath;
+	}
+
+	protected PDDocument createPDFDInvoice(String invoicePath) {
+		PDDocument pdf = null;
+		if(!isBusiness && !checkInvoiceForString()){
+			String toFill = getFieldsToFill();
+			JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
+		} else if(isBusiness && !checkBusinesFields()) {
+			String toFill = getBFieldsToFill();
+			JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
+		} else {
+			if (!tableHasElements()){
+				JOptionPane.showMessageDialog(frame, jl.get(cs.TABLE_EMPTY).toString());
+			} else {
+				boolean update = isUpdateRequred();
+				String listOfServices = getSalesList();
+				Invoice i = collectDataForInvoice(listOfServices);
+				int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
+				if(dialogResult == JOptionPane.YES_OPTION){
+					//TODO
+					//save pdf - invoice #, customer, table of items, prices, qnt, discount, percent/€, total, date?, no of srevices?
+					pdf = pdfCreator.createPDF(cs.PDF_INVOICE, i, customer);
+				}
+				if(update){
+					updateDBStock(listOfServices);
+				}
+				if(pdf != null){
+
+					try {
+						pdf.save(invoicePath);
+						pdf.close();
+						goBack();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+						log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
+						e.printStackTrace();
+					}
+				} else {
+					JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+				}
+			}
+		}
+		return pdf;
+	}
+
 //END OF INITIALIZE
 	private void createInvoicePreview() {
 		int lblX = 10, lblY = 30; 
@@ -615,6 +669,7 @@ public class InvoiceAddEdit {
 				int chosenRow, stRow;
 				for(int j = 0; j < its.size(); j++){
 					chosenRow = msh.getSelectedItemRow(model, its.get(j));
+					//TODO NULL POINTER
 					stRow = msh.getSelectedItemRow(dtm, its.get(j));
 					if(chosenRow != -1)
 						updateStockTableQnt(model, chosenRow, stRow);
@@ -644,23 +699,37 @@ public class InvoiceAddEdit {
 	}
 //END OF INVOICE PREVIEW
 
-	protected void collectDataForInvoice() {
+	protected Invoice collectDataForInvoice(String listOfServices) {
 //		TODO check for customer, add new
-		System.out.println("collect ");	
 		checkCustomer();
 		checkIsBusiness();
-//check if selected from table is not a b customer 
-		String listOfServices = getSalesList();
-		if(!listOfServices.equals(""))
-			System.out.println("list "+listOfServices+" / "+discount+" / "+isPercent);
-		
-		double sum = calculateSum();
-		sum = applyDiscount(sum);
-		createNewInvoice(listOfServices, Double.parseDouble(df.format(sum)));
+		Invoice i= null;
+		if(!listOfServices.equals("")){
+//			System.out.println("list "+listOfServices+" / "+discount+" / "+isPercent);
+			
+			double sum = calculateSum();
+			sum = applyDiscount(sum);
+			total = Double.parseDouble(df.format(sum));
+			i = createNewInvoice(listOfServices, total);
+		}
+		return i;
+	}
+
+	protected void updateDBStock(String listOfServices) {
+		for(int i = 0; i < modTBchosen.getRowCount(); i++){
+			Item it = null;
+			if(modTBchosen.getValueAt(i, 0).toString().equals(cs.SHOP_CODE)
+					|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TUBE_CODE)
+					|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE)){
+				it = this.getItemByName(this.modTBchosen.getValueAt(i, cn.NAME_COLUMN).toString());
+			}
+			if(it != null){
+				it.updateRecord();
+			}
+		}
 	}
 
 	private void checkIsBusiness() {
-//		System.out.println("???"+customer.getId());
 		if(customer != null)
 			isBusiness = customer.getId().contains(cs.CUST_BUS_CODE) ? true : false;
 		else
@@ -698,10 +767,10 @@ public class InvoiceAddEdit {
 		return s;
 	}
 
-	private void createNewInvoice(String listOfServices, double sum) {
+	private Invoice createNewInvoice(String listOfServices, double sum) {
 		Invoice in = new Invoice(dm, cdb, cs, cn, customer.getId(),isBusiness, listOfServices, discount, isPercent, sum, date, date+cs.PDF_EXT);
 		this.im.add(in);
-		System.out.println("in "+in);
+		return in;
 	}
 
 	private void checkCustomer() {
@@ -726,14 +795,13 @@ public class InvoiceAddEdit {
 			}else if(this.chbInd.isSelected() && !str.contains(cs.COMA)){
 				customer =  new CustomerInd(this.dm, this.cdb, this.cn, this.cs, 1, str, brand);
 			}else{
-				String[] t = msh.splitString(str, cs.COMA);
+				String[] t = msh.splitStringRemoveSpecialChars(str, cs.COMA);
 				String vat="", name="", address="";
 				if(t!=null){
 					if(t[0]!= null && !t[0].isEmpty()) vat = t[0];
 					if(t[1]!= null && !t[1].isEmpty()) name = t[1];
 					if(t[2]!= null && !t[2].isEmpty()) address = t[2];
 				}
-				System.out.println("brand "+brand);
 				if(brand > 0)
 					customer =  new CustomerBusiness(this.dm, this.cdb, this.cn, this.cs, 1, vat, name, address, brand);
 				else
@@ -741,7 +809,6 @@ public class InvoiceAddEdit {
 					
 			}
 			this.cm.addCustomer(customer);
-			System.out.println("Str: "+customer.toString());	
 		}		
 	}
 
@@ -858,7 +925,7 @@ public class InvoiceAddEdit {
 		for(int i = startIndex; i < rowNumber; i++) {
 			data[i][0] = list.get(j).getCode();
 			data[i][1] = list.get(j).getName();
-			data[i][2] = ""+list.get(j).getPrice();
+			data[i][2] = ""+df.format(list.get(j).getPrice());
 			data[i][3] = ""+list.get(j).getQnt();
 			data[i][4] = ""+list.get(j).getCost();
 			j++;
@@ -923,7 +990,7 @@ public class InvoiceAddEdit {
 				item = null;
 				int row = table.getSelectedRow();
 				if(row != -1) {
-					item = getItem(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.NAME_COLUMN).toString());
+					item = getItemByName(table.getModel().getValueAt(table.convertRowIndexToModel(row), cn.NAME_COLUMN).toString());
 					if(item != null && table.getName().equals(cs.STOCK_TB_NAME)){
 						selectedRowItem.put(item,row);
 					}
@@ -983,7 +1050,7 @@ public class InvoiceAddEdit {
 
 		rowData[0] = item.getCode();
 		rowData[1] = item.getName();
-		rowData[2] = ""+productPrice;
+		rowData[2] = ""+df.format(productPrice);
 		rowData[3] = ""+tfQntInt;
 		rowData[4] = ""+item.getCost();
 		
@@ -995,9 +1062,9 @@ public class InvoiceAddEdit {
 		if(sum > 0 && !tfDiscount.getText().isEmpty()){
 			discount = Double.parseDouble(tfDiscount.getText());
 			if(!isPercent){
-				return sum - (sum * (discount/100));
-			}else if(isPercent){
 				return sum - discount;
+			}else if(isPercent){
+				return sum - (sum * (discount/100));
 			}
 		}
 		return sum;
@@ -1017,8 +1084,9 @@ public class InvoiceAddEdit {
 	protected boolean isUpdateRequred() {
 		//TODO check if this method doesn't need any improvements, check by codes?
 		for(int i = 0; i < modTBchosen.getRowCount(); i++){
-			if(!modTBchosen.getValueAt(i, 0).toString().contains(cs.STAR) 
-					&& !modTBchosen.getValueAt(i, 0).toString().toUpperCase().contains(cs.WASH.toUpperCase())){
+			if(modTBchosen.getValueAt(i, 0).toString().equals(cs.SHOP_CODE)
+				|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TUBE_CODE)
+				|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE)){
 				return true;
 			}
 		}
@@ -1026,7 +1094,7 @@ public class InvoiceAddEdit {
 	}
 
 	protected Customer getCustomer(String customerStr) {
-		String[] t = msh.splitString(customerStr, cs.COMA);
+		String[] t = msh.splitStringRemoveSpecialChars(customerStr, cs.COMA);
 		Customer c = null;
 //TODO - need to improve
 		if(t != null)
@@ -1050,6 +1118,19 @@ public class InvoiceAddEdit {
 		
 		return s;
 	}
+	
+	protected String getBFieldsToFill() {
+		String s = "";
+		if(lblForWho.getText().contains(jl.get(cs.TF_CUST_HINT).toString()) )
+			s += jl.get(cs.ENTER_DETAILS).toString()+ " ";
+		return s;
+	}
+
+	protected boolean checkBusinesFields() {
+		if(!lblForWho.getText().contains(jl.get(cs.TF_CUST_HINT).toString()))
+				return true;
+		return false;
+	}
 
 	protected void updateInvoiceLbl(String text) {
 		String car = lblForWho.getText().substring(lblForWho.getText().indexOf(cs.AT)+1, lblForWho.getText().indexOf(cs.AMP)-1);
@@ -1067,7 +1148,7 @@ public class InvoiceAddEdit {
 		lblForWho.setText(invFor);
 	}
 
-	protected Item getItem(String string) {
+	protected Item getItemByName(String string) {
 		Item item = null;
 		for(Item i : sm.getList()){
 			if(i.getName().equals(string))
@@ -1086,6 +1167,14 @@ public class InvoiceAddEdit {
 		if(!car.equals(jl.get(cs.LBL_CUSTOMER).toString()))
 			return Integer.parseInt(this.mainView.getCars_BI().get(car));
 		return cn.DEFAULT_CAR_BRAND_ID;
+	}
+
+	protected void goBack() {
+		frame.dispose();
+		setIsVisible(false);
+		if(mainView != null)
+			if(!mainView.isVisible())
+				mainView.setIsVisible(true);		
 	}
 
 	// GETTERS & SETTERS

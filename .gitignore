@@ -7,3 +7,7 @@ bin/
 *.sublime-project
 *.sublime-workspace
 *.pdf
+<<<<<<< HEAD
+=======
+*.pdf
+>>>>>>> work-in-progres
