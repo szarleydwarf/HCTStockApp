@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.font.TextAttribute;
+import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -339,61 +340,28 @@ public class InvoiceAddEdit {
 				checkIsBusiness();
 				PDDocument pdf = null;
 				System.out.println("Saving !");
-				if(!isBusiness && !checkInvoiceForString()){
-					String toFill = getFieldsToFill();
-					JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
-				} else if(isBusiness && !checkBusinesFields()) {
-					String toFill = getBFieldsToFill();
-					JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
-				} else {
-					if (!tableHasElements()){
-						JOptionPane.showMessageDialog(frame, jl.get(cs.TABLE_EMPTY).toString());
-					} else {
-						boolean update = isUpdateRequred();
-						String listOfServices = getSalesList();
-						Invoice i = collectDataForInvoice(listOfServices);
-						int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
-						if(dialogResult == JOptionPane.YES_OPTION){
-							//TODO
-							//save pdf - invoice #, customer, table of items, prices, qnt, discount, percent/€, total, date?, no of srevices?
-							pdf = pdfCreator.createPDF(cs.PDF_INVOICE, i, customer);
-						}
-						if(update){
-							updateDBStock(listOfServices);
-						}
-						if(pdf != null){
-							String invoicePath = js.get(cs.INVOICE_PATH).toString()+date;
-							fh.createFolderIfNotExist(invoicePath);
-							invoicePath+=cs.SLASH + date + cs.PDF_EXT;
-							try {
-								pdf.save(invoicePath);
-								pdf.close();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
-								log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
-								e.printStackTrace();
-							}
-							goBack();
-						} else {
-							JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
-						}
-					}
-				}
+				String invPath = getInvoicePath();
+				pdf = createPDFDInvoice(invPath);
 			}
 		});
 		
 		btnPrint.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(!checkInvoiceForString()){
-					String toFill = getFieldsToFill();
-					JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
-				}
 				System.out.println("Printing !");
-				boolean update = isUpdateRequred();
-//				collectDataForInvoice();
-//				TODO update database
-				
+				checkIsBusiness();
+				PDDocument pdf = null;
+				String invPath = getInvoicePath();
+				pdf = createPDFDInvoice(invPath);
+				try {
+					printer.printDoc(invPath);
+				} catch (IOException e) {
+					log.logError(js.get(cs.PRINTER_NAME_ERROR).toString());
+					e.printStackTrace();
+				} catch (PrinterException e) {
+					log.logError(js.get(cs.PRINTER_NAME_ERROR).toString());
+					e.printStackTrace();
+				}
+				//TODO
 				//print
 			}
 		});
@@ -506,6 +474,57 @@ public class InvoiceAddEdit {
 
 
 	}
+	protected String getInvoicePath() {
+		String invoicePath = js.get(cs.INVOICE_PATH).toString()+date;
+		fh.createFolderIfNotExist(invoicePath);
+		invoicePath+=cs.SLASH + date + cs.UNDERSCORE + lastInvoice + cs.PDF_EXT;
+		return invoicePath;
+	}
+
+	protected PDDocument createPDFDInvoice(String invoicePath) {
+		PDDocument pdf = null;
+		if(!isBusiness && !checkInvoiceForString()){
+			String toFill = getFieldsToFill();
+			JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
+		} else if(isBusiness && !checkBusinesFields()) {
+			String toFill = getBFieldsToFill();
+			JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
+		} else {
+			if (!tableHasElements()){
+				JOptionPane.showMessageDialog(frame, jl.get(cs.TABLE_EMPTY).toString());
+			} else {
+				boolean update = isUpdateRequred();
+				String listOfServices = getSalesList();
+				Invoice i = collectDataForInvoice(listOfServices);
+				int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
+				if(dialogResult == JOptionPane.YES_OPTION){
+					//TODO
+					//save pdf - invoice #, customer, table of items, prices, qnt, discount, percent/€, total, date?, no of srevices?
+					pdf = pdfCreator.createPDF(cs.PDF_INVOICE, i, customer);
+				}
+				if(update){
+					updateDBStock(listOfServices);
+				}
+				if(pdf != null){
+
+					try {
+						pdf.save(invoicePath);
+						pdf.close();
+						goBack();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+						log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
+						e.printStackTrace();
+					}
+				} else {
+					JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+				}
+			}
+		}
+		return pdf;
+	}
+
 //END OF INITIALIZE
 	private void createInvoicePreview() {
 		int lblX = 10, lblY = 30; 

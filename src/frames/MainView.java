@@ -192,7 +192,7 @@ public class MainView {
 	private static void loadClasses() {
 		System.out.println("loadClasses");
 		pdfCreator = new PDFCreator(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh, df_4_2);
-		printer = new Printer(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh, df_4_2);
+		printer = new Printer(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh);
 
 		newItemFrame = new ItemAddNew(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_4_2);
 		newInvoice = new InvoiceAddEdit(window, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, jUser, msh, dh, fh, stmng, cmng, invmng, carBrandList, df_3_2);

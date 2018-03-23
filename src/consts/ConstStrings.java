@@ -176,9 +176,13 @@ public class ConstStrings {
 	public final String PDF_SAVE_ERROR = "save pdf error";
 	public final String PDF_CREATION_ERROR = "pdf creation error";
 	public final String OTHER_STRING = "other";
-	public final String PRINTER_NAME = "Canon MP620 series Printer WS";
+	public final String PRINTER_NAME = "Canon MP620 series Printer (Copy 1)";
+	public final String DEF_PRINTER_NAME = "default printer name";
+	
 	public final String PDF_SALES_HEADER = "pdf sales header";
 	public final String TYRE_CHECK_MESSAGE_1 = "tyre check msg1";
 	public final String TYRE_CHECK_MESSAGE_2 = "tyre check msg2";
 	public final String TYRE_CHECK_MESSAGE_3 = "tyre check msg3";
+	public final String PRINTING_PDF_ERROR = "pdf print error";
+	public final String PRINTER_NAME_ERROR = "printer name error";
 }

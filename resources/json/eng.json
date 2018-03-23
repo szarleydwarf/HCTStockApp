@@ -51,6 +51,8 @@
 	"not_number_error":"This is not a number. Please try again.",
 	"pdf creation error":"There was an error when trying to create a PDF document. Wrong document type passed.",
 	"delete_error":"There was an error when trying to delete an item. Most likely, item selection return null.",
+	"pdf print error":"There was an error when trying to print a PDF document. Most likely, document not found. Check paths to it.",
+	"printer name error":"There was an error when trying to get default printer name.",
 	"coma error":"Your registration contains 'comma'. Delete it or check if you not missing any information.(Business customer format: VAT,NAME,ADDRESS",
 
 	"saved":"Item saved sucessfully",
@@ -58,6 +60,6 @@
 	"search":"Enter frease you looking for:",
 
 	"tyre check msg1":"IMPORTANT !!!",
-	"tyre check msg2":"Check that Your nuts/screws are fastened properly,",
-	"tyre check msg3":"after driving about 10 miles after tyre change."
+	"tyre check msg2":"After tyre change, check the tightening of your tyres,",
+	"tyre check msg3":"after driving around 10 miles."
 }

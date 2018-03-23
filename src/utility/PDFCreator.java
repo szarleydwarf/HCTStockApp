@@ -120,7 +120,7 @@ public class PDFCreator {
 		fillSales(cst, i);
 		// fill customer msg
 		if(saleListContainTyres(i))
-		addMessage(cst);
+			addMessage(cst);
 		
 		cst.close();
 		return pdd;
@@ -241,7 +241,6 @@ public class PDFCreator {
 		cst.endText();
 		
 	}
-	
 	
 	private void addLogo(PDPageContentStream cst, PDDocument pdd) throws IOException {
 		PDImageXObject pdImage = PDImageXObject.createFromFile(ju.get(cs.LOGO_PATH).toString(), pdd);

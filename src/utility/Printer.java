@@ -3,6 +3,7 @@ package utility;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.font.TextAttribute;
+import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import javax.print.attribute.PrintServiceAttributeSet;
 import javax.swing.JOptionPane;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.printing.PDFPageable;
 import org.json.simple.JSONObject;
 
@@ -43,7 +45,7 @@ public class Printer {
 
 	public Printer (ConstStrings cS, ConstNums cN, ConstPaths CP, Logger logger,
 			JSONObject jSettings, JSONObject jLang, JSONObject jUser,
-			MiscHelper mSH, DateHelper DH, DecimalFormat df_3_2) {
+			MiscHelper mSH, DateHelper DH) {
 		this.jl = jLang;
 		this.js = jSettings;
 		this.ju = jUser;
@@ -55,37 +57,35 @@ public class Printer {
 		
 		this.msh = mSH;
 		this.dh = DH;
-		
-		this.df = df_3_2;
-		
-		this.fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
-		this.fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
-		this.attributes = fonts_title.getAttributes();
-		this.attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-		this.color = msh.getColor(cs.APP, cs, js);
-		this.date = dh.getFormatedDate();
-		System.out.println("printer creator");
+		this.printerName = "";
+		try{
+			this.printerName = js.get(cs.DEF_PRINTER_NAME).toString();
+		}catch(NullPointerException ne){
+			this.printerName = cs.PRINTER_NAME;
+			log.logError(jl.get(cs.PRINTER_NAME_ERROR).toString());
+		}
 }
 	
 
-	public void printDoc(String docPath) throws IOException, Exception{
-		System.out.println("printpdf "+docPath);
-		PDDocument document = PDDocument.load(new File(docPath));
+	public void printDoc(String docPath) throws IOException, PrinterException{
+//		System.out.println("printpdf "+docPath);
+		PDDocument document = null;
+		document = PDDocument.load(new File(docPath));
 
 		if(this.printerName.isEmpty() || this.printerName == "")
         	this.printerName = this.cs.PRINTER_NAME;
 
-        PrintService myPrintService = findPrintService(this.printerName);//this.fv.PRINTER_NAME
+		PrintService myPrintService = findPrintService(this.printerName);
         PrintServiceAttributeSet set = myPrintService.getAttributes();
                 
         PrinterJob job = PrinterJob.getPrinterJob();
         job.setPageable(new PDFPageable(document));
-        job.setPrintService(myPrintService);
+		job.setPrintService(myPrintService);
 
         //TODO /Uncomment bellow before export to app
-//        job.print();
+		job.print();
         
-        document.close();
+		document.close();
    }
 	
 	private static PrintService findPrintService(String printerName) {
@@ -93,6 +93,8 @@ public class Printer {
         for (PrintService printService : printServices) {
             if (printService.getName().trim().equals(printerName)) {
                 return printService;
+            } else {
+            	return PrintServiceLookup.lookupDefaultPrintService();
             }
         }
         return null;
