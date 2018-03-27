@@ -75,8 +75,15 @@ public class InvoiceManager {
 		}
 	}
 
-	private ArrayList<Invoice> getList() {
+	public ArrayList<Invoice> getList() {
 		return (ArrayList<Invoice>) this.dm.selectData(this.cdb.SELECT_ALL_INVOICES, list);
 	}
+
+	public String[][] getDataShort() {
+		String[][] data = new String[this.list.size()][];
+		for (int i = 0; i < list.size(); i++)
+			data[i] = list.get(i).getCasData();
+		return data;	
+		}
 
 }

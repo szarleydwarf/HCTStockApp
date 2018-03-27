@@ -78,10 +78,7 @@ public class DatabaseManager {
 	private Connection connect() {
 		try {
 			Class.forName(cdb.JDBC_DRIVER);
-//			Connection conn = DriverManager.getConnection(cdb.DB_URL, cdb.USER, cdb.PASS);
 			Connection conn = DriverManager.getConnection(js.get(cs.DB_URL).toString(), js.get(cs.DB_USER).toString(), js.get(cs.DB_PASS).toString());
-
-//			JOptionPane.showMessageDialog(null, "Connected!");
 			return conn;
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Connection Error: "+ex.getMessage());
@@ -246,8 +243,9 @@ public class DatabaseManager {
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		try {
-			if(conn == null || conn.isClosed())
+			if(conn == null || conn.isClosed()){
 				conn = this.connect();
+			}
 		} catch (SQLException e) {
 			log.logError(" 1st "+this.getClass().getName()+"\tSELECT DATA ARRAYLIST [E]\t"+e.getMessage());
 		}

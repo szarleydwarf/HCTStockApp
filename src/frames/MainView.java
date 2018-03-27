@@ -81,6 +81,7 @@ public class MainView {
 	private static Printer printer;
 	private static PDFCreator pdfCreator;
 	private static DecimalFormat df_4_2;
+	private static InvoicesDisplay invoicesFrame;
 	
 
 	/**
@@ -198,6 +199,7 @@ public class MainView {
 		newInvoice = new InvoiceAddEdit(window, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, jUser, msh, dh, fh, stmng, cmng, invmng, carBrandList, df_3_2);
 		stockFrame = new DisplayStock(window, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
 
+		invoicesFrame = new InvoicesDisplay(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, invmng);
 	}
 
 	private static void loadConst() {
@@ -226,10 +228,10 @@ public class MainView {
 		try {
 			dm = new DatabaseManager(logger, todayL, cdb, cn, cs, cp, jSettings, df_3_2);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			logger.logError("FileNotFoundException DM in Main "+e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			logger.logError("IOException DM in Main "+e.getMessage());
 			e.printStackTrace();
 		}
 //		get customer list
@@ -371,18 +373,6 @@ public class MainView {
 		line.setBounds(btnX, btnY, frameW - 40, 2);
 		line.setBorder(border);
 		frame.getContentPane().add(line);
-	
-//		JButton nowaUslugaBtn = new JButton("Nowa usługa");
-//		nowaUslugaBtn.setBackground(new Color(0, 255, 153));
-//		nowaUslugaBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
-//		nowaUslugaBtn.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent arg0) {
-//				frame.dispose();
-////				DodajUsluge.main(loggerFolderPath);
-//			}
-//		});
-//		nowaUslugaBtn.setBounds(358, 112, 200, 36);
-//		frame.getContentPane().add(nowaUslugaBtn);
 		
 		JButton btnSalesReports = new JButton("Raporty sprzedaży");
 		btnSalesReports.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
@@ -426,7 +416,9 @@ public class MainView {
 		invoiceBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		invoiceBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(frame, "W trakcie tworzenia");
+				if(!invoicesFrame.isVisible())
+					invoicesFrame.setIsVisible(true);
+				
 			}
 		});
 		btnY += yOffset;
@@ -486,6 +478,10 @@ public class MainView {
 
 	public static HashMap<String, String> getCars_IB() {
 		return cars_IB;
+	}
+
+	public static CustomersManager getCustMng() {
+		return cmng;
 	}
 
 }

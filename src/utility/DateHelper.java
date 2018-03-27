@@ -19,6 +19,13 @@ public class DateHelper {
 		return df.format(today.getTime());
 	}
 
+	public String getFormatedDateRev(){
+		Calendar today = Calendar.getInstance();
+		SimpleDateFormat df = new SimpleDateFormat(this.cs.DATE_FORMAT_REVERSE);
+		
+		return df.format(today.getTime());
+	}
+	
 	public String getFormatedDateAndTime() {
 		Calendar today = Calendar.getInstance();
 		SimpleDateFormat df= new SimpleDateFormat(this.cs.DATE_TIME_FORMAT);

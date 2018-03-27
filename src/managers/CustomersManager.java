@@ -92,7 +92,8 @@ public class CustomersManager {
 		String[][] data = new String[this.list.size()][];
 		for (int i = 0; i < list.size(); i++)
 			data[i] = list.get(i).getCasData();
-		return data;	}
+		return data;	
+	}
 
 	
 	//GETTERS & SETTERS

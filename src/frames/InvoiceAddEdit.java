@@ -30,7 +30,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
-import javax.swing.RowSorter;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -189,7 +188,7 @@ public class InvoiceAddEdit {
 		this.color = msh.getColor(cs.APP, cs, js);
 		
 		this.selectedRowItem = new HashMap<Item, Integer>();
-		this.date = dh.getFormatedDate();
+		this.date = dh.getFormatedDateRev();
 	}
 	
 	/**
@@ -473,56 +472,6 @@ public class InvoiceAddEdit {
         });
 
 
-	}
-	protected String getInvoicePath() {
-		String invoicePath = js.get(cs.INVOICE_PATH).toString()+date;
-		fh.createFolderIfNotExist(invoicePath);
-		invoicePath+=cs.SLASH + date + cs.UNDERSCORE + lastInvoice + cs.PDF_EXT;
-		return invoicePath;
-	}
-
-	protected PDDocument createPDFDInvoice(String invoicePath) {
-		PDDocument pdf = null;
-		if(!isBusiness && !checkInvoiceForString()){
-			String toFill = getFieldsToFill();
-			JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
-		} else if(isBusiness && !checkBusinesFields()) {
-			String toFill = getBFieldsToFill();
-			JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
-		} else {
-			if (!tableHasElements()){
-				JOptionPane.showMessageDialog(frame, jl.get(cs.TABLE_EMPTY).toString());
-			} else {
-				boolean update = isUpdateRequred();
-				String listOfServices = getSalesList();
-				Invoice i = collectDataForInvoice(listOfServices);
-				int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
-				if(dialogResult == JOptionPane.YES_OPTION){
-					//TODO
-					//save pdf - invoice #, customer, table of items, prices, qnt, discount, percent/€, total, date?, no of srevices?
-					pdf = pdfCreator.createPDF(cs.PDF_INVOICE, i, customer);
-				}
-				if(update){
-					updateDBStock(listOfServices);
-				}
-				if(pdf != null){
-
-					try {
-						pdf.save(invoicePath);
-						pdf.close();
-						goBack();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
-						log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
-						e.printStackTrace();
-					}
-				} else {
-					JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
-				}
-			}
-		}
-		return pdf;
 	}
 
 //END OF INITIALIZE
@@ -1100,6 +1049,57 @@ public class InvoiceAddEdit {
 		if(t != null)
 			c = cm.find(t);
 		return c;
+	}
+	protected String getInvoicePath() {
+		String subPath = date.replace(cs.MINUS, cs.SLASH); 
+		String invoicePath = js.get(cs.INVOICE_PATH).toString()+subPath;
+		fh.createFolderIfNotExist(invoicePath);
+		invoicePath+=cs.SLASH + date + cs.UNDERSCORE + lastInvoice + cs.PDF_EXT;
+		return invoicePath;
+	}
+
+	protected PDDocument createPDFDInvoice(String invoicePath) {
+		PDDocument pdf = null;
+		if(!isBusiness && !checkInvoiceForString()){
+			String toFill = getFieldsToFill();
+			JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
+		} else if(isBusiness && !checkBusinesFields()) {
+			String toFill = getBFieldsToFill();
+			JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
+		} else {
+			if (!tableHasElements()){
+				JOptionPane.showMessageDialog(frame, jl.get(cs.TABLE_EMPTY).toString());
+			} else {
+				boolean update = isUpdateRequred();
+				String listOfServices = getSalesList();
+				Invoice i = collectDataForInvoice(listOfServices);
+				int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
+				if(dialogResult == JOptionPane.YES_OPTION){
+					//TODO
+					//save pdf - invoice #, customer, table of items, prices, qnt, discount, percent/€, total, date?, no of srevices?
+					pdf = pdfCreator.createPDF(cs.PDF_INVOICE, i, customer);
+				}
+				if(update){
+					updateDBStock(listOfServices);
+				}
+				if(pdf != null){
+
+					try {
+						pdf.save(invoicePath);
+						pdf.close();
+						goBack();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+						log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
+						e.printStackTrace();
+					}
+				} else {
+					JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+				}
+			}
+		}
+		return pdf;
 	}
 
 	protected boolean checkInvoiceForString() {

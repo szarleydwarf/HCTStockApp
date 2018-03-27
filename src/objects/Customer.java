@@ -83,6 +83,8 @@ public abstract class Customer {
 
 	public abstract String[] getCasData();
 
+	public abstract boolean isBusiness();
+
 
 
 	

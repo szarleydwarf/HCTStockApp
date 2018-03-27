@@ -170,4 +170,9 @@ public class CustomerInd extends Customer{
 		this.idINT = idINT;
 	}
 
+	@Override
+	public boolean isBusiness() {
+		return false;
+	}
+
 }
