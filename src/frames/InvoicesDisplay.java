@@ -15,7 +15,12 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 
 import org.json.simple.JSONObject;
@@ -47,6 +52,7 @@ public class InvoicesDisplay {
 	private Map attributes;
 	private Color color;
 	private Map<Item, Integer> selectedRowItem;
+	private TableRowSorter rSorter;
 
 	/**
 	 * Launch the application.
@@ -134,7 +140,7 @@ public class InvoicesDisplay {
 		btnBack.setBounds(btnX, btnY, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
 		frame.getContentPane().add(btnBack);
 		
-		populateInvoiceListTable();
+		populateInvoiceListTable(lblX+6, lblY+52, btnX - 40, btnY-80);
 
 		// LISTENERS
 		btnBack.addActionListener(new ActionListener() {
@@ -143,21 +149,55 @@ public class InvoicesDisplay {
 			}
 		});
 
+		tfSearch.getDocument().addDocumentListener(new DocumentListener(){
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				String text = tfSearch.getText();
+				if (text.trim().length() == 0) rSorter.setRowFilter(null);
+				else rSorter.setRowFilter(RowFilter.regexFilter(cs.REGEX_FILTER + text));
+			}
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				String text = tfSearch.getText();
+				if (text.trim().length() == 0) rSorter.setRowFilter(null);
+				else  rSorter.setRowFilter(RowFilter.regexFilter(cs.REGEX_FILTER + text));
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+			}
+		});
 	}
 
-	private void populateInvoiceListTable() {
+	private void populateInvoiceListTable(int x, int y, int w, int h) {
 		String[][] data = new String [im.getList().size()][cs.INVOICES_TB_HEADINGS.length];
 		data = im.getDataShort();
 		JTable table = new JTable();
-//		table = createTable(data, cs.CUSTOMER_TB_HEADINGS, cs.CUSTOMER_TB_NAME, 140, 20);
-//		rSortCustomer = new TableRowSorter<>(table.getModel());
-//		
-//		table.setRowSorter(rSortCustomer);
+		table = msh.createTable(fonts, data, cs.INVOICES_TB_HEADINGS, cs.INVOICE_TB_NAME, 20, 120);
+		rSorter = new TableRowSorter<>(table.getModel());
 		
-//		JScrollPane spCustomerList = new JScrollPane(table);
-//		spCustomerList.setBounds(x, y, w, h);
-//		frame.getContentPane().add(spCustomerList);
-	
+		table.setRowSorter(rSorter);
+		ListSelectionListener listener = null;
+		listener = createTableListener(table);
+
+		table.getSelectionModel().addListSelectionListener(listener);
+		JScrollPane spCustomerList = new JScrollPane(table);
+		spCustomerList.setBounds(x, y, w, h);
+		frame.getContentPane().add(spCustomerList);
+	}
+
+	private ListSelectionListener createTableListener(JTable table) {
+		ListSelectionListener listener = new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				int row = table.getSelectedRow();
+				if(row != -1) {
+				}
+			}
+		};
+	    return listener;
 	}
 
 	protected void goBack() {

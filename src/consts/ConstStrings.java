@@ -42,6 +42,7 @@ public class ConstStrings {
 	public final String STOCK_TB_NAME = "STOCK";
 	public final String CUSTOMER_TB_NAME = "CUSTOMER";
 	public final String CHOSEN_TB_NAME = "CHOOSEN";
+	public final String INVOICE_TB_NAME = "invoices table";
 
 
 	//PATTERNS AND FORMATS

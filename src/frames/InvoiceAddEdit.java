@@ -766,7 +766,9 @@ public class InvoiceAddEdit {
 		data = msh.populateDataArrayString(carList, data, carList.size());
 
 		JTable table = new JTable();
-		table = createTable(data, cs.CARS_TABLE_HEADING, cs.CARS_TB_NAME, 150, 0);
+		table = msh.createTable(fonts, data, cs.CARS_TABLE_HEADING, cs.CARS_TB_NAME, 150, 0);
+		addListener(table, cs.CARS_TB_NAME);
+
 		rSortCars = new TableRowSorter<>(table.getModel());
 		table.setRowSorter(rSortCars);
 
@@ -789,9 +791,10 @@ public class InvoiceAddEdit {
 		String[][] data = new String [sm.getList().size()][cs.STOCK_TB_HEADINGS_SHORT.length];
 		data = sm.getDataNoCost();
 		JTable table = new JTable();
-		table = createTable(data, cs.STOCK_TB_HEADINGS_SHORT, cs.STOCK_TB_NAME, 40, 240);
+		table = msh.createTable(fonts, data, cs.STOCK_TB_HEADINGS_SHORT, cs.STOCK_TB_NAME, 40, 240);
+		addListener(table, cs.STOCK_TB_NAME);
+
 		rSortStock = new TableRowSorter<>(table.getModel());
-		
 		table.setRowSorter(rSortStock);
 		this.tbStock = table;
 		
@@ -804,9 +807,10 @@ public class InvoiceAddEdit {
 		String[][] data = new String [cm.getList().size()][cs.CUSTOMER_TB_HEADINGS.length];
 		data = cm.getDataShort();
 		JTable table = new JTable();
-		table = createTable(data, cs.CUSTOMER_TB_HEADINGS, cs.CUSTOMER_TB_NAME, 140, 20);
+		table = msh.createTable(fonts, data, cs.CUSTOMER_TB_HEADINGS, cs.CUSTOMER_TB_NAME, 140, 20);
+		addListener(table, cs.CUSTOMER_TB_NAME);
+
 		rSortCustomer = new TableRowSorter<>(table.getModel());
-		
 		table.setRowSorter(rSortCustomer);
 		
 		JScrollPane spCustomerList = new JScrollPane(table);
@@ -820,8 +824,9 @@ public class InvoiceAddEdit {
 		data = populateDataArray(emptyArray, data, 0, 0);
 
 		tbChoosen = new JTable();
-		tbChoosen = createTable(data, this.cs.STOCK_TB_HEADINGS_SHORT, cs.CHOSEN_TB_NAME, 40, 240);
-	
+		tbChoosen = msh.createTable(fonts, data, this.cs.STOCK_TB_HEADINGS_SHORT, cs.CHOSEN_TB_NAME, 40, 240);
+		addListener(tbChoosen, cs.CHOSEN_TB_NAME);
+		
 		JScrollPane spInvoice = new JScrollPane(tbChoosen);
 		spInvoice.setBounds(x, y, w, h);
 		frame.getContentPane().add(spInvoice);
@@ -836,21 +841,7 @@ public class InvoiceAddEdit {
 		});
 	}
 
-	private JTable createTable(String[][] data, String[] headings, String tbName, int firstCol, int secondCol) {
-		DefaultTableModel dm = new DefaultTableModel(data, headings);
-		JTable table = new JTable();
-		table.setFont(fonts);
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.setModel(dm);
-		table.setName(tbName);
-
-		table.setPreferredScrollableViewportSize(new Dimension(500, 150));
-		table.setFillsViewportHeight(true);
-//		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-//		
-		table.getColumnModel().getColumn(0).setPreferredWidth(firstCol);
-		if(secondCol > 0)
-			table.getColumnModel().getColumn(1).setPreferredWidth(secondCol);
+	private void addListener(JTable table, String tbName) {
 		ListSelectionListener listener = null;
 		if(tbName == cs.STOCK_TB_NAME || tbName == cs.CHOSEN_TB_NAME){
 			listener = createStockTableListener(table);
@@ -861,12 +852,6 @@ public class InvoiceAddEdit {
 			listener = createCustomerTableListener(table);
 
 		table.getSelectionModel().addListSelectionListener(listener);
-		
-		JTableHeader header = table.getTableHeader();
-		header.setBackground(Color.black);
-		header.setForeground(Color.yellow);
-		
-		return table;
 	}
 
 	private String[][] populateDataArray(ArrayList<Item> list, String[][] data, int startIndex, int rowNumber){

@@ -212,7 +212,7 @@ public class CustomerBusiness extends Customer {
 
 	@Override
 	public String[] getCasData() {
-		String[] data = new String[9];
+		String[] data = new String[3];
 		data[0] = this.getCompName();
 		data[1] = "B";
 		data[2] = this.getVATTaxNUM();

@@ -225,18 +225,20 @@ public class Invoice {
 
 	private String getCustomerDetails(String cid) {
 		String c = "";
-		System.out.println("cid "+cid);
+		Customer ct = null;
 		
 		ArrayList<Customer> list = MainView.getCustMng().getList();
 		for (int i = 0; i < list.size(); i++) {
-			if(list.get(i).isBusiness()){
-				//TODO
+			ct = list.get(i);
+			if(ct.getId().equals(cid)) {
+				if(ct instanceof CustomerInd){
+					c = cs.AT + ((CustomerInd) ct).getCar().getBrandString() + " " + cs.AMP + ((CustomerInd) ct).getCar().getRegistration();;
+				}
+				if(ct instanceof CustomerBusiness){
+					c =  " " + cs.AMP + ((CustomerBusiness) ct).getCompName();
+				}
 			}
-			if(list.get(i).getIdINT() == Integer.parseInt(cid.substring(2)))
-				System.out.println("got it");
 		}
-		System.out.println("inv get cd "+c);
-		
 		return c;
 	}
 }
