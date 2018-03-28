@@ -1149,8 +1149,9 @@ public class InvoiceAddEdit {
 	}
 
 	private int findBrand(String car) {
-		if(!car.equals(jl.get(cs.LBL_CUSTOMER).toString()))
-			return Integer.parseInt(this.mainView.getCars_BI().get(car));
+		if(this.mainView != null)
+			if(!car.equals(jl.get(cs.LBL_CUSTOMER).toString()))
+				return Integer.parseInt(this.mainView.getCars_BI().get(car));
 		return cn.DEFAULT_CAR_BRAND_ID;
 	}
 
@@ -1184,6 +1185,11 @@ public class InvoiceAddEdit {
 		setLastInvoiceNum();
 	}
 
+	public void setIsVisible(String[] forPreview, boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public static ConstNums getCn() {
 		return cn;
 	}
@@ -1211,5 +1217,6 @@ public class InvoiceAddEdit {
 	public static JSONObject getJl() {
 		return jl;
 	}
+
 
 }

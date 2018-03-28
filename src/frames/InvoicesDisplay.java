@@ -21,6 +21,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.json.simple.JSONObject;
@@ -53,22 +54,24 @@ public class InvoicesDisplay {
 	private Color color;
 	private Map<Item, Integer> selectedRowItem;
 	private TableRowSorter rSorter;
+	private JButton btnEdit;
+	private String[] forPreview;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					InvoicesDisplay window = new InvoicesDisplay();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					InvoicesDisplay window = new InvoicesDisplay();
+//					window.frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the application.
@@ -93,7 +96,6 @@ public class InvoicesDisplay {
 
 		this.im = invMng;
 
-		
 		this.fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
 		this.fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
 		this.attributes = fonts_title.getAttributes();
@@ -139,6 +141,12 @@ public class InvoicesDisplay {
 		btnBack.setFont(fonts_title);
 		btnBack.setBounds(btnX, btnY, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
 		frame.getContentPane().add(btnBack);
+
+		btnEdit = new JButton(jl.get(cs.BTN_EDIT).toString());
+		btnEdit.setEnabled(false);
+		btnEdit.setFont(fonts_title);
+		btnEdit.setBounds(btnX, btnY - cn.BACK_BTN_HEIGHT - cn.BACK_BTN_Y_OFFSET, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
+		frame.getContentPane().add(btnEdit);
 		
 		populateInvoiceListTable(lblX+6, lblY+52, btnX - 40, btnY-80);
 
@@ -146,6 +154,17 @@ public class InvoicesDisplay {
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				goBack();
+			}
+		});
+		
+		btnEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+// TODO create invoice preview
+				if(mainView != null)
+					mainView.getInvoiceAEFrame().setIsVisible(forPreview, true);
+				else
+					MainView.main.getInvoiceAEFrame().setIsVisible(forPreview, true);
+				frame.setVisible(false);
 			}
 		});
 
@@ -194,10 +213,21 @@ public class InvoicesDisplay {
 			public void valueChanged(ListSelectionEvent e) {
 				int row = table.getSelectedRow();
 				if(row != -1) {
+					btnEdit.setEnabled(true);
+					createInvoiceDetails(table.getModel(), row);
 				}
 			}
 		};
 	    return listener;
+	}
+
+	protected void createInvoiceDetails(TableModel tm, int row) {
+		forPreview = new String[cs.INVOICES_TB_HEADINGS.length];
+		for (int i = 0; i < forPreview.length; i++) {
+			forPreview[i] = (String) tm.getValueAt(row, i);
+			System.out.println("fp "+forPreview[i]);
+		}
+		
 	}
 
 	protected void goBack() {

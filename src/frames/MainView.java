@@ -48,7 +48,7 @@ import utility.tScanner;
 public class MainView {
 
 	private JFrame frame;
-	protected static MainView window;
+	protected static MainView main;
 	private static DatabaseManager dm;
 	private static LoadScreen ls;
 	private static Logger logger;
@@ -122,9 +122,9 @@ public class MainView {
 					if(isStarting)
 						ls.splashScreenDestruct();
 					
-					window = new MainView();
+					main = new MainView();
 					if(!isNew){
-						window.frame.setVisible(true);
+						main.frame.setVisible(true);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -195,11 +195,11 @@ public class MainView {
 		pdfCreator = new PDFCreator(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh, df_4_2);
 		printer = new Printer(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh);
 
-		newItemFrame = new ItemAddNew(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_4_2);
-		newInvoice = new InvoiceAddEdit(window, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, jUser, msh, dh, fh, stmng, cmng, invmng, carBrandList, df_3_2);
-		stockFrame = new DisplayStock(window, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
+		newItemFrame = new ItemAddNew(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_4_2);
+		newInvoice = new InvoiceAddEdit(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, jUser, msh, dh, fh, stmng, cmng, invmng, carBrandList, df_3_2);
+		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
 
-		invoicesFrame = new InvoicesDisplay(window, dm, cdb, cs, cn, logger, jSettings , jLang, msh, invmng);
+		invoicesFrame = new InvoicesDisplay(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, invmng);
 	}
 
 	private static void loadConst() {
@@ -482,6 +482,10 @@ public class MainView {
 
 	public static CustomersManager getCustMng() {
 		return cmng;
+	}
+
+	public InvoiceAddEdit getInvoiceAEFrame() {
+		return this.newInvoice;
 	}
 
 }
