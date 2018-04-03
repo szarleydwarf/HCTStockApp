@@ -202,9 +202,9 @@ public class InvoicesDisplay {
 		listener = createTableListener(table);
 
 		table.getSelectionModel().addListSelectionListener(listener);
-		JScrollPane spCustomerList = new JScrollPane(table);
-		spCustomerList.setBounds(x, y, w, h);
-		frame.getContentPane().add(spCustomerList);
+		JScrollPane spInvoicesList = new JScrollPane(table);
+		spInvoicesList.setBounds(x, y, w, h);
+		frame.getContentPane().add(spInvoicesList);
 	}
 
 	private ListSelectionListener createTableListener(JTable table) {
@@ -225,7 +225,7 @@ public class InvoicesDisplay {
 		forPreview = new String[cs.INVOICES_TB_HEADINGS.length];
 		for (int i = 0; i < forPreview.length; i++) {
 			forPreview[i] = (String) tm.getValueAt(row, i);
-			System.out.println("fp "+forPreview[i]);
+//			System.out.println("fp "+forPreview[i]);
 		}
 		
 	}

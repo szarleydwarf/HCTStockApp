@@ -628,7 +628,7 @@ public class InvoiceAddEdit {
 			}
 		});
 		
-		/*		
+		/*		TODO 
 		JCheckBox chbAirfreshener = new JCheckBox(jl.get(cs.CBX_AIRFRESH).toString());
 		chbAirfreshener.setSelected(true);
 		chbAirfreshener.setBackground(color);
@@ -648,18 +648,16 @@ public class InvoiceAddEdit {
 	}
 //END OF INVOICE PREVIEW
 
-	protected Invoice collectDataForInvoice(String listOfServices) {
+	protected Invoice collectDataForInvoice(String listOfServices, String invoicePath) {
 //		TODO check for customer, add new
 		checkCustomer();
 		checkIsBusiness();
 		Invoice i= null;
 		if(!listOfServices.equals("")){
-//			System.out.println("list "+listOfServices+" / "+discount+" / "+isPercent);
-			
 			double sum = calculateSum();
 			sum = applyDiscount(sum);
 			total = Double.parseDouble(df.format(sum));
-			i = createNewInvoice(listOfServices, total);
+			i = createNewInvoice(listOfServices, invoicePath, total);
 		}
 		return i;
 	}
@@ -716,8 +714,9 @@ public class InvoiceAddEdit {
 		return s;
 	}
 
-	private Invoice createNewInvoice(String listOfServices, double sum) {
-		Invoice in = new Invoice(dm, cdb, cs, cn, customer.getId(),isBusiness, listOfServices, discount, isPercent, sum, date, date+cs.PDF_EXT);
+	private Invoice createNewInvoice(String listOfServices, String invoicePath, double sum) {
+		String path = invoicePath.substring(invoicePath.lastIndexOf(cs.SLASH)+1);
+		Invoice in = new Invoice(dm, cdb, cs, cn, customer.getId(),isBusiness, listOfServices, discount, isPercent, sum, date, path);
 		this.im.add(in);
 		return in;
 	}
@@ -979,7 +978,7 @@ public class InvoiceAddEdit {
 				tbStock.setValueAt(item.getQnt(), row, cn.QNT_COLUMN);
 			}	
 		}
-		
+		//TODO - move below to method?
 		String[] rowData = new String[this.cs.STOCK_TB_HEADINGS_SHORT.length+1];
 
 		rowData[0] = item.getCode();
@@ -1057,7 +1056,7 @@ public class InvoiceAddEdit {
 			} else {
 				boolean update = isUpdateRequred();
 				String listOfServices = getSalesList();
-				Invoice i = collectDataForInvoice(listOfServices);
+				Invoice i = collectDataForInvoice(listOfServices, invoicePath);
 				int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
 				if(dialogResult == JOptionPane.YES_OPTION){
 					//TODO
@@ -1187,7 +1186,50 @@ public class InvoiceAddEdit {
 
 	public void setIsVisible(String[] forPreview, boolean b) {
 		// TODO Auto-generated method stub
+		for (int j = 0; j < forPreview.length; j++) {
+			System.out.println("iae "+forPreview[j]);
+		}
+		lastInvoice = forPreview[0];
+		String s = forPreview[1].substring(forPreview[1].indexOf(cs.AMP));
+		customer = this.getCustomer(s);
 		
+//		System.out.println("CUST "+customer.getNumOfServices());
+		if(customer != null)
+			isBusiness = customer.isBusiness();
+		else
+			isBusiness = false;
+
+		this.date = forPreview[2];
+		
+		setSaleTable(forPreview[3]);
+		
+		initialize();
+		frame.setVisible(b);
+		setLastInvoiceNum();
+	}
+
+	private void setSaleTable(String string) {
+		// TODO Auto-generated method stub
+		String[] shopping = msh.splitString(string, cs.SEMICOLON);
+		for (int i = 0; i < shopping.length-1; i++) {
+			if(shopping[i] != "" || !shopping[i].isEmpty() || shopping[i] != null){
+				String ss = shopping[i];
+				String[] rowData = new String[this.cs.STOCK_TB_HEADINGS_SHORT.length+1];
+				System.out.println("ss "+ss.substring(0, ss.indexOf(cs.STAR)));
+				rowData[3] = ""+ss.substring(0, ss.indexOf(cs.STAR));
+				rowData[0] = ss.substring(ss.indexOf(cs.STAR)+1, ss.indexOf(cs.UNDERSCORE));
+				rowData[1] = ss.substring(ss.indexOf(cs.UNDERSCORE)+1, ss.indexOf(cs.HASH));
+				
+				rowData[4] = ss.substring(ss.indexOf(cs.HASH)+1, ss.indexOf(cs.AT));
+				rowData[2] = ss.substring(ss.indexOf(cs.AT)+1);
+				
+				System.out.println("rd "+ss+"\n\t0: "+rowData[0]+"\n\t3: "+rowData[3]
+						+"\n\t1: "+rowData[1]+"\n\t2: "+rowData[2]+"\n\t4: "+rowData[4]);
+
+				DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
+				model.addRow(rowData);
+			}
+		}
 	}
 
 	public static ConstNums getCn() {
