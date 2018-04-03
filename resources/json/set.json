@@ -2,7 +2,7 @@
 	"lang":"eng.json",
 	"starting":"true",
 
-	"database host":"jdbc:mysql://127.0.0.1:3306/hct_stock",
+	"db host":"jdbc:mysql://127.0.0.1:3306/hct_stock",
 	"db user":"hct",
 	"db pass":"pass1234",
 
@@ -10,13 +10,13 @@
 	"sales folder path":"documents\\sales\\",
 	"stock folder path":"documents\\stock\\",
 	"repak folder path":"documents\\repak\\",
-	"doc subfolder path":"YYYY\\MM\\DD",
+	"doc subfolder path":"YYYY\\MM\\DD\\",
 
-	"default printer name":"Canon MP620 series Printer (Copy 1)"
+	"default printer name":"Canon MP620 series Printer (Copy 1)",
 	
-	"app color R":"0",
-	"app color G":"153",
-	"app color B":"204",
+	"app color R":"250",
+	"app color G":"50",
+	"app color B":"250",
 	
 	"font":"Segoe UI Black",
 	"fs def":"14",

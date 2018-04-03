@@ -30,7 +30,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
-import javax.swing.RowSorter;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -189,7 +188,7 @@ public class InvoiceAddEdit {
 		this.color = msh.getColor(cs.APP, cs, js);
 		
 		this.selectedRowItem = new HashMap<Item, Integer>();
-		this.date = dh.getFormatedDate();
+		this.date = dh.getFormatedDateRev();
 	}
 	
 	/**
@@ -474,56 +473,6 @@ public class InvoiceAddEdit {
 
 
 	}
-	protected String getInvoicePath() {
-		String invoicePath = js.get(cs.INVOICE_PATH).toString()+date;
-		fh.createFolderIfNotExist(invoicePath);
-		invoicePath+=cs.SLASH + date + cs.UNDERSCORE + lastInvoice + cs.PDF_EXT;
-		return invoicePath;
-	}
-
-	protected PDDocument createPDFDInvoice(String invoicePath) {
-		PDDocument pdf = null;
-		if(!isBusiness && !checkInvoiceForString()){
-			String toFill = getFieldsToFill();
-			JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
-		} else if(isBusiness && !checkBusinesFields()) {
-			String toFill = getBFieldsToFill();
-			JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
-		} else {
-			if (!tableHasElements()){
-				JOptionPane.showMessageDialog(frame, jl.get(cs.TABLE_EMPTY).toString());
-			} else {
-				boolean update = isUpdateRequred();
-				String listOfServices = getSalesList();
-				Invoice i = collectDataForInvoice(listOfServices);
-				int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
-				if(dialogResult == JOptionPane.YES_OPTION){
-					//TODO
-					//save pdf - invoice #, customer, table of items, prices, qnt, discount, percent/€, total, date?, no of srevices?
-					pdf = pdfCreator.createPDF(cs.PDF_INVOICE, i, customer);
-				}
-				if(update){
-					updateDBStock(listOfServices);
-				}
-				if(pdf != null){
-
-					try {
-						pdf.save(invoicePath);
-						pdf.close();
-						goBack();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
-						log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
-						e.printStackTrace();
-					}
-				} else {
-					JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
-				}
-			}
-		}
-		return pdf;
-	}
 
 //END OF INITIALIZE
 	private void createInvoicePreview() {
@@ -679,7 +628,7 @@ public class InvoiceAddEdit {
 			}
 		});
 		
-		/*		
+		/*		TODO 
 		JCheckBox chbAirfreshener = new JCheckBox(jl.get(cs.CBX_AIRFRESH).toString());
 		chbAirfreshener.setSelected(true);
 		chbAirfreshener.setBackground(color);
@@ -699,18 +648,16 @@ public class InvoiceAddEdit {
 	}
 //END OF INVOICE PREVIEW
 
-	protected Invoice collectDataForInvoice(String listOfServices) {
+	protected Invoice collectDataForInvoice(String listOfServices, String invoicePath) {
 //		TODO check for customer, add new
 		checkCustomer();
 		checkIsBusiness();
 		Invoice i= null;
 		if(!listOfServices.equals("")){
-//			System.out.println("list "+listOfServices+" / "+discount+" / "+isPercent);
-			
 			double sum = calculateSum();
 			sum = applyDiscount(sum);
 			total = Double.parseDouble(df.format(sum));
-			i = createNewInvoice(listOfServices, total);
+			i = createNewInvoice(listOfServices, invoicePath, total);
 		}
 		return i;
 	}
@@ -767,8 +714,9 @@ public class InvoiceAddEdit {
 		return s;
 	}
 
-	private Invoice createNewInvoice(String listOfServices, double sum) {
-		Invoice in = new Invoice(dm, cdb, cs, cn, customer.getId(),isBusiness, listOfServices, discount, isPercent, sum, date, date+cs.PDF_EXT);
+	private Invoice createNewInvoice(String listOfServices, String invoicePath, double sum) {
+		String path = invoicePath.substring(invoicePath.lastIndexOf(cs.SLASH)+1);
+		Invoice in = new Invoice(dm, cdb, cs, cn, customer.getId(),isBusiness, listOfServices, discount, isPercent, sum, date, path);
 		this.im.add(in);
 		return in;
 	}
@@ -817,7 +765,9 @@ public class InvoiceAddEdit {
 		data = msh.populateDataArrayString(carList, data, carList.size());
 
 		JTable table = new JTable();
-		table = createTable(data, cs.CARS_TABLE_HEADING, cs.CARS_TB_NAME, 150, 0);
+		table = msh.createTable(fonts, data, cs.CARS_TABLE_HEADING, cs.CARS_TB_NAME, 150, 0);
+		addListener(table, cs.CARS_TB_NAME);
+
 		rSortCars = new TableRowSorter<>(table.getModel());
 		table.setRowSorter(rSortCars);
 
@@ -840,9 +790,10 @@ public class InvoiceAddEdit {
 		String[][] data = new String [sm.getList().size()][cs.STOCK_TB_HEADINGS_SHORT.length];
 		data = sm.getDataNoCost();
 		JTable table = new JTable();
-		table = createTable(data, cs.STOCK_TB_HEADINGS_SHORT, cs.STOCK_TB_NAME, 40, 240);
+		table = msh.createTable(fonts, data, cs.STOCK_TB_HEADINGS_SHORT, cs.STOCK_TB_NAME, 40, 240);
+		addListener(table, cs.STOCK_TB_NAME);
+
 		rSortStock = new TableRowSorter<>(table.getModel());
-		
 		table.setRowSorter(rSortStock);
 		this.tbStock = table;
 		
@@ -855,9 +806,10 @@ public class InvoiceAddEdit {
 		String[][] data = new String [cm.getList().size()][cs.CUSTOMER_TB_HEADINGS.length];
 		data = cm.getDataShort();
 		JTable table = new JTable();
-		table = createTable(data, cs.CUSTOMER_TB_HEADINGS, cs.CUSTOMER_TB_NAME, 140, 20);
+		table = msh.createTable(fonts, data, cs.CUSTOMER_TB_HEADINGS, cs.CUSTOMER_TB_NAME, 140, 20);
+		addListener(table, cs.CUSTOMER_TB_NAME);
+
 		rSortCustomer = new TableRowSorter<>(table.getModel());
-		
 		table.setRowSorter(rSortCustomer);
 		
 		JScrollPane spCustomerList = new JScrollPane(table);
@@ -871,8 +823,9 @@ public class InvoiceAddEdit {
 		data = populateDataArray(emptyArray, data, 0, 0);
 
 		tbChoosen = new JTable();
-		tbChoosen = createTable(data, this.cs.STOCK_TB_HEADINGS_SHORT, cs.CHOSEN_TB_NAME, 40, 240);
-	
+		tbChoosen = msh.createTable(fonts, data, this.cs.STOCK_TB_HEADINGS_SHORT, cs.CHOSEN_TB_NAME, 40, 240);
+		addListener(tbChoosen, cs.CHOSEN_TB_NAME);
+		
 		JScrollPane spInvoice = new JScrollPane(tbChoosen);
 		spInvoice.setBounds(x, y, w, h);
 		frame.getContentPane().add(spInvoice);
@@ -887,21 +840,7 @@ public class InvoiceAddEdit {
 		});
 	}
 
-	private JTable createTable(String[][] data, String[] headings, String tbName, int firstCol, int secondCol) {
-		DefaultTableModel dm = new DefaultTableModel(data, headings);
-		JTable table = new JTable();
-		table.setFont(fonts);
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.setModel(dm);
-		table.setName(tbName);
-
-		table.setPreferredScrollableViewportSize(new Dimension(500, 150));
-		table.setFillsViewportHeight(true);
-//		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-//		
-		table.getColumnModel().getColumn(0).setPreferredWidth(firstCol);
-		if(secondCol > 0)
-			table.getColumnModel().getColumn(1).setPreferredWidth(secondCol);
+	private void addListener(JTable table, String tbName) {
 		ListSelectionListener listener = null;
 		if(tbName == cs.STOCK_TB_NAME || tbName == cs.CHOSEN_TB_NAME){
 			listener = createStockTableListener(table);
@@ -912,12 +851,6 @@ public class InvoiceAddEdit {
 			listener = createCustomerTableListener(table);
 
 		table.getSelectionModel().addListSelectionListener(listener);
-		
-		JTableHeader header = table.getTableHeader();
-		header.setBackground(Color.black);
-		header.setForeground(Color.yellow);
-		
-		return table;
 	}
 
 	private String[][] populateDataArray(ArrayList<Item> list, String[][] data, int startIndex, int rowNumber){
@@ -1045,7 +978,7 @@ public class InvoiceAddEdit {
 				tbStock.setValueAt(item.getQnt(), row, cn.QNT_COLUMN);
 			}	
 		}
-		
+		//TODO - move below to method?
 		String[] rowData = new String[this.cs.STOCK_TB_HEADINGS_SHORT.length+1];
 
 		rowData[0] = item.getCode();
@@ -1100,6 +1033,57 @@ public class InvoiceAddEdit {
 		if(t != null)
 			c = cm.find(t);
 		return c;
+	}
+	protected String getInvoicePath() {
+		String subPath = date.replace(cs.MINUS, cs.SLASH); 
+		String invoicePath = js.get(cs.INVOICE_PATH).toString()+subPath;
+		fh.createFolderIfNotExist(invoicePath);
+		invoicePath+=cs.SLASH + date + cs.UNDERSCORE + lastInvoice + cs.PDF_EXT;
+		return invoicePath;
+	}
+
+	protected PDDocument createPDFDInvoice(String invoicePath) {
+		PDDocument pdf = null;
+		if(!isBusiness && !checkInvoiceForString()){
+			String toFill = getFieldsToFill();
+			JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
+		} else if(isBusiness && !checkBusinesFields()) {
+			String toFill = getBFieldsToFill();
+			JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
+		} else {
+			if (!tableHasElements()){
+				JOptionPane.showMessageDialog(frame, jl.get(cs.TABLE_EMPTY).toString());
+			} else {
+				boolean update = isUpdateRequred();
+				String listOfServices = getSalesList();
+				Invoice i = collectDataForInvoice(listOfServices, invoicePath);
+				int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
+				if(dialogResult == JOptionPane.YES_OPTION){
+					//TODO
+					//save pdf - invoice #, customer, table of items, prices, qnt, discount, percent/€, total, date?, no of srevices?
+					pdf = pdfCreator.createPDF(cs.PDF_INVOICE, i, customer);
+				}
+				if(update){
+					updateDBStock(listOfServices);
+				}
+				if(pdf != null){
+
+					try {
+						pdf.save(invoicePath);
+						pdf.close();
+						goBack();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+						log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
+						e.printStackTrace();
+					}
+				} else {
+					JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+				}
+			}
+		}
+		return pdf;
 	}
 
 	protected boolean checkInvoiceForString() {
@@ -1164,8 +1148,9 @@ public class InvoiceAddEdit {
 	}
 
 	private int findBrand(String car) {
-		if(!car.equals(jl.get(cs.LBL_CUSTOMER).toString()))
-			return Integer.parseInt(this.mainView.getCars_BI().get(car));
+		if(this.mainView != null)
+			if(!car.equals(jl.get(cs.LBL_CUSTOMER).toString()))
+				return Integer.parseInt(this.mainView.getCars_BI().get(car));
 		return cn.DEFAULT_CAR_BRAND_ID;
 	}
 
@@ -1199,6 +1184,54 @@ public class InvoiceAddEdit {
 		setLastInvoiceNum();
 	}
 
+	public void setIsVisible(String[] forPreview, boolean b) {
+		// TODO Auto-generated method stub
+		for (int j = 0; j < forPreview.length; j++) {
+			System.out.println("iae "+forPreview[j]);
+		}
+		lastInvoice = forPreview[0];
+		String s = forPreview[1].substring(forPreview[1].indexOf(cs.AMP));
+		customer = this.getCustomer(s);
+		
+//		System.out.println("CUST "+customer.getNumOfServices());
+		if(customer != null)
+			isBusiness = customer.isBusiness();
+		else
+			isBusiness = false;
+
+		this.date = forPreview[2];
+		
+		setSaleTable(forPreview[3]);
+		
+		initialize();
+		frame.setVisible(b);
+		setLastInvoiceNum();
+	}
+
+	private void setSaleTable(String string) {
+		// TODO Auto-generated method stub
+		String[] shopping = msh.splitString(string, cs.SEMICOLON);
+		for (int i = 0; i < shopping.length-1; i++) {
+			if(shopping[i] != "" || !shopping[i].isEmpty() || shopping[i] != null){
+				String ss = shopping[i];
+				String[] rowData = new String[this.cs.STOCK_TB_HEADINGS_SHORT.length+1];
+				System.out.println("ss "+ss.substring(0, ss.indexOf(cs.STAR)));
+				rowData[3] = ""+ss.substring(0, ss.indexOf(cs.STAR));
+				rowData[0] = ss.substring(ss.indexOf(cs.STAR)+1, ss.indexOf(cs.UNDERSCORE));
+				rowData[1] = ss.substring(ss.indexOf(cs.UNDERSCORE)+1, ss.indexOf(cs.HASH));
+				
+				rowData[4] = ss.substring(ss.indexOf(cs.HASH)+1, ss.indexOf(cs.AT));
+				rowData[2] = ss.substring(ss.indexOf(cs.AT)+1);
+				
+				System.out.println("rd "+ss+"\n\t0: "+rowData[0]+"\n\t3: "+rowData[3]
+						+"\n\t1: "+rowData[1]+"\n\t2: "+rowData[2]+"\n\t4: "+rowData[4]);
+
+				DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
+				model.addRow(rowData);
+			}
+		}
+	}
+
 	public static ConstNums getCn() {
 		return cn;
 	}
@@ -1226,5 +1259,6 @@ public class InvoiceAddEdit {
 	public static JSONObject getJl() {
 		return jl;
 	}
+
 
 }

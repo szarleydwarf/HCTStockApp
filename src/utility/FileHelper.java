@@ -12,7 +12,7 @@ public class FileHelper {
 	public boolean createFolderIfNotExist (String path) {
 		File dir = new File(path);
 		if(!dir.exists()){
-			return dir.mkdir();
+			return dir.mkdirs();
 		}
 		return false;
 	}

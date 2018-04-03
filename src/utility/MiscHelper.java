@@ -2,6 +2,7 @@ package utility;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
@@ -17,9 +18,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 import org.json.simple.JSONObject;
 
@@ -222,5 +226,37 @@ public class MiscHelper {
 		
 	}
 
+	public JTable createTable(Font fonts, String[][] data, String[] headings, String tbName, int firstCol, int secondCol) {
+		DefaultTableModel dm = new DefaultTableModel(data, headings);
+		JTable table = new JTable();
+		table.setFont(fonts);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.setModel(dm);
+		table.setName(tbName);
+
+		table.setPreferredScrollableViewportSize(new Dimension(500, 150));
+		table.setFillsViewportHeight(true);
+//		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+		table.getColumnModel().getColumn(0).setPreferredWidth(firstCol);
+		if(secondCol > 0)
+			table.getColumnModel().getColumn(1).setPreferredWidth(secondCol);
+//		ListSelectionListener listener = null;
+//		if(tbName == cs.STOCK_TB_NAME || tbName == cs.CHOSEN_TB_NAME){
+//			listener = createStockTableListener(table);
+//			table.removeColumn(table.getColumnModel().getColumn(4));
+//		}else if(tbName == cs.CARS_TB_NAME)
+//			listener = createCarTableListener(table);
+//		else if(tbName == cs.CUSTOMER_TB_NAME)
+//			listener = createCustomerTableListener(table);
+//
+//		table.getSelectionModel().addListSelectionListener(listener);
+		
+		JTableHeader header = table.getTableHeader();
+		header.setBackground(Color.black);
+		header.setForeground(Color.yellow);
+		
+		return table;
+	}
 
 }

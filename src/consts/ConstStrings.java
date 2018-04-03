@@ -36,11 +36,13 @@ public class ConstStrings {
 	public final String[] STOCK_TB_HEADINGS = {"ID", "Kod", "Nazwa", "Koszt", "Cena", "Qnt", "VAT", "Transport", "VEMC"};
 	public final String[] STOCK_TB_HEADINGS_SHORT =  {"Kod","Towar", "Cena", "Qnt", "Cost"};
 	public final String[] CUSTOMER_TB_HEADINGS = {"Customer", "B/I", "VAT/TAX"};
+	public final String[] INVOICES_TB_HEADINGS = {"ID", "Klient", "Data", "Zakupy", "Plik"};
 
 	public final String CARS_TB_NAME = "CARS";
 	public final String STOCK_TB_NAME = "STOCK";
 	public final String CUSTOMER_TB_NAME = "CUSTOMER";
 	public final String CHOSEN_TB_NAME = "CHOOSEN";
+	public final String INVOICE_TB_NAME = "invoices table";
 
 
 	//PATTERNS AND FORMATS
@@ -104,7 +106,7 @@ public class ConstStrings {
 	public final String JLANG = "lang";
 	public final String JSTART = "starting";
 
-	public  final String DB_URL = "database host";
+	public  final String DB_URL = "db host";
 	public  final String DB_USER = "db user";
 	public  final String DB_PASS = "db pass";
 	

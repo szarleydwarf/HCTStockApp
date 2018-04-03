@@ -1,8 +1,11 @@
 package objects;
 
+import java.util.ArrayList;
+
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
+import frames.MainView;
 import managers.DatabaseManager;
 
 public class Invoice {
@@ -207,5 +210,35 @@ public class Invoice {
 
 	public void setFile(String file) {
 		this.file = file;
+	}
+
+	public String[] getCasData() {
+		String[] data = new String[5];
+		data[0] = ""+this.getId();
+		String customer = getCustomerDetails(this.getCustId());
+		data[1] = customer;
+		data[2] = this.getDate();
+		data[3] = this.getList();
+		data[4] = this.getFile();
+		return data;
+	}
+
+	private String getCustomerDetails(String cid) {
+		String c = "";
+		Customer ct = null;
+		
+		ArrayList<Customer> list = MainView.getCustMng().getList();
+		for (int i = 0; i < list.size(); i++) {
+			ct = list.get(i);
+			if(ct.getId().equals(cid)) {
+				if(ct instanceof CustomerInd){
+					c = cs.AT + ((CustomerInd) ct).getCar().getBrandString() + " " + cs.AMP + ((CustomerInd) ct).getCar().getRegistration();;
+				}
+				if(ct instanceof CustomerBusiness){
+					c =  " " + cs.AMP + ((CustomerBusiness) ct).getCompName();
+				}
+			}
+		}
+		return c;
 	}
 }

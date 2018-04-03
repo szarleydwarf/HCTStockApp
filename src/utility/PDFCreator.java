@@ -106,7 +106,6 @@ public class PDFCreator {
 
 	//create invoice
 	private PDDocument createInvoice(Invoice i, Customer customer) throws IOException {
-		// TODO Auto-generated method stub
 		PDDocument pdd = new PDDocument();
 		PDPage page = new PDPage();
 		pdd.addPage(page);
