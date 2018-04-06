@@ -82,7 +82,7 @@ public class DatabaseManager {
 			return conn;
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Connection Error: "+ex.getMessage());
-			log.logError(date+" "+this.getClass().getName()+"\t"+ex.getMessage());
+			log.logError(date+" CONNECTION "+this.getClass().getName()+"\t"+ex.getMessage());
 			return null;		
 		}		
 	}
@@ -591,7 +591,7 @@ public class DatabaseManager {
 			if(conn == null || conn.isClosed())
 				conn = this.connect();
 		} catch (SQLException e) {
-			log.logError(" 1st "+this.getClass().getName()+"\tSELECT DATA ARRAYLIST [E]\t"+e.getMessage());
+			log.logError(" 1st "+this.getClass().getName()+"\tgetObject [E]\t"+e.getMessage());
 		}
 		String q;
 		if(str.equals(this.cs.CAR))
@@ -608,12 +608,12 @@ public class DatabaseManager {
 
 			
 		} catch (SQLException e2) {
-			log.logError(" "+this.getClass().getName()+"\tSELECT DATA ARRAYLIST [E2] \t"+e2.getMessage());
+			log.logError(" "+this.getClass().getName()+"\tgetObject [E2] \t"+e2.getMessage());
 		} finally {
 			try{
 				this.close(rs, pst, conn);
 			} catch (Exception e3){
-				log.logError(" "+this.getClass().getName()+"\tSELECT DATA ARRAYLIST [E3]\t"+e3.getMessage());
+				log.logError(" "+this.getClass().getName()+"\tgetObject [E3]\t"+e3.getMessage());
 			}
 		}
 		return null;

@@ -460,7 +460,8 @@ public class DisplayStock {
 		populateFields(i, cbCodes, tfName, tfCost, tfPrice, tfQnt, chbVAT, chbTransport, chbVemc);
 	}
 
-	protected void refreashTable() {
+	public void refreashTable() {
+		System.out.println("table refreash");
 		sm.getListFormDatabase();
 		data = null;
 		data = sm.getData();
@@ -568,6 +569,10 @@ public class DisplayStock {
 
 	}
 
+	public void refreash() {
+		
+	}
+	
 	// GETTERS & SETTERS
 	public boolean isVisible(){
 		if(frame != null)

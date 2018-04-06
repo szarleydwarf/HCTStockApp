@@ -68,8 +68,13 @@ public class CustomersManager {
 	public Customer find(String[] str){
 		for(Customer c : this.list){
 			if(c instanceof CustomerBusiness){
-				if(((CustomerBusiness) c).find(str[0], str[1]))
-					return c;
+				if(str[1] != ""){
+					if(((CustomerBusiness) c).find(str[0], str[1]))
+						return c;
+				} else {
+					if(((CustomerBusiness) c).find(str[0]))
+						return c;
+				}
 			}
 
 			if(c instanceof CustomerInd){

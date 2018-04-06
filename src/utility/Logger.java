@@ -28,7 +28,7 @@ public class Logger {
 		try {
 			FileWriter write = new FileWriter(filePathName, true);
 			PrintWriter printLine = new PrintWriter(write);
-			printLine.printf("%s"+"%n", this.getTodayLong() + msg);
+			printLine.printf("%s"+"%n", this.getTodayLong() + "\t"  + msg);
 			printLine.close();
 			
 		} catch (IOException e) {
@@ -36,6 +36,28 @@ public class Logger {
 			JOptionPane.showMessageDialog(null, "Nie udalo sie zapisac logga\n"+e.getMessage());
 			e.printStackTrace();
 		}	
+	}
+	
+	public void logInfo(String msg) {
+		String fileName = "INFO_"+this.dh.getFormatedDate()+".txt";
+		String filePathName = this.defaultFolderPath+ "\\"+fileName;
+		
+		boolean folderExist = this.fh.createFolderIfNotExist(defaultFolderPath);		
+		boolean fileExist = this.fh.createFileIfNotExist(filePathName);
+		
+		try {
+			FileWriter write = new FileWriter(filePathName, true);
+			PrintWriter printLine = new PrintWriter(write);
+			printLine.printf("%s"+"%n", this.getTodayLong() + "\t" + msg);
+			printLine.close();
+			
+		} catch (IOException e) {
+			//TODO add JPane with error msg#
+			JOptionPane.showMessageDialog(null, "Nie udalo sie zapisac logga\n"+e.getMessage());
+			e.printStackTrace();
+		}	
+		// TODO Auto-generated method stub
+		
 	}
 
 	public void setShortDate(String today) {

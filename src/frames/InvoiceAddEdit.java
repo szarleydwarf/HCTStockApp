@@ -1026,14 +1026,20 @@ public class InvoiceAddEdit {
 		return false;
 	}
 
-	protected Customer getCustomer(String customerStr) {
-		String[] t = msh.splitStringRemoveSpecialChars(customerStr, cs.COMA);
+	protected Customer getCustomer(String str) {
+		String[] t = {"","",""};
+		if(str.contains(cs.COMA))
+			t = msh.splitStringRemoveSpecialChars(str, cs.COMA);
+		else if(str.contains(cs.AMP))
+			t[0] = str.substring(str.indexOf(cs.AMP)+1);
 		Customer c = null;
 //TODO - need to improve
 		if(t != null)
 			c = cm.find(t);
+		
 		return c;
 	}
+	
 	protected String getInvoicePath() {
 		String subPath = date.replace(cs.MINUS, cs.SLASH); 
 		String invoicePath = js.get(cs.INVOICE_PATH).toString()+subPath;
@@ -1126,6 +1132,12 @@ public class InvoiceAddEdit {
 		this.setBrandLbl(car);
 	}
 
+	private void updateInvoiceLblFP(String string) {
+		String s = this.lblForWho.getText();
+		s = s.replace(s.substring(s.indexOf(cs.AT)), string);
+		lblForWho.setText(s);
+	}
+
 	protected void setBrandLbl(String car) {
 		String invFor = lblForWho.getText();
 		invFor = invFor.replace(invFor.substring(invFor.indexOf(cs.AT)+1, invFor.indexOf(cs.AMP)-1), car);
@@ -1190,22 +1202,26 @@ public class InvoiceAddEdit {
 			System.out.println("iae "+forPreview[j]);
 		}
 		lastInvoice = forPreview[0];
+		initialize();
+
 		String s = forPreview[1].substring(forPreview[1].indexOf(cs.AMP));
 		customer = this.getCustomer(s);
 		
-//		System.out.println("CUST "+customer.getNumOfServices());
+		System.out.println("CUST "+s+" / "+customer.isBusiness());
 		if(customer != null)
 			isBusiness = customer.isBusiness();
 		else
 			isBusiness = false;
+		
+		this.chbInd.setSelected(isBusiness);
 
 		this.date = forPreview[2];
 		
 		setSaleTable(forPreview[3]);
 		
-		initialize();
 		frame.setVisible(b);
 		setLastInvoiceNum();
+		updateInvoiceLblFP(forPreview[1]);
 	}
 
 	private void setSaleTable(String string) {
@@ -1215,7 +1231,6 @@ public class InvoiceAddEdit {
 			if(shopping[i] != "" || !shopping[i].isEmpty() || shopping[i] != null){
 				String ss = shopping[i];
 				String[] rowData = new String[this.cs.STOCK_TB_HEADINGS_SHORT.length+1];
-				System.out.println("ss "+ss.substring(0, ss.indexOf(cs.STAR)));
 				rowData[3] = ""+ss.substring(0, ss.indexOf(cs.STAR));
 				rowData[0] = ss.substring(ss.indexOf(cs.STAR)+1, ss.indexOf(cs.UNDERSCORE));
 				rowData[1] = ss.substring(ss.indexOf(cs.UNDERSCORE)+1, ss.indexOf(cs.HASH));
@@ -1223,8 +1238,8 @@ public class InvoiceAddEdit {
 				rowData[4] = ss.substring(ss.indexOf(cs.HASH)+1, ss.indexOf(cs.AT));
 				rowData[2] = ss.substring(ss.indexOf(cs.AT)+1);
 				
-				System.out.println("rd "+ss+"\n\t0: "+rowData[0]+"\n\t3: "+rowData[3]
-						+"\n\t1: "+rowData[1]+"\n\t2: "+rowData[2]+"\n\t4: "+rowData[4]);
+//				System.out.println("rd "+ss+"\n\t0: "+rowData[0]+"\n\t3: "+rowData[3]
+//						+"\n\t1: "+rowData[1]+"\n\t2: "+rowData[2]+"\n\t4: "+rowData[4]);
 
 				DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
 				model.addRow(rowData);

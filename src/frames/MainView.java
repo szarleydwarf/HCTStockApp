@@ -166,18 +166,12 @@ public class MainView {
 		ts = new tScanner();
 
 		loadHelpers();
-
-		todayL = dh.getFormatedDateAndTime();
-		logger.setLongDate(todayL);
-		
-		todayS = dh.getFormatedDate();
-		logger.setShortDate(todayS);
-		
+		setDates();
 		loadManagers();
 
-		//		get cars list
-		cars_BI = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_BRAND_ID);
-		cars_IB = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_ID_BRAND);
+		//		get cars list TODO ????????
+//		cars_BI = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_BRAND_ID);
+//		cars_IB = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_ID_BRAND);
 		carBrandList = new ArrayList<String>();
 		carBrandList = (ArrayList<String>) dm.selectData("SELECT brand FROM brands ORDER BY brand ASC", carBrandList);
 		
@@ -190,6 +184,15 @@ public class MainView {
 //		check last database last backup - do it if necessary
 	}
 
+	private static void setDates() {
+		todayL = dh.getFormatedDateAndTime();
+		logger.setLongDate(todayL);
+		
+		todayS = dh.getFormatedDate();
+		logger.setShortDate(todayS);
+		logger.logInfo(" Dates set");
+	}
+
 	private static void loadClasses() {
 		System.out.println("loadClasses");
 		pdfCreator = new PDFCreator(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh, df_4_2);
@@ -200,6 +203,7 @@ public class MainView {
 		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
 
 		invoicesFrame = new InvoicesDisplay(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, invmng);
+		logger.logInfo("Classes loaded");
 	}
 
 	private static void loadConst() {
@@ -216,6 +220,7 @@ public class MainView {
 		fh = new FileHelper();
 
 		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
+		logger.logInfo("Logger Init");
 		msh = new MiscHelper(logger, cs);
 
 		df_3_2 = new DecimalFormat(cs.DECIMAL_FORMAT_3_2);
@@ -227,6 +232,8 @@ public class MainView {
 		System.out.println("loadManagers");
 		try {
 			dm = new DatabaseManager(logger, todayL, cdb, cn, cs, cp, jSettings, df_3_2);
+			logger.logInfo("DM Init");
+
 		} catch (FileNotFoundException e) {
 			logger.logError("FileNotFoundException DM in Main "+e.getMessage());
 			e.printStackTrace();
@@ -240,6 +247,7 @@ public class MainView {
 		stmng = new StockManager(dm, cdb, cn, cs);
 		//get invoices list
 		invmng = new InvoiceManager(dm, cdb, cn, cs);		
+		logger.logInfo("Mangers Init");
 	}
 
 	private static void loadJsonFiles() {
@@ -303,6 +311,7 @@ public class MainView {
 	 * @wbp.parser.entryPoint
 	 */
 	private void initialize() {
+		logger.logInfo("MAIN Init");
 		Color color = msh.getColor(cs.APP, cs, jSettings);
 		int btnX = 16, btnY = 22, yOffset = 48, frameW = 240, frameH = 480;
 		
