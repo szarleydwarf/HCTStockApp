@@ -1073,7 +1073,6 @@ public class InvoiceAddEdit {
 					updateDBStock(listOfServices);
 				}
 				if(pdf != null){
-
 					try {
 						pdf.save(invoicePath);
 						pdf.close();
@@ -1084,6 +1083,8 @@ public class InvoiceAddEdit {
 						log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
 						e.printStackTrace();
 					}
+				} else if(dialogResult == JOptionPane.NO_OPTION) {
+					JOptionPane.showMessageDialog(frame, jl.get(cs.INVOICE_SAVED).toString());
 				} else {
 					JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
 				}
@@ -1222,6 +1223,45 @@ public class InvoiceAddEdit {
 		frame.setVisible(b);
 		setLastInvoiceNum();
 		updateInvoiceLblFP(forPreview[1]);
+	}
+
+
+	public void setIsVisible(Invoice invoice, boolean b) {
+		lastInvoice = ""+invoice.getId();
+		initialize();
+
+		String s = invoice.getCustId().substring(invoice.getCustId().indexOf(cs.UNDERSCORE)+1);
+		System.out.println("S: "+s);
+		if(invoice.getCustId().contains(cs.CUST_BUS_CODE))
+			customer = this.cm.findByID(s, true);
+		else if(invoice.getCustId().contains(cs.CUST_BUS_CODE))
+			customer = this.cm.findByID(s, false);
+		
+		System.out.println("CUST INV "+s+" / "+customer.isBusiness());
+		String str = cs.AT;
+		if(customer != null) {
+			isBusiness = customer.isBusiness();
+			if(!customer.isBusiness()) {
+				str = ((CustomerInd) customer).getCar().getBrandString();
+				str += " " + cs.HASH;
+				str += ((CustomerInd) customer).getCar().getRegistration();
+			} else if(customer.isBusiness()) {
+				str = ((CustomerBusiness) customer).getVATTaxNUM() +cs.COMA + ((CustomerBusiness) customer).getCompName()+cs.COMA+((CustomerBusiness) customer).getCompAddress();
+//			} else 
+			}
+		} else {
+			str = jl.get(cs.OTHER_STRING).toString() + cs.AT + jl.get(cs.NONAME).toString();
+			isBusiness = false;
+		}
+		this.chbInd.setSelected(isBusiness);
+
+		this.date = invoice.getDate();
+		
+		setSaleTable(invoice.getList());
+		
+		frame.setVisible(b);
+		setLastInvoiceNum();
+		updateInvoiceLblFP(str);
 	}
 
 	private void setSaleTable(String string) {

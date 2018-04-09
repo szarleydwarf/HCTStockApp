@@ -420,7 +420,7 @@ public class MainView {
 		btnRepakReport.setBounds(btnX, btnY, 200, 36);
 		frame.getContentPane().add(btnRepakReport);
 		
-		JButton invoiceBtn = new JButton("Rachunki");
+		JButton invoiceBtn = new JButton(jLang.get(cs.BTN_INVOICES).toString());
 		invoiceBtn.setBackground(new Color(135, 206, 235));
 		invoiceBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		invoiceBtn.addActionListener(new ActionListener() {

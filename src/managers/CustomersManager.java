@@ -84,9 +84,23 @@ public class CustomersManager {
 		}
 		return null;
 	}
-	//edit
+
+	public Customer findByID(String s, boolean b) {
+		System.out.println("fbid "+s+" / "+b);
+		for (Customer c : list) {
+			if(c instanceof CustomerBusiness && b){
+				System.out.println("fbid b "+s+" / "+b);
+				if(c.getId() == s)
+					return c;
+			} else if(c instanceof CustomerInd && !b) {
+				System.out.println("fbid in "+s+" / "+b);
+				if(c.getId() == s)
+					return c;
+			}
+		}
+		return null;
+	}
 	
-	//print
 	public void printList() {
 		for(Customer c : this.list)
 			if(c != null)System.out.println("C: "+c.toString());
@@ -132,4 +146,5 @@ public class CustomersManager {
 	public void setCs(ConstStrings cs) {
 		this.cs = cs;
 	}
+
 }

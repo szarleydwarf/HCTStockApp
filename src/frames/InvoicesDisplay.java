@@ -31,6 +31,7 @@ import consts.ConstNums;
 import consts.ConstStrings;
 import managers.DatabaseManager;
 import managers.InvoiceManager;
+import objects.Invoice;
 import objects.Item;
 import utility.Logger;
 import utility.MiscHelper;
@@ -56,6 +57,7 @@ public class InvoicesDisplay {
 	private TableRowSorter rSorter;
 	private JButton btnEdit;
 	private String[] forPreview;
+	protected Invoice invoice;
 
 	/**
 	 * Launch the application.
@@ -160,7 +162,11 @@ public class InvoicesDisplay {
 		btnEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 // TODO create invoice preview
-				if(mainView != null)
+				if(mainView != null && invoice != null)
+					mainView.getInvoiceAEFrame().setIsVisible(invoice, true);
+				else if(invoice != null)
+					MainView.main.getInvoiceAEFrame().setIsVisible(invoice, true);
+				else if(mainView != null)
 					mainView.getInvoiceAEFrame().setIsVisible(forPreview, true);
 				else
 					MainView.main.getInvoiceAEFrame().setIsVisible(forPreview, true);
@@ -215,6 +221,10 @@ public class InvoicesDisplay {
 				if(row != -1) {
 					btnEdit.setEnabled(true);
 					createInvoiceDetails(table.getModel(), row);
+					int id = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
+					invoice = im.getInvoiceByID(id);
+					if(invoice != null)
+						System.out.println("IN "+invoice.getFile());
 				}
 			}
 		};

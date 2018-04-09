@@ -86,4 +86,8 @@ public class InvoiceManager {
 		return data;	
 		}
 
+	public Invoice getInvoiceByID(int id) {
+		return this.list.get(id);
+	}
+
 }

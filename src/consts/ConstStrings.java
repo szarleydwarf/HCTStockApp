@@ -128,6 +128,7 @@ public class ConstStrings {
 	public final String BTN_NEW = "new";
 	public final String BTN_INVOICE = "invoice";
 	public final String BTN_PRINT = "print";
+	public final String BTN_INVOICES = "btn invoices";
 	
 	public final String RB_TYPED_IN = "typed";
 	public final String RB_SUGGESTED = "suggested";
@@ -164,6 +165,7 @@ public class ConstStrings {
 	public final String[] LANG = {"ENGLISH", "POLISH"};
 	
 	public final String SAVED_MSG = "saved";
+	public final String INVOICE_SAVED = "saved invoice";
 	public final String DELETE_MSG = "delete_msg";
 	
 	public final String ITEM_ADD_ERROR = "item_add_error";
@@ -187,4 +189,5 @@ public class ConstStrings {
 	public final String TYRE_CHECK_MESSAGE_3 = "tyre check msg3";
 	public final String PRINTING_PDF_ERROR = "pdf print error";
 	public final String PRINTER_NAME_ERROR = "printer name error";
+	public final String NONAME = "noname";
 }
