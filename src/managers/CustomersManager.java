@@ -85,18 +85,10 @@ public class CustomersManager {
 		return null;
 	}
 
-	public Customer findByID(String s, boolean b) {
-		System.out.println("fbid "+s+" / "+b);
+	public Customer findByID(String s) {
 		for (Customer c : list) {
-			if(c instanceof CustomerBusiness && b){
-				System.out.println("fbid b "+s+" / "+b);
-				if(c.getId() == s)
-					return c;
-			} else if(c instanceof CustomerInd && !b) {
-				System.out.println("fbid in "+s+" / "+b);
-				if(c.getId() == s)
-					return c;
-			}
+			if(c.getId().equalsIgnoreCase(s))
+				return c;
 		}
 		return null;
 	}

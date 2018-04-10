@@ -87,7 +87,11 @@ public class InvoiceManager {
 		}
 
 	public Invoice getInvoiceByID(int id) {
-		return this.list.get(id);
+		for (int i = 0; i < list.size(); i++) {
+			if(list.get(i).getId() == id)
+				return list.get(i);
+		}
+		return null;
 	}
 
 }

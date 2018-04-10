@@ -224,7 +224,7 @@ public class InvoicesDisplay {
 					int id = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
 					invoice = im.getInvoiceByID(id);
 					if(invoice != null)
-						System.out.println("IN "+invoice.getFile());
+						System.out.println("IN "+invoice.getId());
 				}
 			}
 		};

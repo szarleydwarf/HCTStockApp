@@ -165,7 +165,8 @@ public class ConstStrings {
 	public final String[] LANG = {"ENGLISH", "POLISH"};
 	
 	public final String SAVED_MSG = "saved";
-	public final String INVOICE_SAVED = "saved invoice";
+	public final String INVOICE_SAVED_1 = "saved invoice 1";
+	public final String INVOICE_SAVED_2 = "saved invoice 2";
 	public final String DELETE_MSG = "delete_msg";
 	
 	public final String ITEM_ADD_ERROR = "item_add_error";

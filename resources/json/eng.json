@@ -57,7 +57,8 @@
 	"printer name error":"There was an error when trying to get default printer name.",
 	"coma error":"Your registration contains 'comma'. Delete it or check if you not missing any information.(Business customer format: VAT,NAME,ADDRESS",
 
-	"saved invoice":"Invoice saved sucessfully, PDF not created.",
+	"saved invoice 1":"Invoice saved sucessfully, PDF NOT created.",
+	"saved invoice 2":"Invoice saved sucessfully, PDF created.",
 	"saved":"Item saved sucessfully",
 	"close":"Are you really want to close this window?",
 	"search":"Enter frease you looking for:",

@@ -125,6 +125,10 @@ public class InvoiceAddEdit {
 
 	private FileHelper fh;
 
+	private boolean isNew;
+
+	private Invoice editedInvoice;
+
 	
 	/**
 	 * Launch the application.
@@ -567,7 +571,7 @@ public class InvoiceAddEdit {
 				isPercent = false;
 				double sum = calculateSum();
 				sum = applyDiscount(sum);
-				lblTotal.setText("€ "+df.format(sum));
+				lblTotal.setText(cs.EURO+" "+df.format(sum));
 			}
 		});
 		rbPercent.addActionListener(new ActionListener() {
@@ -575,7 +579,7 @@ public class InvoiceAddEdit {
 				isPercent = true;
 				double sum = calculateSum();
 				sum = applyDiscount(sum);
-				lblTotal.setText("€ "+df.format(sum));
+				lblTotal.setText(cs.EURO+" "+df.format(sum));
 			}
 		});
 
@@ -649,7 +653,6 @@ public class InvoiceAddEdit {
 //END OF INVOICE PREVIEW
 
 	protected Invoice collectDataForInvoice(String listOfServices, String invoicePath) {
-//		TODO check for customer, add new
 		checkCustomer();
 		checkIsBusiness();
 		Invoice i= null;
@@ -657,7 +660,21 @@ public class InvoiceAddEdit {
 			double sum = calculateSum();
 			sum = applyDiscount(sum);
 			total = Double.parseDouble(df.format(sum));
-			i = createNewInvoice(listOfServices, invoicePath, total);
+			if(isNew)
+				i = createNewInvoice(listOfServices, invoicePath, total);
+			else {
+//		TODO edit invoice
+				if(editedInvoice != null){
+					System.out.println("EI "+editedInvoice.getId());
+					i = editedInvoice;
+					i.setList(listOfServices);
+					i.setTotal(total);
+					i.setDiscount(discount);
+					i.setPercent(isPercent);
+					i.setDate(date);
+					i.updateRecord();
+				}
+			}
 		}
 		return i;
 	}
@@ -835,7 +852,7 @@ public class InvoiceAddEdit {
 			@Override
 			public void tableChanged(TableModelEvent arg0) {
 				double sum = calculateSum();
-				lblTotal.setText("€ "+df.format(sum));
+				lblTotal.setText(cs.EURO+" "+df.format(sum));
 			}			
 		});
 	}
@@ -1076,6 +1093,7 @@ public class InvoiceAddEdit {
 					try {
 						pdf.save(invoicePath);
 						pdf.close();
+						JOptionPane.showMessageDialog(frame, jl.get(cs.INVOICE_SAVED_2).toString());
 						goBack();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -1084,7 +1102,7 @@ public class InvoiceAddEdit {
 						e.printStackTrace();
 					}
 				} else if(dialogResult == JOptionPane.NO_OPTION) {
-					JOptionPane.showMessageDialog(frame, jl.get(cs.INVOICE_SAVED).toString());
+					JOptionPane.showMessageDialog(frame, jl.get(cs.INVOICE_SAVED_1).toString());
 				} else {
 					JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
 				}
@@ -1198,10 +1216,6 @@ public class InvoiceAddEdit {
 	}
 
 	public void setIsVisible(String[] forPreview, boolean b) {
-		// TODO Auto-generated method stub
-		for (int j = 0; j < forPreview.length; j++) {
-			System.out.println("iae "+forPreview[j]);
-		}
 		lastInvoice = forPreview[0];
 		initialize();
 
@@ -1227,17 +1241,12 @@ public class InvoiceAddEdit {
 
 
 	public void setIsVisible(Invoice invoice, boolean b) {
+		editedInvoice = invoice;
 		lastInvoice = ""+invoice.getId();
 		initialize();
-
-		String s = invoice.getCustId().substring(invoice.getCustId().indexOf(cs.UNDERSCORE)+1);
-		System.out.println("S: "+s);
-		if(invoice.getCustId().contains(cs.CUST_BUS_CODE))
-			customer = this.cm.findByID(s, true);
-		else if(invoice.getCustId().contains(cs.CUST_BUS_CODE))
-			customer = this.cm.findByID(s, false);
+// TODO
+		customer = this.cm.findByID(invoice.getCustId());
 		
-		System.out.println("CUST INV "+s+" / "+customer.isBusiness());
 		String str = cs.AT;
 		if(customer != null) {
 			isBusiness = customer.isBusiness();
@@ -1247,25 +1256,36 @@ public class InvoiceAddEdit {
 				str += ((CustomerInd) customer).getCar().getRegistration();
 			} else if(customer.isBusiness()) {
 				str = ((CustomerBusiness) customer).getVATTaxNUM() +cs.COMA + ((CustomerBusiness) customer).getCompName()+cs.COMA+((CustomerBusiness) customer).getCompAddress();
-//			} else 
 			}
 		} else {
 			str = jl.get(cs.OTHER_STRING).toString() + cs.AT + jl.get(cs.NONAME).toString();
 			isBusiness = false;
 		}
+		
+		setSaleTable(invoice.getList());
+		if(invoice.getDiscount() > 0.00){
+			this.discount = invoice.getDiscount();
+			this.tfDiscount.setText(""+this.discount);
+			if(invoice.isPercent()==0)
+				this.rbMoney.setSelected(true);
+			else if(invoice.isPercent() > 0)
+				this.rbPercent.setSelected(true);
+			double sum = calculateSum();
+			sum = this.applyDiscount(sum);
+			this.lblTotal.setText(cs.EURO+" "+df.format(sum));
+		}
 		this.chbInd.setSelected(isBusiness);
 
 		this.date = invoice.getDate();
 		
-		setSaleTable(invoice.getList());
 		
 		frame.setVisible(b);
 		setLastInvoiceNum();
 		updateInvoiceLblFP(str);
+		isNew = false;
 	}
 
 	private void setSaleTable(String string) {
-		// TODO Auto-generated method stub
 		String[] shopping = msh.splitString(string, cs.SEMICOLON);
 		for (int i = 0; i < shopping.length-1; i++) {
 			if(shopping[i] != "" || !shopping[i].isEmpty() || shopping[i] != null){
@@ -1278,9 +1298,6 @@ public class InvoiceAddEdit {
 				rowData[4] = ss.substring(ss.indexOf(cs.HASH)+1, ss.indexOf(cs.AT));
 				rowData[2] = ss.substring(ss.indexOf(cs.AT)+1);
 				
-//				System.out.println("rd "+ss+"\n\t0: "+rowData[0]+"\n\t3: "+rowData[3]
-//						+"\n\t1: "+rowData[1]+"\n\t2: "+rowData[2]+"\n\t4: "+rowData[4]);
-
 				DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
 				model.addRow(rowData);
 			}
