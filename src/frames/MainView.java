@@ -82,6 +82,7 @@ public class MainView {
 	private static PDFCreator pdfCreator;
 	private static DecimalFormat df_4_2;
 	private static InvoicesDisplay invoicesFrame;
+	private static SalesReports salesRepFrame;
 	
 
 	/**
@@ -176,10 +177,6 @@ public class MainView {
 		carBrandList = (ArrayList<String>) dm.selectData("SELECT brand FROM brands ORDER BY brand ASC", carBrandList);
 		
 		loadClasses();
-		//TODO
-		// getLastIDs();
-		
-
 //		TODO
 //		check last database last backup - do it if necessary
 	}
@@ -203,6 +200,8 @@ public class MainView {
 		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
 
 		invoicesFrame = new InvoicesDisplay(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, invmng);
+		salesRepFrame = new SalesReports(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, invmng);
+		
 		logger.logInfo("Classes loaded");
 	}
 
@@ -300,7 +299,7 @@ public class MainView {
 	 */
 	public MainView() {
 		jLang = loadLanguage();
-		if(isNew)//TODO change to field 
+		if(isNew) 
 			CompanyDetails.main(dm, logger, cdb, cs, cn, cp, jSettings, jUser, jLang, msh);
 		else
 			initialize();
@@ -383,12 +382,14 @@ public class MainView {
 		line.setBorder(border);
 		frame.getContentPane().add(line);
 		
-		JButton btnSalesReports = new JButton("Raporty sprzedaży");
+		JButton btnSalesReports = new JButton(jLang.get(cs.BTN_SALES_REPORT).toString());
 		btnSalesReports.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		btnSalesReports.setBackground(new Color(135, 206, 235));
 		btnSalesReports.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(frame, "W trakcie tworzenia");
+				//TODO
+				if(!salesRepFrame.isVisible())
+					salesRepFrame.setIsVisible(true);
 			}
 		});
 		btnY += (yOffset/2);

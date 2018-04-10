@@ -375,7 +375,6 @@ public class ItemAddNew {
 	protected void recalculateCost(JTextField tfCost) {
 		  d_cost = 0;
 		  cost = ""; price = "";
-//		  TODO
 		  try {
 			  d_cost = Double.parseDouble(tfCost.getText()); 
 		  } catch (NumberFormatException nfe) {
@@ -387,7 +386,6 @@ public class ItemAddNew {
 			  cost = calculateCost();
 			  price = calculatePrice();
 		  }
-		  
 		  setCostLBL();
 		  setPriceLBL();
 	}
