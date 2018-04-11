@@ -29,6 +29,24 @@
 	"suggested":"Suggested",
 	"enter search fraze":"Enter frase to search",
 
+	"months names":[
+		"January",
+		"February",
+		"March",
+		"April",
+		"May",
+		"June",
+		"July",
+		"August",
+		"September",
+		"October",
+		"November",
+		"December"
+	],
+
+	"years":["2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034", "2035"],
+	"sale report headings":["Month", "Costs", "Income", "Profit"],
+
 	"code":"Item Code:",
 	"name":"Name:",
 	"cost":"Cost:",

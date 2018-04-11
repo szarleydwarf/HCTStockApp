@@ -3,13 +3,18 @@ package utility;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import org.json.simple.JSONArray;
+
+import consts.ConstNums;
 import consts.ConstStrings;
 
 public class DateHelper {
 	private ConstStrings cs;
+	private ConstNums cn;
 	
-	public DateHelper(ConstStrings constStrings){
+	public DateHelper(ConstStrings constStrings, ConstNums CN){
 		this.cs = constStrings;
+		this.cn = CN;
 	}
 	
 	public String getFormatedDate(){
@@ -33,6 +38,68 @@ public class DateHelper {
 		return df.format(today.getTime());
 	}
 
+	public String[] getDaysArray() {
+		int month = getMonthNum();
+		month++;
+
+		switch(month){
+			case 1:
+			case 3:
+			case 5:
+			case 7:
+			case 8:
+			case 10:
+			case 12:
+				return cs.DAYS_NUM_31;
+	
+			case 4:
+			case 6:
+			case 9:
+			case 11:
+				return cs.DAYS_NUM_30;
+	
+			case 2:
+				boolean isLeap = isLeapYear();
+				if(isLeap)
+					return cs.DAYS_NUM_29;
+				else
+					return cs.DAYS_NUM_28;
+	
+			default:
+				return cs.DAYS_NUM_31;
+		}
+	}
+
+	public String[] getDaysArray(int month) {
+		switch(month){
+			case 1:
+			case 3:
+			case 5:
+			case 7:
+			case 8:
+			case 10:
+			case 12:
+				return cs.DAYS_NUM_31;
+	
+			case 4:
+			case 6:
+			case 9:
+			case 11:
+				return cs.DAYS_NUM_30;
+	
+			case 2:
+				boolean isLeap = isLeapYear();
+				if(isLeap)
+					return cs.DAYS_NUM_29;
+				else
+					return cs.DAYS_NUM_28;
+	
+			default:
+				return cs.DAYS_NUM_31;
+		}
+	}
+
+
 	public int getDayOfMonthNum(){
 		Calendar cal = Calendar.getInstance();
 		return cal.get(Calendar.DAY_OF_MONTH);
@@ -44,15 +111,15 @@ public class DateHelper {
 	}
 
 
-	public String getIndexOfMonth(String month) {
-		for(int i = 0; i < cs.MONTHS_NAMES.length; i++){
-			if(cs.MONTHS_NAMES[i].equals(month)){
-				int monthNum = i+1;
-				return "" + monthNum;
-			}
-		}
-		return "";
-	}
+//	public String getIndexOfMonth(String month) {
+//		for(int i = 0; i < cn.NUM_OF_MONTHS; i++){
+//			if(cs.MONTHS_NAMES[i].equals(month)){
+//				int monthNum = i+1;
+//				return "" + monthNum;
+//			}
+//		}
+//		return "";
+//	}
 
 	public int getYearNum(){
 		Calendar cal = Calendar.getInstance();
@@ -103,6 +170,18 @@ public class DateHelper {
         else {
         	return false;
         }
+	}
+
+	public String[] json2Array(JSONArray jsonArray) {
+	    String[] stringArray = null;
+	    if (jsonArray != null) {
+	        int length = jsonArray.size();
+	        stringArray = new String[length];
+	        for (int i = 0; i < length; i++) {
+	            stringArray[i] = jsonArray.get(i).toString();
+	        }
+	    }
+	    return stringArray;
 	}
 
 }

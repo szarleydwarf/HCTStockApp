@@ -200,7 +200,7 @@ public class MainView {
 		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
 
 		invoicesFrame = new InvoicesDisplay(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, invmng);
-		salesRepFrame = new SalesReports(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, invmng);
+		salesRepFrame = new SalesReports(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, dh, invmng);
 		
 		logger.logInfo("Classes loaded");
 	}
@@ -215,7 +215,7 @@ public class MainView {
 
 	private static void loadHelpers() {
 		System.out.println("loadHelpers");
-		dh = new DateHelper(cs);
+		dh = new DateHelper(cs, cn);
 		fh = new FileHelper();
 
 		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);

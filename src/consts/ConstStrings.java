@@ -12,11 +12,12 @@ public class ConstStrings {
 
 	//DATE RELATED
 	public final String[] YEARS_NO_STRING = {"2017", "2018", "2019", "2020"};
-	public final String[] MONTHS_NAMES = {"Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"};
 	public final String DATE_FORMAT = "dd-MM-yyyy";//"yyyy-MM-dd" ?? not sure which format is correct for a database entry. so far works
 	public final String DATE_FORMAT_REVERSE = "yyyy-MM-dd";
 	public final String DATE_TIME_FORMAT = "dd-MM-yyyy @HH:mm:ss";
 	public final String DATE_TIME_FORMAT_REVERSE = "yyyy-MM-dd @HH:mm:ss";
+	public final String YEARS = "years";
+	public final String SALE_REPORT_HEADINGS = "sale report headings";
 
 	// ITEM CODES
 	public final String TYRE_CODE = "TR";
@@ -44,7 +45,12 @@ public class ConstStrings {
 	public final String CHOSEN_TB_NAME = "CHOOSEN";
 	public final String INVOICE_TB_NAME = "invoices table";
 
-
+	public final String[] DAYS_NUM_31 = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"};
+	public final String[] DAYS_NUM_30 = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"};
+	public final String[] DAYS_NUM_29 = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29"};
+	public final String[] DAYS_NUM_28 = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28"};
+	public final String MONTHS_NAMES = "months names";
+	
 	//PATTERNS AND FORMATS
 	public final String DECIMAL_PATTERN = "^-?([0-9]*)\\.([0-9]*)+$";	
 	public final String REGEX_FILTER = "(?i).*\\Q";	

@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import consts.ConstDB;
@@ -20,6 +21,7 @@ import consts.ConstStrings;
 import managers.DatabaseManager;
 import managers.InvoiceManager;
 import objects.Item;
+import utility.DateHelper;
 import utility.Logger;
 import utility.MiscHelper;
 
@@ -37,7 +39,12 @@ public class SalesReports {
 	private Color color;
 	private JSONObject js;
 	private MiscHelper msh;
+	private DateHelper dh;
 	private InvoiceManager invmng;
+
+	protected String dayOfReport = "";
+	protected String yearOfReport = "";
+	protected String monthOfReport = "";
 
 //	/**
 //	 * Launch the application.
@@ -63,7 +70,7 @@ public class SalesReports {
 	}
 
 	public SalesReports(MainView main, DatabaseManager dm, ConstDB CDB, ConstStrings CS, ConstNums CN, Logger logger,
-			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, InvoiceManager invMng) {
+			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, InvoiceManager invMng) {
 		mainView = main;
 		jl = jLang;
 		js = jSettings;
@@ -74,6 +81,7 @@ public class SalesReports {
 		cn = CN;
 		
 		msh = mSH;
+		dh = DH;
 		invmng = invMng;
 		
 		fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
@@ -109,36 +117,46 @@ public class SalesReports {
 		// TEXTFIELDS
 
 		// DROPDOWN MENU
-		String[]days = {"1","2"};
-		int today = 1;
+		String[]days = dh.getDaysArray();
+		JSONArray jArr = (JSONArray) jl.get(cs.MONTHS_NAMES);
+		String[]months = dh.json2Array(jArr);
+		jArr = null;
+		jArr = (JSONArray) jl.get(cs.YEARS);
+		String[]years = dh.json2Array(jArr);
+
+		int today = dh.getDayOfMonthNum();
+		today--;
+		int month = dh.getMonthNum();
+		int year = dh.getYearIndex();
+		
+		dayOfReport = days[today];
+		monthOfReport = months[month];
+		yearOfReport = years[year];
+		System.out.println("Date "+dayOfReport+"/"+monthOfReport+"/"+yearOfReport);
 
 		JComboBox cbDays = new JComboBox(days);
-		cbDays.setSelectedIndex(today-1);
+		cbDays.setSelectedIndex(today);
 		cbDays.setBounds(lblX, (lblH/2)+20, jcbW, jcbH);
 		frame.getContentPane().add(cbDays);
 		
-		JComboBox cbMonthDaily = new JComboBox(days);
-		cbMonthDaily.setSelectedIndex(-1);
+		JComboBox cbMonthDaily = new JComboBox(months);
+		cbMonthDaily.setSelectedIndex(month);
 		cbMonthDaily.setBounds(lblX+cbDays.getWidth()+16, (lblH/2)+20, jcbW*2, jcbH);
-//		cbMonthDaily.setSelectedIndex(monthNo);
 		frame.getContentPane().add(cbMonthDaily);
 		
-		JComboBox cbYearDaily = new JComboBox(days);
-		cbYearDaily.setSelectedIndex(-1);
+		JComboBox cbYearDaily = new JComboBox(years);
+		cbYearDaily.setSelectedIndex(year);
 		cbYearDaily.setBounds(cbMonthDaily.getX()+cbMonthDaily.getWidth()+16, (lblH/2)+20, jcbW*2, jcbH);
-//		cbYearDaily.setSelectedIndex(yearIndex);
 		frame.getContentPane().add(cbYearDaily);
 
-		JComboBox cbMonth = new JComboBox(days);
-		cbMonth.setSelectedIndex(-1);
+		JComboBox cbMonth = new JComboBox(months);
+		cbMonth.setSelectedIndex(month);
 		cbMonth.setBounds(lblX+cbDays.getWidth()+16, (lblH/2)+jcbYOffset, jcbW*2, jcbH);
-//		cbMonthDaily.setSelectedIndex(monthNo);
 		frame.getContentPane().add(cbMonth);
 		
-		JComboBox cbYear = new JComboBox(days);
-		cbYear.setSelectedIndex(-1);
+		JComboBox cbYear = new JComboBox(years);
+		cbYear.setSelectedIndex(year);
 		cbYear.setBounds(cbMonth.getX()+cbMonth.getWidth()+16, (lblH/2)+jcbYOffset, jcbW*2, jcbH);
-//		cbYearDaily.setSelectedIndex(yearIndex);
 		frame.getContentPane().add(cbYear);
 		
 		// BUTTONS
@@ -200,6 +218,7 @@ public class SalesReports {
 			public void actionPerformed(ActionEvent a) {
 				if(a.getSource() == cbDays ){
 					JComboBox cb = (JComboBox) a.getSource();
+					dayOfReport = cb.getSelectedItem().toString();
 				}		
 			}
 		});
@@ -209,6 +228,7 @@ public class SalesReports {
 			public void actionPerformed(ActionEvent a) {
 				if(a.getSource() == cbMonthDaily ){
 					JComboBox cb = (JComboBox) a.getSource();
+					monthOfReport = cb.getSelectedItem().toString();
 				}		
 			}
 		});
@@ -218,6 +238,7 @@ public class SalesReports {
 			public void actionPerformed(ActionEvent a) {
 				if(a.getSource() == cbYearDaily ){
 					JComboBox cb = (JComboBox) a.getSource();
+					yearOfReport = cb.getSelectedItem().toString();
 				}		
 			}
 		});
@@ -227,6 +248,7 @@ public class SalesReports {
 			public void actionPerformed(ActionEvent a) {
 				if(a.getSource() == cbMonth ){
 					JComboBox cb = (JComboBox) a.getSource();
+					monthOfReport = cb.getSelectedItem().toString();
 				}		
 			}
 		});
@@ -236,10 +258,41 @@ public class SalesReports {
 			public void actionPerformed(ActionEvent a) {
 				if(a.getSource() == cbYear ){
 					JComboBox cb = (JComboBox) a.getSource();
+					yearOfReport = cb.getSelectedItem().toString();
 				}		
 			}
 		});
 		
+		populateTabel();
+	}
+
+	private void populateTabel() {
+		JSONArray jArr = (JSONArray) jl.get(cs.SALE_REPORT_HEADINGS);
+		String[]sReportHeadings = dh.json2Array(jArr);
+
+		String[][] data = new String [this.cn.NUM_OF_MONTHS][sReportHeadings.length];
+		
+		data = fillData(data);
+		
+
+	}
+
+	private String[][] fillData(String[][] data) {
+		int monthNo = dh.getMonthNum()+1;
+		int yearNo = dh.getYearNum();
+		String dateMMYYYY="";
+		for (int i = 0; i < cn.NUM_OF_MONTHS; i++) {
+			dateMMYYYY = ""+monthNo+"-"+yearNo;
+			data[i][0] = dateMMYYYY;
+			
+			
+			if(monthNo == 1){
+				yearNo--;
+				monthNo = 13;
+			}
+			monthNo--;
+		}
+		return data;
 	}
 
 	protected void goBack() {
