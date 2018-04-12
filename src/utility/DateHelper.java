@@ -1,6 +1,7 @@
 package utility;
 
 import java.text.SimpleDateFormat;
+import java.time.Month;
 import java.util.Calendar;
 
 import org.json.simple.JSONArray;
@@ -182,6 +183,10 @@ public class DateHelper {
 	        }
 	    }
 	    return stringArray;
+	}
+
+	public int getMonthNumber(String monthName) {
+	    return Month.valueOf(monthName.toUpperCase()).getValue();
 	}
 
 }

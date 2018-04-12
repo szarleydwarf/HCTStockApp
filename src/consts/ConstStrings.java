@@ -39,11 +39,12 @@ public class ConstStrings {
 	public final String[] CUSTOMER_TB_HEADINGS = {"Customer", "B/I", "VAT/TAX"};
 	public final String[] INVOICES_TB_HEADINGS = {"ID", "Klient", "Data", "Zakupy", "Plik"};
 
+	public final String SALE_REPORTS = "SALE REPORTS";
 	public final String CARS_TB_NAME = "CARS";
 	public final String STOCK_TB_NAME = "STOCK";
 	public final String CUSTOMER_TB_NAME = "CUSTOMER";
 	public final String CHOSEN_TB_NAME = "CHOOSEN";
-	public final String INVOICE_TB_NAME = "invoices table";
+	public final String INVOICE_TB_NAME = "INVOICES TABLE";
 
 	public final String[] DAYS_NUM_31 = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"};
 	public final String[] DAYS_NUM_30 = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"};
@@ -163,6 +164,8 @@ public class ConstStrings {
 	public final String LBL_PREVIEW = "preview";
 	public final String LBL_DISCOUNT = "discount";
 	public final String LBL_TOTAL = "total";
+	public final String LBL_DAILY_REPORT = "daily report";
+	public final String LBL_MONTHLY_REPORT = "monthly report";
 
 	public final String TF_CUST_HINT = "tf cust hint";
 
