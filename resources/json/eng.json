@@ -5,6 +5,8 @@
 	"back":"GO BACK",
 	"delete":"DELETE",
 	"invoice":"INVOICE",
+	"btn invoices":"INVOICES",
+	"btn sales report":"SALES REPORTS",
 	"edit":"EDIT",
 	"new":"ADD NEW",
 	"customer":"CUSTOMER",
@@ -27,6 +29,24 @@
 	"suggested":"Suggested",
 	"enter search fraze":"Enter frase to search",
 
+	"months names":[
+		"January",
+		"February",
+		"March",
+		"April",
+		"May",
+		"June",
+		"July",
+		"August",
+		"September",
+		"October",
+		"November",
+		"December"
+	],
+
+	"years":["2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034", "2035"],
+	"sale report headings":["Month", "Costs", "Sale", "Profit"],
+
 	"code":"Item Code:",
 	"name":"Name:",
 	"cost":"Cost:",
@@ -38,7 +58,11 @@
 	"s_cost":"Calc.cost",
 	"s_price":"Rec.Price",
 
+	"daily report":"Daily Report",
+	"monthly report":"Montly Report",
+
 	"other":"OTHER",
+	"noname":"NO NAME",
 	"pdf sales header":"No.     Description                  Price   Qnt",
 
 	"tf cust hint":"Business,type as follow:VAT,NAME,ADDRESS",
@@ -55,6 +79,8 @@
 	"printer name error":"There was an error when trying to get default printer name.",
 	"coma error":"Your registration contains 'comma'. Delete it or check if you not missing any information.(Business customer format: VAT,NAME,ADDRESS",
 
+	"saved invoice 1":"Invoice saved sucessfully, PDF NOT created.",
+	"saved invoice 2":"Invoice saved sucessfully, PDF created.",
 	"saved":"Item saved sucessfully",
 	"close":"Are you really want to close this window?",
 	"search":"Enter frease you looking for:",

@@ -22,7 +22,7 @@ public class InvoiceManager {
 		this.cn = cn;
 		this.cs = cs;
 		
-		list = getList();
+		list = (ArrayList<Invoice>) this.dm.selectData(this.cdb.SELECT_ALL_INVOICES, list);
 	}
 
 	public boolean add(Invoice i) {
@@ -76,7 +76,7 @@ public class InvoiceManager {
 	}
 
 	public ArrayList<Invoice> getList() {
-		return (ArrayList<Invoice>) this.dm.selectData(this.cdb.SELECT_ALL_INVOICES, list);
+		return list;
 	}
 
 	public String[][] getDataShort() {
@@ -85,5 +85,13 @@ public class InvoiceManager {
 			data[i] = list.get(i).getCasData();
 		return data;	
 		}
+
+	public Invoice getInvoiceByID(int id) {
+		for (int i = 0; i < list.size(); i++) {
+			if(list.get(i).getId() == id)
+				return list.get(i);
+		}
+		return null;
+	}
 
 }

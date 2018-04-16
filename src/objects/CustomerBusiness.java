@@ -180,6 +180,10 @@ public class CustomerBusiness extends Customer {
 		return (this.getCompName().equals(str1) && this.getVATTaxNUM().equals(str2));
 	}
 
+    public boolean find(String str1) {
+    	return (this.getCompName().equals(str1));
+    }
+
 	@Override
 	public boolean compare(Object c) {
   	   if (c == null) return false;

@@ -12,11 +12,12 @@ public class ConstStrings {
 
 	//DATE RELATED
 	public final String[] YEARS_NO_STRING = {"2017", "2018", "2019", "2020"};
-	public final String[] MONTHS_NAMES = {"Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"};
 	public final String DATE_FORMAT = "dd-MM-yyyy";//"yyyy-MM-dd" ?? not sure which format is correct for a database entry. so far works
 	public final String DATE_FORMAT_REVERSE = "yyyy-MM-dd";
 	public final String DATE_TIME_FORMAT = "dd-MM-yyyy @HH:mm:ss";
 	public final String DATE_TIME_FORMAT_REVERSE = "yyyy-MM-dd @HH:mm:ss";
+	public final String YEARS = "years";
+	public final String SALE_REPORT_HEADINGS = "sale report headings";
 
 	// ITEM CODES
 	public final String TYRE_CODE = "TR";
@@ -38,13 +39,19 @@ public class ConstStrings {
 	public final String[] CUSTOMER_TB_HEADINGS = {"Customer", "B/I", "VAT/TAX"};
 	public final String[] INVOICES_TB_HEADINGS = {"ID", "Klient", "Data", "Zakupy", "Plik"};
 
+	public final String SALE_REPORTS = "SALE REPORTS";
 	public final String CARS_TB_NAME = "CARS";
 	public final String STOCK_TB_NAME = "STOCK";
 	public final String CUSTOMER_TB_NAME = "CUSTOMER";
 	public final String CHOSEN_TB_NAME = "CHOOSEN";
-	public final String INVOICE_TB_NAME = "invoices table";
+	public final String INVOICE_TB_NAME = "INVOICES TABLE";
 
-
+	public final String[] DAYS_NUM_31 = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"};
+	public final String[] DAYS_NUM_30 = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"};
+	public final String[] DAYS_NUM_29 = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29"};
+	public final String[] DAYS_NUM_28 = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28"};
+	public final String MONTHS_NAMES = "months names";
+	
 	//PATTERNS AND FORMATS
 	public final String DECIMAL_PATTERN = "^-?([0-9]*)\\.([0-9]*)+$";	
 	public final String REGEX_FILTER = "(?i).*\\Q";	
@@ -128,6 +135,8 @@ public class ConstStrings {
 	public final String BTN_NEW = "new";
 	public final String BTN_INVOICE = "invoice";
 	public final String BTN_PRINT = "print";
+	public final String BTN_INVOICES = "btn invoices";
+	public final String BTN_SALES_REPORT = "btn sales report";
 	
 	public final String RB_TYPED_IN = "typed";
 	public final String RB_SUGGESTED = "suggested";
@@ -155,6 +164,8 @@ public class ConstStrings {
 	public final String LBL_PREVIEW = "preview";
 	public final String LBL_DISCOUNT = "discount";
 	public final String LBL_TOTAL = "total";
+	public final String LBL_DAILY_REPORT = "daily report";
+	public final String LBL_MONTHLY_REPORT = "monthly report";
 
 	public final String TF_CUST_HINT = "tf cust hint";
 
@@ -164,6 +175,8 @@ public class ConstStrings {
 	public final String[] LANG = {"ENGLISH", "POLISH"};
 	
 	public final String SAVED_MSG = "saved";
+	public final String INVOICE_SAVED_1 = "saved invoice 1";
+	public final String INVOICE_SAVED_2 = "saved invoice 2";
 	public final String DELETE_MSG = "delete_msg";
 	
 	public final String ITEM_ADD_ERROR = "item_add_error";
@@ -187,4 +200,5 @@ public class ConstStrings {
 	public final String TYRE_CHECK_MESSAGE_3 = "tyre check msg3";
 	public final String PRINTING_PDF_ERROR = "pdf print error";
 	public final String PRINTER_NAME_ERROR = "printer name error";
+	public final String NONAME = "noname";
 }

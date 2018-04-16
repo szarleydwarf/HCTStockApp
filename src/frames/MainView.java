@@ -82,6 +82,7 @@ public class MainView {
 	private static PDFCreator pdfCreator;
 	private static DecimalFormat df_4_2;
 	private static InvoicesDisplay invoicesFrame;
+	private static SalesReports salesRepFrame;
 	
 
 	/**
@@ -166,28 +167,27 @@ public class MainView {
 		ts = new tScanner();
 
 		loadHelpers();
+		setDates();
+		loadManagers();
 
+		//		get cars list TODO ????????
+//		cars_BI = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_BRAND_ID);
+//		cars_IB = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_ID_BRAND);
+		carBrandList = new ArrayList<String>();
+		carBrandList = (ArrayList<String>) dm.selectData("SELECT brand FROM brands ORDER BY brand ASC", carBrandList);
+		
+		loadClasses();
+//		TODO
+//		check last database last backup - do it if necessary
+	}
+
+	private static void setDates() {
 		todayL = dh.getFormatedDateAndTime();
 		logger.setLongDate(todayL);
 		
 		todayS = dh.getFormatedDate();
 		logger.setShortDate(todayS);
-		
-		loadManagers();
-
-		//		get cars list
-		cars_BI = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_BRAND_ID);
-		cars_IB = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_ID_BRAND);
-		carBrandList = new ArrayList<String>();
-		carBrandList = (ArrayList<String>) dm.selectData("SELECT brand FROM brands ORDER BY brand ASC", carBrandList);
-		
-		loadClasses();
-		//TODO
-		// getLastIDs();
-		
-
-//		TODO
-//		check last database last backup - do it if necessary
+		logger.logInfo(" Dates set");
 	}
 
 	private static void loadClasses() {
@@ -200,6 +200,9 @@ public class MainView {
 		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
 
 		invoicesFrame = new InvoicesDisplay(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, invmng);
+		salesRepFrame = new SalesReports(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, dh, invmng, df_5_2);
+		
+		logger.logInfo("Classes loaded");
 	}
 
 	private static void loadConst() {
@@ -212,10 +215,11 @@ public class MainView {
 
 	private static void loadHelpers() {
 		System.out.println("loadHelpers");
-		dh = new DateHelper(cs);
+		dh = new DateHelper(cs, cn);
 		fh = new FileHelper();
 
 		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
+		logger.logInfo("Logger Init");
 		msh = new MiscHelper(logger, cs);
 
 		df_3_2 = new DecimalFormat(cs.DECIMAL_FORMAT_3_2);
@@ -227,6 +231,8 @@ public class MainView {
 		System.out.println("loadManagers");
 		try {
 			dm = new DatabaseManager(logger, todayL, cdb, cn, cs, cp, jSettings, df_3_2);
+			logger.logInfo("DM Init");
+
 		} catch (FileNotFoundException e) {
 			logger.logError("FileNotFoundException DM in Main "+e.getMessage());
 			e.printStackTrace();
@@ -240,6 +246,7 @@ public class MainView {
 		stmng = new StockManager(dm, cdb, cn, cs);
 		//get invoices list
 		invmng = new InvoiceManager(dm, cdb, cn, cs);		
+		logger.logInfo("Mangers Init");
 	}
 
 	private static void loadJsonFiles() {
@@ -292,7 +299,7 @@ public class MainView {
 	 */
 	public MainView() {
 		jLang = loadLanguage();
-		if(isNew)//TODO change to field 
+		if(isNew) 
 			CompanyDetails.main(dm, logger, cdb, cs, cn, cp, jSettings, jUser, jLang, msh);
 		else
 			initialize();
@@ -303,6 +310,7 @@ public class MainView {
 	 * @wbp.parser.entryPoint
 	 */
 	private void initialize() {
+		logger.logInfo("MAIN Init");
 		Color color = msh.getColor(cs.APP, cs, jSettings);
 		int btnX = 16, btnY = 22, yOffset = 48, frameW = 240, frameH = 480;
 		
@@ -374,12 +382,14 @@ public class MainView {
 		line.setBorder(border);
 		frame.getContentPane().add(line);
 		
-		JButton btnSalesReports = new JButton("Raporty sprzedaży");
+		JButton btnSalesReports = new JButton(jLang.get(cs.BTN_SALES_REPORT).toString());
 		btnSalesReports.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		btnSalesReports.setBackground(new Color(135, 206, 235));
 		btnSalesReports.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(frame, "W trakcie tworzenia");
+				//TODO
+				if(!salesRepFrame.isVisible())
+					salesRepFrame.setIsVisible(true);
 			}
 		});
 		btnY += (yOffset/2);
@@ -411,7 +421,7 @@ public class MainView {
 		btnRepakReport.setBounds(btnX, btnY, 200, 36);
 		frame.getContentPane().add(btnRepakReport);
 		
-		JButton invoiceBtn = new JButton("Rachunki");
+		JButton invoiceBtn = new JButton(jLang.get(cs.BTN_INVOICES).toString());
 		invoiceBtn.setBackground(new Color(135, 206, 235));
 		invoiceBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		invoiceBtn.addActionListener(new ActionListener() {

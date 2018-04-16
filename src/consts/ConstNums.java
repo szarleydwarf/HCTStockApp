@@ -7,6 +7,8 @@ public class ConstNums {
 
 	public final long SPLASHSCREEN_TIME = 5000;
 	
+	public final int NUM_OF_MONTHS = 12;
+
 	public final int NAME_COLUMN = 1;
 	public final int PRICE_COLUMN = 2;
 	public final int QNT_COLUMN = 3;

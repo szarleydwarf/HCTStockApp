@@ -8,6 +8,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -259,4 +260,34 @@ public class MiscHelper {
 		return table;
 	}
 
+	public void displayDataInLabel(JLabel jlbl, DecimalFormat df, String[][] data, String[] sa) {
+		// TODO Auto-generated method stub
+		String s = "<html><body>";
+		for (String ss : sa) {
+			s+= ss + "    ";
+		}
+		jlbl.setText(s);
+		if(data != null){
+			for(int j = 0 ; j< data.length; j++){
+				s = jlbl.getText();
+				s+="<br>";
+				for(int i = 0; i < data[j].length; i++){
+					if(isNumeric(data[j][i]))
+						s += df.format(Double.parseDouble(data[j][i]));
+					else if(data[j][i] == null)
+						s += df.format(0);
+					else
+						s += data[j][i];
+					s += " ~ ";
+				}
+				jlbl.setText(s);
+			}
+		}
+		s += "</body></html>";
+	}
+	public static boolean isNumeric(String str)	{
+		if(str != null)
+			return str.matches("-?\\d+(\\.\\d+)?");
+		return false;
+	}
 }

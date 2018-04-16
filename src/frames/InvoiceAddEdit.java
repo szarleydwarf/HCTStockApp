@@ -125,6 +125,10 @@ public class InvoiceAddEdit {
 
 	private FileHelper fh;
 
+	private boolean isNew;
+
+	private Invoice editedInvoice;
+
 	
 	/**
 	 * Launch the application.
@@ -567,7 +571,7 @@ public class InvoiceAddEdit {
 				isPercent = false;
 				double sum = calculateSum();
 				sum = applyDiscount(sum);
-				lblTotal.setText("€ "+df.format(sum));
+				lblTotal.setText(cs.EURO+" "+df.format(sum));
 			}
 		});
 		rbPercent.addActionListener(new ActionListener() {
@@ -575,7 +579,7 @@ public class InvoiceAddEdit {
 				isPercent = true;
 				double sum = calculateSum();
 				sum = applyDiscount(sum);
-				lblTotal.setText("€ "+df.format(sum));
+				lblTotal.setText(cs.EURO+" "+df.format(sum));
 			}
 		});
 
@@ -649,7 +653,6 @@ public class InvoiceAddEdit {
 //END OF INVOICE PREVIEW
 
 	protected Invoice collectDataForInvoice(String listOfServices, String invoicePath) {
-//		TODO check for customer, add new
 		checkCustomer();
 		checkIsBusiness();
 		Invoice i= null;
@@ -657,7 +660,21 @@ public class InvoiceAddEdit {
 			double sum = calculateSum();
 			sum = applyDiscount(sum);
 			total = Double.parseDouble(df.format(sum));
-			i = createNewInvoice(listOfServices, invoicePath, total);
+			if(isNew)
+				i = createNewInvoice(listOfServices, invoicePath, total);
+			else {
+//		TODO edit invoice
+				if(editedInvoice != null){
+					System.out.println("EI "+editedInvoice.getId());
+					i = editedInvoice;
+					i.setList(listOfServices);
+					i.setTotal(total);
+					i.setDiscount(discount);
+					i.setPercent(isPercent);
+					i.setDate(date);
+					i.updateRecord();
+				}
+			}
 		}
 		return i;
 	}
@@ -835,7 +852,7 @@ public class InvoiceAddEdit {
 			@Override
 			public void tableChanged(TableModelEvent arg0) {
 				double sum = calculateSum();
-				lblTotal.setText("€ "+df.format(sum));
+				lblTotal.setText(cs.EURO+" "+df.format(sum));
 			}			
 		});
 	}
@@ -1026,14 +1043,20 @@ public class InvoiceAddEdit {
 		return false;
 	}
 
-	protected Customer getCustomer(String customerStr) {
-		String[] t = msh.splitStringRemoveSpecialChars(customerStr, cs.COMA);
+	protected Customer getCustomer(String str) {
+		String[] t = {"","",""};
+		if(str.contains(cs.COMA))
+			t = msh.splitStringRemoveSpecialChars(str, cs.COMA);
+		else if(str.contains(cs.AMP))
+			t[0] = str.substring(str.indexOf(cs.AMP)+1);
 		Customer c = null;
 //TODO - need to improve
 		if(t != null)
 			c = cm.find(t);
+		
 		return c;
 	}
+	
 	protected String getInvoicePath() {
 		String subPath = date.replace(cs.MINUS, cs.SLASH); 
 		String invoicePath = js.get(cs.INVOICE_PATH).toString()+subPath;
@@ -1067,10 +1090,10 @@ public class InvoiceAddEdit {
 					updateDBStock(listOfServices);
 				}
 				if(pdf != null){
-
 					try {
 						pdf.save(invoicePath);
 						pdf.close();
+						JOptionPane.showMessageDialog(frame, jl.get(cs.INVOICE_SAVED_2).toString());
 						goBack();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -1078,6 +1101,8 @@ public class InvoiceAddEdit {
 						log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
 						e.printStackTrace();
 					}
+				} else if(dialogResult == JOptionPane.NO_OPTION) {
+					JOptionPane.showMessageDialog(frame, jl.get(cs.INVOICE_SAVED_1).toString());
 				} else {
 					JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
 				}
@@ -1124,6 +1149,12 @@ public class InvoiceAddEdit {
 		lblForWho.setText(invFor);
 		this.setLastInvoiceNum();
 		this.setBrandLbl(car);
+	}
+
+	private void updateInvoiceLblFP(String string) {
+		String s = this.lblForWho.getText();
+		s = s.replace(s.substring(s.indexOf(cs.AT)), string);
+		lblForWho.setText(s);
 	}
 
 	protected void setBrandLbl(String car) {
@@ -1185,37 +1216,81 @@ public class InvoiceAddEdit {
 	}
 
 	public void setIsVisible(String[] forPreview, boolean b) {
-		// TODO Auto-generated method stub
-		for (int j = 0; j < forPreview.length; j++) {
-			System.out.println("iae "+forPreview[j]);
-		}
 		lastInvoice = forPreview[0];
+		initialize();
+
 		String s = forPreview[1].substring(forPreview[1].indexOf(cs.AMP));
 		customer = this.getCustomer(s);
 		
-//		System.out.println("CUST "+customer.getNumOfServices());
+		System.out.println("CUST "+s+" / "+customer.isBusiness());
 		if(customer != null)
 			isBusiness = customer.isBusiness();
 		else
 			isBusiness = false;
+		
+		this.chbInd.setSelected(isBusiness);
 
 		this.date = forPreview[2];
 		
 		setSaleTable(forPreview[3]);
 		
-		initialize();
 		frame.setVisible(b);
 		setLastInvoiceNum();
+		updateInvoiceLblFP(forPreview[1]);
+	}
+
+
+	public void setIsVisible(Invoice invoice, boolean b) {
+		editedInvoice = invoice;
+		lastInvoice = ""+invoice.getId();
+		initialize();
+// TODO
+		customer = this.cm.findByID(invoice.getCustId());
+		
+		String str = cs.AT;
+		if(customer != null) {
+			isBusiness = customer.isBusiness();
+			if(!customer.isBusiness()) {
+				str = ((CustomerInd) customer).getCar().getBrandString();
+				str += " " + cs.HASH;
+				str += ((CustomerInd) customer).getCar().getRegistration();
+			} else if(customer.isBusiness()) {
+				str = ((CustomerBusiness) customer).getVATTaxNUM() +cs.COMA + ((CustomerBusiness) customer).getCompName()+cs.COMA+((CustomerBusiness) customer).getCompAddress();
+			}
+		} else {
+			str = jl.get(cs.OTHER_STRING).toString() + cs.AT + jl.get(cs.NONAME).toString();
+			isBusiness = false;
+		}
+		
+		setSaleTable(invoice.getList());
+		if(invoice.getDiscount() > 0.00){
+			this.discount = invoice.getDiscount();
+			this.tfDiscount.setText(""+this.discount);
+			if(invoice.isPercent()==0)
+				this.rbMoney.setSelected(true);
+			else if(invoice.isPercent() > 0)
+				this.rbPercent.setSelected(true);
+			double sum = calculateSum();
+			sum = this.applyDiscount(sum);
+			this.lblTotal.setText(cs.EURO+" "+df.format(sum));
+		}
+		this.chbInd.setSelected(isBusiness);
+
+		this.date = invoice.getDate();
+		
+		
+		frame.setVisible(b);
+		setLastInvoiceNum();
+		updateInvoiceLblFP(str);
+		isNew = false;
 	}
 
 	private void setSaleTable(String string) {
-		// TODO Auto-generated method stub
 		String[] shopping = msh.splitString(string, cs.SEMICOLON);
 		for (int i = 0; i < shopping.length-1; i++) {
 			if(shopping[i] != "" || !shopping[i].isEmpty() || shopping[i] != null){
 				String ss = shopping[i];
 				String[] rowData = new String[this.cs.STOCK_TB_HEADINGS_SHORT.length+1];
-				System.out.println("ss "+ss.substring(0, ss.indexOf(cs.STAR)));
 				rowData[3] = ""+ss.substring(0, ss.indexOf(cs.STAR));
 				rowData[0] = ss.substring(ss.indexOf(cs.STAR)+1, ss.indexOf(cs.UNDERSCORE));
 				rowData[1] = ss.substring(ss.indexOf(cs.UNDERSCORE)+1, ss.indexOf(cs.HASH));
@@ -1223,9 +1298,6 @@ public class InvoiceAddEdit {
 				rowData[4] = ss.substring(ss.indexOf(cs.HASH)+1, ss.indexOf(cs.AT));
 				rowData[2] = ss.substring(ss.indexOf(cs.AT)+1);
 				
-				System.out.println("rd "+ss+"\n\t0: "+rowData[0]+"\n\t3: "+rowData[3]
-						+"\n\t1: "+rowData[1]+"\n\t2: "+rowData[2]+"\n\t4: "+rowData[4]);
-
 				DefaultTableModel model = (DefaultTableModel) tbChoosen.getModel();
 				model.addRow(rowData);
 			}
