@@ -66,11 +66,12 @@ public class PDFCreator {
 	}
 
 	//create pdf sending doctype???
-	public PDDocument createPDF(String docType, Object object, Customer customer) {
+	public PDDocument createPDF(String docType, Object object1, Object obj2) {
 		// TODO Auto-generated method stub
 		PDDocument pdd = null;
 		if (docType.equals(cs.PDF_INVOICE)) {
-			Invoice i = (Invoice) object;
+			Invoice i = (Invoice) object1;
+			Customer customer = (Customer) obj2;
 			try {
 				pdd = createInvoice(i, customer);
 			} catch (IOException e) {
@@ -78,7 +79,17 @@ public class PDFCreator {
 				e.printStackTrace();
 			}
 		} else if (docType.equals(cs.PDF_SALE_REPORT)){
-			pdd = createSaleRep();
+			String[][] data = (String[][]) object1;
+			String header = (String) obj2;
+			for(String[] s : data)
+				for(String ss : s)
+					System.out.println("SS "+ss);
+			try {
+				pdd = createSaleRep(data, header);
+			} catch (IOException e) {
+				log.logError(jl.get(cs.PDF_CREATION_ERROR).toString());
+				e.printStackTrace();
+			}
 		} else if (docType.equals(cs.PDF_STOCK_REPORT)){
 			pdd = createStockRep();
 		} else if (docType.equals(ConstStrings.PDF_REPAK_REPORT)){
@@ -89,16 +100,25 @@ public class PDFCreator {
 		return pdd;
 	}
 
+	private PDDocument createSaleRep(String[][] data, String header) throws IOException {
+		PDDocument pdd = new PDDocument();
+		PDPage page = new PDPage();
+		pdd.addPage(page);
+		PDPageContentStream cst = new PDPageContentStream(pdd, page);
+		
+		addLogo(cst, pdd);
+		fillCompanyDetails(cst);
+		fillSalesReport(cst, data, header);
+		
+		cst.close();
+		return pdd;
+	}
+
 	private PDDocument createStockRep() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	private PDDocument createSaleRep() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	private PDDocument createRepakRep() {
 		// TODO Auto-generated method stub
 		return null;
@@ -143,19 +163,45 @@ public class PDFCreator {
 		cst.showText(jl.get(cs.TYRE_CHECK_MESSAGE_3).toString());
 		cst.endText();
 	}
+	
+
+	private void fillSalesReport(PDPageContentStream cst, String[][] data, String header) throws IOException {
+		// TODO Auto-generated method stub
+		displayHeadings(cst, header);
+		if(data.length > 0) {
+			for (int i = 0; i < data.length; i++) {
+				String code = data[i][0];
+//				double cost = data[i][1];
+				
+				
+				String s = "", t = "";
+				double d = 0;
+				boolean b;
+				for (int j = 0; j < data[i].length; j++) {
+					if(j == 0){
+						s = data[i][j];
+						b = false;
+						s = msh.paddStringRight(s, 18, cs.UNDERSCORE);
+					} else {
+						d = Double.parseDouble(data[i][j]);
+						t = "€ "+df.format(d);
+						b = true;
+						t = msh.paddStringRight(t, 18, cs.UNDERSCORE);
+					}
+					s += t;
+				}
+				s = msh.removeLastChar(s, cs.UNDERSCORE);
+				cst.showText(s);
+				cst.newLine();
+			}
+		}
+		cst.endText();
+	}
+
 
 	private void fillSales(PDPageContentStream cst, Invoice i) throws IOException {
-		cst.beginText();
-		cst.setNonStrokingColor(Color.WHITE);
-		cst.setFont(PDType1Font.COURIER_BOLD, this.fonts_title);
-		cst.newLineAtOffset(cn.PDF_DOC_X_OFFSET,  440f);
-		cst.setLeading(cn.LEADING_LINE_SIZE);
-		cst.showText(jl.get(cs.PDF_SALES_HEADER).toString());
-		cst.newLine();
-		cst.newLine();
-		float yPos = 440f+cn.LEADING_LINE_SIZE;
-		cst.setNonStrokingColor(Color.BLACK);
-		cst.setFont(PDType1Font.COURIER, fonts);
+		displayHeadings(cst, jl.get(cs.PDF_SALES_HEADER).toString());
+//		float yPos = 440f+cn.LEADING_LINE_SIZE;
 		String[] salesList = msh.splitString(i.getList(), cs.SEMICOLON);
 		if(salesList.length > 0){
 			int count = 1;
@@ -177,13 +223,28 @@ public class PDFCreator {
 			symbol = cs.PERCENT;
 		
 		if(i.getDiscount()>0)
-		cst.showText("                         Discount          "+symbol+" "+i.getDiscount());
+			cst.showText("                         Discount          "+symbol+" "+i.getDiscount());
 		cst.newLine();	
 		cst.showText("                         TOTAL            € "+df.format(i.getTotal()));
 				
 		cst.newLine();	
 		cst.endText();
 	}
+			
+	private void displayHeadings(PDPageContentStream cst, String header) throws IOException {
+		System.out.println("\n\tfillSalesReport "+header);
+		cst.beginText();
+		cst.setNonStrokingColor(Color.lightGray);
+		cst.setFont(PDType1Font.COURIER_BOLD, this.fonts_title);
+		cst.newLineAtOffset(cn.PDF_DOC_X_OFFSET,  440f);
+		cst.setLeading(cn.LEADING_LINE_SIZE);
+		cst.showText(header);
+		cst.newLine();
+		cst.newLine();
+		cst.setNonStrokingColor(Color.BLACK);
+		cst.setFont(PDType1Font.COURIER, fonts);
+	}
+
 //TODO add accountancy copy boolean
 	private void fillCustomerDetails(PDPageContentStream cst, Invoice i, Customer customer) throws IOException {
 		cst.beginText();
@@ -192,6 +253,7 @@ public class PDFCreator {
 		cst.setLeading(cn.LEADING_LINE_SIZE);
 		
 		cst.newLineAtOffset(20, 530);
+		System.out.println("fillCustomerDetails\n\t"+i.getCustId());
 		if(!i.isBusiness()){
 			CustomerInd c = null;
 			if(customer != null)

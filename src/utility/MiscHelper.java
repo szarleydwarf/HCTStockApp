@@ -264,7 +264,7 @@ public class MiscHelper {
 		// TODO Auto-generated method stub
 		String s = "<html><body>";
 		for (String ss : sa) {
-			s+= ss + "    ";
+			s+=  " __ " + ss + " __ ";
 		}
 		jlbl.setText(s);
 		if(data != null){

@@ -200,7 +200,7 @@ public class MainView {
 		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
 
 		invoicesFrame = new InvoicesDisplay(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, invmng);
-		salesRepFrame = new SalesReports(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, dh, invmng, df_5_2);
+		salesRepFrame = new SalesReports(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, msh, dh, fh, invmng, df_5_2);
 		
 		logger.logInfo("Classes loaded");
 	}

@@ -7,9 +7,9 @@
 	"db pass":"pass1234",
 
 	"invoice folder path":"_documents\\invoices\\",
-	"sales folder path":"documents\\sales\\",
-	"stock folder path":"documents\\stock\\",
-	"repak folder path":"documents\\repak\\",
+	"sales folder path":"_documents\\sales\\",
+	"stock folder path":"_documents\\stock\\",
+	"repak folder path":"_documents\\repak\\",
 	"doc subfolder path":"YYYY\\MM\\DD\\",
 
 	"default printer name":"Canon MP620 series Printer (Copy 1)",

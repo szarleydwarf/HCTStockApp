@@ -660,10 +660,11 @@ public class InvoiceAddEdit {
 			double sum = calculateSum();
 			sum = applyDiscount(sum);
 			total = Double.parseDouble(df.format(sum));
-			if(isNew)
+	System.out.println("collectDataForInvoice\n\t"+isNew);
+			if(isNew) {
 				i = createNewInvoice(listOfServices, invoicePath, total);
-			else {
-//		TODO edit invoice
+				System.out.println("collectDataForInvoice\n\tNEW");
+			} else {
 				if(editedInvoice != null){
 					System.out.println("EI "+editedInvoice.getId());
 					i = editedInvoice;
@@ -673,9 +674,11 @@ public class InvoiceAddEdit {
 					i.setPercent(isPercent);
 					i.setDate(date);
 					i.updateRecord();
+					System.out.println("collectDataForInvoice\n\tupdate");
 				}
 			}
 		}
+		System.out.println("collectDataForInvoice\n\tEND "+i.getCustId());
 		return i;
 	}
 
@@ -1083,7 +1086,7 @@ public class InvoiceAddEdit {
 				int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
 				if(dialogResult == JOptionPane.YES_OPTION){
 					//TODO
-					//save pdf - invoice #, customer, table of items, prices, qnt, discount, percent/€, total, date?, no of srevices?
+System.out.println("createPDFDInvoice\n\t"+i.getCustId());					
 					pdf = pdfCreator.createPDF(cs.PDF_INVOICE, i, customer);
 				}
 				if(update){
@@ -1213,6 +1216,7 @@ public class InvoiceAddEdit {
 		initialize();
 		frame.setVisible(b);
 		setLastInvoiceNum();
+		isNew = true;
 	}
 
 	public void setIsVisible(String[] forPreview, boolean b) {
@@ -1237,6 +1241,8 @@ public class InvoiceAddEdit {
 		frame.setVisible(b);
 		setLastInvoiceNum();
 		updateInvoiceLblFP(forPreview[1]);
+		
+		isNew = false;
 	}
 
 
