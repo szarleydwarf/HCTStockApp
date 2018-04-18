@@ -83,6 +83,7 @@ public class MainView {
 	private static DecimalFormat df_4_2;
 	private static InvoicesDisplay invoicesFrame;
 	private static SalesReports salesRepFrame;
+	private static RepakReport repakRepFrame;
 	
 
 	/**
@@ -201,6 +202,7 @@ public class MainView {
 
 		invoicesFrame = new InvoicesDisplay(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, invmng);
 		salesRepFrame = new SalesReports(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, msh, dh, fh, invmng, df_5_2);
+		repakRepFrame = new RepakReport(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, msh, dh, fh);
 		
 		logger.logInfo("Classes loaded");
 	}
@@ -387,7 +389,6 @@ public class MainView {
 		btnSalesReports.setBackground(new Color(135, 206, 235));
 		btnSalesReports.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO
 				if(!salesRepFrame.isVisible())
 					salesRepFrame.setIsVisible(true);
 			}
@@ -409,12 +410,14 @@ public class MainView {
 		btnCustomers.setBounds(btnX, btnY, 200, 36);
 		frame.getContentPane().add(btnCustomers);
 		
-		JButton btnRepakReport = new JButton("Repak");
+		JButton btnRepakReport = new JButton(jLang.get(cs.BTN_REPAK_REPORT).toString());
 		btnRepakReport.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		btnRepakReport.setBackground(new Color(204, 255, 255));
 		btnRepakReport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(frame, "W trakcie tworzenia");
+				// TODO
+				if(!repakRepFrame.isVisible())
+					repakRepFrame.setIsVisible(true);
 			}
 		});
 		btnY += yOffset;

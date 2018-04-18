@@ -137,6 +137,7 @@ public class ConstStrings {
 	public final String BTN_PRINT = "print";
 	public final String BTN_INVOICES = "btn invoices";
 	public final String BTN_SALES_REPORT = "btn sales report";
+	public final String BTN_REPAK_REPORT = "btn repak";
 	
 	public final String RB_TYPED_IN = "typed";
 	public final String RB_SUGGESTED = "suggested";
