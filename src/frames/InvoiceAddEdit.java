@@ -358,14 +358,12 @@ public class InvoiceAddEdit {
 				try {
 					printer.printDoc(invPath);
 				} catch (IOException e) {
-					log.logError(js.get(cs.PRINTER_NAME_ERROR).toString());
+					log.logError(js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
 					e.printStackTrace();
 				} catch (PrinterException e) {
-					log.logError(js.get(cs.PRINTER_NAME_ERROR).toString());
+					log.logError(js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
 					e.printStackTrace();
 				}
-				//TODO
-				//print
 			}
 		});
 		

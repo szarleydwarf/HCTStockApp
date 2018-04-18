@@ -81,9 +81,6 @@ public class PDFCreator {
 		} else if (docType.equals(cs.PDF_SALE_REPORT)){
 			String[][] data = (String[][]) object1;
 			String header = (String) obj2;
-			for(String[] s : data)
-				for(String ss : s)
-					System.out.println("SS "+ss);
 			try {
 				pdd = createSaleRep(data, header);
 			} catch (IOException e) {
@@ -100,20 +97,6 @@ public class PDFCreator {
 		return pdd;
 	}
 
-	private PDDocument createSaleRep(String[][] data, String header) throws IOException {
-		PDDocument pdd = new PDDocument();
-		PDPage page = new PDPage();
-		pdd.addPage(page);
-		PDPageContentStream cst = new PDPageContentStream(pdd, page);
-		
-		addLogo(cst, pdd);
-		fillCompanyDetails(cst);
-		fillSalesReport(cst, data, header);
-		
-		cst.close();
-		return pdd;
-	}
-
 	private PDDocument createStockRep() {
 		// TODO Auto-generated method stub
 		return null;
@@ -124,7 +107,7 @@ public class PDFCreator {
 		return null;
 	}
 
-	//create invoice
+	// CREATE INVOICE SECTION
 	private PDDocument createInvoice(Invoice i, Customer customer) throws IOException {
 		PDDocument pdd = new PDDocument();
 		PDPage page = new PDPage();
@@ -144,60 +127,6 @@ public class PDFCreator {
 		cst.close();
 		return pdd;
 	}
-
-	private boolean saleListContainTyres(Invoice i) {
-		return i.getList().contains(cs.TYRE_CODE) ? true : false;
-	}
-
-	private void addMessage(PDPageContentStream cst) throws IOException {
-		cst.beginText();
-		cst.newLineAtOffset(cn.PDF_DOC_X_OFFSET,  100f);
-		cst.setLeading(cn.LEADING_LINE_SIZE);
-		cst.setNonStrokingColor(Color.BLACK);
-		cst.setFont(PDType1Font.COURIER, fonts);
-		
-		cst.showText(jl.get(cs.TYRE_CHECK_MESSAGE_1).toString());
-		cst.newLine();
-		cst.showText(jl.get(cs.TYRE_CHECK_MESSAGE_2).toString());
-		cst.newLine();
-		cst.showText(jl.get(cs.TYRE_CHECK_MESSAGE_3).toString());
-		cst.endText();
-	}
-	
-
-	private void fillSalesReport(PDPageContentStream cst, String[][] data, String header) throws IOException {
-		// TODO Auto-generated method stub
-		displayHeadings(cst, header);
-		if(data.length > 0) {
-			for (int i = 0; i < data.length; i++) {
-				String code = data[i][0];
-//				double cost = data[i][1];
-				
-				
-				String s = "", t = "";
-				double d = 0;
-				boolean b;
-				for (int j = 0; j < data[i].length; j++) {
-					if(j == 0){
-						s = data[i][j];
-						b = false;
-						s = msh.paddStringRight(s, 18, cs.UNDERSCORE);
-					} else {
-						d = Double.parseDouble(data[i][j]);
-						t = "€ "+df.format(d);
-						b = true;
-						t = msh.paddStringRight(t, 18, cs.UNDERSCORE);
-					}
-					s += t;
-				}
-				s = msh.removeLastChar(s, cs.UNDERSCORE);
-				cst.showText(s);
-				cst.newLine();
-			}
-		}
-		cst.endText();
-	}
-
 
 	private void fillSales(PDPageContentStream cst, Invoice i) throws IOException {
 		displayHeadings(cst, jl.get(cs.PDF_SALES_HEADER).toString());
@@ -230,22 +159,26 @@ public class PDFCreator {
 		cst.newLine();	
 		cst.endText();
 	}
-			
-	private void displayHeadings(PDPageContentStream cst, String header) throws IOException {
-		System.out.println("\n\tfillSalesReport "+header);
-		cst.beginText();
-		cst.setNonStrokingColor(Color.lightGray);
-		cst.setFont(PDType1Font.COURIER_BOLD, this.fonts_title);
-		cst.newLineAtOffset(cn.PDF_DOC_X_OFFSET,  440f);
-		cst.setLeading(cn.LEADING_LINE_SIZE);
-		cst.showText(header);
-		cst.newLine();
-		cst.newLine();
-		cst.setNonStrokingColor(Color.BLACK);
-		cst.setFont(PDType1Font.COURIER, fonts);
+
+	private boolean saleListContainTyres(Invoice i) {
+		return i.getList().contains(cs.TYRE_CODE) ? true : false;
 	}
 
-//TODO add accountancy copy boolean
+	private void addMessage(PDPageContentStream cst) throws IOException {
+		cst.beginText();
+		cst.newLineAtOffset(cn.PDF_DOC_X_OFFSET,  100f);
+		cst.setLeading(cn.LEADING_LINE_SIZE);
+		cst.setNonStrokingColor(Color.BLACK);
+		cst.setFont(PDType1Font.COURIER, fonts);
+		
+		cst.showText(jl.get(cs.TYRE_CHECK_MESSAGE_1).toString());
+		cst.newLine();
+		cst.showText(jl.get(cs.TYRE_CHECK_MESSAGE_2).toString());
+		cst.newLine();
+		cst.showText(jl.get(cs.TYRE_CHECK_MESSAGE_3).toString());
+		cst.endText();
+	}
+	
 	private void fillCustomerDetails(PDPageContentStream cst, Invoice i, Customer customer) throws IOException {
 		cst.beginText();
 		cst.setNonStrokingColor(Color.BLACK);
@@ -253,7 +186,6 @@ public class PDFCreator {
 		cst.setLeading(cn.LEADING_LINE_SIZE);
 		
 		cst.newLineAtOffset(20, 530);
-		System.out.println("fillCustomerDetails\n\t"+i.getCustId());
 		if(!i.isBusiness()){
 			CustomerInd c = null;
 			if(customer != null)
@@ -275,6 +207,106 @@ public class PDFCreator {
 		cst.endText();
 	}
 
+
+	// END CREATE INVOICE SECTION
+	
+	// SALES REPORTS SECTION
+	private PDDocument createSaleRep(String[][] data, String header) throws IOException {
+		PDDocument pdd = new PDDocument();
+		PDPage page = new PDPage();
+		pdd.addPage(page);
+		PDPageContentStream cst = new PDPageContentStream(pdd, page);
+		
+		addLogo(cst, pdd);
+		fillCompanyDetails(cst);
+		fillDate(cst);
+		fillSalesReport(cst, data, header);
+		
+		cst.close();
+		return pdd;
+	}
+
+	private void fillSalesReport(PDPageContentStream cst, String[][] data, String header) throws IOException {
+		displayHeadings(cst, header);
+		double  sc = 0, sp = 0, ss = 0;
+		String tt = msh.paddStringRight("***TOTAL ", cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE);
+		if(data.length > 0) {
+			for (int i = 0; i < data.length; i++) {
+				String code = data[i][0];
+//				double cost = data[i][1];
+				
+				
+				String s = "", t = "";
+				double d = 0;
+				boolean b;
+				for (int j = 0; j < data[i].length; j++) {
+					if(j == 0){
+						s = data[i][j];
+						b = false;
+						s = msh.paddStringRight(s, cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE);
+					} else {
+						d = Double.parseDouble(data[i][j]);
+						switch (j) {
+						case 1:
+							sc += d;
+							break;
+						case 2:
+							ss += d;
+							break;
+						case 3:
+							sp += d;
+							break;
+
+						default:
+							break;
+						}
+						t = "€ "+df.format(d);
+						b = true;
+						t = msh.paddStringRight(t, cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE);
+					}
+					s += t;
+				}
+				s = msh.removeLastChar(s, cs.UNDERSCORE);
+				cst.showText(s);
+				cst.newLine();
+			}
+			cst.newLine();
+			tt += msh.removeLastChar(msh.paddStringRight("€ "+df.format(sc), cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE) 
+					+ msh.paddStringRight("€ "+df.format(ss), cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE)
+					+ msh.paddStringRight("€ "+df.format(sp), cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE), cs.UNDERSCORE);
+			
+			cst.showText(tt);
+		}
+		cst.endText();
+	}
+	// END SALES REPORTS SECTION
+
+	// GENERAL SECTION
+	private void fillDate(PDPageContentStream cst) throws IOException {
+		cst.beginText();
+		cst.setNonStrokingColor(Color.BLACK);
+		cst.setFont(PDType1Font.COURIER_BOLD, this.fonts_title);
+		cst.setLeading(cn.LEADING_LINE_SIZE);
+		cst.newLineAtOffset(20, 530);
+		cst.showText(jl.get(cs.BTN_SALES_REPORT).toString() + " from "+date);
+		
+		cst.endText();
+	}
+
+	private void displayHeadings(PDPageContentStream cst, String header) throws IOException {
+		cst.beginText();
+		cst.setNonStrokingColor(Color.lightGray);
+		cst.setFont(PDType1Font.COURIER_BOLD, this.fonts_title);
+		cst.newLineAtOffset(cn.PDF_DOC_X_OFFSET,  440f);
+		cst.setLeading(cn.LEADING_LINE_SIZE);
+		cst.showText(header);
+		cst.newLine();
+		cst.newLine();
+		cst.setNonStrokingColor(Color.BLACK);
+		cst.setFont(PDType1Font.COURIER, fonts);
+	}
+
+//TODO add accountancy copy boolean
 	private void fillCompanyDetails(PDPageContentStream cst) throws IOException {
 		cst.beginText();
 		cst.setNonStrokingColor(Color.BLACK);

@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.Month;
@@ -61,9 +62,10 @@ public class SalesReports {
 	private DecimalFormat df;
 	private DecimalFormat dfm;
 	private FileHelper fh;
-	private String[][] DATA;
+	private String[][] DATA_M;
 	private PDFCreator pdfCreator;
 	private Printer printer;
+	private String[][] DATA_D;
 
 //	/**
 //	 * Launch the application.
@@ -245,8 +247,20 @@ public class SalesReports {
 		btnPntMonthlyRep.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("Monthly report print");
+				// TODO
 				String path = createPdfPath(false);
+				boolean pdfCreated = printSalesReport(path, false);
+				if(pdfCreated){
+					try {
+						printer.printDoc(path);
+					} catch (IOException e) {
+						log.logError(js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+						e.printStackTrace();
+					} catch (PrinterException e) {
+						log.logError(js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+						e.printStackTrace();
+					}
+				}
 			}
 		});
 		
@@ -255,7 +269,18 @@ public class SalesReports {
 			public void actionPerformed(ActionEvent arg0) {
 //				if(DATA != null){
 					String path = createPdfPath(true);
-					printDailyReport(path);
+					boolean pdfCreated = printSalesReport(path, true);
+					if(pdfCreated){
+						try {
+							printer.printDoc(path);
+						} catch (IOException e) {
+							log.logError(js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+							e.printStackTrace();
+						} catch (PrinterException e) {
+							log.logError(js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+							e.printStackTrace();
+						}
+					}
 //				} else {
 //					log.logError(jl.get(cs.PRINTING_PDF_ERROR).toString());
 //				}
@@ -320,26 +345,31 @@ public class SalesReports {
 		populateTabel(lblX+10, lblY+10, lblW/2, lblH/2, lblTB.getTitle());
 	}
 
-	protected void printDailyReport(String path) {
+	protected boolean printSalesReport(String path, boolean b) {
 		// TODO Auto-generated method stub
-System.out.println("path "+path);
 		PDDocument pdf = null;
 		JSONArray jArr = (JSONArray) jl.get(cs.SALE_REPORT_HEADINGS);
 		String header = createHeader(dh.json2Array(jArr));
-		pdf = pdfCreator.createPDF(cs.PDF_SALE_REPORT, DATA, header);
+		if(b)
+			pdf = pdfCreator.createPDF(cs.PDF_SALE_REPORT, DATA_D, header);
+		else
+			pdf = pdfCreator.createPDF(cs.PDF_SALE_REPORT, DATA_M, header);
 		if(pdf != null){
 			try {
 				pdf.save(path);
 				pdf.close();
 				JOptionPane.showMessageDialog(frame, jl.get(cs.INVOICE_SAVED_2).toString());
 //				goBack();
+				return true;
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
 				log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
 				e.printStackTrace();
+				return false;
 			}
 		}  else {
 			JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+			return false;
 		}
 	}
 
@@ -347,9 +377,9 @@ System.out.println("path "+path);
 		String h = "";
 		jArr[0] = "I.C. - ";
 		for (String s : jArr) {
-			h += s + " __ ";
+			h += msh.paddStringRight(s, 12, cs.UNDERSCORE);
 		}
-
+		h = msh.removeLastChar(h, cs.UNDERSCORE);
 		return h;
 	}
 
@@ -376,15 +406,17 @@ System.out.println("path "+path);
 			data = new String [this.cs.ITEM_CODES.length][sReportHeadings.length];
 			data = setNulls(data);
 			data = fillReportData(data, dateDMY, dateYMD);
+			this.DATA_D = null;
+			this.DATA_D = data;
 		} else if(name.equals(jl.get(cs.LBL_MONTHLY_REPORT).toString())) {
 			String dateYM = yearOfReport+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReport));
 			String dateMY = dfm.format(dh.getMonthNumber(monthOfReport))+cs.MINUS+yearOfReport;
 			data = new String [this.cs.ITEM_CODES.length][sReportHeadings.length];
 			data = fillReportData(data, dateMY, dateYM);
+			this.DATA_M = null;
+			this.DATA_M = data;
 		}
 		jlbl.setText("");
-		this.DATA = null;
-		this.DATA = data;
 		msh.displayDataInLabel(jlbl, df, data, sReportHeadings);
 	}
 

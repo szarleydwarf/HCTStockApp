@@ -51,6 +51,20 @@ public class MiscHelper {
 				System.out.println("j:"+j+" i:"+i+" - "+d[j][i]);
 	}
 	
+	public void sopl2DimensionalArray(String[][] da) {
+		System.out.println("Data 1st length "+da.length);
+		System.out.println("Data 2nd length "+da[0].length);
+		int count = 0;
+		for (String[] ss : da) {
+			System.out.println(count + " : ");
+			for (String s : ss) {
+				System.out.print(" "+s);
+			}
+			count++;
+			System.out.println("");
+		}
+	}
+	
 	public int[] getScreenDimension() {
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		int[] sd = new int[2];
@@ -185,7 +199,7 @@ public class MiscHelper {
 	public String[] splitStringRemoveSpecialChars(String str, String c) {
 		String[] t = new String[2];
 		if(str.contains(c)){
-			System.out.println("msh 1. "+str.matches(cs.SPECIAL_CHAR_PATTERN));
+//			System.out.println("msh 1. "+str.matches(cs.SPECIAL_CHAR_PATTERN));
 			
 			if(str.matches(cs.SPECIAL_CHAR_PATTERN)){
 				System.out.println("msh 2. "+str);
