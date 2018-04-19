@@ -36,6 +36,7 @@ import managers.CustomersManager;
 import managers.DatabaseManager;
 import managers.InvoiceManager;
 import managers.StockManager;
+import objects.RepakROne;
 import utility.DateHelper;
 import utility.FileHelper;
 import utility.LoadScreen;
@@ -95,7 +96,6 @@ public class MainView {
 		loadConst();
 		loadJsonFiles();
 
-//		test();
 		try {
 	      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	    }
@@ -135,13 +135,12 @@ public class MainView {
 		});
 	}
 
-	private void test() {
+	private static void test() {
 		// TODO Here I will be testing all of the functionalities
-//		System.out.println("TEST\n1");
-
-//		System.out.println("\n2");
-
-//		System.out.println("\n3");
+		System.out.println("TEST\n1");
+//		System.out.println("SD: "+repakRepFrame.updateRepakList(dh.getRevDateYM(), cdb.TB_REPAK_SOLD_CAR, 10));
+		System.out.println("\n2");
+		System.out.println("\n3");
 
 		System.out.println();
 	}
@@ -180,6 +179,7 @@ public class MainView {
 		loadClasses();
 //		TODO
 //		check last database last backup - do it if necessary
+		test();
 	}
 
 	private static void setDates() {

@@ -58,13 +58,13 @@ public class InvoiceManager {
 		return false;
 	}
 
-//	TODO
 	public boolean edit(Invoice i1, Invoice i2){
 		
 		return false;
 	}
 	
-//	find
+//	TODO
+//	find ???? why is null
 	public Invoice find(String str){
 		return null;
 	}

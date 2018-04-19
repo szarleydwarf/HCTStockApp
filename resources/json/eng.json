@@ -6,6 +6,7 @@
 	"delete":"DELETE",
 	"invoice":"INVOICE",
 	"btn invoices":"INVOICES",
+	"btn update":"UPDATE",
 	"btn sales report":"SALES REPORTS",
 	"btn repak":"REPAK REPORTS",
 	"edit":"EDIT",

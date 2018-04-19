@@ -31,6 +31,7 @@ import org.json.simple.JSONObject;
 import consts.ConstStrings;
 import objects.Customer;
 import objects.Item;
+import objects.RepakROne;
 
 
 public class MiscHelper {
@@ -303,5 +304,11 @@ public class MiscHelper {
 		if(str != null)
 			return str.matches("-?\\d+(\\.\\d+)?");
 		return false;
+	}
+
+	public void printArrayList(ArrayList<?> list) {
+		for (int i = 0; i < list.size(); i++) {
+			System.out.println(list.get(i).toString());
+		}
 	}
 }
