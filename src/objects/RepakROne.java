@@ -94,7 +94,15 @@ public class RepakROne {
 				+ "\nSC: "  + this.getSoldCarTyres() + " BC: "  + this.getBoughtCarTyres() + " FC: "  + this.getFittedCarTyres()
 				+ "\nSA: "  + this.getSoldAgriTyres() + " BA: "  + this.getBoughtAgriTyres() + " FA: "  + this.getFittedAgriTyres()
 				+ "\nRC: "  + this.getReturnedCarTyres() + " RA: "  + this.getReturnedAgriTyres()
-				+ "\n2RC: "  + this.getToReturnCarTyres() + " 2RA: "  + this.getToReturnAgriTyres();
+				+ "\n2RC: "  + this.getToReturnCarTyres() + " 2RA: "  + this.getToReturnAgriTyres()+";";
+	}
+
+	public String toStringForData(){
+		return this.getSoldCarTyres() + ","  + this.getBoughtCarTyres() + ","  + this.getFittedCarTyres()
+			+ ","  + this.getSoldAgriTyres() + ","  + this.getBoughtAgriTyres() + ","  + this.getFittedAgriTyres()
+			+ ","  + this.getReturnedCarTyres() + ","  + this.getReturnedAgriTyres()
+			+ ","  + this.getToReturnCarTyres() + ","  + this.getToReturnAgriTyres()+";";
+
 	}
 
 	// DATABASE OPERATIONS

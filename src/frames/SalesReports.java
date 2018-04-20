@@ -404,7 +404,7 @@ public class SalesReports {
 			String dateYMD = yearOfReportD+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReportD))+cs.MINUS+dfm.format(Integer.parseInt(dayOfReport));
 			String dateDMY = dfm.format(Integer.parseInt(dayOfReport))+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReportD))+cs.MINUS+yearOfReportD;
 			data = new String [this.cs.ITEM_CODES.length][sReportHeadings.length];
-			data = setNulls(data);
+			data = msh.setZeros(data);
 			data = fillReportData(data, dateDMY, dateYMD);
 			this.DATA_D = null;
 			this.DATA_D = data;
@@ -437,17 +437,6 @@ public class SalesReports {
 		frame.getContentPane().add(spSalesList);
 	}
 
-	private String[][] setNulls(String[][] data) {
-		for (int i = 0; i < data.length; i++) {
-			for (int j = 0; j < data[i].length; j++) {
-				if(data[i][j] == null) {
-					data[i][j] = ""+0;
-				}
-			}
-		}
-		return data;
-	}
-
 	private String[][] fillReportData(String[][] data, String dMY, String dYM) {
 		data = fillFirst(data);
 		String lists = findInList(dMY, dYM);
@@ -460,7 +449,7 @@ public class SalesReports {
 	private String[][] splitToData(String list, String[][] data) {
 		String[]tokens = msh.splitString(list, cs.SEMICOLON);
 		double diff = 0;
-		data = setNulls(data);
+		data = msh.setZeros(data);
 		for (String s : tokens) {
 			if(!s.isEmpty()){
 

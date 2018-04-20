@@ -9,8 +9,11 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -65,6 +68,9 @@ public class RepakReport {
 //		});
 //	}
 	private JTextField tfReturned;
+	protected String monthOfReport;
+	protected String yearOfReport;
+	private String[] months;
 
 	/**
 	 * Create the application.
@@ -108,12 +114,11 @@ public class RepakReport {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		int lblX = 10, lblY = 10, lblW = (int) (msh.getScreenDimension()[0]/1.5), lblH = (int) (msh.getScreenDimension()[1]/1.5);
+		int lblX = 10, lblY = 10, lblW = (int) (msh.getScreenDimension()[0]/1.5), lblH = (int) (msh.getScreenDimension()[1]/1.2);
 		int jcbW = 55, jcbH = 28, jcbYOffset = 70, btnPrintX = 400;
 		
-		String[]days = dh.getDaysArray();
 		JSONArray jArr = (JSONArray) jl.get(cs.MONTHS_NAMES);
-		String[]months = dh.json2Array(jArr);
+		months = dh.json2Array(jArr);
 		jArr = null;
 		jArr = (JSONArray) jl.get(cs.YEARS);
 		String[]years = dh.json2Array(jArr);
@@ -126,8 +131,30 @@ public class RepakReport {
 
 		int btnX = (frame.getWidth() - cn.BACK_BTN_X_OFFSET),
 				btnY = (frame.getHeight() - cn.BACK_BTN_Y_OFFSET);
+		int month = dh.getMonthNum();
+		int year = dh.getYearIndex();
+		monthOfReport = months[month];
+		yearOfReport = years[year];
+
+		// BORDERS
+		TitledBorder lblTB = msh.createBorders(jl.get(cs.LBL_PICK_DATE).toString(), Color.YELLOW);
+		TitledBorder lblP = msh.createBorders(jl.get(cs.LBL_DAILY_REPORT).toString(), Color.YELLOW);
+
+	
 		// DROPDOWN DATE - YYYY-MM
+		JComboBox cbMonth = new JComboBox(months);
+		cbMonth.setSelectedIndex(month);
+		cbMonth.setFont(fonts_title);
+		cbMonth.setBounds(lblX*2, (int) (lblY*3), jcbW*3, jcbH);
+		frame.getContentPane().add(cbMonth);
 		
+		JComboBox cbYear = new JComboBox(years);
+		cbYear.setSelectedIndex(year);
+		cbYear.setFont(fonts_title);
+		cbYear.setBounds(cbMonth.getX()+cbMonth.getWidth()+16, lblY*3, jcbW*3, jcbH);
+		frame.getContentPane().add(cbYear);
+		
+
 		// BUTTONS
 		JButton btnBack = new JButton(jl.get(cs.BTN_BACK).toString());
 		btnBack.setFont(fonts_title);
@@ -141,7 +168,19 @@ public class RepakReport {
 
 
 		// JLABEL DISPLAY
-		
+		JLabel lblPickDate = new JLabel("");
+		lblPickDate.setBorder(lblTB);
+		lblPickDate.setFont(fonts_title);
+		lblPickDate.setBounds(lblX, lblY, lblW/2, lblH/6);
+		frame.getContentPane().add(lblPickDate);
+
+		JLabel lblPreview = new JLabel("");
+		lblPreview.setBorder(lblP);
+		lblPreview.setFont(fonts);
+		lblPreview.setBounds(lblX, lblY + lblPickDate.getHeight()+6, lblW - 40, (int) (lblH/1.525));
+		frame.getContentPane().add(lblPreview);
+		previewReport(lblPreview, lblP.getTitle());
+
 		// TEXT FIELD FOR RETURNS
 		tfReturned = new JTextField();
 		tfReturned.setBounds((int) (btnX - (cn.BACK_BTN_WIDTH * 1.6)-(cn.BACK_10P_OFFSET)), btnY, cn.BACK_BTN_WIDTH/2, cn.BACK_BTN_HEIGHT);
@@ -161,9 +200,99 @@ public class RepakReport {
 			}
 		});
 		
+		cbMonth.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbMonth ){
+					JComboBox cb = (JComboBox) a.getSource();
+					monthOfReport = cb.getSelectedItem().toString();
+					previewReport(lblPreview, lblP.getTitle());
+				}		
+			}
+		});
+		
+		cbYear.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbYear ){
+					JComboBox cb = (JComboBox) a.getSource();
+					yearOfReport = cb.getSelectedItem().toString();
+					previewReport(lblPreview, lblP.getTitle());
+				}		
+			}
+		});
+
 
 	}
 	// END OF INIT METHOD
+
+	protected void previewReport(JLabel jlbl, String title) {
+		JSONArray jArr = (JSONArray) jl.get(cs.REPAK_REPORT_HEADINGS);
+		String[]sReportHeadings = dh.json2Array(jArr);
+		String[][] data = new String [months.length][sReportHeadings.length];
+		data = msh.setZeros(data);
+		
+		String dateYM = yearOfReport+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReport));
+		String dateMY = dfm.format(dh.getMonthNumber(monthOfReport))+cs.MINUS+yearOfReport;
+		data = fillReportData(data, dateMY, dateYM);
+		jlbl.setText("");
+		msh.displayDataInLblTable(jlbl, dfm, data, sReportHeadings);
+	}
+
+	private String[][] fillReportData(String[][] data, String dMY, String dYM) {
+		// TODO Auto-generated method stub
+		int monthNo = dh.getMonthNum()+1;
+		int yearNo = dh.getYearNum();
+		String dateMMYYYY=dMY, dateYYYYMM=dYM;
+		for (int i = 0; i < cn.NUM_OF_MONTHS; i++) {
+			String lists = "";
+			dateMMYYYY = ""+dfm.format(monthNo)+"-"+yearNo;
+			dateYYYYMM = ""+yearNo+"-"+dfm.format(monthNo);
+			
+			data[i][0] = dateMMYYYY;
+			lists = findInList(dateMMYYYY, dateYYYYMM);
+			
+			if (lists != ""){
+				String[]tokens = msh.splitString(lists, cs.SEMICOLON);
+				
+				for(String s : tokens){
+					if(!s.isEmpty()){
+						int k = 1;
+						String[] tok = msh.splitString(s, cs.COMA);
+						System.out.println("S "+s+" - "+tok.length);
+						for(String st : tok) {
+							if(!st.isEmpty()) {
+								data[i][k] = dfm.format(Integer.parseInt(st));
+							}
+							if(k < tok.length)
+								k++;
+						}
+					}
+				}
+			} else {
+				for (int j = 1; j < data[0].length; j++) {
+					data[i][j] = "" + dfm.format(0);
+				}
+			}
+			
+			if(monthNo == 1){
+				yearNo--;
+				monthNo = 13;
+			}
+			monthNo--;
+		}
+		return data;
+	}
+
+	private String findInList(String dateYMD, String dateDMY) {
+		String lists="";
+		for(RepakROne r : list){
+			if (r.getDate().contains(dateYMD) || r.getDate().contains(dateDMY)){
+				lists += ""+r.toStringForData();
+			}
+		}
+		return lists;
+	}
 
 	// add tyre to list: sale/buy/fit(nosale)
 	public boolean addReport(RepakROne r) {

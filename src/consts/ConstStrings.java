@@ -18,6 +18,7 @@ public class ConstStrings {
 	public final String DATE_TIME_FORMAT_REVERSE = "yyyy-MM-dd @HH:mm:ss";
 	public final String YEARS = "years";
 	public final String SALE_REPORT_HEADINGS = "sale report headings";
+	public final String REPAK_REPORT_HEADINGS = "repak report headings";
 
 	// ITEM CODES
 	public final String TYRE_CODE = "TR";
@@ -168,6 +169,7 @@ public class ConstStrings {
 	public final String LBL_TOTAL = "total";
 	public final String LBL_DAILY_REPORT = "daily report";
 	public final String LBL_MONTHLY_REPORT = "monthly report";
+	public final String LBL_PICK_DATE = "pick date";
 
 	public final String TF_CUST_HINT = "tf cust hint";
 

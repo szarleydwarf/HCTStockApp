@@ -47,9 +47,9 @@ public class MiscHelper {
 	public void printData(String[][] d) {
 		System.out.println("Data 1st length "+d.length);
 		System.out.println("Data 2nd length "+d[0].length);
-		for(int j = 0 ; j< d.length; j++)
-			for(int i = 0; i < d[j].length; i++)
-				System.out.println("j:"+j+" i:"+i+" - "+d[j][i]);
+		for(int i = 0 ; i< d.length; i++)
+			for(int j = 0; j < d[j].length; j++)
+				System.out.println("i:"+i+" j:"+j+" - "+d[i][j]);
 	}
 	
 	public void sopl2DimensionalArray(String[][] da) {
@@ -275,6 +275,28 @@ public class MiscHelper {
 		return table;
 	}
 
+	public void displayDataInLblTable(JLabel jlbl, DecimalFormat df, String[][] data, String[] sa) {
+		String s = "<html><body><table><tr>";
+		// jlbl, dfm, data, sReportHeadings
+		for (String st : sa) {
+			s += "<th>" +st + "</th>";
+		}
+		s += "</tr>";
+		jlbl.setText(s);
+		if(data != null){
+			for(int j = 0 ; j< data.length; j++) {
+				s = jlbl.getText();
+				s += "<tr>";
+				for (int i = 0; i < data[j].length; i++) {
+					s += "<td>"+data[j][i]+"</td>";
+				}
+				s += "</tr>";
+				jlbl.setText(s);
+			}
+		}
+
+		s += "</table></body></html>";
+	}
 	public void displayDataInLabel(JLabel jlbl, DecimalFormat df, String[][] data, String[] sa) {
 		// TODO Auto-generated method stub
 		String s = "<html><body>";
@@ -300,6 +322,18 @@ public class MiscHelper {
 		}
 		s += "</body></html>";
 	}
+	
+	public String[][] setZeros(String[][] data) {
+		for (int i = 0; i < data.length; i++) {
+			for (int j = 0; j < data[i].length; j++) {
+				if(data[i][j] == null) {
+					data[i][j] = ""+0;
+				}
+			}
+		}
+		return data;
+	}
+
 	public static boolean isNumeric(String str)	{
 		if(str != null)
 			return str.matches("-?\\d+(\\.\\d+)?");
