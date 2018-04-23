@@ -47,6 +47,8 @@
 		"December"
 	],
 
+	"tyre categories":["Car", "Agri"],
+
 	"years":["2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034", "2035"],
 	"sale report headings":["Month", "Costs", "Sale", "Profit"],
 	"repak report headings":["Month", "CT Sold", "CT Fitted", "CT Bought", "AT Sold", "AT Fitted", "AT Bought", "CT Returned", "AT Returned", "CT To Return", "AT To Return"],

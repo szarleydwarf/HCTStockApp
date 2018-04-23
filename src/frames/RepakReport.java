@@ -49,8 +49,8 @@ public class RepakReport {
 	private Font fonts;
 	private Font fonts_title;
 	private Color color;
-
-	ArrayList<RepakROne> list;
+	private String[]tCat;
+	private ArrayList<RepakROne> list;
 	private DatabaseManager dm;
 	/**
 	 * Launch the application.
@@ -71,6 +71,7 @@ public class RepakReport {
 	protected String monthOfReport;
 	protected String yearOfReport;
 	private String[] months;
+	private String defaultCategory;
 
 	/**
 	 * Create the application.
@@ -154,6 +155,17 @@ public class RepakReport {
 		cbYear.setBounds(cbMonth.getX()+cbMonth.getWidth()+16, lblY*3, jcbW*3, jcbH);
 		frame.getContentPane().add(cbYear);
 		
+		jArr = null;
+		jArr = (JSONArray) jl.get(cs.TYRES_CATEGORY);
+		tCat = dh.json2Array(jArr);
+		defaultCategory = tCat[0];
+
+		JComboBox cbTyreCategorys = new JComboBox(tCat);
+		cbTyreCategorys.setSelectedIndex(0);
+		cbTyreCategorys.setFont(fonts_title);
+		cbTyreCategorys.setBounds((int) (btnX - (cn.BACK_BTN_WIDTH*2.75)-cn.BACK_10P_OFFSET), btnY, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
+		frame.getContentPane().add(cbTyreCategorys);
+		
 
 		// BUTTONS
 		JButton btnBack = new JButton(jl.get(cs.BTN_BACK).toString());
@@ -168,16 +180,17 @@ public class RepakReport {
 
 
 		// JLABEL DISPLAY
+		lblW -= 40;
 		JLabel lblPickDate = new JLabel("");
 		lblPickDate.setBorder(lblTB);
 		lblPickDate.setFont(fonts_title);
-		lblPickDate.setBounds(lblX, lblY, lblW/2, lblH/6);
+		lblPickDate.setBounds(lblX, lblY, lblW, lblH/6);
 		frame.getContentPane().add(lblPickDate);
 
 		JLabel lblPreview = new JLabel("");
 		lblPreview.setBorder(lblP);
 		lblPreview.setFont(fonts);
-		lblPreview.setBounds(lblX, lblY + lblPickDate.getHeight()+6, lblW - 40, (int) (lblH/1.525));
+		lblPreview.setBounds(lblX, lblY + lblPickDate.getHeight()+6, lblW, (int) (lblH/1.525));
 		frame.getContentPane().add(lblPreview);
 		previewReport(lblPreview, lblP.getTitle());
 
@@ -190,7 +203,31 @@ public class RepakReport {
 		// LISTENERS
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Updating record");
+				System.out.println("Updating record "+defaultCategory);
+				RepakROne r;
+				String dateYM = yearOfReport+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReport));
+				String dateMY = dfm.format(dh.getMonthNumber(monthOfReport))+cs.MINUS+yearOfReport;
+				r = findInListRRO(dateMY, dateYM);
+				int returned = 0, t = 0;;
+				boolean update = false;
+
+				if(!tfReturned.getText().isEmpty())
+					returned = msh.parseToInt(tfReturned.getText());
+
+				if(defaultCategory.equals(tCat[1])){
+					t = r.getReturnedAgriTyres();
+					returned = t + returned;
+					r.setReturnedAgriTyres(returned);
+					update = true;
+				} else {
+					t = r.getReturnedCarTyres();
+					returned = t + returned;
+					r.setReturnedCarTyres(returned);
+					update = true;
+				}
+				
+				if(update)
+					r.updateRecord();
 			}
 		});
 		
@@ -211,13 +248,12 @@ public class RepakReport {
 			}
 		});
 		
-		cbYear.addActionListener(new ActionListener() {
+		cbTyreCategorys.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent a) {
-				if(a.getSource() == cbYear ){
+				if(a.getSource() == cbTyreCategorys ){
 					JComboBox cb = (JComboBox) a.getSource();
-					yearOfReport = cb.getSelectedItem().toString();
-					previewReport(lblPreview, lblP.getTitle());
+					defaultCategory = cb.getSelectedItem().toString();
 				}		
 			}
 		});
@@ -240,7 +276,6 @@ public class RepakReport {
 	}
 
 	private String[][] fillReportData(String[][] data, String dMY, String dYM) {
-		// TODO Auto-generated method stub
 		int monthNo = dh.getMonthNum()+1;
 		int yearNo = dh.getYearNum();
 		String dateMMYYYY=dMY, dateYYYYMM=dYM;
@@ -259,7 +294,6 @@ public class RepakReport {
 					if(!s.isEmpty()){
 						int k = 1;
 						String[] tok = msh.splitString(s, cs.COMA);
-						System.out.println("S "+s+" - "+tok.length);
 						for(String st : tok) {
 							if(!st.isEmpty()) {
 								data[i][k] = dfm.format(Integer.parseInt(st));
@@ -294,6 +328,15 @@ public class RepakReport {
 		return lists;
 	}
 
+	private RepakROne findInListRRO(String dateYMD, String dateDMY) {
+		for(RepakROne r : list){
+			if (r.getDate().contains(dateYMD) || r.getDate().contains(dateDMY)){
+				return r;
+			}
+		}
+		return null;
+	}
+	
 	// add tyre to list: sale/buy/fit(nosale)
 	public boolean addReport(RepakROne r) {
 		if(!contains(r)){

@@ -345,4 +345,13 @@ public class MiscHelper {
 			System.out.println(list.get(i).toString());
 		}
 	}
+
+	public int parseToInt(String text) {
+		text = removeSpecials(text);
+		return Integer.parseInt(text);
+	}
+
+	private String removeSpecials(String text) {
+		return text.replaceAll("\\D+","");
+	}
 }

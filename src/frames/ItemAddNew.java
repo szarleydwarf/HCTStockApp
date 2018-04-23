@@ -105,7 +105,6 @@ public class ItemAddNew {
 		
 		msh = mSH;
 		
-		
 		sm = SM;
 		
 		df = df_3_2;

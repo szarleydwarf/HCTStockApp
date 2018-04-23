@@ -19,6 +19,7 @@ public class ConstStrings {
 	public final String YEARS = "years";
 	public final String SALE_REPORT_HEADINGS = "sale report headings";
 	public final String REPAK_REPORT_HEADINGS = "repak report headings";
+	public final String TYRES_CATEGORY = "tyre categories";
 
 	// ITEM CODES
 	public final String TYRE_CODE = "TR";

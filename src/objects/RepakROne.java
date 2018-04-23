@@ -80,7 +80,7 @@ public class RepakROne {
 				+ "`"+cdb.TB_REPAK_BOUGHT_AGRI+"`"+cdb.EQUAL+this.getBoughtAgriTyres()+","
 				+ "`"+cdb.TB_REPAK_RETURNED_CAR+"`"+cdb.EQUAL+this.getReturnedCarTyres()+","
 				+ "`"+cdb.TB_REPAK_RETURNED_AGRI+"`"+cdb.EQUAL+this.getReturnedAgriTyres()
-				+ cdb.WHERE + cdb.DATE + cdb.EQUAL+ this.getDate();
+				+ cdb.WHERE+ "`" + cdb.DATE+ "`" + cdb.EQUAL + "'"+ this.getDate()+ "'";
 	}
 
 	private String createUpdateQuery(String columnToSet, String valueToSet, String columnToFind, String valueToFind) {
