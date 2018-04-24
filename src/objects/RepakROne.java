@@ -29,8 +29,8 @@ public class RepakROne {
 	 * @param cs
 	 */
 	public RepakROne(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs,
-			String p_date, int sold_car, int bought_car, int fitted_car, 
-			int sold_agri, int bought_agri, int fitted_agri
+			String p_date, int sold_car, int fitted_car, int bought_car, 
+			int sold_agri, int fitted_agri, int bought_agri
 			, int returned_car, int returned_agri){
 		this.dm = dm;
 		this.cdb = cdb;
@@ -113,6 +113,7 @@ public class RepakROne {
 	
 	public boolean updateRecord(String columnToSet, String valueToSet, String columnToFind, String valueToFind) {
 		String q = this.createUpdateQuery(columnToSet, valueToSet, columnToFind, valueToFind); 
+		System.out.println("rro "+q);
 		return this.dm.updateRecord(q);
 	}
 

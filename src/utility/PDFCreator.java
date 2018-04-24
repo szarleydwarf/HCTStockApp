@@ -161,7 +161,7 @@ public class PDFCreator {
 	}
 
 	private boolean saleListContainTyres(Invoice i) {
-		return i.getList().contains(cs.TYRE_CODE) ? true : false;
+		return (i.getList().contains(cs.TYRE_CODE_C) || i.getList().contains(cs.TYRE_CODE_A)) ? true : false;
 	}
 
 	private void addMessage(PDPageContentStream cst) throws IOException {

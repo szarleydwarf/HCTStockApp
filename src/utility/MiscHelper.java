@@ -26,6 +26,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import consts.ConstStrings;
@@ -38,10 +39,12 @@ public class MiscHelper {
 
 	private Logger log;
 	private ConstStrings cs;
+	private JSONObject jl;
 
-	public MiscHelper(Logger logger, ConstStrings CS){
+	public MiscHelper(Logger logger, ConstStrings CS, JSONObject jLang){
 		log = logger;
 		cs = CS;
+		jl = jLang;
 	}
 	
 	public void printData(String[][] d) {
@@ -275,12 +278,17 @@ public class MiscHelper {
 		return table;
 	}
 
-	public void displayDataInLblTable(JLabel jlbl, DecimalFormat df, String[][] data, String[] sa) {
-		String s = "<html><body><table><tr>";
-		// jlbl, dfm, data, sReportHeadings
-		for (String st : sa) {
-			s += "<th>" +st + "</th>";
+	public void displayDataInLblTable(JLabel jlbl, DecimalFormat df, String[][] data, String[] sh) {
+		String s = "<html><body><table>";
+		s += "<tr>";
+		for (String st : sh) {
+			s +="<th width=\"70px\"  align=\"center\">";
+			if(!jlbl.getName().equals(jl.get(cs.LBL_PICK_DATE).toString())){
+				s += st;
+			} 
+			s += "</th>";
 		}
+			
 		s += "</tr>";
 		jlbl.setText(s);
 		if(data != null){
@@ -288,7 +296,7 @@ public class MiscHelper {
 				s = jlbl.getText();
 				s += "<tr>";
 				for (int i = 0; i < data[j].length; i++) {
-					s += "<td>"+data[j][i]+"</td>";
+					s += "<td  align=\"center\">"+data[j][i]+"</td>";
 				}
 				s += "</tr>";
 				jlbl.setText(s);
@@ -297,9 +305,22 @@ public class MiscHelper {
 
 		s += "</table></body></html>";
 	}
+	
+
+	public String[] json2Array(JSONArray jsonArray) {
+	    String[] stringArray = null;
+	    if (jsonArray != null) {
+	        int length = jsonArray.size();
+	        stringArray = new String[length];
+	        for (int i = 0; i < length; i++) {
+	            stringArray[i] = jsonArray.get(i).toString();
+	        }
+	    }
+	    return stringArray;
+	}
+
 	public void displayDataInLabel(JLabel jlbl, DecimalFormat df, String[][] data, String[] sa) {
-		// TODO Auto-generated method stub
-		String s = "<html><body>";
+		String s = "<html><body> ";
 		for (String ss : sa) {
 			s+=  " __ " + ss + " __ ";
 		}

@@ -72,6 +72,8 @@ public class RepakReport {
 	protected String yearOfReport;
 	private String[] months;
 	private String defaultCategory;
+	private TitledBorder lblTB;
+	private TitledBorder lblP;
 
 	/**
 	 * Create the application.
@@ -107,7 +109,7 @@ public class RepakReport {
 		color = msh.getColor(cs.APP, cs, js);
 
 		list = new ArrayList<>();
-		list = (ArrayList<RepakROne>) this.dm.selectData(this.cdb.SELECT_ALL_REPAK_REPORTS, list);
+		list = listUpdate();
 //		msh.printArrayList(list);
 	}
 
@@ -119,10 +121,10 @@ public class RepakReport {
 		int jcbW = 55, jcbH = 28, jcbYOffset = 70, btnPrintX = 400;
 		
 		JSONArray jArr = (JSONArray) jl.get(cs.MONTHS_NAMES);
-		months = dh.json2Array(jArr);
+		months = msh.json2Array(jArr);
 		jArr = null;
 		jArr = (JSONArray) jl.get(cs.YEARS);
-		String[]years = dh.json2Array(jArr);
+		String[]years = msh.json2Array(jArr);
 
 		frame = new JFrame();
 		frame.getContentPane().setBackground(color);
@@ -138,8 +140,8 @@ public class RepakReport {
 		yearOfReport = years[year];
 
 		// BORDERS
-		TitledBorder lblTB = msh.createBorders(jl.get(cs.LBL_PICK_DATE).toString(), Color.YELLOW);
-		TitledBorder lblP = msh.createBorders(jl.get(cs.LBL_DAILY_REPORT).toString(), Color.YELLOW);
+		lblTB = msh.createBorders(jl.get(cs.LBL_PICK_DATE).toString(), Color.YELLOW);
+		lblP = msh.createBorders(jl.get(cs.LBL_DAILY_REPORT).toString(), Color.YELLOW);
 
 	
 		// DROPDOWN DATE - YYYY-MM
@@ -157,7 +159,7 @@ public class RepakReport {
 		
 		jArr = null;
 		jArr = (JSONArray) jl.get(cs.TYRES_CATEGORY);
-		tCat = dh.json2Array(jArr);
+		tCat = msh.json2Array(jArr);
 		defaultCategory = tCat[0];
 
 		JComboBox cbTyreCategorys = new JComboBox(tCat);
@@ -183,13 +185,15 @@ public class RepakReport {
 		lblW -= 40;
 		JLabel lblPickDate = new JLabel("");
 		lblPickDate.setBorder(lblTB);
-		lblPickDate.setFont(fonts_title);
+		lblPickDate.setFont(fonts);
+		lblPickDate.setName(lblTB.getTitle());
 		lblPickDate.setBounds(lblX, lblY, lblW, lblH/6);
 		frame.getContentPane().add(lblPickDate);
 
 		JLabel lblPreview = new JLabel("");
 		lblPreview.setBorder(lblP);
 		lblPreview.setFont(fonts);
+		lblPreview.setName(lblP.getTitle());
 		lblPreview.setBounds(lblX, lblY + lblPickDate.getHeight()+6, lblW, (int) (lblH/1.525));
 		frame.getContentPane().add(lblPreview);
 		previewReport(lblPreview, lblP.getTitle());
@@ -203,7 +207,6 @@ public class RepakReport {
 		// LISTENERS
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Updating record "+defaultCategory);
 				RepakROne r;
 				String dateYM = yearOfReport+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReport));
 				String dateMY = dfm.format(dh.getMonthNumber(monthOfReport))+cs.MINUS+yearOfReport;
@@ -228,6 +231,7 @@ public class RepakReport {
 				
 				if(update)
 					r.updateRecord();
+				previewReport(lblPreview, lblP.getTitle());
 			}
 		});
 		
@@ -243,7 +247,18 @@ public class RepakReport {
 				if(a.getSource() == cbMonth ){
 					JComboBox cb = (JComboBox) a.getSource();
 					monthOfReport = cb.getSelectedItem().toString();
-					previewReport(lblPreview, lblP.getTitle());
+					previewReport(lblPickDate, lblTB.getTitle());
+				}		
+			}
+		});
+		
+		cbYear.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbYear ){
+					JComboBox cb = (JComboBox) a.getSource();
+					yearOfReport = cb.getSelectedItem().toString();
+					previewReport(lblPickDate, lblTB.getTitle());
 				}		
 			}
 		});
@@ -264,15 +279,51 @@ public class RepakReport {
 
 	protected void previewReport(JLabel jlbl, String title) {
 		JSONArray jArr = (JSONArray) jl.get(cs.REPAK_REPORT_HEADINGS);
-		String[]sReportHeadings = dh.json2Array(jArr);
-		String[][] data = new String [months.length][sReportHeadings.length];
-		data = msh.setZeros(data);
-		
+		String[]sReportHeadings = msh.json2Array(jArr);
+		String[][] data = null;
 		String dateYM = yearOfReport+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReport));
 		String dateMY = dfm.format(dh.getMonthNumber(monthOfReport))+cs.MINUS+yearOfReport;
-		data = fillReportData(data, dateMY, dateYM);
+		if(title.equals(lblTB.getTitle())){
+			data = new String [1][sReportHeadings.length];
+			data = msh.setZeros(data);
+			data = fillOneRepData(data, dateMY, dateYM);
+		} else if(title.equals(lblP.getTitle())){
+			data = new String [months.length][sReportHeadings.length];
+			data = msh.setZeros(data);
+			data = fillReportData(data, dateMY, dateYM);
+		}
+		
 		jlbl.setText("");
 		msh.displayDataInLblTable(jlbl, dfm, data, sReportHeadings);
+	}
+
+	private String[][] fillOneRepData(String[][] data, String dateMY, String dateYM) {
+		// TODO Auto-generated method stub
+		String lists = "";
+		data[0][0] = dateMY;
+		lists = findInList(dateMY, dateYM);
+		if (lists != ""){
+			String[]tokens = msh.splitString(lists, cs.SEMICOLON);
+			
+			for(String s : tokens){
+				if(!s.isEmpty()){
+					int k = 1;
+					String[] tok = msh.splitString(s, cs.COMA);
+					for(String st : tok) {
+						if(!st.isEmpty()) {
+							data[0][k] = dfm.format(Integer.parseInt(st));
+						}
+						if(k < tok.length)
+							k++;
+					}
+				}
+			}
+		}else {
+			for (int j = 1; j < data[0].length; j++) {
+				data[0][j] = "" + dfm.format(0);
+			}
+		}
+		return data;
 	}
 
 	private String[][] fillReportData(String[][] data, String dMY, String dYM) {
@@ -345,6 +396,13 @@ public class RepakReport {
 		}
 		return false;
 	}
+	
+	public ArrayList<RepakROne> listUpdate() {
+		list = new ArrayList<>();
+		return (ArrayList<RepakROne>) this.dm.selectData(this.cdb.SELECT_ALL_REPAK_REPORTS, list);
+	}
+
+
 	// update tyre list: sale/buy/fit(nosale)
 	public boolean updateRepakList(String date, String colName, int nTyres){
 		for (int i = 0; i < list.size(); i++) {
@@ -354,8 +412,32 @@ public class RepakReport {
 		}
 		return false;
 	}
+	
 	// search for report in list: by date??
+	public int getTyresInStock(String date, boolean b){
+		for (int i = 0; i < list.size(); i++) {
+			if(list.get(i).getDate().equals(date)){
+				if(b)
+					return list.get(i).getBoughtCarTyres();
+				else
+					return list.get(i).getBoughtAgriTyres();
+			}
+		}
+		return 0;
+	}
 
+	public int getTyresSold(String date, boolean b){
+		for (int i = 0; i < list.size(); i++) {
+			if(list.get(i).getDate().equals(date)){
+				if(b)
+					return list.get(i).getSoldCarTyres();
+				else
+					return list.get(i).getSoldAgriTyres();
+			}
+		}
+		return 0;
+	}
+	
 	// id/ date(YYYY-MM) / sold_car / fitted_car / bought_car / sold_agri / fitted_agri / bought_agri
 
 	public boolean contains(RepakROne r){
@@ -387,6 +469,10 @@ public class RepakReport {
 	}
 	public ArrayList<RepakROne> getReportList() {
 		return list;
+	}
+
+	public void setList(ArrayList<RepakROne> list) {
+		this.list = list;
 	}
 
 

@@ -130,10 +130,10 @@ public class SalesReports {
 		int jcbW = 55, jcbH = 28, jcbYOffset = 70, btnPrintX = 400;
 		String[]days = dh.getDaysArray();
 		JSONArray jArr = (JSONArray) jl.get(cs.MONTHS_NAMES);
-		String[]months = dh.json2Array(jArr);
+		String[]months = msh.json2Array(jArr);
 		jArr = null;
 		jArr = (JSONArray) jl.get(cs.YEARS);
-		String[]years = dh.json2Array(jArr);
+		String[]years = msh.json2Array(jArr);
 		
 		int today = dh.getDayOfMonthNum();
 		today--;
@@ -349,7 +349,7 @@ public class SalesReports {
 		// TODO Auto-generated method stub
 		PDDocument pdf = null;
 		JSONArray jArr = (JSONArray) jl.get(cs.SALE_REPORT_HEADINGS);
-		String header = createHeader(dh.json2Array(jArr));
+		String header = createHeader(msh.json2Array(jArr));
 		if(b)
 			pdf = pdfCreator.createPDF(cs.PDF_SALE_REPORT, DATA_D, header);
 		else
@@ -395,7 +395,7 @@ public class SalesReports {
 
 	private void previewReport(JLabel jlbl, String name) {
 		JSONArray jArr = (JSONArray) jl.get(cs.SALE_REPORT_HEADINGS);
-		String[]sReportHeadings = dh.json2Array(jArr);
+		String[]sReportHeadings = msh.json2Array(jArr);
 		String[][] data = null;
 
 		sReportHeadings[0] = "I.C. - ";
@@ -422,7 +422,7 @@ public class SalesReports {
 
 	private void populateTabel(int x, int y, int w, int h, String name) {
 		JSONArray jArr = (JSONArray) jl.get(cs.SALE_REPORT_HEADINGS);
-		String[]sReportHeadings = dh.json2Array(jArr);
+		String[]sReportHeadings = msh.json2Array(jArr);
 		JTable table = new JTable();
 		String[][] data = null;
 		JScrollPane spSalesList = null;
@@ -461,30 +461,34 @@ public class SalesReports {
 				price *= qnt;
 				diff = price - cost;
 	
-				if(code.equals(cs.TYRE_CODE)){
+				if(code.equals(cs.TYRE_CODE_C)){
 					data[0][1] = getValue(data[0][1], cost);
 					data[0][2] = getValue(data[0][2], price);
 					data[0][3] = getValue(data[0][3], diff);
-				} else if(code.equals(cs.TUBE_CODE)){
+				} else if(code.equals(cs.TYRE_CODE_A)){
 					data[1][1] = getValue(data[1][1], cost);
 					data[1][2] = getValue(data[1][2], price);
 					data[1][3] = getValue(data[1][3], diff);
+				} else if(code.equals(cs.TUBE_CODE)){
+					data[2][1] = getValue(data[1][1], cost);
+					data[2][2] = getValue(data[1][2], price);
+					data[2][3] = getValue(data[1][3], diff);
 				} else if(code.equals(cs.SERVICE_CODE)){
-					data[2][1] = getValue(data[2][1], cost);
-					data[2][2] = getValue(data[2][2], price);
-					data[2][3] = getValue(data[2][3], diff);
+					data[3][1] = getValue(data[2][1], cost);
+					data[3][2] = getValue(data[2][2], price);
+					data[3][3] = getValue(data[2][3], diff);
 				} else if(code.equals(cs.SHOP_CODE)){
-					data[3][1] = getValue(data[3][1], cost);
-					data[3][2] = getValue(data[3][2], price);
-					data[3][3] = getValue(data[3][3], diff);
+					data[4][1] = getValue(data[3][1], cost);
+					data[4][2] = getValue(data[3][2], price);
+					data[4][3] = getValue(data[3][3], diff);
 				} else if(code.equals(cs.OTHER_CODE)){
-					data[4][1] = getValue(data[4][1], cost);
-					data[4][2] = getValue(data[4][2], price);
-					data[4][3] = getValue(data[4][3], diff);
+					data[5][1] = getValue(data[4][1], cost);
+					data[5][2] = getValue(data[4][2], price);
+					data[5][3] = getValue(data[4][3], diff);
 				} else if(code.equals(cs.CARWASH_CODE)){
-					data[5][1] = getValue(data[5][1], cost);
-					data[5][2] = getValue(data[5][2], price);
-					data[5][3] = getValue(data[5][3], diff);
+					data[6][1] = getValue(data[5][1], cost);
+					data[6][2] = getValue(data[5][2], price);
+					data[6][3] = getValue(data[5][3], diff);
 				}
 			}
 		}

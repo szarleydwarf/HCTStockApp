@@ -19,16 +19,18 @@ public class ConstStrings {
 	public final String YEARS = "years";
 	public final String SALE_REPORT_HEADINGS = "sale report headings";
 	public final String REPAK_REPORT_HEADINGS = "repak report headings";
+	public final String REPAK_TB_COL_NAMES = "repak tb col names";
 	public final String TYRES_CATEGORY = "tyre categories";
 
 	// ITEM CODES
-	public final String TYRE_CODE = "TR";
+	public final String TYRE_CODE_C = "TRC";
+	public final String TYRE_CODE_A = "TRA";
 	public final String TUBE_CODE = "TB";
 	public final String SERVICE_CODE = "SR";
 	public final String SHOP_CODE = "SH";
 	public final String OTHER_CODE = "OT";
 	public final String CARWASH_CODE = "CW";
-	public final String[] ITEM_CODES = {"TR", "TB", "SR", "SH", "OT", "CW"};
+	public final String[] ITEM_CODES = {"TRC", "TRA", "TB", "SR", "SH", "OT", "CW"};
 	
 	// CUSTOMER CODES
 	public final String CUST_IND_CODE = "C_";

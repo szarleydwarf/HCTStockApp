@@ -45,6 +45,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import consts.ConstDB;
@@ -129,6 +130,8 @@ public class InvoiceAddEdit {
 
 	private Invoice editedInvoice;
 
+	private RepakReport repakReport;
+
 	
 	/**
 	 * Launch the application.
@@ -158,7 +161,7 @@ public class InvoiceAddEdit {
 			PDFCreator PDFCreator, Printer printer,
 			JSONObject jSettings, JSONObject jLang, JSONObject jUser, 
 			MiscHelper mSH, DateHelper DH, FileHelper FH,
-			StockManager SM, CustomersManager cMng, InvoiceManager invMng, 
+			StockManager SM, CustomersManager cMng, InvoiceManager invMng, RepakReport rr,
 			ArrayList<String> carList, DecimalFormat DF) {
 		this.mainView = main;
 		this.jl = jLang;
@@ -177,6 +180,7 @@ public class InvoiceAddEdit {
 		this.dh = DH;
 		this.pdfCreator = PDFCreator;
 		this.printer = printer;
+		this.repakReport = rr;
 
 		this.sm = SM;
 		this.cm = cMng;
@@ -629,23 +633,6 @@ public class InvoiceAddEdit {
 				model.setRowCount(0);
 			}
 		});
-		
-		/*		TODO 
-		JCheckBox chbAirfreshener = new JCheckBox(jl.get(cs.CBX_AIRFRESH).toString());
-		chbAirfreshener.setSelected(true);
-		chbAirfreshener.setBackground(color);
-		chbAirfreshener.setFont(fonts);
-		chbAirfreshener.setBounds(lblPrevX+6, lblPrevY+12,chbW-16, chbH);
-		frame.getContentPane().add(chbAirfreshener);
-		
-		JCheckBox chbTyreShine = new JCheckBox(jl.get(cs.CBX_AIRFRESH).toString());
-		chbTyreShine.setBackground(color);
-		chbTyreShine.setFont(fonts);
-		chbTyreShine.setBounds(lblPrevX+6, lblPrevY+34,chbW-16, chbH);
-		frame.getContentPane().add(chbTyreShine);
-	*/
-
-
 		createChoosenItemsTable(lblPrevX+6, lblPrevY ,lblW-80, lblH-60);
 	}
 //END OF INVOICE PREVIEW
@@ -658,13 +645,10 @@ public class InvoiceAddEdit {
 			double sum = calculateSum();
 			sum = applyDiscount(sum);
 			total = Double.parseDouble(df.format(sum));
-	System.out.println("collectDataForInvoice\n\t"+isNew);
 			if(isNew) {
 				i = createNewInvoice(listOfServices, invoicePath, total);
-				System.out.println("collectDataForInvoice\n\tNEW");
 			} else {
 				if(editedInvoice != null){
-					System.out.println("EI "+editedInvoice.getId());
 					i = editedInvoice;
 					i.setList(listOfServices);
 					i.setTotal(total);
@@ -672,7 +656,6 @@ public class InvoiceAddEdit {
 					i.setPercent(isPercent);
 					i.setDate(date);
 					i.updateRecord();
-					System.out.println("collectDataForInvoice\n\tupdate");
 				}
 			}
 		}
@@ -685,11 +668,27 @@ public class InvoiceAddEdit {
 			Item it = null;
 			if(modTBchosen.getValueAt(i, 0).toString().equals(cs.SHOP_CODE)
 					|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TUBE_CODE)
-					|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE)){
+					|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE_C)
+					|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE_A)){
 				it = this.getItemByName(this.modTBchosen.getValueAt(i, cn.NAME_COLUMN).toString());
 			}
 			if(it != null){
 				it.updateRecord();
+				if(it.getCode().equals(cs.TYRE_CODE_C) || it.getCode().equals(cs.TYRE_CODE_A)){
+					JSONArray jArr = (JSONArray) jl.get(cs.REPAK_TB_COL_NAMES);
+					String[]sHeadings = msh.json2Array(jArr);
+					boolean b = (it.getCode().equals(cs.TYRE_CODE_C)) ? true : false;
+					int col = (it.getCode().equals(cs.TYRE_CODE_C)) ? 1 : 4;
+					String d = date.substring(0, date.lastIndexOf(cs.MINUS));
+					
+					int tQ = repakReport.getTyresSold(d, b);
+					int t = Integer.parseInt(modTBchosen.getValueAt(i, 3).toString());
+					
+					System.out.println("tQ "+tQ+" / "+t+" "+d+" "+sHeadings[col]);
+					tQ = tQ + t;
+					repakReport.updateRepakList(d, sHeadings[col], tQ);
+					repakReport.setList(repakReport.listUpdate());
+				}
 			}
 		}
 	}
@@ -800,7 +799,7 @@ public class InvoiceAddEdit {
 		Iterator<Item> it = sm.getList().iterator();
 		while(it.hasNext()){
 			Item itit = it.next();
-			if (itit.getQnt() == 0 && itit.getCode().equals(cs.TYRE_CODE)){
+			if (itit.getQnt() == 0 && (itit.getCode().equals(cs.TYRE_CODE_C) || itit.getCode().equals(cs.TYRE_CODE_A))){
 				it.remove();
 			}
 		}
@@ -1037,7 +1036,8 @@ public class InvoiceAddEdit {
 		for(int i = 0; i < modTBchosen.getRowCount(); i++){
 			if(modTBchosen.getValueAt(i, 0).toString().equals(cs.SHOP_CODE)
 				|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TUBE_CODE)
-				|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE)){
+				|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE_C)
+				|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE_A)){
 				return true;
 			}
 		}
@@ -1083,8 +1083,6 @@ public class InvoiceAddEdit {
 				Invoice i = collectDataForInvoice(listOfServices, invoicePath);
 				int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
 				if(dialogResult == JOptionPane.YES_OPTION){
-					//TODO
-System.out.println("createPDFDInvoice\n\t"+i.getCustId());					
 					pdf = pdfCreator.createPDF(cs.PDF_INVOICE, i, customer);
 				}
 				if(update){
@@ -1097,7 +1095,6 @@ System.out.println("createPDFDInvoice\n\t"+i.getCustId());
 						JOptionPane.showMessageDialog(frame, jl.get(cs.INVOICE_SAVED_2).toString());
 						goBack();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
 						log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
 						e.printStackTrace();

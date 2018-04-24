@@ -78,13 +78,14 @@ public class MainView {
 	private static boolean isStarting;
 	private static DisplayStock stockFrame;
 	private static ItemAddNew newItemFrame;
-	private static InvoiceAddEdit newInvoice;
+	private static InvoiceAddEdit newInvoiceFrame;
 	private static Printer printer;
 	private static PDFCreator pdfCreator;
 	private static DecimalFormat df_4_2;
 	private static InvoicesDisplay invoicesFrame;
 	private static SalesReports salesRepFrame;
 	private static RepakReport repakRepFrame;
+	private static String todayYM;
 	
 
 	/**
@@ -188,7 +189,9 @@ public class MainView {
 		
 		todayS = dh.getFormatedDate();
 		logger.setShortDate(todayS);
-		logger.logInfo(" Dates set");
+		
+		todayYM = dh.getRevDateYM();
+		logger.logInfo(" Dates set"+todayYM);
 	}
 
 	private static void loadClasses() {
@@ -196,14 +199,15 @@ public class MainView {
 		pdfCreator = new PDFCreator(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh, df_4_2);
 		printer = new Printer(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh);
 
-		newItemFrame = new ItemAddNew(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_4_2);
-		newInvoice = new InvoiceAddEdit(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, jUser, msh, dh, fh, stmng, cmng, invmng, carBrandList, df_3_2);
-		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
 
 		invoicesFrame = new InvoicesDisplay(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, invmng);
 		salesRepFrame = new SalesReports(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, msh, dh, fh, invmng, df_5_2);
 		repakRepFrame = new RepakReport(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, msh, dh, fh);
+
+		newInvoiceFrame = new InvoiceAddEdit(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, jUser, msh, dh, fh, stmng, cmng, invmng, repakRepFrame, carBrandList, df_3_2);
+		newItemFrame = new ItemAddNew(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_4_2, repakRepFrame, todayYM);
 		
+		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
 		logger.logInfo("Classes loaded");
 	}
 
@@ -222,7 +226,7 @@ public class MainView {
 
 		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
 		logger.logInfo("Logger Init");
-		msh = new MiscHelper(logger, cs);
+		msh = new MiscHelper(logger, cs, jLang);
 
 		df_3_2 = new DecimalFormat(cs.DECIMAL_FORMAT_3_2);
 		df_4_2 = new DecimalFormat(cs.DECIMAL_FORMAT_4_2);
@@ -343,8 +347,8 @@ public class MainView {
 		nowyRachunekBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		nowyRachunekBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(!newInvoice.isVisible())
-					newInvoice.setIsVisible(true);
+				if(!newInvoiceFrame.isVisible())
+					newInvoiceFrame.setIsVisible(true);
 			}
 		});
 		nowyRachunekBtn.setBounds(btnX, btnX, 200, 36);
@@ -498,7 +502,7 @@ public class MainView {
 	}
 
 	public InvoiceAddEdit getInvoiceAEFrame() {
-		return this.newInvoice;
+		return this.newInvoiceFrame;
 	}
 
 }
