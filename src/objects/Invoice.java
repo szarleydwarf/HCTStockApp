@@ -99,7 +99,7 @@ public class Invoice {
 		+ this.cdb.TB_INVOICE_DISCOUNT + this.cdb.EQUAL + this.getDiscount() + ","
 		+ this.cdb.TB_INVOICE_IS_PERCENT + this.cdb.EQUAL + this.isPercent() + ","
 		+ this.cdb.TB_INVOICE_TOTAL + this.cdb.EQUAL + this.getTotal() + ","
-		+ this.cdb.TB_INVOICE_DATE  + this.cdb.EQUAL + "'" + this.getDate() + "',"
+		+ this.cdb.DATE  + this.cdb.EQUAL + "'" + this.getDate() + "',"
 		+ this.cdb.TB_INVOICE_FILE_NAME + this.cdb.EQUAL + "'" + this.getFile() + "'"
 		+ this.cdb.WHERE + ConstDB.TableNames.TB_INVOICES.getName()+"."+this.cdb.ID + this.cdb.EQUAL + this.getId();
 		return this.dm.updateRecord(q);

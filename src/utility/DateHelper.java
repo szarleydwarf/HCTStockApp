@@ -173,20 +173,15 @@ public class DateHelper {
         }
 	}
 
-	public String[] json2Array(JSONArray jsonArray) {
-	    String[] stringArray = null;
-	    if (jsonArray != null) {
-	        int length = jsonArray.size();
-	        stringArray = new String[length];
-	        for (int i = 0; i < length; i++) {
-	            stringArray[i] = jsonArray.get(i).toString();
-	        }
-	    }
-	    return stringArray;
-	}
-
 	public int getMonthNumber(String monthName) {
 	    return Month.valueOf(monthName.toUpperCase()).getValue();
+	}
+
+	public String getRevDateYM() {
+		Calendar today = Calendar.getInstance();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM");
+		
+		return df.format(today.getTime());
 	}
 
 }

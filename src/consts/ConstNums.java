@@ -26,6 +26,7 @@ public class ConstNums {
 	
 	public final int DEFAULT_CAR_BRAND_ID = 45;
 
+	public final int BACK_10P_OFFSET = 10;
 	// JBUTTONS
 	public final int BACK_BTN_X_OFFSET = 160;
 	public final int BACK_BTN_Y_OFFSET = 80;
@@ -38,4 +39,5 @@ public class ConstNums {
 	public final float LEADING_LINE_SIZE = 20.5f;
 	public final float PDF_DOC_X_OFFSET = 25f;
 	public final int DESCRPTION_LENGTH = 48;
+	public final int SALE_REPORT_PAD_LENGTH = 18;
 }

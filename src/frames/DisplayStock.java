@@ -25,6 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -33,6 +34,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import consts.ConstDB;
@@ -77,34 +79,34 @@ public class DisplayStock {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
-			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM) {
-		jl = jLang;
-		js = jSettings;
-
-		dm = dmn;
-		log = logger;
-		cdb = cDB;
-		cs = cS;
-		cn = cN;
-//		cp = cP;
-		
-		msh = mSH;
-		
-		data = SM.getData();
-		sm = SM;
-
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					DisplayStock window = new DisplayStock();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
+//			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM) {
+//		jl = jLang;
+//		js = jSettings;
+//
+//		dm = dmn;
+//		log = logger;
+//		cdb = cDB;
+//		cs = cS;
+//		cn = cN;
+////		cp = cP;
+//		
+//		msh = mSH;
+//		
+//		data = SM.getData();
+//		sm = SM;
+//
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					DisplayStock window = new DisplayStock();
+//					window.frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the application.
@@ -139,9 +141,6 @@ public class DisplayStock {
 		attributes = fonts_title.getAttributes();
 		attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 		color = msh.getColor(cs.APP, cs, js);
-
-
-//		initialize();
 	}
 
 	/**
@@ -149,7 +148,6 @@ public class DisplayStock {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-//		this.setIsVisible(false);
 		frame.setTitle(jl.get(cs.LBL_STOCK).toString());
 		frame.getContentPane().setBackground(color);
 		frame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, (msh.getScreenDimension()[0]), (msh.getScreenDimension()[1]));
@@ -166,7 +164,50 @@ public class DisplayStock {
 		lblSearch.setFont(fonts);
 		lblSearch.setBounds(10, 40, 200, 24);
 		frame.getContentPane().add(lblSearch);
+
+		TitledBorder lblCosts = msh.createBorders(jl.get(cs.LBL_COST).toString(), Color.YELLOW);
+		TitledBorder lblPrice = msh.createBorders(jl.get(cs.LBL_PRICE).toString(), Color.YELLOW);
+		TitledBorder lblQ = msh.createBorders(jl.get(cs.LBL_QNT).toString(), Color.YELLOW);
+
+		int xOffset = 120, heigh = 32;
+		int xPosLbl = (msh.getScreenDimension()[0] / 5), yPosLbl = frame.getHeight() - 76;
+
+// TODO
+		JSONArray jArr = (JSONArray) jl.get(cs.ITEM_CATEGORY);
+		String[] tCat = msh.json2Array(jArr);
+
+		JComboBox cbCategory = new JComboBox(tCat);
+		cbCategory.setSelectedIndex(0);
+		cbCategory.setFont(fonts);
+		cbCategory.setBounds(xPosLbl, yPosLbl+6, (int) (xOffset*1.2), heigh-10);
+		frame.getContentPane().add(cbCategory);
+
+		JLabel lblTyreCost = new JLabel();
+		lblTyreCost.setBorder(lblCosts);
+		lblTyreCost.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTyreCost.setFont(fonts);
+		xPosLbl = xPosLbl+(2*xOffset);
+		lblTyreCost.setBounds(xPosLbl, yPosLbl, xOffset, heigh);
+		frame.getContentPane().add(lblTyreCost);
 		
+		JLabel lblTyrePrices = new JLabel();
+		lblTyrePrices.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTyrePrices.setBorder(lblPrice);
+		lblTyrePrices.setFont(fonts);
+		xPosLbl += (xOffset * 1.25);
+		lblTyrePrices.setBounds(xPosLbl, yPosLbl, xOffset, heigh);
+		frame.getContentPane().add(lblTyrePrices);
+		
+		JLabel lblQnt = new JLabel();
+		lblQnt.setHorizontalAlignment(SwingConstants.CENTER);
+		lblQnt.setBorder(lblQ);
+		lblQnt.setFont(fonts);
+		xPosLbl += (xOffset * 1.25);
+		lblQnt.setBounds(xPosLbl, yPosLbl, xOffset, heigh);
+		frame.getContentPane().add(lblQnt);
+		
+		fillLabels(lblTyreCost, lblTyrePrices, lblQnt, cs.TYRE_CODE_C);
+//		
 		tfSearch = new JTextField();
 		tfSearch.setHorizontalAlignment(SwingConstants.CENTER);
 		tfSearch.setFont(fonts);
@@ -174,6 +215,7 @@ public class DisplayStock {
 		frame.getContentPane().add(tfSearch);
 		tfSearch.setColumns(10);
 		
+		// BUTTONS
 		JButton btnBack = new JButton(jl.get(cs.BTN_BACK).toString());
 		btnBack.setFont(fonts_title);
 		btnBack.setBounds((frame.getWidth() - cn.BACK_BTN_X_OFFSET), (frame.getHeight() - cn.BACK_BTN_Y_OFFSET), cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
@@ -201,9 +243,6 @@ public class DisplayStock {
 		btnAddNew.setFont(fonts);
 		btnAddNew.setBounds((frame.getWidth() - cn.BACK_BTN_X_OFFSET), 120, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
 		frame.getContentPane().add(btnAddNew);
-		
-		
-//		createTable();
 		
 		// LISTENERS SECTION
 		btnEdit.addActionListener(new ActionListener() {
@@ -275,6 +314,28 @@ public class DisplayStock {
             }
         });
 
+		cbCategory.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbCategory){
+					JComboBox cb = (JComboBox) a.getSource();
+					String defaultCategory = cb.getSelectedItem().toString();
+					String code = "";
+// TODO 					
+					if(defaultCategory.equals(tCat[0])){
+						code = cs.TYRE_CODE_C;
+					} else if(defaultCategory.equals(tCat[1])){
+						code = cs.TYRE_CODE_A;
+					} else if(defaultCategory.equals(tCat[2])){
+						code = cs.TUBE_CODE;
+					} else if(defaultCategory.equals(tCat[3])){
+						code = cs.SHOP_CODE;
+					} 
+					fillLabels(lblTyreCost, lblTyrePrices, lblQnt, code);
+				}		
+			}
+		});
+
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
@@ -292,6 +353,26 @@ public class DisplayStock {
 		        }
 		    }
 		});		
+	}
+
+	protected void fillLabels(JLabel lblTyreCost, JLabel lblTyrePrices, JLabel lblQnt, String code) {
+		double cSum = 0, pSum = 0;
+		int q = 0;
+		for (int i = 0; i < sm.getList().size(); i++) {
+//			System.out.println("Code "+code+"\t"+sm.getList().get(i).getCode());
+			if(sm.getList().get(i).getCode().equals(code)){
+				double ct = sm.getList().get(i).getCost();
+				double pt = sm.getList().get(i).getPrice();
+				q+=sm.getList().get(i).getQnt();
+				ct = ct * q;
+				pt = pt * q;
+				cSum += ct;
+				pSum += pt;
+			}
+		}
+		lblTyreCost.setText(cs.EURO+df.format(cSum));
+		lblTyrePrices.setText(cs.EURO+df.format(pSum));
+		lblQnt.setText(""+q);
 	}
 
 	protected void deleteRecord() {
@@ -462,7 +543,7 @@ public class DisplayStock {
 
 	public void refreashTable() {
 		System.out.println("table refreash");
-		sm.getListFormDatabase();
+		sm.getListFromDatabase();
 		data = null;
 		data = sm.getData();
 		table.removeAll();
@@ -569,10 +650,6 @@ public class DisplayStock {
 
 	}
 
-	public void refreash() {
-		
-	}
-	
 	// GETTERS & SETTERS
 	public boolean isVisible(){
 		if(frame != null)
@@ -582,7 +659,7 @@ public class DisplayStock {
 	
 	public void setIsVisible(boolean b){
 		initialize();
-		sm.getListFormDatabase();
+		sm.getListFromDatabase();
 		data = sm.getData();
 		createTable();
 		frame.setVisible(b);

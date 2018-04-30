@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.print.PrinterException;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.Month;
 import java.util.ArrayList;
@@ -13,10 +15,12 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -28,8 +32,11 @@ import managers.InvoiceManager;
 import objects.Invoice;
 import objects.Item;
 import utility.DateHelper;
+import utility.FileHelper;
 import utility.Logger;
 import utility.MiscHelper;
+import utility.PDFCreator;
+import utility.Printer;
 
 public class SalesReports {
 
@@ -49,11 +56,16 @@ public class SalesReports {
 	private InvoiceManager invmng;
 
 	protected String dayOfReport = "";
-	protected String yearOfReport = "";
-	protected String monthOfReport = "";
+	protected String yearOfReportD = "", yearOfReport = "";
+	protected String monthOfReportD = "", monthOfReport = "";
 	private ArrayList<Invoice> list;
 	private DecimalFormat df;
 	private DecimalFormat dfm;
+	private FileHelper fh;
+	private String[][] DATA_M;
+	private PDFCreator pdfCreator;
+	private Printer printer;
+	private String[][] DATA_D;
 
 //	/**
 //	 * Launch the application.
@@ -79,7 +91,9 @@ public class SalesReports {
 	}
 
 	public SalesReports(MainView main, DatabaseManager dm, ConstDB CDB, ConstStrings CS, ConstNums CN, Logger logger,
-			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, InvoiceManager invMng, DecimalFormat DF) {
+			PDFCreator PDFCreator, Printer p_rinter,
+			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, FileHelper FH,
+			InvoiceManager invMng, DecimalFormat DF) {
 		mainView = main;
 		jl = jLang;
 		js = jSettings;
@@ -91,6 +105,11 @@ public class SalesReports {
 		
 		msh = mSH;
 		dh = DH;
+		fh = FH;
+		
+		pdfCreator = PDFCreator;
+		printer = p_rinter;
+
 		invmng = invMng;
 		df = DF;
 		dfm = new DecimalFormat("00");
@@ -111,10 +130,10 @@ public class SalesReports {
 		int jcbW = 55, jcbH = 28, jcbYOffset = 70, btnPrintX = 400;
 		String[]days = dh.getDaysArray();
 		JSONArray jArr = (JSONArray) jl.get(cs.MONTHS_NAMES);
-		String[]months = dh.json2Array(jArr);
+		String[]months = msh.json2Array(jArr);
 		jArr = null;
 		jArr = (JSONArray) jl.get(cs.YEARS);
-		String[]years = dh.json2Array(jArr);
+		String[]years = msh.json2Array(jArr);
 		
 		int today = dh.getDayOfMonthNum();
 		today--;
@@ -122,6 +141,8 @@ public class SalesReports {
 		int year = dh.getYearIndex();
 		
 		dayOfReport = days[today];
+		monthOfReportD = months[month];
+		yearOfReportD = years[year];
 		monthOfReport = months[month];
 		yearOfReport = years[year];
 		
@@ -215,19 +236,7 @@ public class SalesReports {
 		btnPntMonthlyRep.setBounds(btnPrintX, (lblH/2)+jcbYOffset, jcbW*2, jcbH);
 		frame.getContentPane().add(btnPntMonthlyRep);
 	
-		//TODO maybe it can be done without buttons to display, auto after selection
-		JButton btnShowDailyRep = new JButton("DISPLAY");
-		btnShowDailyRep.setFont(fonts_title);
-		btnShowDailyRep.setBounds(btnPrintX+(jcbW*2)+20, (lblH/2)+20, jcbW*2, jcbH);
-		frame.getContentPane().add(btnShowDailyRep);
 		
-		JButton btnShowMonthlyRep = new JButton("PREVIEW");
-		btnShowMonthlyRep.setFont(fonts_title);
-		btnShowMonthlyRep.setBounds(btnPrintX+(jcbW*2)+20, (lblH/2)+jcbYOffset, jcbW*2, jcbH);
-		frame.getContentPane().add(btnShowMonthlyRep);
-		
-		
-	
 		// LISTENERS
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -238,16 +247,43 @@ public class SalesReports {
 		btnPntMonthlyRep.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("Monthly report print");
+				// TODO
+				String path = createPdfPath(false);
+				boolean pdfCreated = printSalesReport(path, false);
+				if(pdfCreated){
+					try {
+						printer.printDoc(path);
+					} catch (IOException e) {
+						log.logError(js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+						e.printStackTrace();
+					} catch (PrinterException e) {
+						log.logError(js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+						e.printStackTrace();
+					}
+				}
 			}
 		});
 		
 		btnPntDailyRep.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("Daily report print");
-
-//				printDailyReport(dateOfReport);
+//				if(DATA != null){
+					String path = createPdfPath(true);
+					boolean pdfCreated = printSalesReport(path, true);
+					if(pdfCreated){
+						try {
+							printer.printDoc(path);
+						} catch (IOException e) {
+							log.logError(js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+							e.printStackTrace();
+						} catch (PrinterException e) {
+							log.logError(js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+							e.printStackTrace();
+						}
+					}
+//				} else {
+//					log.logError(jl.get(cs.PRINTING_PDF_ERROR).toString());
+//				}
 			}			
 		});
 	
@@ -267,7 +303,7 @@ public class SalesReports {
 			public void actionPerformed(ActionEvent a) {
 				if(a.getSource() == cbMonthDaily ){
 					JComboBox cb = (JComboBox) a.getSource();
-					monthOfReport = cb.getSelectedItem().toString();
+					monthOfReportD = cb.getSelectedItem().toString();
 					previewReport(lblDayPreview, lblDP.getTitle());
 				}		
 			}
@@ -278,7 +314,7 @@ public class SalesReports {
 			public void actionPerformed(ActionEvent a) {
 				if(a.getSource() == cbYearDaily ){
 					JComboBox cb = (JComboBox) a.getSource();
-					yearOfReport = cb.getSelectedItem().toString();
+					yearOfReportD = cb.getSelectedItem().toString();
 					previewReport(lblDayPreview, lblDP.getTitle());
 				}		
 			}
@@ -290,7 +326,7 @@ public class SalesReports {
 				if(a.getSource() == cbMonth ){
 					JComboBox cb = (JComboBox) a.getSource();
 					monthOfReport = cb.getSelectedItem().toString();
-					previewReport(lblDayPreview, lblDP.getTitle());
+					previewReport(lblMonthPreview, lblMP.getTitle());
 				}		
 			}
 		});
@@ -301,7 +337,7 @@ public class SalesReports {
 				if(a.getSource() == cbYear ){
 					JComboBox cb = (JComboBox) a.getSource();
 					yearOfReport = cb.getSelectedItem().toString();
-					previewReport(lblDayPreview, lblDP.getTitle());
+					previewReport(lblMonthPreview, lblMP.getTitle());
 				}		
 			}
 		});
@@ -309,23 +345,76 @@ public class SalesReports {
 		populateTabel(lblX+10, lblY+10, lblW/2, lblH/2, lblTB.getTitle());
 	}
 
-	private void previewReport(JLabel jlbl, String name) {
+	protected boolean printSalesReport(String path, boolean b) {
 		// TODO Auto-generated method stub
+		PDDocument pdf = null;
 		JSONArray jArr = (JSONArray) jl.get(cs.SALE_REPORT_HEADINGS);
-		String[]sReportHeadings = dh.json2Array(jArr);
+		String header = createHeader(msh.json2Array(jArr));
+		if(b)
+			pdf = pdfCreator.createPDF(cs.PDF_SALE_REPORT, DATA_D, header);
+		else
+			pdf = pdfCreator.createPDF(cs.PDF_SALE_REPORT, DATA_M, header);
+		if(pdf != null){
+			try {
+				pdf.save(path);
+				pdf.close();
+				JOptionPane.showMessageDialog(frame, jl.get(cs.INVOICE_SAVED_2).toString());
+//				goBack();
+				return true;
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+				log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
+				e.printStackTrace();
+				return false;
+			}
+		}  else {
+			JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+			return false;
+		}
+	}
+
+	private String createHeader(String[] jArr) {
+		String h = "";
+		jArr[0] = "I.C. - ";
+		for (String s : jArr) {
+			h += msh.paddStringRight(s, 12, cs.UNDERSCORE);
+		}
+		h = msh.removeLastChar(h, cs.UNDERSCORE);
+		return h;
+	}
+
+	protected String createPdfPath(boolean daily) {
+		String s = yearOfReport+cs.SLASH+monthOfReport;
+		if(daily)
+			s+=cs.SLASH+dayOfReport;
+		String p = js.get(cs.SALES_PATH).toString() + s;
+		fh.createFolderIfNotExist(p);
+		p += cs.SLASH + jl.get(cs.BTN_SALES_REPORT).toString() + " " + s.replace(cs.SLASH, cs.UNDERSCORE) + cs.PDF_EXT;
+		return p;
+	}
+
+	private void previewReport(JLabel jlbl, String name) {
+		JSONArray jArr = (JSONArray) jl.get(cs.SALE_REPORT_HEADINGS);
+		String[]sReportHeadings = msh.json2Array(jArr);
 		String[][] data = null;
-		sReportHeadings[0] = "IC";
+
+		sReportHeadings[0] = "I.C. - ";
 
 		if(name.equals(jl.get(cs.LBL_DAILY_REPORT).toString())) {
-			System.out.println("dr");
+			String dateYMD = yearOfReportD+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReportD))+cs.MINUS+dfm.format(Integer.parseInt(dayOfReport));
+			String dateDMY = dfm.format(Integer.parseInt(dayOfReport))+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReportD))+cs.MINUS+yearOfReportD;
 			data = new String [this.cs.ITEM_CODES.length][sReportHeadings.length];
-			data = setNuls(data);
-			data = fillDailyRepData(data);
-//			msh.printData(data);
+			data = msh.setZeros(data);
+			data = fillReportData(data, dateDMY, dateYMD);
+			this.DATA_D = null;
+			this.DATA_D = data;
 		} else if(name.equals(jl.get(cs.LBL_MONTHLY_REPORT).toString())) {
-			System.out.println("mr");
+			String dateYM = yearOfReport+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReport));
+			String dateMY = dfm.format(dh.getMonthNumber(monthOfReport))+cs.MINUS+yearOfReport;
 			data = new String [this.cs.ITEM_CODES.length][sReportHeadings.length];
-			data = fillMonthlyRepData(data);
+			data = fillReportData(data, dateMY, dateYM);
+			this.DATA_M = null;
+			this.DATA_M = data;
 		}
 		jlbl.setText("");
 		msh.displayDataInLabel(jlbl, df, data, sReportHeadings);
@@ -333,13 +422,12 @@ public class SalesReports {
 
 	private void populateTabel(int x, int y, int w, int h, String name) {
 		JSONArray jArr = (JSONArray) jl.get(cs.SALE_REPORT_HEADINGS);
-		String[]sReportHeadings = dh.json2Array(jArr);
+		String[]sReportHeadings = msh.json2Array(jArr);
 		JTable table = new JTable();
 		String[][] data = null;
 		JScrollPane spSalesList = null;
 		
 		if(name.equals(jl.get(cs.BTN_SALES_REPORT).toString())) {
-			System.out.println("sr");
 			data = new String [this.cn.NUM_OF_MONTHS][sReportHeadings.length];
 			data = fillData(data);
 			table = msh.createTable(fonts, data, sReportHeadings, name, 60, 60);
@@ -349,45 +437,19 @@ public class SalesReports {
 		frame.getContentPane().add(spSalesList);
 	}
 
-	private String[][] setNuls(String[][] data) {
-		for (int i = 0; i < data.length; i++) {
-			for (int j = 0; j < data[i].length; j++) {
-				data[i][j] = ""+0;
-				data[i][j] = ""+0;
-				data[i][j] = ""+0;
-				
-			}
-		}
-		return data;
-	}
-
-	private String[][] fillMonthlyRepData(String[][] data) {
-		// TODO Auto-generated method stub
-		System.out.println("DateM "+dayOfReport+"/"+monthOfReport+"/"+yearOfReport);
+	private String[][] fillReportData(String[][] data, String dMY, String dYM) {
 		data = fillFirst(data);
-
-		return data;
-	}
-
-	private String[][] fillDailyRepData(String[][] data) {
-		// TODO Auto-generated method stub
-		String dateYMD = yearOfReport+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReport))+cs.MINUS+dfm.format(Integer.parseInt(dayOfReport));
-		String dateDMY = dfm.format(Integer.parseInt(dayOfReport))+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReport))+cs.MINUS+yearOfReport;
-		data = fillFirst(data);
-
-		String lists = findInList(dateYMD, dateDMY);
-		
+		String lists = findInList(dMY, dYM);
 		if(lists != ""){
-//			System.out.println("list "+lists);
 			data = splitToData(lists, data);
 		}
-		
 		return data;
 	}
- 
+
 	private String[][] splitToData(String list, String[][] data) {
 		String[]tokens = msh.splitString(list, cs.SEMICOLON);
 		double diff = 0;
+		data = msh.setZeros(data);
 		for (String s : tokens) {
 			if(!s.isEmpty()){
 
@@ -398,30 +460,35 @@ public class SalesReports {
 				double price = Double.parseDouble(s.substring(s.indexOf(cs.AT)+1));
 				price *= qnt;
 				diff = price - cost;
-				if(code.equals(cs.TYRE_CODE)){
+	
+				if(code.equals(cs.TYRE_CODE_C)){
 					data[0][1] = getValue(data[0][1], cost);
 					data[0][2] = getValue(data[0][2], price);
 					data[0][3] = getValue(data[0][3], diff);
-				} else if(code.equals(cs.TUBE_CODE)){
+				} else if(code.equals(cs.TYRE_CODE_A)){
 					data[1][1] = getValue(data[1][1], cost);
 					data[1][2] = getValue(data[1][2], price);
 					data[1][3] = getValue(data[1][3], diff);
+				} else if(code.equals(cs.TUBE_CODE)){
+					data[2][1] = getValue(data[1][1], cost);
+					data[2][2] = getValue(data[1][2], price);
+					data[2][3] = getValue(data[1][3], diff);
 				} else if(code.equals(cs.SERVICE_CODE)){
-					data[2][1] = getValue(data[2][1], cost);
-					data[2][2] = getValue(data[2][2], price);
-					data[2][3] = getValue(data[2][3], diff);
+					data[3][1] = getValue(data[2][1], cost);
+					data[3][2] = getValue(data[2][2], price);
+					data[3][3] = getValue(data[2][3], diff);
 				} else if(code.equals(cs.SHOP_CODE)){
-					data[3][1] = getValue(data[3][1], cost);
-					data[3][2] = getValue(data[3][2], price);
-					data[3][3] = getValue(data[3][3], diff);
+					data[4][1] = getValue(data[3][1], cost);
+					data[4][2] = getValue(data[3][2], price);
+					data[4][3] = getValue(data[3][3], diff);
 				} else if(code.equals(cs.OTHER_CODE)){
-					data[4][1] = getValue(data[4][1], cost);
-					data[4][2] = getValue(data[4][2], price);
-					data[4][3] = getValue(data[4][3], diff);
+					data[5][1] = getValue(data[4][1], cost);
+					data[5][2] = getValue(data[4][2], price);
+					data[5][3] = getValue(data[4][3], diff);
 				} else if(code.equals(cs.CARWASH_CODE)){
-					data[5][1] = getValue(data[5][1], cost);
-					data[5][2] = getValue(data[5][2], price);
-					data[5][3] = getValue(data[5][3], diff);
+					data[6][1] = getValue(data[5][1], cost);
+					data[6][2] = getValue(data[5][2], price);
+					data[6][3] = getValue(data[5][3], diff);
 				}
 			}
 		}
@@ -448,7 +515,6 @@ public class SalesReports {
 				lists += in.getList();
 			}
 		}
-
 		return lists;
 	}
 

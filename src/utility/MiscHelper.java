@@ -26,29 +26,47 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import consts.ConstStrings;
 import objects.Customer;
 import objects.Item;
+import objects.RepakROne;
 
 
 public class MiscHelper {
 
 	private Logger log;
 	private ConstStrings cs;
+	private JSONObject jl;
 
-	public MiscHelper(Logger logger, ConstStrings CS){
+	public MiscHelper(Logger logger, ConstStrings CS, JSONObject jLang){
 		log = logger;
 		cs = CS;
+		jl = jLang;
 	}
 	
 	public void printData(String[][] d) {
 		System.out.println("Data 1st length "+d.length);
 		System.out.println("Data 2nd length "+d[0].length);
-		for(int j = 0 ; j< d.length; j++)
-			for(int i = 0; i < d[j].length; i++)
-				System.out.println("j:"+j+" i:"+i+" - "+d[j][i]);
+		for(int i = 0 ; i< d.length; i++)
+			for(int j = 0; j < d[j].length; j++)
+				System.out.println("i:"+i+" j:"+j+" - "+d[i][j]);
+	}
+	
+	public void sopl2DimensionalArray(String[][] da) {
+		System.out.println("Data 1st length "+da.length);
+		System.out.println("Data 2nd length "+da[0].length);
+		int count = 0;
+		for (String[] ss : da) {
+			System.out.println(count + " : ");
+			for (String s : ss) {
+				System.out.print(" "+s);
+			}
+			count++;
+			System.out.println("");
+		}
 	}
 	
 	public int[] getScreenDimension() {
@@ -185,7 +203,7 @@ public class MiscHelper {
 	public String[] splitStringRemoveSpecialChars(String str, String c) {
 		String[] t = new String[2];
 		if(str.contains(c)){
-			System.out.println("msh 1. "+str.matches(cs.SPECIAL_CHAR_PATTERN));
+//			System.out.println("msh 1. "+str.matches(cs.SPECIAL_CHAR_PATTERN));
 			
 			if(str.matches(cs.SPECIAL_CHAR_PATTERN)){
 				System.out.println("msh 2. "+str);
@@ -260,11 +278,51 @@ public class MiscHelper {
 		return table;
 	}
 
+	public void displayDataInLblTable(JLabel jlbl, DecimalFormat df, String[][] data, String[] sh) {
+		String s = "<html><body><table>";
+		s += "<tr>";
+		for (String st : sh) {
+			s +="<th width=\"70px\"  align=\"center\">";
+			if(!jlbl.getName().equals(jl.get(cs.LBL_PICK_DATE).toString())){
+				s += st;
+			} 
+			s += "</th>";
+		}
+			
+		s += "</tr>";
+		jlbl.setText(s);
+		if(data != null){
+			for(int j = 0 ; j< data.length; j++) {
+				s = jlbl.getText();
+				s += "<tr>";
+				for (int i = 0; i < data[j].length; i++) {
+					s += "<td  align=\"center\">"+data[j][i]+"</td>";
+				}
+				s += "</tr>";
+				jlbl.setText(s);
+			}
+		}
+
+		s += "</table></body></html>";
+	}
+	
+
+	public String[] json2Array(JSONArray jsonArray) {
+	    String[] stringArray = null;
+	    if (jsonArray != null) {
+	        int length = jsonArray.size();
+	        stringArray = new String[length];
+	        for (int i = 0; i < length; i++) {
+	            stringArray[i] = jsonArray.get(i).toString();
+	        }
+	    }
+	    return stringArray;
+	}
+
 	public void displayDataInLabel(JLabel jlbl, DecimalFormat df, String[][] data, String[] sa) {
-		// TODO Auto-generated method stub
-		String s = "<html><body>";
+		String s = "<html><body> ";
 		for (String ss : sa) {
-			s+= ss + "    ";
+			s+=  " __ " + ss + " __ ";
 		}
 		jlbl.setText(s);
 		if(data != null){
@@ -285,9 +343,36 @@ public class MiscHelper {
 		}
 		s += "</body></html>";
 	}
+	
+	public String[][] setZeros(String[][] data) {
+		for (int i = 0; i < data.length; i++) {
+			for (int j = 0; j < data[i].length; j++) {
+				if(data[i][j] == null) {
+					data[i][j] = ""+0;
+				}
+			}
+		}
+		return data;
+	}
+
 	public static boolean isNumeric(String str)	{
 		if(str != null)
 			return str.matches("-?\\d+(\\.\\d+)?");
 		return false;
+	}
+
+	public void printArrayList(ArrayList<?> list) {
+		for (int i = 0; i < list.size(); i++) {
+			System.out.println(list.get(i).toString());
+		}
+	}
+
+	public int parseToInt(String text) {
+		text = removeSpecials(text);
+		return Integer.parseInt(text);
+	}
+
+	private String removeSpecials(String text) {
+		return text.replaceAll("\\D+","");
 	}
 }

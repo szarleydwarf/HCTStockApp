@@ -9,6 +9,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.font.TextAttribute;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
@@ -26,6 +27,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import consts.ConstDB;
@@ -34,6 +36,7 @@ import consts.ConstStrings;
 import managers.DatabaseManager;
 import managers.StockManager;
 import objects.Item;
+import objects.RepakROne;
 import utility.Logger;
 import utility.MiscHelper;
 
@@ -67,6 +70,8 @@ public class ItemAddNew {
 	private JRadioButton rbSuggested;
 	private String price;
 	protected boolean isSuggested;
+	private RepakReport repakReport;
+	private String date;
 
 	/**
 	 * Launch the application.
@@ -91,7 +96,8 @@ public class ItemAddNew {
 		 
 	 }
 	public ItemAddNew(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
-			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM, DecimalFormat df_3_2) {
+			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM, DecimalFormat df_3_2, RepakReport rr,
+			String Date) {
 		mainView = main;
 		jl = jLang;
 		js = jSettings;
@@ -105,7 +111,6 @@ public class ItemAddNew {
 		
 		msh = mSH;
 		
-		
 		sm = SM;
 		
 		df = df_3_2;
@@ -114,6 +119,9 @@ public class ItemAddNew {
 		vat = 0;
 		tran = 0;
 		vemc = 0;
+		
+		repakReport = rr;
+		date = Date;
 		
 		isSuggested = true;
 		
@@ -362,6 +370,37 @@ public class ItemAddNew {
 				System.out.println(""+i.toString());
 				itemSaved = sm.addItem(i);
 				if(itemSaved){
+//					JSONArray jArr = (JSONArray) jl.get(cs.REPAK_TB_COL_NAMES);
+//					String[]sHeadings = msh.json2Array(jArr);
+//					int t = 0, tq = 0;
+//					tq = Integer.parseInt(tfQnt.getText());
+//					String d = date.substring(0, date.lastIndexOf(cs.MINUS));
+//					System.out.println("ian "+d+ " " +date);
+//					if(itemCode.equals(cs.TYRE_CODE_C)){
+//						t = repakReport.getTyresInStock(date, true);
+//						tq = t+tq;
+//						repakReport.updateRepakList(date, sHeadings[3], tq);
+//					} else if(itemCode.equals(cs.TYRE_CODE_A)){
+//						t = repakReport.getTyresInStock(date, false);
+//						tq = t+tq;
+//						repakReport.updateRepakList(date, sHeadings[6], tq);
+//					}
+					if(i.getCode().equals(cs.TYRE_CODE_C) || i.getCode().equals(cs.TYRE_CODE_A)){
+						JSONArray jArr = (JSONArray) jl.get(cs.REPAK_TB_COL_NAMES);
+						String[]sHeadings = msh.json2Array(jArr);
+						boolean b = (i.getCode().equals(cs.TYRE_CODE_C)) ? true : false;
+						int col = (i.getCode().equals(cs.TYRE_CODE_C)) ? 3 : 6;
+						
+						int tQ = repakReport.getTyresInStock(date, b);
+						int t = 0;
+						t = Integer.parseInt(tfQnt.getText());
+						
+						System.out.println("ian "+tQ+" / "+t+" "+date+" "+sHeadings[col]);
+						tQ = tQ + t;
+						repakReport.updateRepakList(date, sHeadings[col], tQ);
+						repakReport.setList(repakReport.listUpdate());
+					}
+
 					JOptionPane.showMessageDialog(frame, jl.get(cs.SAVED_MSG).toString());
 					frame.dispose();
 				}else{

@@ -2,14 +2,15 @@
 	"lang":"eng.json",
 	"starting":"true",
 
-	"db host":"jdbc:mysql://192.168.43.179:3306/hct_stock",
+	"db host":"jdbc:mysql://127.0.0.1:3306/hct_stock",
 	"db user":"hct",
 	"db pass":"pass1234",
 
+
 	"invoice folder path":"_documents\\invoices\\",
-	"sales folder path":"documents\\sales\\",
-	"stock folder path":"documents\\stock\\",
-	"repak folder path":"documents\\repak\\",
+	"sales folder path":"_documents\\sales\\",
+	"stock folder path":"_documents\\stock\\",
+	"repak folder path":"_documents\\repak\\",
 	"doc subfolder path":"YYYY\\MM\\DD\\",
 
 	"default printer name":"Canon MP620 series Printer (Copy 1)",

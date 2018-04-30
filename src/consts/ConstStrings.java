@@ -18,15 +18,18 @@ public class ConstStrings {
 	public final String DATE_TIME_FORMAT_REVERSE = "yyyy-MM-dd @HH:mm:ss";
 	public final String YEARS = "years";
 	public final String SALE_REPORT_HEADINGS = "sale report headings";
+	public final String REPAK_REPORT_HEADINGS = "repak report headings";
+	public final String REPAK_TB_COL_NAMES = "repak tb col names";
 
 	// ITEM CODES
-	public final String TYRE_CODE = "TR";
+	public final String TYRE_CODE_C = "TRC";
+	public final String TYRE_CODE_A = "TRA";
 	public final String TUBE_CODE = "TB";
 	public final String SERVICE_CODE = "SR";
 	public final String SHOP_CODE = "SH";
 	public final String OTHER_CODE = "OT";
 	public final String CARWASH_CODE = "CW";
-	public final String[] ITEM_CODES = {"TR", "TB", "SR", "SH", "OT", "CW"};
+	public final String[] ITEM_CODES = {"TRC", "TRA", "TB", "SH", "SR", "OT", "CW"};
 	
 	// CUSTOMER CODES
 	public final String CUST_IND_CODE = "C_";
@@ -59,8 +62,8 @@ public class ConstStrings {
 	public final String SPECIAL_CHAR_PATTERN = "^.*[^a-zA-Z0-9\\d\\s,].*$";	
 	public final String INTEGER_PATTERN = "^-?\\d+$";
 	public final String DECIMAL_FORMAT_3_2 = "000.00";
-	public final String DECIMAL_FORMAT_4_2 = "0000.00";
-	public final String DECIMAL_FORMAT_5_2 = "00000.00";
+	public final String DECIMAL_FORMAT_4_2 = "0,000.00";
+	public final String DECIMAL_FORMAT_5_2 = "00,000.00";
 
 	public final String DEFAULT_REGISTRATION = "00AA0000";
 	
@@ -125,6 +128,9 @@ public class ConstStrings {
 
 
 	// JSON LANG PACKET
+	public final String TYRES_CATEGORY = "tyre categories";
+	public final String ITEM_CATEGORY = "items cat";
+
 	public final String BTN_NEXT = "next";
 	public final String BTN_SAVE = "save";
 	public final String FILL_UP = "fill_up";
@@ -137,6 +143,8 @@ public class ConstStrings {
 	public final String BTN_PRINT = "print";
 	public final String BTN_INVOICES = "btn invoices";
 	public final String BTN_SALES_REPORT = "btn sales report";
+	public final String BTN_REPAK_REPORT = "btn repak";
+	public final String BTN_UPDATE = "btn update";
 	
 	public final String RB_TYPED_IN = "typed";
 	public final String RB_SUGGESTED = "suggested";
@@ -166,6 +174,7 @@ public class ConstStrings {
 	public final String LBL_TOTAL = "total";
 	public final String LBL_DAILY_REPORT = "daily report";
 	public final String LBL_MONTHLY_REPORT = "monthly report";
+	public final String LBL_PICK_DATE = "pick date";
 
 	public final String TF_CUST_HINT = "tf cust hint";
 

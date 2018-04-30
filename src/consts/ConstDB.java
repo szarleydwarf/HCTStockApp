@@ -18,7 +18,6 @@ public class ConstDB {
 
 	public static final String POPULATE_BRANDS = "INSERT INTO `brands` (`id`, `brand`) VALUES(1, 'Volkswagen'),(2, 'Toyota'),(3, 'Ford'),(4, 'Mazda'),(5, 'Skoda'),(6, 'Renault'),(7, 'Citroen'),(8, 'Peugeot'),(9, 'Audi'),(10, 'BMW'),(11, 'Mercedes'),(12, 'Opel'),(13, 'Porsche'),(14, 'Suzuki'),(15, 'Mitshubishi'),(16, 'Lancia'),(17, 'Fiat'),(18, 'Alfa Romeo'),(19, 'Honda'),(20, 'Isuzu'),(21, 'Nissan'),(22, 'Subaru'),(23, 'Lexus'),(24, 'Kia'),(25, 'Hyundai'),(26, 'SSangyong'),(27, 'Daewoo'),(28, 'Chevrolet'),(29, 'Vauxhal'),(30, 'Seat'),(31, 'Saab'),(32, 'Volvo'),(33, 'Bentley'),(34, 'Aston Martin'),(35, 'Jaguar'),(36, 'Land Rover'),(37, 'Range Rover'),(38, 'Rover'),(39, 'Mini'),(40, 'Lotus'),(41, 'Rols Roys'),(42, 'Chrysler'),(43, 'Dodge'),(44, 'Jeep'),(45, 'Other');";
 	
-	
 	public  final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
 
 	public final String USE_DATABASE = "USE ";
@@ -53,6 +52,7 @@ public class ConstDB {
 		public void setName(String name) { this.name = name; }	
 	}
 
+	public final String DATE = "date";
 	public final String ID = "id";
 
 	//brands table column names
@@ -87,8 +87,18 @@ public class ConstDB {
 	public final String TB_INVOICE_DISCOUNT = "discount";
 	public final String TB_INVOICE_IS_PERCENT = "ispercent";
 	public final String TB_INVOICE_TOTAL = "total";
-	public final String TB_INVOICE_DATE = "date";
+//	public final String TB_INVOICE_DATE = "date";
 	public final String TB_INVOICE_FILE_NAME = "file_name";
+	
+	//stock table column names
+	public final String TB_REPAK_SOLD_CAR = "sold_car";
+	public final String TB_REPAK_FITTED_CAR = "fitted_car";
+	public final String TB_REPAK_BOUGHT_CAR = "bought_car";
+	public final String TB_REPAK_SOLD_AGRI = "sold_agri";
+	public final String TB_REPAK_FITTED_AGRI= "fitted_agri";
+	public final String TB_REPAK_BOUGHT_AGRI= "bought_agri";
+	public final String TB_REPAK_RETURNED_CAR = "returned_car";
+	public final String TB_REPAK_RETURNED_AGRI = "returned_agri";
 	
 	//Database query's
 	public final String SELECT_CARS_LIST_BRAND_ID = this.SELECT+this.TB_BRANDS_NAME+", "+this.ID+this.FROM+TableNames.TB_BRANDS.getName();
@@ -96,9 +106,11 @@ public class ConstDB {
 	public final String SELECT_ALL_ITEMS = this.SELECT_STAR  + this.FROM + TableNames.TB_STOCK.getName();
 	public final String SELECT_ALL_CUSTOMERS_I = this.SELECT_STAR  + this.FROM + TableNames.TB_CUSTOMERS.getName();
 	public final String SELECT_ALL_CUSTOMERS_B = this.SELECT + TableNames.TB_BUSINESS.getName() + ".* " + this.FROM + TableNames.TB_BUSINESS.getName();
-	public final String SELECT_ALL_INVOICES = this.SELECT_STAR + this.FROM + TableNames.TB_INVOICES.getName();
-	public final String SELECT_LAST_INVOICE = this.SELECT + "id" + this.FROM + TableNames.TB_INVOICES.getName() + this.ODER_BY  + "id" + this.DESC + this.LIMIT + "1;";
+	public final String SELECT_ALL_INVOICES = this.SELECT_STAR + this.FROM + TableNames.TB_INVOICES.getName() + this.ODER_BY + this.DATE + this.DESC;
+	public final String SELECT_LAST_INVOICE = this.SELECT + "id" + this.FROM + TableNames.TB_INVOICES.getName() + this.ODER_BY  + this.ID + this.DESC + this.LIMIT + "1;";
 
+	public final String SELECT_ALL_REPAK_REPORTS = this.SELECT_STAR + this.FROM + TableNames.TB_REPAK.getName();;
 	public final String SELECT_CAR = this.SELECT_STAR + this.FROM + TableNames.TB_CARS.getName() + this.WHERE + this.ID + this.EQUAL;
+	public final String GET_LAST_MONTH = this.SELECT + this.DATE + this.FROM + TableNames.TB_REPAK.getName();
 
 }

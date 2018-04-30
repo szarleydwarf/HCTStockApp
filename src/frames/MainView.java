@@ -10,8 +10,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -36,6 +38,7 @@ import managers.CustomersManager;
 import managers.DatabaseManager;
 import managers.InvoiceManager;
 import managers.StockManager;
+import objects.RepakROne;
 import utility.DateHelper;
 import utility.FileHelper;
 import utility.LoadScreen;
@@ -77,12 +80,14 @@ public class MainView {
 	private static boolean isStarting;
 	private static DisplayStock stockFrame;
 	private static ItemAddNew newItemFrame;
-	private static InvoiceAddEdit newInvoice;
+	private static InvoiceAddEdit newInvoiceFrame;
 	private static Printer printer;
 	private static PDFCreator pdfCreator;
 	private static DecimalFormat df_4_2;
 	private static InvoicesDisplay invoicesFrame;
 	private static SalesReports salesRepFrame;
+	private static RepakReport repakRepFrame;
+	private static String todayYM;
 	
 
 	/**
@@ -94,7 +99,6 @@ public class MainView {
 		loadConst();
 		loadJsonFiles();
 
-//		test();
 		try {
 	      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	    }
@@ -134,13 +138,12 @@ public class MainView {
 		});
 	}
 
-	private void test() {
+	private static void test() {
 		// TODO Here I will be testing all of the functionalities
-//		System.out.println("TEST\n1");
-
-//		System.out.println("\n2");
-
-//		System.out.println("\n3");
+		System.out.println("TEST\n1");
+//		System.out.println("SD: "+repakRepFrame.updateRepakList(dh.getRevDateYM(), cdb.TB_REPAK_SOLD_CAR, 10));
+		System.out.println("\n2");
+		System.out.println("\n3");
 
 		System.out.println();
 	}
@@ -179,6 +182,8 @@ public class MainView {
 		loadClasses();
 //		TODO
 //		check last database last backup - do it if necessary
+		checkLastDBUpdate();
+		test();
 	}
 
 	private static void setDates() {
@@ -187,7 +192,9 @@ public class MainView {
 		
 		todayS = dh.getFormatedDate();
 		logger.setShortDate(todayS);
-		logger.logInfo(" Dates set");
+		
+		todayYM = dh.getRevDateYM();
+		logger.logInfo(" Dates set "+todayYM);
 	}
 
 	private static void loadClasses() {
@@ -195,13 +202,15 @@ public class MainView {
 		pdfCreator = new PDFCreator(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh, df_4_2);
 		printer = new Printer(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh);
 
-		newItemFrame = new ItemAddNew(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_4_2);
-		newInvoice = new InvoiceAddEdit(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, jUser, msh, dh, fh, stmng, cmng, invmng, carBrandList, df_3_2);
-		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
 
 		invoicesFrame = new InvoicesDisplay(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, invmng);
-		salesRepFrame = new SalesReports(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, dh, invmng, df_5_2);
+		salesRepFrame = new SalesReports(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, msh, dh, fh, invmng, df_5_2);
+		repakRepFrame = new RepakReport(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, msh, dh, fh);
+
+		newInvoiceFrame = new InvoiceAddEdit(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, jUser, msh, dh, fh, stmng, cmng, invmng, repakRepFrame, carBrandList, df_3_2);
+		newItemFrame = new ItemAddNew(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_4_2, repakRepFrame, todayYM);
 		
+		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
 		logger.logInfo("Classes loaded");
 	}
 
@@ -220,11 +229,15 @@ public class MainView {
 
 		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
 		logger.logInfo("Logger Init");
-		msh = new MiscHelper(logger, cs);
+		msh = new MiscHelper(logger, cs, jLang);
+
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols( new Locale("en", "UK"));
+		symbols.setDecimalSeparator('.');
+		symbols.setGroupingSeparator('\'');
 
 		df_3_2 = new DecimalFormat(cs.DECIMAL_FORMAT_3_2);
-		df_4_2 = new DecimalFormat(cs.DECIMAL_FORMAT_4_2);
-		df_5_2 = new DecimalFormat(cs.DECIMAL_FORMAT_5_2);
+		df_4_2 = new DecimalFormat(cs.DECIMAL_FORMAT_4_2, symbols);
+		df_5_2 = new DecimalFormat(cs.DECIMAL_FORMAT_5_2, symbols);
 	}
 
 	private static void loadManagers() {
@@ -293,6 +306,15 @@ public class MainView {
 		}
 	}
 
+	private static void checkLastDBUpdate() {
+		// TODO
+		String lastUpdate = "";
+		String lastMonth = dm.selectData(cdb.GET_LAST_MONTH);
+		System.out.println("last month "+lastMonth);
+		
+	}
+
+
 	/**
 	 * Create the application.
 	 * @wbp.parser.entryPoint
@@ -341,8 +363,8 @@ public class MainView {
 		nowyRachunekBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		nowyRachunekBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(!newInvoice.isVisible())
-					newInvoice.setIsVisible(true);
+				if(!newInvoiceFrame.isVisible())
+					newInvoiceFrame.setIsVisible(true);
 			}
 		});
 		nowyRachunekBtn.setBounds(btnX, btnX, 200, 36);
@@ -387,7 +409,6 @@ public class MainView {
 		btnSalesReports.setBackground(new Color(135, 206, 235));
 		btnSalesReports.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//TODO
 				if(!salesRepFrame.isVisible())
 					salesRepFrame.setIsVisible(true);
 			}
@@ -409,12 +430,14 @@ public class MainView {
 		btnCustomers.setBounds(btnX, btnY, 200, 36);
 		frame.getContentPane().add(btnCustomers);
 		
-		JButton btnRepakReport = new JButton("Repak");
+		JButton btnRepakReport = new JButton(jLang.get(cs.BTN_REPAK_REPORT).toString());
 		btnRepakReport.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		btnRepakReport.setBackground(new Color(204, 255, 255));
 		btnRepakReport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(frame, "W trakcie tworzenia");
+				// TODO
+				if(!repakRepFrame.isVisible())
+					repakRepFrame.setIsVisible(true);
 			}
 		});
 		btnY += yOffset;
@@ -495,7 +518,7 @@ public class MainView {
 	}
 
 	public InvoiceAddEdit getInvoiceAEFrame() {
-		return this.newInvoice;
+		return this.newInvoiceFrame;
 	}
 
 }

@@ -34,6 +34,7 @@ import objects.CustomerBusiness;
 import objects.CustomerInd;
 import objects.Invoice;
 import objects.Item;
+import objects.RepakROne;
 import utility.Logger;
 
 public class DatabaseManager {
@@ -76,9 +77,12 @@ public class DatabaseManager {
 	}
 
 	private Connection connect() {
+//		System.out.println("1conn "+js.get(cs.DB_URL).toString()+"\n");
 		try {
 			Class.forName(cdb.JDBC_DRIVER);
 			Connection conn = DriverManager.getConnection(js.get(cs.DB_URL).toString(), js.get(cs.DB_USER).toString(), js.get(cs.DB_PASS).toString());
+//			System.out.println("conn "+js.get(cs.DB_URL).toString()+"\n"+conn.toString());
+//			this.executeQuery(conn, cdb.USE_DATABASE+js.get(cs.DB_USER).toString());
 			return conn;
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Connection Error: "+ex.getMessage());
@@ -157,7 +161,7 @@ public class DatabaseManager {
 //	add new record	
 	public void addNewRecord(String table, ArrayList<?> list) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("TODO"); 
 	}
 
 //	TODO
@@ -264,6 +268,8 @@ public class DatabaseManager {
 					isIndividual = true;
 				else isIndividual = false;
 				list =  populateCustomersList(rs, (ArrayList<Customer>)list, isIndividual);
+			} else if (q.contains(ConstDB.TableNames.TB_REPAK.getName())) {
+				list = populateRepakList(rs, (ArrayList<RepakROne>) list);
 			} else {
 				list =  populateStringList(rs, (ArrayList<String>)list);
 			}
@@ -466,6 +472,66 @@ public class DatabaseManager {
 			list.add(s);
 		}
 		return list;
+	}
+	
+	private ArrayList<?> populateRepakList(ResultSet rs, ArrayList<RepakROne> list) {
+		ResultSetMetaData rsmd;
+		try {
+			rsmd = rs.getMetaData();
+			int colNum = rsmd.getColumnCount();
+			while(rs.next()){
+				RepakROne i = cretateRepakReport(rs, colNum);
+				list.add(i);
+			}
+		} catch (SQLException e) {
+			log.logError(" "+this.getClass().getName()+"\tPOPULATE REPAK LIST E\t"+e.getMessage());
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+
+
+	private RepakROne cretateRepakReport(ResultSet rs, int colNum) throws SQLException {
+		String  date = "";
+		int soldCarTyres = 0, fittedCarTyres = 0, boughtCarTyres = 0;
+		int soldAgriTyres = 0, fittedAgriTyres = 0, boughtAgriTyres = 0;
+		int returnedCarTyres = 0, returnedAgriTyres = 0;
+		for(int i = 1 ; i <= colNum; i++){
+//			System.out.println(i + " "+ rs.getString(i));
+			if(!rs.getString(i).isEmpty()) {
+				switch (i) {
+				case 1:
+					date = rs.getString(i);
+					break;
+				case 2:
+					soldCarTyres = Integer.parseInt(rs.getString(i));
+					break;
+				case 3:
+					fittedCarTyres = Integer.parseInt(rs.getString(i));
+					break;
+				case 4:
+					boughtCarTyres = Integer.parseInt(rs.getString(i));
+					break;
+				case 5:
+					soldAgriTyres = Integer.parseInt(rs.getString(i));
+					break;
+				case 6:
+					fittedAgriTyres = Integer.parseInt(rs.getString(i));
+					break;
+				case 7:
+					boughtAgriTyres = Integer.parseInt(rs.getString(i));
+					break;
+				case 8:
+					returnedCarTyres = Integer.parseInt(rs.getString(i));
+					break;
+				case 9:
+					returnedAgriTyres = Integer.parseInt(rs.getString(i));
+					break;
+				}
+			}
+		}
+		return new RepakROne(this, this.cdb, this.cn, this.cs, date, soldCarTyres, fittedCarTyres, boughtCarTyres, soldAgriTyres, fittedAgriTyres, boughtAgriTyres, returnedCarTyres, returnedAgriTyres);
 	}
 
 	public ArrayList<Item> populateItemList(ResultSet rs, ArrayList<Item> list) {
