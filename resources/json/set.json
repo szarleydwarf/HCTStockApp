@@ -2,9 +2,10 @@
 	"lang":"eng.json",
 	"starting":"true",
 
-	"db host":"jdbc:mysql://192.168.43.179:3306/hct_stock",
+	"db host":"jdbc:mysql://127.0.0.1:3306/hct_stock",
 	"db user":"hct",
 	"db pass":"pass1234",
+
 
 	"invoice folder path":"_documents\\invoices\\",
 	"sales folder path":"_documents\\sales\\",

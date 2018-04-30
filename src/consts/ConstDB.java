@@ -87,7 +87,7 @@ public class ConstDB {
 	public final String TB_INVOICE_DISCOUNT = "discount";
 	public final String TB_INVOICE_IS_PERCENT = "ispercent";
 	public final String TB_INVOICE_TOTAL = "total";
-	public final String TB_INVOICE_DATE = "date";
+//	public final String TB_INVOICE_DATE = "date";
 	public final String TB_INVOICE_FILE_NAME = "file_name";
 	
 	//stock table column names
@@ -106,10 +106,11 @@ public class ConstDB {
 	public final String SELECT_ALL_ITEMS = this.SELECT_STAR  + this.FROM + TableNames.TB_STOCK.getName();
 	public final String SELECT_ALL_CUSTOMERS_I = this.SELECT_STAR  + this.FROM + TableNames.TB_CUSTOMERS.getName();
 	public final String SELECT_ALL_CUSTOMERS_B = this.SELECT + TableNames.TB_BUSINESS.getName() + ".* " + this.FROM + TableNames.TB_BUSINESS.getName();
-	public final String SELECT_ALL_INVOICES = this.SELECT_STAR + this.FROM + TableNames.TB_INVOICES.getName();
-	public final String SELECT_LAST_INVOICE = this.SELECT + "id" + this.FROM + TableNames.TB_INVOICES.getName() + this.ODER_BY  + "id" + this.DESC + this.LIMIT + "1;";
+	public final String SELECT_ALL_INVOICES = this.SELECT_STAR + this.FROM + TableNames.TB_INVOICES.getName() + this.ODER_BY + this.DATE + this.DESC;
+	public final String SELECT_LAST_INVOICE = this.SELECT + "id" + this.FROM + TableNames.TB_INVOICES.getName() + this.ODER_BY  + this.ID + this.DESC + this.LIMIT + "1;";
 
 	public final String SELECT_ALL_REPAK_REPORTS = this.SELECT_STAR + this.FROM + TableNames.TB_REPAK.getName();;
 	public final String SELECT_CAR = this.SELECT_STAR + this.FROM + TableNames.TB_CARS.getName() + this.WHERE + this.ID + this.EQUAL;
+	public final String GET_LAST_MONTH = this.SELECT + this.DATE + this.FROM + TableNames.TB_REPAK.getName();
 
 }

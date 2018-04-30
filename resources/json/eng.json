@@ -30,7 +30,7 @@
 	"delete_msg":"You sure you want to delete this item, it is not recoverable process.",
 	"typed":"Typed in",
 	"suggested":"Suggested",
-	"enter search fraze":"Enter frase to search",
+	"enter search fraze":"Enter phrase to search",
 
 	"months names":[
 		"January",
@@ -48,6 +48,8 @@
 	],
 
 	"tyre categories":["Car", "Agri"],
+	"items cat":["Car", "Agri", "Tubes", "Shop"],
+	"items codes":["TRC", "TRA", "TB", "SH", "SR", "OT", "CW"],
 
 	"years":["2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034", "2035"],
 	"sale report headings":["Month", "Costs", "Sale", "Profit"],

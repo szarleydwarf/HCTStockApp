@@ -10,8 +10,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -180,6 +182,7 @@ public class MainView {
 		loadClasses();
 //		TODO
 //		check last database last backup - do it if necessary
+		checkLastDBUpdate();
 		test();
 	}
 
@@ -191,7 +194,7 @@ public class MainView {
 		logger.setShortDate(todayS);
 		
 		todayYM = dh.getRevDateYM();
-		logger.logInfo(" Dates set"+todayYM);
+		logger.logInfo(" Dates set "+todayYM);
 	}
 
 	private static void loadClasses() {
@@ -228,9 +231,13 @@ public class MainView {
 		logger.logInfo("Logger Init");
 		msh = new MiscHelper(logger, cs, jLang);
 
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols( new Locale("en", "UK"));
+		symbols.setDecimalSeparator('.');
+		symbols.setGroupingSeparator('\'');
+
 		df_3_2 = new DecimalFormat(cs.DECIMAL_FORMAT_3_2);
-		df_4_2 = new DecimalFormat(cs.DECIMAL_FORMAT_4_2);
-		df_5_2 = new DecimalFormat(cs.DECIMAL_FORMAT_5_2);
+		df_4_2 = new DecimalFormat(cs.DECIMAL_FORMAT_4_2, symbols);
+		df_5_2 = new DecimalFormat(cs.DECIMAL_FORMAT_5_2, symbols);
 	}
 
 	private static void loadManagers() {
@@ -298,6 +305,15 @@ public class MainView {
 			return false;
 		}
 	}
+
+	private static void checkLastDBUpdate() {
+		// TODO
+		String lastUpdate = "";
+		String lastMonth = dm.selectData(cdb.GET_LAST_MONTH);
+		System.out.println("last month "+lastMonth);
+		
+	}
+
 
 	/**
 	 * Create the application.

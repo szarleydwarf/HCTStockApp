@@ -77,9 +77,12 @@ public class DatabaseManager {
 	}
 
 	private Connection connect() {
+//		System.out.println("1conn "+js.get(cs.DB_URL).toString()+"\n");
 		try {
 			Class.forName(cdb.JDBC_DRIVER);
 			Connection conn = DriverManager.getConnection(js.get(cs.DB_URL).toString(), js.get(cs.DB_USER).toString(), js.get(cs.DB_PASS).toString());
+//			System.out.println("conn "+js.get(cs.DB_URL).toString()+"\n"+conn.toString());
+//			this.executeQuery(conn, cdb.USE_DATABASE+js.get(cs.DB_USER).toString());
 			return conn;
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(null, "Connection Error: "+ex.getMessage());
@@ -158,7 +161,7 @@ public class DatabaseManager {
 //	add new record	
 	public void addNewRecord(String table, ArrayList<?> list) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("TODO"); 
 	}
 
 //	TODO

@@ -20,7 +20,6 @@ public class ConstStrings {
 	public final String SALE_REPORT_HEADINGS = "sale report headings";
 	public final String REPAK_REPORT_HEADINGS = "repak report headings";
 	public final String REPAK_TB_COL_NAMES = "repak tb col names";
-	public final String TYRES_CATEGORY = "tyre categories";
 
 	// ITEM CODES
 	public final String TYRE_CODE_C = "TRC";
@@ -30,7 +29,7 @@ public class ConstStrings {
 	public final String SHOP_CODE = "SH";
 	public final String OTHER_CODE = "OT";
 	public final String CARWASH_CODE = "CW";
-	public final String[] ITEM_CODES = {"TRC", "TRA", "TB", "SR", "SH", "OT", "CW"};
+	public final String[] ITEM_CODES = {"TRC", "TRA", "TB", "SH", "SR", "OT", "CW"};
 	
 	// CUSTOMER CODES
 	public final String CUST_IND_CODE = "C_";
@@ -63,8 +62,8 @@ public class ConstStrings {
 	public final String SPECIAL_CHAR_PATTERN = "^.*[^a-zA-Z0-9\\d\\s,].*$";	
 	public final String INTEGER_PATTERN = "^-?\\d+$";
 	public final String DECIMAL_FORMAT_3_2 = "000.00";
-	public final String DECIMAL_FORMAT_4_2 = "0000.00";
-	public final String DECIMAL_FORMAT_5_2 = "00000.00";
+	public final String DECIMAL_FORMAT_4_2 = "0,000.00";
+	public final String DECIMAL_FORMAT_5_2 = "00,000.00";
 
 	public final String DEFAULT_REGISTRATION = "00AA0000";
 	
@@ -129,6 +128,9 @@ public class ConstStrings {
 
 
 	// JSON LANG PACKET
+	public final String TYRES_CATEGORY = "tyre categories";
+	public final String ITEM_CATEGORY = "items cat";
+
 	public final String BTN_NEXT = "next";
 	public final String BTN_SAVE = "save";
 	public final String FILL_UP = "fill_up";
