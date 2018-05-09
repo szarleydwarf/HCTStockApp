@@ -386,7 +386,7 @@ public class DisplayStock {
 				if(deleted) refreashTable();
 			 }
 		} else {
-			log.logError(jl.get(cs.ITEM_DELETING_ERROR).toString());
+			log.log(cs.ERR_LOG, jl.get(cs.ITEM_DELETING_ERROR).toString());
 			System.out.println("Delete NULL");
 		}
 	}
@@ -396,7 +396,7 @@ public class DisplayStock {
 		if(i != null){
 			openEditFrame(i);
 		} else {
-			log.logError(jl.get(cs.ITEM_EDITION_ERROR).toString());
+			log.log(cs.ERR_LOG, jl.get(cs.ITEM_EDITION_ERROR).toString());
 			System.out.println("Edit NULL");
 		}
 	}

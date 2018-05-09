@@ -162,7 +162,7 @@ public class MainView {
 		}
 		boolean saved = msh.saveJSON(cp.JSON_SETTINGS_PATH, jo);
 		if(!saved)
-			logger.logError("Fail to save JSON file in MAIN updateJSONSettings().");
+			logger.log(cs.ERR_LOG, "Fail to save JSON file in MAIN updateJSONSettings().");
 	}
 
 	private static void loader() {
@@ -194,7 +194,7 @@ public class MainView {
 		logger.setShortDate(todayS);
 		
 		todayYM = dh.getRevDateYM();
-		logger.logInfo(" Dates set "+todayYM);
+		logger.log(cs.INFO_LOG, " Dates set "+todayYM);
 	}
 
 	private static void loadClasses() {
@@ -211,7 +211,7 @@ public class MainView {
 		newItemFrame = new ItemAddNew(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2, repakRepFrame, todayYM);
 		
 		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
-		logger.logInfo("Classes loaded");
+		logger.log(cs.INFO_LOG, "Classes loaded");
 	}
 
 	private static void loadConst() {
@@ -228,7 +228,7 @@ public class MainView {
 		fh = new FileHelper();
 
 		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
-		logger.logInfo("Logger Init");
+		logger.log(cs.INFO_LOG, "Logger Init");
 		msh = new MiscHelper(logger, cs, jLang);
 
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols( new Locale("en", "UK"));
@@ -244,13 +244,13 @@ public class MainView {
 		System.out.println("loadManagers");
 		try {
 			dm = new DatabaseManager(logger, todayL, cdb, cn, cs, cp, jSettings, df_3_2);
-			logger.logInfo("DM Init");
+			logger.log(cs.INFO_LOG, "DM Init");
 
 		} catch (FileNotFoundException e) {
-			logger.logError("FileNotFoundException DM in Main "+e.getMessage());
+			logger.log(cs.ERR_LOG, "FileNotFoundException DM in Main "+e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			logger.logError("IOException DM in Main "+e.getMessage());
+			logger.log(cs.ERR_LOG, "IOException DM in Main "+e.getMessage());
 			e.printStackTrace();
 		}
 //		get customer list
@@ -259,7 +259,7 @@ public class MainView {
 		stmng = new StockManager(dm, cdb, cn, cs);
 		//get invoices list
 		invmng = new InvoiceManager(dm, cdb, cn, cs);		
-		logger.logInfo("Mangers Init");
+		logger.log(cs.INFO_LOG, "Mangers Init");
 	}
 
 	private static void loadJsonFiles() {
@@ -271,13 +271,13 @@ public class MainView {
 			jUser = (JSONObject) parser.parse(new FileReader(cp.JSON_USER_PATH));
 			jLang = loadLanguage();
 		} catch (FileNotFoundException e1) {
-			logger.logError(todayL+" loadJsonDefaultLang E1 FILE NOT FOUND "+"\t"+e1.getMessage());
+			logger.log(cs.ERR_LOG, todayL+" loadJsonDefaultLang E1 FILE NOT FOUND "+"\t"+e1.getMessage());
 			e1.printStackTrace();
 		} catch (IOException e2) {
-			logger.logError(todayL+" loadJsonDefaultLang E2 IOException "+"\t"+e2.getMessage());
+			logger.log(cs.ERR_LOG, todayL+" loadJsonDefaultLang E2 IOException "+"\t"+e2.getMessage());
 			e2.printStackTrace();
 		} catch (ParseException e3) {
-			logger.logError(todayL+" loadJsonDefaultLang E3 ParseException"+"\t"+e3.getMessage());
+			logger.log(cs.ERR_LOG, todayL+" loadJsonDefaultLang E3 ParseException"+"\t"+e3.getMessage());
 			e3.printStackTrace();
 		}
 		
@@ -332,7 +332,7 @@ public class MainView {
 	 * @wbp.parser.entryPoint
 	 */
 	private void initialize() {
-		logger.logInfo("MAIN Init");
+		logger.log(cs.INFO_LOG, "MAIN Init");
 		Color color = msh.getColor(cs.APP, cs, jSettings);
 		int btnX = 16, btnY = 22, yOffset = 48, frameW = 240, frameH = 480;
 		

@@ -75,7 +75,7 @@ public class PDFCreator {
 			try {
 				pdd = createInvoice(i, customer);
 			} catch (IOException e) {
-				log.logError(jl.get(cs.PDF_CREATION_ERROR).toString());
+				log.log(cs.ERR_LOG, jl.get(cs.PDF_CREATION_ERROR).toString());
 				e.printStackTrace();
 			}
 		} else if (docType.equals(cs.PDF_SALE_REPORT)){
@@ -84,7 +84,7 @@ public class PDFCreator {
 			try {
 				pdd = createSaleRep(data, header);
 			} catch (IOException e) {
-				log.logError(jl.get(cs.PDF_CREATION_ERROR).toString());
+				log.log(cs.ERR_LOG, jl.get(cs.PDF_CREATION_ERROR).toString());
 				e.printStackTrace();
 			}
 		} else if (docType.equals(cs.PDF_STOCK_REPORT)){

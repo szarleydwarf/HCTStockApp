@@ -94,7 +94,7 @@ public class MiscHelper {
             file.flush();
             return true;
         } catch (IOException e) {
-        	log.logError("Fail to save JSON file in "+this.getClass().getName() + ". E: " + e.getMessage());
+        	log.log(cs.ERR_LOG, "Fail to save JSON file in "+this.getClass().getName() + ". E: " + e.getMessage());
             e.printStackTrace();
         }
         return false;

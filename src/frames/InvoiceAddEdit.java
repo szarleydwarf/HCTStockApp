@@ -362,10 +362,10 @@ public class InvoiceAddEdit {
 				try {
 					printer.printDoc(invPath);
 				} catch (IOException e) {
-					log.logError(js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+					log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
 					e.printStackTrace();
 				} catch (PrinterException e) {
-					log.logError(js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+					log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
 					e.printStackTrace();
 				}
 			}
@@ -1096,7 +1096,7 @@ public class InvoiceAddEdit {
 						goBack();
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
-						log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
+						log.log(cs.ERR_LOG, jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
 						e.printStackTrace();
 					}
 				} else if(dialogResult == JOptionPane.NO_OPTION) {

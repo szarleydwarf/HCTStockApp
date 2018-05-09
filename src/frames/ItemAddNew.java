@@ -404,7 +404,7 @@ public class ItemAddNew {
 					JOptionPane.showMessageDialog(frame, jl.get(cs.SAVED_MSG).toString());
 					frame.dispose();
 				}else{
-					log.logError(" - " + this.getClass().getName() + " ~ " + jl.get(cs.ITEM_ADD_ERROR).toString());
+					log.log(cs.ERR_LOG, " - " + this.getClass().getName() + " ~ " + jl.get(cs.ITEM_ADD_ERROR).toString());
 					JOptionPane.showMessageDialog(frame, jl.get(cs.ITEM_ADD_ERROR).toString());
 				}
 			}

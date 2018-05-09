@@ -9,6 +9,8 @@ public class ConstStrings {
 	public final String APP = "app";
 	public final String CHECKBOX_LBL = "I/B";
 	public final String PDF_EXT = ".pdf";
+	public final String ERR_LOG = "ERR_";
+	public final String INFO_LOG = "INFO_";
 
 	//DATE RELATED
 	public final String[] YEARS_NO_STRING = {"2017", "2018", "2019", "2020"};

@@ -18,8 +18,8 @@ public class Logger {
 		this.defaultFolderPath = folderPath;
 	}
 
-	public void logError(String msg){
-		String fileName = this.dh.getFormatedDate()+".txt";
+	public void log(String fName, String msg){
+		String fileName = fName+this.dh.getFormatedDate()+".txt";
 		String filePathName = this.defaultFolderPath+ "\\"+fileName;
 		
 		boolean folderExist = this.fh.createFolderIfNotExist(defaultFolderPath);		
@@ -36,28 +36,6 @@ public class Logger {
 			JOptionPane.showMessageDialog(null, "Nie udalo sie zapisac logga\n"+e.getMessage());
 			e.printStackTrace();
 		}	
-	}
-	
-	public void logInfo(String msg) {
-		String fileName = "INFO_"+this.dh.getFormatedDate()+".txt";
-		String filePathName = this.defaultFolderPath+ "\\"+fileName;
-		
-		boolean folderExist = this.fh.createFolderIfNotExist(defaultFolderPath);		
-		boolean fileExist = this.fh.createFileIfNotExist(filePathName);
-		
-		try {
-			FileWriter write = new FileWriter(filePathName, true);
-			PrintWriter printLine = new PrintWriter(write);
-			printLine.printf("%s"+"%n", this.getTodayLong() + "\t" + msg);
-			printLine.close();
-			
-		} catch (IOException e) {
-			//TODO add JPane with error msg#
-			JOptionPane.showMessageDialog(null, "Nie udalo sie zapisac logga\n"+e.getMessage());
-			e.printStackTrace();
-		}	
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void setShortDate(String today) {

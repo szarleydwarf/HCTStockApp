@@ -119,7 +119,6 @@ public class SalesReports {
 		fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
 		fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
 		color = msh.getColor(cs.APP, cs, js);
-
 	}
 
 	/**
@@ -152,7 +151,7 @@ public class SalesReports {
 		frame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, lblW, lblH);
 		frame.getContentPane().setLayout(null);
 		frame.setTitle(jl.get(cs.BTN_SALES_REPORT).toString());
-
+/*
 		// BORDERS
 		TitledBorder lblTB = msh.createBorders(jl.get(cs.BTN_SALES_REPORT).toString(), Color.YELLOW);
 		TitledBorder lblDP = msh.createBorders(jl.get(cs.LBL_DAILY_REPORT).toString(), Color.YELLOW);
@@ -254,10 +253,10 @@ public class SalesReports {
 					try {
 						printer.printDoc(path);
 					} catch (IOException e) {
-						log.logError(js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
 						e.printStackTrace();
 					} catch (PrinterException e) {
-						log.logError(js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
 						e.printStackTrace();
 					}
 				}
@@ -274,15 +273,15 @@ public class SalesReports {
 						try {
 							printer.printDoc(path);
 						} catch (IOException e) {
-							log.logError(js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
 							e.printStackTrace();
 						} catch (PrinterException e) {
-							log.logError(js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
 							e.printStackTrace();
 						}
 					}
 //				} else {
-//					log.logError(jl.get(cs.PRINTING_PDF_ERROR).toString());
+//					log.log(cs.ERR_LOG, jl.get(cs.PRINTING_PDF_ERROR).toString());
 //				}
 			}			
 		});
@@ -343,6 +342,7 @@ public class SalesReports {
 		});
 		
 		populateTabel(lblX+10, lblY+10, lblW/2, lblH/2, lblTB.getTitle());
+		*/
 	}
 
 	protected boolean printSalesReport(String path, boolean b) {
@@ -363,7 +363,7 @@ public class SalesReports {
 				return true;
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
-				log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
+				log.log(cs.ERR_LOG, jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
 				e.printStackTrace();
 				return false;
 			}
