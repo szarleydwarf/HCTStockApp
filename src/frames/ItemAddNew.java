@@ -496,7 +496,7 @@ public class ItemAddNew {
 	
 	public void setIsVisible(boolean b){
 		initialize();
-		i = new Item(dm, cdb, cn, cs, df, "", "", 0,0,0,0,0);
+		i = new Item(dm, cdb, cn, cs, df, "", "", 0.00,0,0,0,0);
 
 		frame.setVisible(b);
 	}

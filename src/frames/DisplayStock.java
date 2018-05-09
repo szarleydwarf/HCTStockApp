@@ -556,8 +556,8 @@ public class DisplayStock {
 	
 		if(!itemCode.isEmpty())i.setCode(itemCode); else i.setCode(cs.OTHER_CODE);
 		if(!tfName.getText().isEmpty())i.setName(tfName.getText());
-		if(!tfCost.getText().isEmpty())i.setCost(Double.parseDouble(df.format(Double.parseDouble(tfCost.getText()))));
-		if(!tfPrice.getText().isEmpty())i.setPrice(Double.parseDouble(df.format(Double.parseDouble(tfPrice.getText()))));
+		if(!tfCost.getText().isEmpty())i.setCost(Double.parseDouble(tfCost.getText()));
+		if(!tfPrice.getText().isEmpty())i.setPrice(Double.parseDouble(tfPrice.getText()));
 		if(!tfQnt.getText().isEmpty())i.setQnt(Integer.parseInt(tfQnt.getText()));
 		
 		if(chbVAT.isSelected()) i.setAddVat((byte) 1); else i.setAddVat((byte) 0);

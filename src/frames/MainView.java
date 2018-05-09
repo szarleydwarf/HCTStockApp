@@ -208,7 +208,7 @@ public class MainView {
 		repakRepFrame = new RepakReport(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, msh, dh, fh);
 
 		newInvoiceFrame = new InvoiceAddEdit(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, jUser, msh, dh, fh, stmng, cmng, invmng, repakRepFrame, carBrandList, df_3_2);
-		newItemFrame = new ItemAddNew(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_4_2, repakRepFrame, todayYM);
+		newItemFrame = new ItemAddNew(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2, repakRepFrame, todayYM);
 		
 		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
 		logger.logInfo("Classes loaded");
@@ -233,7 +233,7 @@ public class MainView {
 
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols( new Locale("en", "UK"));
 		symbols.setDecimalSeparator('.');
-		symbols.setGroupingSeparator('\'');
+		symbols.setGroupingSeparator(' ');
 
 		df_3_2 = new DecimalFormat(cs.DECIMAL_FORMAT_3_2);
 		df_4_2 = new DecimalFormat(cs.DECIMAL_FORMAT_4_2, symbols);

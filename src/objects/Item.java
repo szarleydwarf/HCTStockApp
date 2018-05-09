@@ -84,17 +84,21 @@ public class Item {
 	}
 
 	private void calculateCost(double p_cost) {
+//		System.out.println("1 pcost "+p_cost);
 		if(this.getAddVat() == 1)
 			p_cost  = p_cost * cn.VAT;
 		
+//		System.out.println("2 pcost "+p_cost);
 		// TODO - different transport cost depending, company depend
 		if (this.getAddTransportCost() == 1)
 			p_cost = p_cost + cn.TRANSPORT_COST_DALY;
 		
+//		System.out.println("3 pcost "+p_cost);
 		if(this.getAddVEMCCharge() == 1)
 			p_cost = p_cost + cn.REPAK_CHARGE;
 		
-		this.cost = Double.parseDouble(this.df.format(p_cost));
+//		System.out.println("4 pcost "+p_cost);
+		this.cost = p_cost;//Double.parseDouble(this.df.format(p_cost));
 	}
 
 	private void calculatePrice() {
@@ -106,7 +110,7 @@ public class Item {
 			this.price = tCost + 20;
 		else
 			this.price = profit;
-		this.price = Double.parseDouble(this.df.format(this.price));
+//		this.price = Double.parseDouble(this.df.format(this.price));
 //		System.out.println("price "+profit + " - " + tCost + " - " + this.price);
 	}
 	
@@ -122,7 +126,7 @@ public class Item {
 		if(vemc == 1)
 			p_cost = p_cost + cn.REPAK_CHARGE;
 		
-		this.cost = Double.parseDouble(this.df.format(p_cost));
+		this.cost = p_cost;//Double.parseDouble(this.df.format(p_cost));
 		return df.format(p_cost);
 	}
 	
@@ -136,7 +140,7 @@ public class Item {
 			price = tCost + 20;
 		else
 			price = profit;
-		this.price = Double.parseDouble(this.df.format(price));
+		this.price = price;//Double.parseDouble(this.df.format(price));
 		return df.format(price);
 	}
 	
