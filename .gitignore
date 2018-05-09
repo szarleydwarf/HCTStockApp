@@ -9,3 +9,4 @@ bin/
 *.pdf
 *.pdf
 resources/t.java
+*.sql
