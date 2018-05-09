@@ -151,7 +151,7 @@ public class SalesReports {
 		frame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, lblW, lblH);
 		frame.getContentPane().setLayout(null);
 		frame.setTitle(jl.get(cs.BTN_SALES_REPORT).toString());
-/*
+
 		// BORDERS
 		TitledBorder lblTB = msh.createBorders(jl.get(cs.BTN_SALES_REPORT).toString(), Color.YELLOW);
 		TitledBorder lblDP = msh.createBorders(jl.get(cs.LBL_DAILY_REPORT).toString(), Color.YELLOW);
@@ -168,7 +168,7 @@ public class SalesReports {
 		lblDayPreviewFrame.setFont(fonts_title);
 		lblDayPreviewFrame.setBounds(lblW/2+16, lblY, lblW/2-40, lblH/3);
 		frame.getContentPane().add(lblDayPreviewFrame);
-		
+/*		
 		JLabel lblDayPreview = new JLabel("");
 		lblDayPreview.setBorder(lblDP);
 		lblDayPreview.setFont(fonts_title);
@@ -188,7 +188,7 @@ public class SalesReports {
 		frame.getContentPane().add(lblMonthPreview);
 		previewReport(lblMonthPreview, lblMP.getTitle());
 		
-		
+/*		
 		// TEXTFIELDS
 
 		// DROPDOWN MENU
