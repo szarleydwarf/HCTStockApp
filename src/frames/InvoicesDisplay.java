@@ -235,7 +235,6 @@ public class InvoicesDisplay {
 		forPreview = new String[cs.INVOICES_TB_HEADINGS.length];
 		for (int i = 0; i < forPreview.length; i++) {
 			forPreview[i] = (String) tm.getValueAt(row, i);
-//			System.out.println("fp "+forPreview[i]);
 		}
 		
 	}

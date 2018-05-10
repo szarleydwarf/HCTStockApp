@@ -346,7 +346,6 @@ public class InvoiceAddEdit {
 			public void actionPerformed(ActionEvent arg0) {
 				checkIsBusiness();
 				PDDocument pdf = null;
-				System.out.println("Saving !");
 				String invPath = getInvoicePath();
 				pdf = createPDFDInvoice(invPath);
 			}
@@ -354,7 +353,6 @@ public class InvoiceAddEdit {
 		
 		btnPrint.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("Printing !");
 				checkIsBusiness();
 				PDDocument pdf = null;
 				String invPath = getInvoicePath();
@@ -659,7 +657,6 @@ public class InvoiceAddEdit {
 				}
 			}
 		}
-		System.out.println("collectDataForInvoice\n\tEND "+i.getCustId());
 		return i;
 	}
 
@@ -684,7 +681,6 @@ public class InvoiceAddEdit {
 					int tQ = repakReport.getTyresSold(d, b);
 					int t = Integer.parseInt(modTBchosen.getValueAt(i, 3).toString());
 					
-					System.out.println("tQ "+tQ+" / "+t+" "+d+" "+sHeadings[col]);
 					tQ = tQ + t;
 					repakReport.updateRepakList(d, sHeadings[col], tQ);
 					repakReport.setList(repakReport.listUpdate());
@@ -1050,6 +1046,8 @@ public class InvoiceAddEdit {
 			t = msh.splitStringRemoveSpecialChars(str, cs.COMA);
 		else if(str.contains(cs.AMP))
 			t[0] = str.substring(str.indexOf(cs.AMP)+1);
+		else
+			t[0] = str;
 		Customer c = null;
 //TODO - need to improve
 		if(t != null)
@@ -1221,7 +1219,6 @@ public class InvoiceAddEdit {
 		String s = forPreview[1].substring(forPreview[1].indexOf(cs.AMP));
 		customer = this.getCustomer(s);
 		
-		System.out.println("CUST "+s+" / "+customer.isBusiness());
 		if(customer != null)
 			isBusiness = customer.isBusiness();
 		else
@@ -1246,6 +1243,7 @@ public class InvoiceAddEdit {
 		lastInvoice = ""+invoice.getId();
 		initialize();
 // TODO
+		
 		customer = this.cm.findByID(invoice.getCustId());
 		
 		String str = cs.AT;

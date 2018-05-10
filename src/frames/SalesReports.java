@@ -168,13 +168,13 @@ public class SalesReports {
 		lblDayPreviewFrame.setFont(fonts_title);
 		lblDayPreviewFrame.setBounds(lblW/2+16, lblY, lblW/2-40, lblH/3);
 		frame.getContentPane().add(lblDayPreviewFrame);
-/*		
+
 		JLabel lblDayPreview = new JLabel("");
 		lblDayPreview.setBorder(lblDP);
 		lblDayPreview.setFont(fonts_title);
 		lblDayPreview.setBounds(lblW/2+24, lblY, lblW/2-46, lblH/3);
 		frame.getContentPane().add(lblDayPreview);
-		previewReport(lblDayPreview, lblDP.getTitle());
+//		previewReport(lblDayPreview, lblDP.getTitle());
 
 		JLabel lblMonthPreviewFrame = new JLabel("");
 		lblMonthPreviewFrame.setBorder(lblMP);
@@ -186,9 +186,8 @@ public class SalesReports {
 		lblMonthPreview.setFont(fonts_title);
 		lblMonthPreview.setBounds(lblW/2+24, lblH/3+10, lblW/2-46, lblH/3);
 		frame.getContentPane().add(lblMonthPreview);
-		previewReport(lblMonthPreview, lblMP.getTitle());
+//		previewReport(lblMonthPreview, lblMP.getTitle());
 		
-/*		
 		// TEXTFIELDS
 
 		// DROPDOWN MENU
@@ -216,6 +215,7 @@ public class SalesReports {
 		cbYear.setSelectedIndex(year);
 		cbYear.setBounds(cbMonth.getX()+cbMonth.getWidth()+16, (lblH/2)+jcbYOffset, jcbW*2, jcbH);
 		frame.getContentPane().add(cbYear);
+			
 		
 		// BUTTONS
 		int btnX = (frame.getWidth() - cn.BACK_BTN_X_OFFSET),
@@ -292,7 +292,7 @@ public class SalesReports {
 				if(a.getSource() == cbDays ){
 					JComboBox cb = (JComboBox) a.getSource();
 					dayOfReport = cb.getSelectedItem().toString();
-					previewReport(lblDayPreview, lblDP.getTitle());
+//					previewReport(lblDayPreview, lblDP.getTitle());
 				}		
 			}
 		});
@@ -303,7 +303,7 @@ public class SalesReports {
 				if(a.getSource() == cbMonthDaily ){
 					JComboBox cb = (JComboBox) a.getSource();
 					monthOfReportD = cb.getSelectedItem().toString();
-					previewReport(lblDayPreview, lblDP.getTitle());
+//					previewReport(lblDayPreview, lblDP.getTitle());
 				}		
 			}
 		});
@@ -314,7 +314,7 @@ public class SalesReports {
 				if(a.getSource() == cbYearDaily ){
 					JComboBox cb = (JComboBox) a.getSource();
 					yearOfReportD = cb.getSelectedItem().toString();
-					previewReport(lblDayPreview, lblDP.getTitle());
+//					previewReport(lblDayPreview, lblDP.getTitle());
 				}		
 			}
 		});
@@ -325,7 +325,7 @@ public class SalesReports {
 				if(a.getSource() == cbMonth ){
 					JComboBox cb = (JComboBox) a.getSource();
 					monthOfReport = cb.getSelectedItem().toString();
-					previewReport(lblMonthPreview, lblMP.getTitle());
+//					previewReport(lblMonthPreview, lblMP.getTitle());
 				}		
 			}
 		});
@@ -336,13 +336,13 @@ public class SalesReports {
 				if(a.getSource() == cbYear ){
 					JComboBox cb = (JComboBox) a.getSource();
 					yearOfReport = cb.getSelectedItem().toString();
-					previewReport(lblMonthPreview, lblMP.getTitle());
+//					previewReport(lblMonthPreview, lblMP.getTitle());
 				}		
 			}
 		});
 		
 		populateTabel(lblX+10, lblY+10, lblW/2, lblH/2, lblTB.getTitle());
-		*/
+//		*/
 	}
 
 	protected boolean printSalesReport(String path, boolean b) {
@@ -430,7 +430,10 @@ public class SalesReports {
 		if(name.equals(jl.get(cs.BTN_SALES_REPORT).toString())) {
 			data = new String [this.cn.NUM_OF_MONTHS][sReportHeadings.length];
 			data = fillData(data);
-			table = msh.createTable(fonts, data, sReportHeadings, name, 60, 60);
+			for(String[] ss : data)
+				for(String s : ss)
+					log.log("test_", s);
+//			table = msh.createTable(fonts, data, sReportHeadings, name, 60, 60);
 		} 
 		spSalesList = new JScrollPane(table);
 		spSalesList.setBounds(x, y+12, w-28, h-28);
@@ -529,7 +532,6 @@ public class SalesReports {
 			
 			data[i][0] = dateMMYYYY;
 			lists = findInList(dateMMYYYY, dateYYYYMM);
-			
 			if (lists != ""){
 				String[]tokens = msh.splitString(lists, cs.SEMICOLON);
 				double costs = 0, prices = 0, diff = 0;
@@ -545,6 +547,7 @@ public class SalesReports {
 						
 						costs += cost;
 						prices += price;
+						log.log(i +" list ", s+": "+qnt + " - " + cost + " - " + price);
 					}
 				}
 				data[i][1] = "€ "+ df.format(costs);
