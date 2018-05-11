@@ -174,7 +174,7 @@ public class SalesReports {
 		lblDayPreview.setFont(fonts_title);
 		lblDayPreview.setBounds(lblW/2+24, lblY, lblW/2-46, lblH/3);
 		frame.getContentPane().add(lblDayPreview);
-//		previewReport(lblDayPreview, lblDP.getTitle());
+		previewReport(lblDayPreview, lblDP.getTitle());
 
 		JLabel lblMonthPreviewFrame = new JLabel("");
 		lblMonthPreviewFrame.setBorder(lblMP);
@@ -186,7 +186,7 @@ public class SalesReports {
 		lblMonthPreview.setFont(fonts_title);
 		lblMonthPreview.setBounds(lblW/2+24, lblH/3+10, lblW/2-46, lblH/3);
 		frame.getContentPane().add(lblMonthPreview);
-//		previewReport(lblMonthPreview, lblMP.getTitle());
+		previewReport(lblMonthPreview, lblMP.getTitle());
 		
 		// TEXTFIELDS
 
@@ -411,10 +411,14 @@ public class SalesReports {
 		} else if(name.equals(jl.get(cs.LBL_MONTHLY_REPORT).toString())) {
 			String dateYM = yearOfReport+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReport));
 			String dateMY = dfm.format(dh.getMonthNumber(monthOfReport))+cs.MINUS+yearOfReport;
+			log.log("preview month"," "+name + " " + dateMY + " " + dateYM);
 			data = new String [this.cs.ITEM_CODES.length][sReportHeadings.length];
 			data = fillReportData(data, dateMY, dateYM);
 			this.DATA_M = null;
 			this.DATA_M = data;
+			for(String[] ss : data)
+				for(String s : ss)
+					log.log("preview S"," "+name + s);
 		}
 		jlbl.setText("");
 		msh.displayDataInLabel(jlbl, df, data, sReportHeadings);
@@ -433,7 +437,7 @@ public class SalesReports {
 			for(String[] ss : data)
 				for(String s : ss)
 					log.log("test_", s);
-//			table = msh.createTable(fonts, data, sReportHeadings, name, 60, 60);
+			table = msh.createTable(fonts, data, sReportHeadings, name, 60, 60);
 		} 
 		spSalesList = new JScrollPane(table);
 		spSalesList.setBounds(x, y+12, w-28, h-28);
@@ -443,6 +447,7 @@ public class SalesReports {
 	private String[][] fillReportData(String[][] data, String dMY, String dYM) {
 		data = fillFirst(data);
 		String lists = findInList(dMY, dYM);
+		log.log("frd ", ""+lists);
 		if(lists != ""){
 			data = splitToData(lists, data);
 		}
@@ -453,8 +458,10 @@ public class SalesReports {
 		String[]tokens = msh.splitString(list, cs.SEMICOLON);
 		double diff = 0;
 		data = msh.setZeros(data);
+		log.log("stdt ", ""+tokens.length);
 		for (String s : tokens) {
 			if(!s.isEmpty()){
+				log.log("std ", ""+s);
 
 				int qnt = Integer.parseInt(s.substring(0, s.indexOf(cs.STAR)));
 				String code = s.substring(s.indexOf(cs.STAR)+1, s.indexOf(cs.UNDERSCORE)); 
@@ -492,6 +499,10 @@ public class SalesReports {
 					data[6][1] = getValue(data[5][1], cost);
 					data[6][2] = getValue(data[5][2], price);
 					data[6][3] = getValue(data[5][3], diff);
+				} else {
+					data[5][1] = getValue(data[4][1], cost);
+					data[5][2] = getValue(data[4][2], price);
+					data[5][3] = getValue(data[4][3], diff);
 				}
 			}
 		}
@@ -532,22 +543,29 @@ public class SalesReports {
 			
 			data[i][0] = dateMMYYYY;
 			lists = findInList(dateMMYYYY, dateYYYYMM);
+//			log.log(dateYYYYMM + " list " + dateMMYYYY, i + " " + lists);
 			if (lists != ""){
 				String[]tokens = msh.splitString(lists, cs.SEMICOLON);
 				double costs = 0, prices = 0, diff = 0;
-				
-				for(String s : tokens){
-					if(!s.isEmpty()){
-						int qnt = Integer.parseInt(s.substring(0, s.indexOf(cs.STAR)));
-						double cost = Double.parseDouble(s.substring(s.indexOf(cs.HASH)+1, s.indexOf(cs.AT)));
-						double price = Double.parseDouble(s.substring(s.indexOf(cs.AT)+1));
+//				log.log("tokens " + dateMMYYYY + " " + dateMMYYYY+" ", i +" " + tokens.length);
+//				for(String s : tokens){
+				for (int j = 0; j < tokens.length; j++) {
+					
+//					log.log(i +" s in tokens " + dateMMYYYY +" ", tokens[j]);
+					if(!tokens[j].isEmpty()){
+						int qnt = Integer.parseInt(tokens[j].substring(0, tokens[j].indexOf(cs.STAR)));
+						double cost = Double.parseDouble(tokens[j].substring(tokens[j].indexOf(cs.HASH)+1, tokens[j].indexOf(cs.AT)));
+						double price = Double.parseDouble(tokens[j].substring(tokens[j].indexOf(cs.AT)+1));
 						
 						cost = cost * qnt;
 						price = price * qnt;
 						
 						costs += cost;
 						prices += price;
-						log.log(i +" list ", s+": "+qnt + " - " + cost + " - " + price);
+//						log.log(i +" list " + dateMMYYYY, s+": "+qnt + " - " + cost + " - " + price);
+					} else {
+						costs += 0;
+						prices += 0;
 					}
 				}
 				data[i][1] = "€ "+ df.format(costs);

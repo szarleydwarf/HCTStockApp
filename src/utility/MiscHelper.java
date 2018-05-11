@@ -201,7 +201,8 @@ public class MiscHelper {
 	}
 
 	public String[] splitStringRemoveSpecialChars(String str, String c) {
-		String[] t = new String[2];
+		int count = countChar(str, cs.SEMICOLON);
+		String[] t = new String[count];
 		if(str.contains(c)){
 //			System.out.println("msh 1. "+str.matches(cs.SPECIAL_CHAR_PATTERN));
 			
@@ -218,7 +219,8 @@ public class MiscHelper {
 		return t;
 	}
 	public String[] splitString(String str, String c) {
-		String[] t = new String[2];
+		int count = countChar(str, cs.SEMICOLON);
+		String[] t = new String[count+1];
 		if(str.contains(c)){
 			t = str.split(c, -1);
 		} else {
@@ -227,6 +229,12 @@ public class MiscHelper {
 		return t;
 	}
 	
+	public int countChar(String str, String ch) {
+		int split = str.split("\\"+ch,-1).length-1;
+		System.out.println("split = " + split);
+		return split;
+	}
+
 	public TitledBorder createBorders(String title, Color color) {
 		Border b = BorderFactory.createLineBorder(color);
 		return BorderFactory.createTitledBorder(b, title);
@@ -273,7 +281,8 @@ public class MiscHelper {
 		
 		JTableHeader header = table.getTableHeader();
 		header.setBackground(Color.black);
-		header.setForeground(Color.yellow);
+		header.setForeground(Color.RED);
+		table.setTableHeader(header);
 		
 		return table;
 	}
@@ -342,6 +351,7 @@ public class MiscHelper {
 			}
 		}
 		s += "</body></html>";
+		log.log("display msh ", s);
 	}
 	
 	public String[][] setZeros(String[][] data) {
