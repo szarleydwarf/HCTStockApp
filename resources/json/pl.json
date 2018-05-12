@@ -34,18 +34,18 @@
 	"enter search fraze":"Wpisz fraze do wyszukania.",
 
 	"months names":[
-		"Styczen",
-		"Luty",
-		"Marzec",
-		"Kwiecien",
-		"Maj",
-		"Czerwiec",
-		"Lipiec",
-		"Sierpien",
-		"Wrzesien",
-		"Pazdziernik",
-		"Listopad",
-		"Grudzien"
+		"January",
+		"February",
+		"March",
+		"April",
+		"May",
+		"June",
+		"July",
+		"August",
+		"September",
+		"October",
+		"November",
+		"December"
 	],
 
 	"tyre categories":["Osobowe", "Rolnicze"],
