@@ -231,7 +231,6 @@ public class MiscHelper {
 	
 	public int countChar(String str, String ch) {
 		int split = str.split("\\"+ch,-1).length-1;
-		System.out.println("split = " + split);
 		return split;
 	}
 

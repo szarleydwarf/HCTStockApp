@@ -98,7 +98,7 @@ public class InvoiceAddEdit {
 	private JTextField tfPrice;
 	private JTextField tfQnt;
 	private JTable tbStock;
-	private JTextField tfCustomers;
+//	private JTextField tfCustomers;
 	private JCheckBox chbInd;
 	private JSONObject ju;
 
@@ -136,19 +136,19 @@ public class InvoiceAddEdit {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
-			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					InvoiceAddEdit window = new InvoiceAddEdit();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
+//			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					InvoiceAddEdit window = new InvoiceAddEdit();
+//					window.frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the application.
@@ -237,7 +237,7 @@ public class InvoiceAddEdit {
 		tfBrands.setBounds(lblX+6, lblY+20, brandW, lbltfH);
 		frame.getContentPane().add(tfBrands);
 
-		tfCustomers = new JTextField(jl.get(cs.TF_CUST_HINT).toString());
+		JTextField tfCustomers = new JTextField(jl.get(cs.TF_CUST_HINT).toString());
 		tfCustomers.setFont(fonts);
 		tfCustomers.setColumns(10);
 		int custW = (int)(lblW*0.6);
@@ -1229,7 +1229,6 @@ public class InvoiceAddEdit {
 		this.date = forPreview[2];
 		
 		setSaleTable(forPreview[3]);
-		
 		frame.setVisible(b);
 		setLastInvoiceNum();
 		updateInvoiceLblFP(forPreview[1]);
@@ -1245,19 +1244,18 @@ public class InvoiceAddEdit {
 // TODO
 		
 		customer = this.cm.findByID(invoice.getCustId());
-		
 		String str = cs.AT;
 		if(customer != null) {
 			isBusiness = customer.isBusiness();
 			if(!customer.isBusiness()) {
-				str = ((CustomerInd) customer).getCar().getBrandString();
-				str += " " + cs.HASH;
+				str += ((CustomerInd) customer).getCar().getBrandString();
+				str += " " + cs.AMP;
 				str += ((CustomerInd) customer).getCar().getRegistration();
 			} else if(customer.isBusiness()) {
-				str = ((CustomerBusiness) customer).getVATTaxNUM() +cs.COMA + ((CustomerBusiness) customer).getCompName()+cs.COMA+((CustomerBusiness) customer).getCompAddress();
+				str += ((CustomerBusiness) customer).getVATTaxNUM() +cs.COMA + ((CustomerBusiness) customer).getCompName()+cs.COMA+((CustomerBusiness) customer).getCompAddress();
 			}
 		} else {
-			str = jl.get(cs.OTHER_STRING).toString() + cs.AT + jl.get(cs.NONAME).toString();
+			str += jl.get(cs.OTHER_STRING).toString() + cs.AT + jl.get(cs.NONAME).toString();
 			isBusiness = false;
 		}
 		
