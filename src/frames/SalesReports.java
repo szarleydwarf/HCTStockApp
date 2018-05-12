@@ -469,29 +469,29 @@ public class SalesReports {
 					data[1][2] = getValue(data[1][2], price);
 					data[1][3] = getValue(data[1][3], diff);
 				} else if(code.equals(cs.TUBE_CODE)){
-					data[2][1] = getValue(data[1][1], cost);
-					data[2][2] = getValue(data[1][2], price);
-					data[2][3] = getValue(data[1][3], diff);
+					data[2][1] = getValue(data[2][1], cost);
+					data[2][2] = getValue(data[2][2], price);
+					data[2][3] = getValue(data[2][3], diff);
 				} else if(code.equals(cs.SERVICE_CODE)){
-					data[3][1] = getValue(data[2][1], cost);
-					data[3][2] = getValue(data[2][2], price);
-					data[3][3] = getValue(data[2][3], diff);
+					data[3][1] = getValue(data[3][1], cost);
+					data[3][2] = getValue(data[3][2], price);
+					data[3][3] = getValue(data[3][3], diff);
 				} else if(code.equals(cs.SHOP_CODE)){
-					data[4][1] = getValue(data[3][1], cost);
-					data[4][2] = getValue(data[3][2], price);
-					data[4][3] = getValue(data[3][3], diff);
+					data[4][1] = getValue(data[4][1], cost);
+					data[4][2] = getValue(data[4][2], price);
+					data[4][3] = getValue(data[4][3], diff);
 				} else if(code.equals(cs.OTHER_CODE)){
-					data[5][1] = getValue(data[4][1], cost);
-					data[5][2] = getValue(data[4][2], price);
-					data[5][3] = getValue(data[4][3], diff);
+					data[5][1] = getValue(data[5][1], cost);
+					data[5][2] = getValue(data[5][2], price);
+					data[5][3] = getValue(data[5][3], diff);
 				} else if(code.equals(cs.CARWASH_CODE)){
-					data[6][1] = getValue(data[5][1], cost);
-					data[6][2] = getValue(data[5][2], price);
-					data[6][3] = getValue(data[5][3], diff);
+					data[6][1] = getValue(data[6][1], cost);
+					data[6][2] = getValue(data[6][2], price);
+					data[6][3] = getValue(data[6][3], diff);
 				} else {
-					data[5][1] = getValue(data[4][1], cost);
-					data[5][2] = getValue(data[4][2], price);
-					data[5][3] = getValue(data[4][3], diff);
+					data[5][1] = getValue(data[5][1], cost);
+					data[5][2] = getValue(data[5][2], price);
+					data[5][3] = getValue(data[5][3], diff);
 				}
 			}
 		}

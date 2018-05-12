@@ -73,7 +73,7 @@
 
 	"other":"INNE",
 	"noname":"BEZ NAZWY",
-	"pdf sales header":"#     OPIS                    CENA   ILOSC",
+	"pdf sales header":"#     OPIS                       CENA   ILOSC",
 
 	"tf cust hint":"Firma,wpisz w podanej kolejnosci:VAT,NAZWA,ADRES",
 	"save pdf":"Czy chcesz zapisac rachunek takze jako plik PDF?",

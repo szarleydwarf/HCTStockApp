@@ -351,7 +351,7 @@ public class MiscHelper {
 			}
 		}
 		s += "</body></html>";
-		log.log("display msh ", s);
+//		log.log("display msh ", s);
 	}
 	
 	public String[][] setZeros(String[][] data) {

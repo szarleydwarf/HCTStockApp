@@ -356,23 +356,25 @@ public class DisplayStock {
 	}
 
 	protected void fillLabels(JLabel lblTyreCost, JLabel lblTyrePrices, JLabel lblQnt, String code) {
-		double cSum = 0, pSum = 0;
+		double cSum = 0, pSum = 0, pQ = 0;
 		int q = 0;
 		for (int i = 0; i < sm.getList().size(); i++) {
 //			System.out.println("Code "+code+"\t"+sm.getList().get(i).getCode());
 			if(sm.getList().get(i).getCode().equals(code)){
 				double ct = sm.getList().get(i).getCost();
 				double pt = sm.getList().get(i).getPrice();
-				q+=sm.getList().get(i).getQnt();
+				q = sm.getList().get(i).getQnt();
+
 				ct = ct * q;
 				pt = pt * q;
 				cSum += ct;
 				pSum += pt;
+				pQ += q;
 			}
 		}
 		lblTyreCost.setText(cs.EURO+df.format(cSum));
 		lblTyrePrices.setText(cs.EURO+df.format(pSum));
-		lblQnt.setText(""+q);
+		lblQnt.setText(""+pQ);
 	}
 
 	protected void deleteRecord() {
