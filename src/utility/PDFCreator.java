@@ -66,25 +66,25 @@ public class PDFCreator {
 	}
 
 	//create pdf sending doctype???
-	public PDDocument createPDF(String docType, Object object1, Object obj2) {
+	public PDDocument createPDF(String docType, Object object1, Object obj2, String date) {
 		// TODO Auto-generated method stub
 		PDDocument pdd = null;
 		if (docType.equals(cs.PDF_INVOICE)) {
 			Invoice i = (Invoice) object1;
 			Customer customer = (Customer) obj2;
 			try {
-				pdd = createInvoice(i, customer);
+				pdd = createInvoice(i, customer, date);
 			} catch (IOException e) {
-				log.logError(jl.get(cs.PDF_CREATION_ERROR).toString());
+				log.log(cs.ERR_LOG, jl.get(cs.PDF_CREATION_ERROR).toString());
 				e.printStackTrace();
 			}
 		} else if (docType.equals(cs.PDF_SALE_REPORT)){
 			String[][] data = (String[][]) object1;
 			String header = (String) obj2;
 			try {
-				pdd = createSaleRep(data, header);
+				pdd = createSaleRep(data, header, date);
 			} catch (IOException e) {
-				log.logError(jl.get(cs.PDF_CREATION_ERROR).toString());
+				log.log(cs.ERR_LOG, jl.get(cs.PDF_CREATION_ERROR).toString());
 				e.printStackTrace();
 			}
 		} else if (docType.equals(cs.PDF_STOCK_REPORT)){
@@ -108,14 +108,14 @@ public class PDFCreator {
 	}
 
 	// CREATE INVOICE SECTION
-	private PDDocument createInvoice(Invoice i, Customer customer) throws IOException {
+	private PDDocument createInvoice(Invoice i, Customer customer, String date) throws IOException {
 		PDDocument pdd = new PDDocument();
 		PDPage page = new PDPage();
 		pdd.addPage(page);
 		PDPageContentStream cst = new PDPageContentStream(pdd, page);
 		// fill company details
 		addLogo(cst, pdd);
-		fillCompanyDetails(cst);
+		fillCompanyDetails(cst, date);
 		// fill for who
 		fillCustomerDetails(cst, i, customer);
 		// fill what sold
@@ -211,15 +211,15 @@ public class PDFCreator {
 	// END CREATE INVOICE SECTION
 	
 	// SALES REPORTS SECTION
-	private PDDocument createSaleRep(String[][] data, String header) throws IOException {
+	private PDDocument createSaleRep(String[][] data, String header, String date) throws IOException {
 		PDDocument pdd = new PDDocument();
 		PDPage page = new PDPage();
 		pdd.addPage(page);
 		PDPageContentStream cst = new PDPageContentStream(pdd, page);
 		
 		addLogo(cst, pdd);
-		fillCompanyDetails(cst);
-		fillDate(cst);
+		fillCompanyDetails(cst, date);
+		fillDate(cst, date);
 		fillSalesReport(cst, data, header);
 		
 		cst.close();
@@ -282,7 +282,7 @@ public class PDFCreator {
 	// END SALES REPORTS SECTION
 
 	// GENERAL SECTION
-	private void fillDate(PDPageContentStream cst) throws IOException {
+	private void fillDate(PDPageContentStream cst, String date) throws IOException {
 		cst.beginText();
 		cst.setNonStrokingColor(Color.BLACK);
 		cst.setFont(PDType1Font.COURIER_BOLD, this.fonts_title);
@@ -307,7 +307,7 @@ public class PDFCreator {
 	}
 
 //TODO add accountancy copy boolean
-	private void fillCompanyDetails(PDPageContentStream cst) throws IOException {
+	private void fillCompanyDetails(PDPageContentStream cst, String date) throws IOException {
 		cst.beginText();
 		cst.setNonStrokingColor(Color.BLACK);
 		cst.setFont(PDType1Font.COURIER, this.fonts_title);

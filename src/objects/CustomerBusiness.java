@@ -177,6 +177,7 @@ public class CustomerBusiness extends Customer {
     }
 
     public boolean find(String str1, String str2) {
+    	// TODO should be equals but for some reason it doesnt work with this
 		return (this.getCompName().equals(str1) && this.getVATTaxNUM().equals(str2));
 	}
 

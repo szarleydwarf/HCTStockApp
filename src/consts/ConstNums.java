@@ -40,4 +40,6 @@ public class ConstNums {
 	public final float PDF_DOC_X_OFFSET = 25f;
 	public final int DESCRPTION_LENGTH = 48;
 	public final int SALE_REPORT_PAD_LENGTH = 18;
+	public final int CAR_TYRE_COL = 1;
+	public final int AGRI_TYRE_COL = 4;
 }

@@ -62,7 +62,7 @@ public class Printer {
 			this.printerName = js.get(cs.DEF_PRINTER_NAME).toString();
 		}catch(NullPointerException ne){
 			this.printerName = cs.PRINTER_NAME;
-			log.logError(jl.get(cs.PRINTER_NAME_ERROR).toString());
+			log.log(cs.ERR_LOG, jl.get(cs.PRINTER_NAME_ERROR).toString());
 		}
 }
 	

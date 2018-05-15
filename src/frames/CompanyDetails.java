@@ -80,7 +80,7 @@ public class CompanyDetails {
 					CompanyDetails window = new CompanyDetails();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
-					log.logError("Fail to display Company Details window. "+e.getMessage());
+					log.log(cs.ERR_LOG, "Fail to display Company Details window. "+e.getMessage());
 					e.printStackTrace();
 				}
 			}

@@ -5,10 +5,13 @@ public class ConstStrings {
 	public static final String PDF_SALE_REPORT = "sale pdf";
 	public static final String PDF_STOCK_REPORT = "stock pdf";
 	public static final String PDF_REPAK_REPORT = "repak pdf";
+	public final String ITEM_QNT_ZERO = "item qnt zero";
 	public final String ENTER_DETAILS = "company details";
 	public final String APP = "app";
 	public final String CHECKBOX_LBL = "I/B";
 	public final String PDF_EXT = ".pdf";
+	public final String ERR_LOG = "ERR_";
+	public final String INFO_LOG = "INFO_";
 
 	//DATE RELATED
 	public final String[] YEARS_NO_STRING = {"2017", "2018", "2019", "2020"};
@@ -90,6 +93,7 @@ public class ConstStrings {
 	public final String UNDERSCORE = "_";
 	public final String SEMICOLON = ";";
 	public final String SLASH = "\\";
+	public final String SPACE = " ";
 	
 	// JSON USER FILE
 	public final String JSON_COMPANY_NAME = "company";
@@ -210,4 +214,6 @@ public class ConstStrings {
 	public final String PRINTING_PDF_ERROR = "pdf print error";
 	public final String PRINTER_NAME_ERROR = "printer name error";
 	public final String NONAME = "noname";
+	public final String NOT_INT_ERROR = "not int";
+	public final String NOT_DOUBLE_ERROR = "not double";
 }

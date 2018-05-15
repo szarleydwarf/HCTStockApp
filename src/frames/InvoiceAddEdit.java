@@ -98,7 +98,7 @@ public class InvoiceAddEdit {
 	private JTextField tfPrice;
 	private JTextField tfQnt;
 	private JTable tbStock;
-	private JTextField tfCustomers;
+//	private JTextField tfCustomers;
 	private JCheckBox chbInd;
 	private JSONObject ju;
 
@@ -136,19 +136,19 @@ public class InvoiceAddEdit {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
-			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					InvoiceAddEdit window = new InvoiceAddEdit();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
+//			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					InvoiceAddEdit window = new InvoiceAddEdit();
+//					window.frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the application.
@@ -161,7 +161,7 @@ public class InvoiceAddEdit {
 			PDFCreator PDFCreator, Printer printer,
 			JSONObject jSettings, JSONObject jLang, JSONObject jUser, 
 			MiscHelper mSH, DateHelper DH, FileHelper FH,
-			StockManager SM, CustomersManager cMng, InvoiceManager invMng, RepakReport rr,
+			StockManager SM, CustomersManager cMng, InvoiceManager invMng, RepakReport RR,
 			ArrayList<String> carList, DecimalFormat DF) {
 		this.mainView = main;
 		this.jl = jLang;
@@ -180,7 +180,7 @@ public class InvoiceAddEdit {
 		this.dh = DH;
 		this.pdfCreator = PDFCreator;
 		this.printer = printer;
-		this.repakReport = rr;
+		this.repakReport = RR;
 
 		this.sm = SM;
 		this.cm = cMng;
@@ -237,7 +237,7 @@ public class InvoiceAddEdit {
 		tfBrands.setBounds(lblX+6, lblY+20, brandW, lbltfH);
 		frame.getContentPane().add(tfBrands);
 
-		tfCustomers = new JTextField(jl.get(cs.TF_CUST_HINT).toString());
+		JTextField tfCustomers = new JTextField(jl.get(cs.TF_CUST_HINT).toString());
 		tfCustomers.setFont(fonts);
 		tfCustomers.setColumns(10);
 		int custW = (int)(lblW*0.6);
@@ -346,7 +346,6 @@ public class InvoiceAddEdit {
 			public void actionPerformed(ActionEvent arg0) {
 				checkIsBusiness();
 				PDDocument pdf = null;
-				System.out.println("Saving !");
 				String invPath = getInvoicePath();
 				pdf = createPDFDInvoice(invPath);
 			}
@@ -354,7 +353,6 @@ public class InvoiceAddEdit {
 		
 		btnPrint.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("Printing !");
 				checkIsBusiness();
 				PDDocument pdf = null;
 				String invPath = getInvoicePath();
@@ -362,10 +360,10 @@ public class InvoiceAddEdit {
 				try {
 					printer.printDoc(invPath);
 				} catch (IOException e) {
-					log.logError(js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+					log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
 					e.printStackTrace();
 				} catch (PrinterException e) {
-					log.logError(js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+					log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
 					e.printStackTrace();
 				}
 			}
@@ -659,13 +657,16 @@ public class InvoiceAddEdit {
 				}
 			}
 		}
-		System.out.println("collectDataForInvoice\n\tEND "+i.getCustId());
 		return i;
 	}
 
 	protected void updateDBStock(String listOfServices) {
+		boolean updateRepak = false, TRC = false, TRA = false;
+		String d = date.substring(0, date.lastIndexOf(cs.MINUS));
+		int ct = repakReport.getTyresSold(d, true), at = repakReport.getTyresSold(d, false), t;
 		for(int i = 0; i < modTBchosen.getRowCount(); i++){
 			Item it = null;
+			t = 0;
 			if(modTBchosen.getValueAt(i, 0).toString().equals(cs.SHOP_CODE)
 					|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TUBE_CODE)
 					|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE_C)
@@ -674,23 +675,29 @@ public class InvoiceAddEdit {
 			}
 			if(it != null){
 				it.updateRecord();
-				if(it.getCode().equals(cs.TYRE_CODE_C) || it.getCode().equals(cs.TYRE_CODE_A)){
-					JSONArray jArr = (JSONArray) jl.get(cs.REPAK_TB_COL_NAMES);
-					String[]sHeadings = msh.json2Array(jArr);
-					boolean b = (it.getCode().equals(cs.TYRE_CODE_C)) ? true : false;
-					int col = (it.getCode().equals(cs.TYRE_CODE_C)) ? 1 : 4;
-					String d = date.substring(0, date.lastIndexOf(cs.MINUS));
-					
-					int tQ = repakReport.getTyresSold(d, b);
-					int t = Integer.parseInt(modTBchosen.getValueAt(i, 3).toString());
-					
-					System.out.println("tQ "+tQ+" / "+t+" "+d+" "+sHeadings[col]);
-					tQ = tQ + t;
-					repakReport.updateRepakList(d, sHeadings[col], tQ);
-					repakReport.setList(repakReport.listUpdate());
+				t = Integer.parseInt(modTBchosen.getValueAt(i, 3).toString());
+				if(it.getCode().equals(cs.TYRE_CODE_C)) {
+					TRC = true;
+					ct += t;
+				}
+				if(it.getCode().equals(cs.TYRE_CODE_A)){
+					TRA = true;
+					at += t;
 				}
 			}
 		}
+		//TODO
+		JSONArray jArr = (JSONArray) jl.get(cs.REPAK_TB_COL_NAMES);
+		String[]sHeadings = msh.json2Array(jArr);
+
+		if(TRC){
+			repakReport.updateRepakList(d, sHeadings[cn.CAR_TYRE_COL], ct);
+		}
+		if(TRA){
+			repakReport.updateRepakList(d, sHeadings[cn.AGRI_TYRE_COL], at);
+//			repakReport.setList(repakReport.listUpdate());
+		}
+		repakReport.setList(repakReport.listUpdate());
 	}
 
 	private void checkIsBusiness() {
@@ -710,7 +717,6 @@ public class InvoiceAddEdit {
 			int rc = this.tbChoosen.getRowCount();
 			int cc = this.tbChoosen.getColumnCount();
 			for(int i = 0; i < rc; i++){
-				//1*TR_225/45/18 GOALSTAR V78#@134.74;
 				//qnt
 				s += this.tbChoosen.getModel().getValueAt(i, 3);
 				s += cs.STAR;
@@ -982,7 +988,7 @@ public class InvoiceAddEdit {
 		if(!tfQnt.getText().isEmpty()) tfQntInt = Integer.parseInt(this.tfQnt.getText());
 		else tfQntInt = 1;
 		
-		while(tfQntInt > itemQnt && (!item.getCode().equals(cs.CARWASH_CODE) || !item.getCode().equals(cs.SERVICE_CODE))){
+		while(tfQntInt > itemQnt && !(item.getCode().equals(cs.CARWASH_CODE) || item.getCode().equals(cs.SERVICE_CODE))){
 			JOptionPane.showMessageDialog(frame, "Dostępnych "+itemQnt+"szt.");
 			if(tfQntInt > itemQnt) return;
 		}
@@ -1050,6 +1056,8 @@ public class InvoiceAddEdit {
 			t = msh.splitStringRemoveSpecialChars(str, cs.COMA);
 		else if(str.contains(cs.AMP))
 			t[0] = str.substring(str.indexOf(cs.AMP)+1);
+		else
+			t[0] = str;
 		Customer c = null;
 //TODO - need to improve
 		if(t != null)
@@ -1083,7 +1091,7 @@ public class InvoiceAddEdit {
 				Invoice i = collectDataForInvoice(listOfServices, invoicePath);
 				int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
 				if(dialogResult == JOptionPane.YES_OPTION){
-					pdf = pdfCreator.createPDF(cs.PDF_INVOICE, i, customer);
+					pdf = pdfCreator.createPDF(cs.PDF_INVOICE, i, customer, this.date);
 				}
 				if(update){
 					updateDBStock(listOfServices);
@@ -1096,7 +1104,7 @@ public class InvoiceAddEdit {
 						goBack();
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
-						log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
+						log.log(cs.ERR_LOG, jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
 						e.printStackTrace();
 					}
 				} else if(dialogResult == JOptionPane.NO_OPTION) {
@@ -1221,7 +1229,6 @@ public class InvoiceAddEdit {
 		String s = forPreview[1].substring(forPreview[1].indexOf(cs.AMP));
 		customer = this.getCustomer(s);
 		
-		System.out.println("CUST "+s+" / "+customer.isBusiness());
 		if(customer != null)
 			isBusiness = customer.isBusiness();
 		else
@@ -1232,7 +1239,6 @@ public class InvoiceAddEdit {
 		this.date = forPreview[2];
 		
 		setSaleTable(forPreview[3]);
-		
 		frame.setVisible(b);
 		setLastInvoiceNum();
 		updateInvoiceLblFP(forPreview[1]);
@@ -1246,20 +1252,20 @@ public class InvoiceAddEdit {
 		lastInvoice = ""+invoice.getId();
 		initialize();
 // TODO
-		customer = this.cm.findByID(invoice.getCustId());
 		
+		customer = this.cm.findByID(invoice.getCustId());
 		String str = cs.AT;
 		if(customer != null) {
 			isBusiness = customer.isBusiness();
 			if(!customer.isBusiness()) {
-				str = ((CustomerInd) customer).getCar().getBrandString();
-				str += " " + cs.HASH;
+				str += ((CustomerInd) customer).getCar().getBrandString();
+				str += " " + cs.AMP;
 				str += ((CustomerInd) customer).getCar().getRegistration();
 			} else if(customer.isBusiness()) {
-				str = ((CustomerBusiness) customer).getVATTaxNUM() +cs.COMA + ((CustomerBusiness) customer).getCompName()+cs.COMA+((CustomerBusiness) customer).getCompAddress();
+				str += ((CustomerBusiness) customer).getVATTaxNUM() +cs.COMA + ((CustomerBusiness) customer).getCompName()+cs.COMA+((CustomerBusiness) customer).getCompAddress();
 			}
 		} else {
-			str = jl.get(cs.OTHER_STRING).toString() + cs.AT + jl.get(cs.NONAME).toString();
+			str += jl.get(cs.OTHER_STRING).toString() + cs.AT + jl.get(cs.NONAME).toString();
 			isBusiness = false;
 		}
 		

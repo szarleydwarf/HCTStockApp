@@ -119,7 +119,6 @@ public class SalesReports {
 		fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
 		fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
 		color = msh.getColor(cs.APP, cs, js);
-
 	}
 
 	/**
@@ -169,14 +168,14 @@ public class SalesReports {
 		lblDayPreviewFrame.setFont(fonts_title);
 		lblDayPreviewFrame.setBounds(lblW/2+16, lblY, lblW/2-40, lblH/3);
 		frame.getContentPane().add(lblDayPreviewFrame);
-		
+
 		JLabel lblDayPreview = new JLabel("");
 		lblDayPreview.setBorder(lblDP);
 		lblDayPreview.setFont(fonts_title);
 		lblDayPreview.setBounds(lblW/2+24, lblY, lblW/2-46, lblH/3);
 		frame.getContentPane().add(lblDayPreview);
 		previewReport(lblDayPreview, lblDP.getTitle());
-
+// TODO
 		JLabel lblMonthPreviewFrame = new JLabel("");
 		lblMonthPreviewFrame.setBorder(lblMP);
 		lblMonthPreviewFrame.setFont(fonts_title);
@@ -188,7 +187,6 @@ public class SalesReports {
 		lblMonthPreview.setBounds(lblW/2+24, lblH/3+10, lblW/2-46, lblH/3);
 		frame.getContentPane().add(lblMonthPreview);
 		previewReport(lblMonthPreview, lblMP.getTitle());
-		
 		
 		// TEXTFIELDS
 
@@ -217,6 +215,7 @@ public class SalesReports {
 		cbYear.setSelectedIndex(year);
 		cbYear.setBounds(cbMonth.getX()+cbMonth.getWidth()+16, (lblH/2)+jcbYOffset, jcbW*2, jcbH);
 		frame.getContentPane().add(cbYear);
+			
 		
 		// BUTTONS
 		int btnX = (frame.getWidth() - cn.BACK_BTN_X_OFFSET),
@@ -249,17 +248,18 @@ public class SalesReports {
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO
 				String path = createPdfPath(false);
+				System.out.println("Mpath "+path);
 				boolean pdfCreated = printSalesReport(path, false);
 				if(pdfCreated){
-					try {
-						printer.printDoc(path);
-					} catch (IOException e) {
-						log.logError(js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
-						e.printStackTrace();
-					} catch (PrinterException e) {
-						log.logError(js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
-						e.printStackTrace();
-					}
+//					try {
+//						printer.printDoc(path);
+//					} catch (IOException e) {
+//						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+//						e.printStackTrace();
+//					} catch (PrinterException e) {
+//						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+//						e.printStackTrace();
+//					}
 				}
 			}
 		});
@@ -269,20 +269,21 @@ public class SalesReports {
 			public void actionPerformed(ActionEvent arg0) {
 //				if(DATA != null){
 					String path = createPdfPath(true);
+					System.out.println("Dpath "+path);
 					boolean pdfCreated = printSalesReport(path, true);
 					if(pdfCreated){
-						try {
-							printer.printDoc(path);
-						} catch (IOException e) {
-							log.logError(js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
-							e.printStackTrace();
-						} catch (PrinterException e) {
-							log.logError(js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
-							e.printStackTrace();
-						}
+//						try {
+//							printer.printDoc(path);
+//						} catch (IOException e) {
+//							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+//							e.printStackTrace();
+//						} catch (PrinterException e) {
+//							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+//							e.printStackTrace();
+//						}
 					}
 //				} else {
-//					log.logError(jl.get(cs.PRINTING_PDF_ERROR).toString());
+//					log.log(cs.ERR_LOG, jl.get(cs.PRINTING_PDF_ERROR).toString());
 //				}
 			}			
 		});
@@ -350,10 +351,13 @@ public class SalesReports {
 		PDDocument pdf = null;
 		JSONArray jArr = (JSONArray) jl.get(cs.SALE_REPORT_HEADINGS);
 		String header = createHeader(msh.json2Array(jArr));
+		String date = path.substring(path.lastIndexOf(cs.SPACE)+1, path.lastIndexOf(cs.DOT));
+		date = date.replaceAll(cs.UNDERSCORE, cs.MINUS);
+		System.out.println("DD "+date);
 		if(b)
-			pdf = pdfCreator.createPDF(cs.PDF_SALE_REPORT, DATA_D, header);
+			pdf = pdfCreator.createPDF(cs.PDF_SALE_REPORT, DATA_D, header, date);
 		else
-			pdf = pdfCreator.createPDF(cs.PDF_SALE_REPORT, DATA_M, header);
+			pdf = pdfCreator.createPDF(cs.PDF_SALE_REPORT, DATA_M, header, date);
 		if(pdf != null){
 			try {
 				pdf.save(path);
@@ -363,7 +367,7 @@ public class SalesReports {
 				return true;
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
-				log.logError(jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
+				log.log(cs.ERR_LOG, jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
 				e.printStackTrace();
 				return false;
 			}
@@ -399,7 +403,7 @@ public class SalesReports {
 		String[][] data = null;
 
 		sReportHeadings[0] = "I.C. - ";
-
+//TODO
 		if(name.equals(jl.get(cs.LBL_DAILY_REPORT).toString())) {
 			String dateYMD = yearOfReportD+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReportD))+cs.MINUS+dfm.format(Integer.parseInt(dayOfReport));
 			String dateDMY = dfm.format(Integer.parseInt(dayOfReport))+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReportD))+cs.MINUS+yearOfReportD;
@@ -440,6 +444,7 @@ public class SalesReports {
 	private String[][] fillReportData(String[][] data, String dMY, String dYM) {
 		data = fillFirst(data);
 		String lists = findInList(dMY, dYM);
+//		log.log("frd ", ""+lists);
 		if(lists != ""){
 			data = splitToData(lists, data);
 		}
@@ -452,7 +457,6 @@ public class SalesReports {
 		data = msh.setZeros(data);
 		for (String s : tokens) {
 			if(!s.isEmpty()){
-
 				int qnt = Integer.parseInt(s.substring(0, s.indexOf(cs.STAR)));
 				String code = s.substring(s.indexOf(cs.STAR)+1, s.indexOf(cs.UNDERSCORE)); 
 				double cost = Double.parseDouble(s.substring(s.indexOf(cs.HASH)+1, s.indexOf(cs.AT)));
@@ -470,25 +474,29 @@ public class SalesReports {
 					data[1][2] = getValue(data[1][2], price);
 					data[1][3] = getValue(data[1][3], diff);
 				} else if(code.equals(cs.TUBE_CODE)){
-					data[2][1] = getValue(data[1][1], cost);
-					data[2][2] = getValue(data[1][2], price);
-					data[2][3] = getValue(data[1][3], diff);
+					data[2][1] = getValue(data[2][1], cost);
+					data[2][2] = getValue(data[2][2], price);
+					data[2][3] = getValue(data[2][3], diff);
 				} else if(code.equals(cs.SERVICE_CODE)){
-					data[3][1] = getValue(data[2][1], cost);
-					data[3][2] = getValue(data[2][2], price);
-					data[3][3] = getValue(data[2][3], diff);
+					data[3][1] = getValue(data[3][1], cost);
+					data[3][2] = getValue(data[3][2], price);
+					data[3][3] = getValue(data[3][3], diff);
 				} else if(code.equals(cs.SHOP_CODE)){
-					data[4][1] = getValue(data[3][1], cost);
-					data[4][2] = getValue(data[3][2], price);
-					data[4][3] = getValue(data[3][3], diff);
+					data[4][1] = getValue(data[4][1], cost);
+					data[4][2] = getValue(data[4][2], price);
+					data[4][3] = getValue(data[4][3], diff);
 				} else if(code.equals(cs.OTHER_CODE)){
-					data[5][1] = getValue(data[4][1], cost);
-					data[5][2] = getValue(data[4][2], price);
-					data[5][3] = getValue(data[4][3], diff);
+					data[5][1] = getValue(data[5][1], cost);
+					data[5][2] = getValue(data[5][2], price);
+					data[5][3] = getValue(data[5][3], diff);
 				} else if(code.equals(cs.CARWASH_CODE)){
-					data[6][1] = getValue(data[5][1], cost);
-					data[6][2] = getValue(data[5][2], price);
-					data[6][3] = getValue(data[5][3], diff);
+					data[6][1] = getValue(data[6][1], cost);
+					data[6][2] = getValue(data[6][2], price);
+					data[6][3] = getValue(data[6][3], diff);
+				} else {
+					data[5][1] = getValue(data[5][1], cost);
+					data[5][2] = getValue(data[5][2], price);
+					data[5][3] = getValue(data[5][3], diff);
 				}
 			}
 		}
@@ -529,22 +537,24 @@ public class SalesReports {
 			
 			data[i][0] = dateMMYYYY;
 			lists = findInList(dateMMYYYY, dateYYYYMM);
-			
 			if (lists != ""){
 				String[]tokens = msh.splitString(lists, cs.SEMICOLON);
 				double costs = 0, prices = 0, diff = 0;
-				
-				for(String s : tokens){
-					if(!s.isEmpty()){
-						int qnt = Integer.parseInt(s.substring(0, s.indexOf(cs.STAR)));
-						double cost = Double.parseDouble(s.substring(s.indexOf(cs.HASH)+1, s.indexOf(cs.AT)));
-						double price = Double.parseDouble(s.substring(s.indexOf(cs.AT)+1));
+				for (int j = 0; j < tokens.length; j++) {
+					
+					if(!tokens[j].isEmpty()){
+						int qnt = Integer.parseInt(tokens[j].substring(0, tokens[j].indexOf(cs.STAR)));
+						double cost = Double.parseDouble(tokens[j].substring(tokens[j].indexOf(cs.HASH)+1, tokens[j].indexOf(cs.AT)));
+						double price = Double.parseDouble(tokens[j].substring(tokens[j].indexOf(cs.AT)+1));
 						
 						cost = cost * qnt;
 						price = price * qnt;
 						
 						costs += cost;
 						prices += price;
+					} else {
+						costs += 0;
+						prices += 0;
 					}
 				}
 				data[i][1] = "€ "+ df.format(costs);

@@ -223,8 +223,8 @@ public class InvoicesDisplay {
 					createInvoiceDetails(table.getModel(), row);
 					int id = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
 					invoice = im.getInvoiceByID(id);
-					if(invoice != null)
-						System.out.println("IN "+invoice.getId());
+//					if(invoice != null)
+//						System.out.println("IN "+invoice.getId());
 				}
 			}
 		};
@@ -235,7 +235,6 @@ public class InvoicesDisplay {
 		forPreview = new String[cs.INVOICES_TB_HEADINGS.length];
 		for (int i = 0; i < forPreview.length; i++) {
 			forPreview[i] = (String) tm.getValueAt(row, i);
-//			System.out.println("fp "+forPreview[i]);
 		}
 		
 	}

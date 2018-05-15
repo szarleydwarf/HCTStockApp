@@ -69,17 +69,20 @@ public class CustomersManager {
 		for(Customer c : this.list){
 			if(c instanceof CustomerBusiness){
 				if(str[1] != ""){
-					if(((CustomerBusiness) c).find(str[0], str[1]))
+					if(((CustomerBusiness) c).find(str[0], str[1])) {
 						return c;
+					}
 				} else {
-					if(((CustomerBusiness) c).find(str[0]))
+					if(((CustomerBusiness) c).find(str[0])) {
 						return c;
+					}
 				}
 			}
 
 			if(c instanceof CustomerInd){
-				if(((CustomerInd) c).find(str[0]))
+				if(((CustomerInd) c).find(str[0])){
 					return c;
+				}
 			}
 		}
 		return null;

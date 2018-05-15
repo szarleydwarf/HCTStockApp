@@ -112,5 +112,7 @@ public class ConstDB {
 	public final String SELECT_ALL_REPAK_REPORTS = this.SELECT_STAR + this.FROM + TableNames.TB_REPAK.getName();;
 	public final String SELECT_CAR = this.SELECT_STAR + this.FROM + TableNames.TB_CARS.getName() + this.WHERE + this.ID + this.EQUAL;
 	public final String GET_LAST_MONTH = this.SELECT + this.DATE + this.FROM + TableNames.TB_REPAK.getName();
+	public final String NEW_REPAK_ENTRY = this.INSERT + TableNames.TB_REPAK.getName() + this.VALUES + " (";
+			 
 
 }

@@ -18,7 +18,9 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -94,7 +96,7 @@ public class MiscHelper {
             file.flush();
             return true;
         } catch (IOException e) {
-        	log.logError("Fail to save JSON file in "+this.getClass().getName() + ". E: " + e.getMessage());
+        	log.log(cs.ERR_LOG, "Fail to save JSON file in "+this.getClass().getName() + ". E: " + e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -201,7 +203,8 @@ public class MiscHelper {
 	}
 
 	public String[] splitStringRemoveSpecialChars(String str, String c) {
-		String[] t = new String[2];
+		int count = countChar(str, cs.SEMICOLON);
+		String[] t = new String[count];
 		if(str.contains(c)){
 //			System.out.println("msh 1. "+str.matches(cs.SPECIAL_CHAR_PATTERN));
 			
@@ -218,7 +221,8 @@ public class MiscHelper {
 		return t;
 	}
 	public String[] splitString(String str, String c) {
-		String[] t = new String[2];
+		int count = countChar(str, cs.SEMICOLON);
+		String[] t = new String[count+1];
 		if(str.contains(c)){
 			t = str.split(c, -1);
 		} else {
@@ -227,6 +231,11 @@ public class MiscHelper {
 		return t;
 	}
 	
+	public int countChar(String str, String ch) {
+		int split = str.split("\\"+ch,-1).length-1;
+		return split;
+	}
+
 	public TitledBorder createBorders(String title, Color color) {
 		Border b = BorderFactory.createLineBorder(color);
 		return BorderFactory.createTitledBorder(b, title);
@@ -273,7 +282,8 @@ public class MiscHelper {
 		
 		JTableHeader header = table.getTableHeader();
 		header.setBackground(Color.black);
-		header.setForeground(Color.yellow);
+		header.setForeground(Color.RED);
+		table.setTableHeader(header);
 		
 		return table;
 	}
@@ -342,6 +352,7 @@ public class MiscHelper {
 			}
 		}
 		s += "</body></html>";
+//		log.log("display msh ", s);
 	}
 	
 	public String[][] setZeros(String[][] data) {
@@ -374,5 +385,22 @@ public class MiscHelper {
 
 	private String removeSpecials(String text) {
 		return text.replaceAll("\\D+","");
+	}
+
+	public int getInt(JTextField tfQnt) {
+		try{
+			return Integer.parseInt(tfQnt.getText());
+		} catch(NumberFormatException e){
+			JOptionPane.showMessageDialog(null, jl.get(cs.NOT_INT_ERROR).toString());
+		}
+		return 0;
+	}
+	public double getDouble(JTextField tf) {
+		try{
+			return Double.parseDouble(tf.getText());
+		} catch(NumberFormatException e){
+			JOptionPane.showMessageDialog(null, jl.get(cs.NOT_DOUBLE_ERROR).toString());
+		}
+		return 0;
 	}
 }

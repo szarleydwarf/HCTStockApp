@@ -34,18 +34,18 @@
 	"enter search fraze":"Wpisz fraze do wyszukania.",
 
 	"months names":[
-		"Styczen",
-		"Luty",
-		"Marzec",
-		"Kwiecien",
-		"Maj",
-		"Czerwiec",
-		"Lipiec",
-		"Sierpien",
-		"Wrzesien",
-		"Pazdziernik",
-		"Listopad",
-		"Grudzien"
+		"January",
+		"February",
+		"March",
+		"April",
+		"May",
+		"June",
+		"July",
+		"August",
+		"September",
+		"October",
+		"November",
+		"December"
 	],
 
 	"tyre categories":["Osobowe", "Rolnicze"],
@@ -73,10 +73,8 @@
 
 	"other":"INNE",
 	"noname":"BEZ NAZWY",
-	"pdf sales header":"#     OPIS                    CENA   ILOSC",
 
 	"tf cust hint":"Firma,wpisz w podanej kolejnosci:VAT,NAZWA,ADRES",
-	"save pdf":"Czy chcesz zapisac rachunek takze jako plik PDF?",
 	
 	"item_add_error":"Wystapil blad podczas dodawania nowego przedmiotu. Najprawdopodobniej, wybrany przedmiot zwrocil NULL.",
 	"item_edition_error":"Wystapil blad podczas edycji przedmiotu. Najprawdopodobniej, wybrany przedmiot zwrocil NULL.",
@@ -88,14 +86,20 @@
 	"pdf print error":"Wystapil blad podczas proby wydrukowania pliku PDF. Najprawdopodobniej nie znaleziono dokumentu na dysku. Sprawdz sciezke dostepu.",
 	"printer name error":"Wystapil blad podczas proby znalezienia nazwy domylnej drukarki.",
 	"coma error":"Twoja rejestracja zawiera 'przecinek'. Usun go lub sprawdz czy nie pominales jakichs informacji.(Format wpisu Klienta biznesowego: VAT,NAZWA,ADRES)",
+	
+	"not int":"Wpisz poprawny numer.",
+	"not double":"Wprowadz poprawna kwote.",
+	"item qnt zero":"Ilosc przedmiotow nie moze byc rowna zeru",
 
+	"save pdf":"Czy chcesz zapisac rachunek takze jako plik PDF?",
 	"saved invoice 1":"Rachunek zapisany pomyslnie, PDF nie utworzony.",
 	"saved invoice 2":"Rachunek zapisany pomyslnie, PDF utworzony.",
 	"saved":"Przedmiot zapisany pomyslnie.",
 	"close":"Czy napewno chcesz zamknac te okno?",
 	"search":"Wpisz fraze do wyszukania:",
 
-	"tyre check msg1":"WAZNA INFORMACJA !!!",
-	"tyre check msg2":"Po zmianie opon, sprawdz mocowanie kol,",
-	"tyre check msg3":"po przejechaniu okolo 10 kilometrow."
+	"pdf sales header":"No.     Description                  Price   Qnt",
+	"tyre check msg1":"IMPORTANT !!!",
+	"tyre check msg2":"After tyre change, check the tightening of your wheels,",
+	"tyre check msg3":"after driving around 10 miles."
 }
