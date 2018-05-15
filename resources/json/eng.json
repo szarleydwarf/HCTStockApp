@@ -87,6 +87,9 @@
 	"pdf print error":"There was an error when trying to print a PDF document. Most likely, document not found. Check paths to it.",
 	"printer name error":"There was an error when trying to get default printer name.",
 	"coma error":"Your registration contains 'comma'. Delete it or check if you not missing any information.(Business customer format: VAT,NAME,ADDRESS",
+	"not int":"Please, enter proper 'whole' number",
+	"not double":"Please, enter proper number",
+	"item qnt zero":"Quantity of the item can't be zero",
 
 	"saved invoice 1":"Invoice saved sucessfully, PDF NOT created.",
 	"saved invoice 2":"Invoice saved sucessfully, PDF created.",

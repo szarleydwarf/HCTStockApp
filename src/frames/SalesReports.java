@@ -248,17 +248,18 @@ public class SalesReports {
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO
 				String path = createPdfPath(false);
+				System.out.println("Mpath "+path);
 				boolean pdfCreated = printSalesReport(path, false);
 				if(pdfCreated){
-					try {
-						printer.printDoc(path);
-					} catch (IOException e) {
-						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
-						e.printStackTrace();
-					} catch (PrinterException e) {
-						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
-						e.printStackTrace();
-					}
+//					try {
+//						printer.printDoc(path);
+//					} catch (IOException e) {
+//						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+//						e.printStackTrace();
+//					} catch (PrinterException e) {
+//						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+//						e.printStackTrace();
+//					}
 				}
 			}
 		});
@@ -268,17 +269,18 @@ public class SalesReports {
 			public void actionPerformed(ActionEvent arg0) {
 //				if(DATA != null){
 					String path = createPdfPath(true);
+					System.out.println("Dpath "+path);
 					boolean pdfCreated = printSalesReport(path, true);
 					if(pdfCreated){
-						try {
-							printer.printDoc(path);
-						} catch (IOException e) {
-							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
-							e.printStackTrace();
-						} catch (PrinterException e) {
-							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
-							e.printStackTrace();
-						}
+//						try {
+//							printer.printDoc(path);
+//						} catch (IOException e) {
+//							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+//							e.printStackTrace();
+//						} catch (PrinterException e) {
+//							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+//							e.printStackTrace();
+//						}
 					}
 //				} else {
 //					log.log(cs.ERR_LOG, jl.get(cs.PRINTING_PDF_ERROR).toString());
@@ -349,10 +351,13 @@ public class SalesReports {
 		PDDocument pdf = null;
 		JSONArray jArr = (JSONArray) jl.get(cs.SALE_REPORT_HEADINGS);
 		String header = createHeader(msh.json2Array(jArr));
+		String date = path.substring(path.lastIndexOf(cs.SPACE)+1, path.lastIndexOf(cs.DOT));
+		date = date.replaceAll(cs.UNDERSCORE, cs.MINUS);
+		System.out.println("DD "+date);
 		if(b)
-			pdf = pdfCreator.createPDF(cs.PDF_SALE_REPORT, DATA_D, header);
+			pdf = pdfCreator.createPDF(cs.PDF_SALE_REPORT, DATA_D, header, date);
 		else
-			pdf = pdfCreator.createPDF(cs.PDF_SALE_REPORT, DATA_M, header);
+			pdf = pdfCreator.createPDF(cs.PDF_SALE_REPORT, DATA_M, header, date);
 		if(pdf != null){
 			try {
 				pdf.save(path);

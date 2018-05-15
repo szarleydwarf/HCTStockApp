@@ -18,7 +18,9 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -383,5 +385,22 @@ public class MiscHelper {
 
 	private String removeSpecials(String text) {
 		return text.replaceAll("\\D+","");
+	}
+
+	public int getInt(JTextField tfQnt) {
+		try{
+			return Integer.parseInt(tfQnt.getText());
+		} catch(NumberFormatException e){
+			JOptionPane.showMessageDialog(null, jl.get(cs.NOT_INT_ERROR).toString());
+		}
+		return 0;
+	}
+	public double getDouble(JTextField tf) {
+		try{
+			return Double.parseDouble(tf.getText());
+		} catch(NumberFormatException e){
+			JOptionPane.showMessageDialog(null, jl.get(cs.NOT_DOUBLE_ERROR).toString());
+		}
+		return 0;
 	}
 }

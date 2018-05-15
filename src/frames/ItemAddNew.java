@@ -76,19 +76,19 @@ public class ItemAddNew {
 	/**
 	 * Launch the application.
 	 */
-	public static void main() {
-
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ItemAddNew window = new ItemAddNew();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main() {
+//
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					ItemAddNew window = new ItemAddNew();
+//					window.frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the application.
@@ -107,7 +107,6 @@ public class ItemAddNew {
 		cdb = cDB;
 		cs = cS;
 		cn = cN;
-//		cp = cP;
 		
 		msh = mSH;
 		
@@ -130,7 +129,6 @@ public class ItemAddNew {
 		attributes = fonts_title.getAttributes();
 		attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 		color = msh.getColor(cs.APP, cs, js);
-//		initialize();
 	}
 
 	/**
@@ -177,6 +175,7 @@ public class ItemAddNew {
 		
 		JTextField tfCost = new JTextField();
 		tfCost.setFont(fonts);
+		tfCost.setText("0.00");
 		tfCost.setBounds(xOffset, lblY, tfW, lbltfH);
 		frame.getContentPane().add(tfCost);
 		//TODO - add radio button???
@@ -198,6 +197,7 @@ public class ItemAddNew {
 		
 		JTextField tfPrice = new JTextField();
 		tfPrice.setFont(fonts);
+		tfPrice.setText("0.00");
 		tfPrice.setBounds(xOffset, lblY, tfW, lbltfH);
 		frame.getContentPane().add(tfPrice);
 		border = BorderFactory.createTitledBorder(b, jl.get(cs.LBL_SUGGESTED_PRICE).toString());
@@ -232,6 +232,7 @@ public class ItemAddNew {
 		
 		JTextField tfQnt = new JTextField();
 		tfQnt.setFont(fonts);
+		tfQnt.setText(""+0);
 		tfQnt.setBounds(xOffset, lblY, tfW, lbltfH);
 		frame.getContentPane().add(tfQnt);
 		
@@ -365,26 +366,12 @@ public class ItemAddNew {
 
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				int tqnt = msh.getInt(tfQnt);
 				
 				i = getItem(i, cbCodes, tfName, tfPrice, tfQnt, chbVAT, chbTransport, chbVemc);
 				System.out.println(""+i.toString());
 				itemSaved = sm.addItem(i);
 				if(itemSaved){
-//					JSONArray jArr = (JSONArray) jl.get(cs.REPAK_TB_COL_NAMES);
-//					String[]sHeadings = msh.json2Array(jArr);
-//					int t = 0, tq = 0;
-//					tq = Integer.parseInt(tfQnt.getText());
-//					String d = date.substring(0, date.lastIndexOf(cs.MINUS));
-//					System.out.println("ian "+d+ " " +date);
-//					if(itemCode.equals(cs.TYRE_CODE_C)){
-//						t = repakReport.getTyresInStock(date, true);
-//						tq = t+tq;
-//						repakReport.updateRepakList(date, sHeadings[3], tq);
-//					} else if(itemCode.equals(cs.TYRE_CODE_A)){
-//						t = repakReport.getTyresInStock(date, false);
-//						tq = t+tq;
-//						repakReport.updateRepakList(date, sHeadings[6], tq);
-//					}
 					if(i.getCode().equals(cs.TYRE_CODE_C) || i.getCode().equals(cs.TYRE_CODE_A)){
 						JSONArray jArr = (JSONArray) jl.get(cs.REPAK_TB_COL_NAMES);
 						String[]sHeadings = msh.json2Array(jArr);
@@ -392,11 +379,8 @@ public class ItemAddNew {
 						int col = (i.getCode().equals(cs.TYRE_CODE_C)) ? 3 : 6;
 						
 						int tQ = repakReport.getTyresInStock(date, b);
-						int t = 0;
-						t = Integer.parseInt(tfQnt.getText());
 						
-						System.out.println("ian "+tQ+" / "+t+" "+date+" "+sHeadings[col]);
-						tQ = tQ + t;
+						tQ = tQ + tqnt;
 						repakReport.updateRepakList(date, sHeadings[col], tQ);
 						repakReport.setList(repakReport.listUpdate());
 					}
@@ -407,6 +391,41 @@ public class ItemAddNew {
 					log.log(cs.ERR_LOG, " - " + this.getClass().getName() + " ~ " + jl.get(cs.ITEM_ADD_ERROR).toString());
 					JOptionPane.showMessageDialog(frame, jl.get(cs.ITEM_ADD_ERROR).toString());
 				}
+			}
+		});
+		
+		tfCost.getDocument().addDocumentListener(new DocumentListener() {
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+			}
+			
+			private boolean isNumber(String st) {
+				double dCost;
+				try{
+					dCost = Double.parseDouble(st);
+					return true;
+				} catch(NumberFormatException e){
+					JOptionPane.showMessageDialog(null, jl.get(cs.NOT_INT_ERROR).toString());
+				}
+				
+				return false;
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+				String st = tfCost.getText();
+				//check if a number if no 
+				boolean b = isNumber(st);
+				if(b)System.out.println("true");
+				
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 	}
@@ -474,10 +493,10 @@ public class ItemAddNew {
 		}
 		i.setAddVEMCCharge((byte) vemc);
 
-		if(!cost.equals(cs.EURO) && !cost.isEmpty())
+		if(cost != null && !cost.equals(cs.EURO) && !cost.isEmpty())
 			i.setCost(Double.parseDouble(cost));
 		
-		if(!price.equals(cs.EURO) && !price.isEmpty()) {
+		if(price != null && !price.equals(cs.EURO) && !price.isEmpty()) {
 			String pt = price;
 			if(!isSuggested)
 				pt = tfPrice.getText();
@@ -488,6 +507,7 @@ public class ItemAddNew {
 		if(!tfQnt.getText().isEmpty())i.setQnt(Integer.parseInt(tfQnt.getText()));
 		return i;
 	}
+	
 	public boolean isVisible(){
 		if(frame != null)
 			return frame.isVisible();

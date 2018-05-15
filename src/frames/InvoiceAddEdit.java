@@ -161,7 +161,7 @@ public class InvoiceAddEdit {
 			PDFCreator PDFCreator, Printer printer,
 			JSONObject jSettings, JSONObject jLang, JSONObject jUser, 
 			MiscHelper mSH, DateHelper DH, FileHelper FH,
-			StockManager SM, CustomersManager cMng, InvoiceManager invMng, RepakReport rr,
+			StockManager SM, CustomersManager cMng, InvoiceManager invMng, RepakReport RR,
 			ArrayList<String> carList, DecimalFormat DF) {
 		this.mainView = main;
 		this.jl = jLang;
@@ -180,7 +180,7 @@ public class InvoiceAddEdit {
 		this.dh = DH;
 		this.pdfCreator = PDFCreator;
 		this.printer = printer;
-		this.repakReport = rr;
+		this.repakReport = RR;
 
 		this.sm = SM;
 		this.cm = cMng;
@@ -661,8 +661,12 @@ public class InvoiceAddEdit {
 	}
 
 	protected void updateDBStock(String listOfServices) {
+		boolean updateRepak = false, TRC = false, TRA = false;
+		String d = date.substring(0, date.lastIndexOf(cs.MINUS));
+		int ct = repakReport.getTyresSold(d, true), at = repakReport.getTyresSold(d, false), t;
 		for(int i = 0; i < modTBchosen.getRowCount(); i++){
 			Item it = null;
+			t = 0;
 			if(modTBchosen.getValueAt(i, 0).toString().equals(cs.SHOP_CODE)
 					|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TUBE_CODE)
 					|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE_C)
@@ -671,22 +675,29 @@ public class InvoiceAddEdit {
 			}
 			if(it != null){
 				it.updateRecord();
-				if(it.getCode().equals(cs.TYRE_CODE_C) || it.getCode().equals(cs.TYRE_CODE_A)){
-					JSONArray jArr = (JSONArray) jl.get(cs.REPAK_TB_COL_NAMES);
-					String[]sHeadings = msh.json2Array(jArr);
-					boolean b = (it.getCode().equals(cs.TYRE_CODE_C)) ? true : false;
-					int col = (it.getCode().equals(cs.TYRE_CODE_C)) ? 1 : 4;
-					String d = date.substring(0, date.lastIndexOf(cs.MINUS));
-					
-					int tQ = repakReport.getTyresSold(d, b);
-					int t = Integer.parseInt(modTBchosen.getValueAt(i, 3).toString());
-					
-					tQ = tQ + t;
-					repakReport.updateRepakList(d, sHeadings[col], tQ);
-					repakReport.setList(repakReport.listUpdate());
+				t = Integer.parseInt(modTBchosen.getValueAt(i, 3).toString());
+				if(it.getCode().equals(cs.TYRE_CODE_C)) {
+					TRC = true;
+					ct += t;
+				}
+				if(it.getCode().equals(cs.TYRE_CODE_A)){
+					TRA = true;
+					at += t;
 				}
 			}
 		}
+		//TODO
+		JSONArray jArr = (JSONArray) jl.get(cs.REPAK_TB_COL_NAMES);
+		String[]sHeadings = msh.json2Array(jArr);
+
+		if(TRC){
+			repakReport.updateRepakList(d, sHeadings[cn.CAR_TYRE_COL], ct);
+		}
+		if(TRA){
+			repakReport.updateRepakList(d, sHeadings[cn.AGRI_TYRE_COL], at);
+//			repakReport.setList(repakReport.listUpdate());
+		}
+		repakReport.setList(repakReport.listUpdate());
 	}
 
 	private void checkIsBusiness() {
@@ -706,7 +717,6 @@ public class InvoiceAddEdit {
 			int rc = this.tbChoosen.getRowCount();
 			int cc = this.tbChoosen.getColumnCount();
 			for(int i = 0; i < rc; i++){
-				//1*TR_225/45/18 GOALSTAR V78#@134.74;
 				//qnt
 				s += this.tbChoosen.getModel().getValueAt(i, 3);
 				s += cs.STAR;
@@ -978,7 +988,7 @@ public class InvoiceAddEdit {
 		if(!tfQnt.getText().isEmpty()) tfQntInt = Integer.parseInt(this.tfQnt.getText());
 		else tfQntInt = 1;
 		
-		while(tfQntInt > itemQnt && (!item.getCode().equals(cs.CARWASH_CODE) || !item.getCode().equals(cs.SERVICE_CODE))){
+		while(tfQntInt > itemQnt && !(item.getCode().equals(cs.CARWASH_CODE) || item.getCode().equals(cs.SERVICE_CODE))){
 			JOptionPane.showMessageDialog(frame, "Dostępnych "+itemQnt+"szt.");
 			if(tfQntInt > itemQnt) return;
 		}
@@ -1081,7 +1091,7 @@ public class InvoiceAddEdit {
 				Invoice i = collectDataForInvoice(listOfServices, invoicePath);
 				int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
 				if(dialogResult == JOptionPane.YES_OPTION){
-					pdf = pdfCreator.createPDF(cs.PDF_INVOICE, i, customer);
+					pdf = pdfCreator.createPDF(cs.PDF_INVOICE, i, customer, this.date);
 				}
 				if(update){
 					updateDBStock(listOfServices);

@@ -196,7 +196,6 @@ public class MainView {
 		logger.setShortDate(todayS);
 		
 		todayYM = dh.getRevDateYM();
-		logger.log(cs.INFO_LOG, " Dates set "+todayYM);
 	}
 
 	private static void loadClasses() {
@@ -310,10 +309,12 @@ public class MainView {
 
 	private static void checkLastDBUpdate() {
 		// TODO
-		String lastUpdate = "";
 		String lastMonth = dm.selectData(cdb.GET_LAST_MONTH);
 		System.out.println("last month "+lastMonth);
-		
+		if(!lastMonth.equals(todayYM)){
+			String q = cdb.NEW_REPAK_ENTRY + "'" + todayYM + "', 0, 0, 0, 0, 0, 0, 0, 0)";
+			dm.addNewRecord(q );
+		}
 	}
 
 
