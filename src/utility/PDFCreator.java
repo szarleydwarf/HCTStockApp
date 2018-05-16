@@ -336,7 +336,7 @@ public class PDFCreator {
 	}
 	
 	private void addLogo(PDPageContentStream cst, PDDocument pdd) throws IOException {
-		PDImageXObject pdImage = PDImageXObject.createFromFile(ju.get(cs.LOGO_PATH).toString(), pdd);
+		PDImageXObject pdImage = PDImageXObject.createFromFile(js.get(cs.LOGO_PATH).toString(), pdd);
 		
 		cst.drawImage(pdImage, 210,  675);
 		cst.setNonStrokingColor(Color.darkGray);

@@ -115,13 +115,13 @@ public class Item {
 	}
 	
 	// TODO - 
-	public String calcCost(double p_cost, int vat, int transport, int vemc) {
+	public String calcCost(double p_cost, double transportCharge, int vat, int transport, int vemc) {
 		if(vat == 1)
 			p_cost  = p_cost * cn.VAT;
 		
 		
 		if (transport == 1)
-			p_cost = p_cost + cn.TRANSPORT_COST_DALY;
+			p_cost = p_cost + transportCharge;
 		
 		if(vemc == 1)
 			p_cost = p_cost + cn.REPAK_CHARGE;
