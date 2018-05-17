@@ -26,6 +26,7 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -158,7 +159,10 @@ public class MainView {
 			if(keyStr.equals(cs.JSTART)){
 				t = ""+isStarting;
 			} else {
-				t = (String) jSettings.get(keyStr);
+				Object k = jSettings.get(keyStr);
+				if(k instanceof JSONArray){}
+				else
+				t = (String) k;
 			}
 	    	jo.put(keyStr, t);
 		}
@@ -185,7 +189,7 @@ public class MainView {
 //		TODO
 //		check last database last backup - do it if necessary
 		checkLastDBUpdate();
-		test();
+//		test();
 	}
 
 	private static void setDates() {
@@ -355,7 +359,7 @@ public class MainView {
 //		            JOptionPane.YES_NO_OPTION,
 //		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 //		        	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//		            SqliteTestAppV.main(null);
+//		            MainView.main(null);
 //		        }
 		    }
 		});

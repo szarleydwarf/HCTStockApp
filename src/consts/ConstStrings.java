@@ -83,6 +83,7 @@ public class ConstStrings {
 	public final String HASH = "#";
 	public final String AT = "@";
 	public final String AMP = "&";
+	public final String CARET = "^";
 	public final String STAR = "*";
 	public final String EURO = "€ ";
 	public final String PLUS = "+";

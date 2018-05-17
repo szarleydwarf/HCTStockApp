@@ -747,7 +747,7 @@ public class InvoiceAddEdit {
 	private void checkCustomer() {
 		if(customer != null){
 			int n;
-			if(customer.getNumOfServices()>= Integer.parseInt(ju.get(cs.NUMBER_OF_SERVICES).toString())){
+			if(customer.getNumOfServices()>= Integer.parseInt(js.get(cs.NUMBER_OF_SERVICES).toString())){
 				n = 0;
 			} else {
 				n = customer.getNumOfServices();
