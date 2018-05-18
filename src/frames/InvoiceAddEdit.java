@@ -755,7 +755,7 @@ public class InvoiceAddEdit {
 			}
 			customer.setNumOfServices(n);
 			customer.updateRecord();
-		}else{
+		} else {
 			String str = lblForWho.getText();
 			String car = str.substring(str.indexOf(cs.AT)+1, str.indexOf(cs.AMP)-1);
 			str = str.substring(str.indexOf(cs.AMP)+1);
@@ -802,7 +802,8 @@ public class InvoiceAddEdit {
 	}
 
 	private void populateStockTable(int x, int y, int w, int h) {
-		Iterator<Item> it = sm.getList().iterator();
+		ArrayList<Item> list = sm.getSortedList();
+		Iterator<Item> it = list .iterator();
 		while(it.hasNext()){
 			Item itit = it.next();
 			if (itit.getQnt() == 0 && (itit.getCode().equals(cs.TYRE_CODE_C) || itit.getCode().equals(cs.TYRE_CODE_A))){
@@ -810,7 +811,7 @@ public class InvoiceAddEdit {
 			}
 		}
 
-		String[][] data = new String [sm.getList().size()][cs.STOCK_TB_HEADINGS_SHORT.length];
+		String[][] data = new String [list.size()][cs.STOCK_TB_HEADINGS_SHORT.length];
 		data = sm.getDataNoCost();
 		JTable table = new JTable();
 		table = msh.createTable(fonts, data, cs.STOCK_TB_HEADINGS_SHORT, cs.STOCK_TB_NAME, 40, 240);
@@ -1185,15 +1186,17 @@ public class InvoiceAddEdit {
 	}
 
 	private int findBrand(String car) {
-		if(this.mainView != null)
-			if(!car.equals(jl.get(cs.LBL_CUSTOMER).toString()))
+		if(this.mainView != null) {
+			if(!car.equals(jl.get(cs.LBL_CUSTOMER).toString())) {
 				return Integer.parseInt(this.mainView.getCars_BI().get(car));
+			}
+		}
 		return cn.DEFAULT_CAR_BRAND_ID;
 	}
 
 	protected void goBack() {
 		frame.dispose();
-		setIsVisible(false);
+		setIsVisible(mainView, false);
 		if(mainView != null)
 			if(!mainView.isVisible())
 				mainView.setIsVisible(true);		
@@ -1206,7 +1209,7 @@ public class InvoiceAddEdit {
 		return false;
 	}
 	
-	public void setIsVisible(boolean b){
+	public void setIsVisible(MainView MV, boolean b){
 		lastInvoice = dm.selectData(cdb.SELECT_LAST_INVOICE);
 		if(lastInvoice.equals(""))
 			lastInvoice = "0";
@@ -1215,7 +1218,7 @@ public class InvoiceAddEdit {
 		lastInvoice = ""+(li);
 		customer = null;
 		isBusiness = false;
-
+		this.mainView = MV;
 		initialize();
 		frame.setVisible(b);
 		setLastInvoiceNum();

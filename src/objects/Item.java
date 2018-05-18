@@ -30,7 +30,8 @@ public class Item {
 	/**
 	 * constructor for new item
 	 */
-	public Item(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, DecimalFormat df, String p_code, String p_name, double p_cost, int addVat, int addTransportCost, int addVEMCCharge, int qnt){
+	public Item(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, DecimalFormat df, 
+			String p_code, String p_name, double p_cost, int addVat, int addTransportCost, int addVEMCCharge, int qnt){
 		this.dm = dm;
 		this.cdb = cdb;
 		this.cn = ci;

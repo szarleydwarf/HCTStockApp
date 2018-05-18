@@ -422,7 +422,7 @@ public class SalesReports {
 			this.DATA_M = null;
 			this.DATA_M = data;
 		}
-		data[7][0] = "SUM - ";
+		data[7][0] = "SUM";
 		jlbl.setText("");
 		msh.displayDataInLabel(jlbl, df, data, sReportHeadings);
 	}
@@ -464,7 +464,7 @@ public class SalesReports {
 	private String[][] fillReportData(String[][] data, String dMY, String dYM) {
 		data = fillFirst(data);
 		String lists = findInList(dMY, dYM);
-		log.log("frd ", ""+lists);
+//		log.log("fillReportData ", ""+lists);
 		if(lists != ""){
 			data = splitToData(lists, data);
 		}

@@ -155,6 +155,11 @@ public class StockManager {
 		return list;
 	}
 
+	public ArrayList<Item> getSortedList() {
+		list.sort((o1,o2) -> o1.getCode().compareTo(o2.getCode()));
+		return list;
+	}
+
 	public void setList(ArrayList<Item> list) {
 		this.list = list;
 	}
