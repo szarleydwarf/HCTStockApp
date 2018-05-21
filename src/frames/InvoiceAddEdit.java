@@ -116,7 +116,7 @@ public class InvoiceAddEdit {
 	private String lastInvoice;
 	private String date;
 	protected boolean isPercent;
-	private boolean isBusiness;
+	private boolean isBusiness, restore;
 	protected double total;
 	protected int noOfServices;
 	private double discount;
@@ -189,6 +189,8 @@ public class InvoiceAddEdit {
 
 		this.df = DF;
 		
+		this.restore = false;
+
 		this.fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
 		this.fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
 		this.attributes = fonts_title.getAttributes();
@@ -476,6 +478,14 @@ public class InvoiceAddEdit {
         });
 
 
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				restore = true;
+				restoreItems();
+		    }
+		});
+
 	}
 
 //END OF INITIALIZE
@@ -621,11 +631,11 @@ public class InvoiceAddEdit {
 				ArrayList<String> its = msh.getTableDataToStringArray(tbChoosen);
 				int chosenRow, stRow;
 				for(int j = 0; j < its.size(); j++){
-					chosenRow = msh.getSelectedItemRow(model, its.get(j));
+					chosenRow = msh.getSelectedItemRow((DefaultTableModel) modTBchosen, its.get(j));
 					//TODO NULL POINTER
 					stRow = msh.getSelectedItemRow(dtm, its.get(j));
 					if(chosenRow != -1)
-						updateStockTableQnt(model, chosenRow, stRow);
+						updateStockTableQnt((DefaultTableModel) modTBchosen, chosenRow, stRow);
 				}
 				
 				model.setRowCount(0);
@@ -1034,6 +1044,7 @@ public class InvoiceAddEdit {
 				qnt = 1;
 			int actualQnt = Integer.parseInt(tbStock.getValueAt(stRow, cn.QNT_COLUMN).toString());
 			qnt = actualQnt + qnt;
+			item.setQnt(qnt);
 			tbStock.setValueAt(qnt, stRow, cn.QNT_COLUMN);
 		}
 	}
@@ -1195,11 +1206,27 @@ public class InvoiceAddEdit {
 	}
 
 	protected void goBack() {
+		restore = true;
+		restoreItems();
+
 		frame.dispose();
 		setIsVisible(mainView, false);
 		if(mainView != null)
 			if(!mainView.isVisible())
 				mainView.setIsVisible(true);		
+	}
+
+	private void restoreItems() {
+//		log.log(" IAE ", "restore "+restore + " "+ isNew + " " + modTBchosen.getRowCount() + " "  + tableHasElements());
+		if(restore && isNew){
+			//TODO - restore all qnt of the selected items
+			if(this.tableHasElements()){
+				for(int i = 0; i < modTBchosen.getRowCount(); i++){
+					int row = msh.compareItemKeyMap(item, selectedRowItem);
+					updateStockTableQnt((DefaultTableModel) modTBchosen, i, row);
+				}
+			}
+		}		
 	}
 
 	// GETTERS & SETTERS
@@ -1209,12 +1236,15 @@ public class InvoiceAddEdit {
 		return false;
 	}
 	
+	// method used for the new invoice
 	public void setIsVisible(MainView MV, boolean b){
+		this.restore = false;
 		lastInvoice = dm.selectData(cdb.SELECT_LAST_INVOICE);
 		if(lastInvoice.equals(""))
 			lastInvoice = "0";
 		int li = Integer.parseInt(lastInvoice);
 		li++;
+		this.date = dh.getFormatedDateRev();
 		lastInvoice = ""+(li);
 		customer = null;
 		isBusiness = false;
@@ -1225,7 +1255,10 @@ public class InvoiceAddEdit {
 		isNew = true;
 	}
 
+	// method used for the invoice edition
 	public void setIsVisible(String[] forPreview, boolean b) {
+		this.restore = false;
+
 		lastInvoice = forPreview[0];
 		initialize();
 
@@ -1249,12 +1282,12 @@ public class InvoiceAddEdit {
 		isNew = false;
 	}
 
-
+	// method used for the invoice edition
 	public void setIsVisible(Invoice invoice, boolean b) {
+		this.restore = false;
 		editedInvoice = invoice;
 		lastInvoice = ""+invoice.getId();
 		initialize();
-// TODO
 		
 		customer = this.cm.findByID(invoice.getCustId());
 		String str = cs.AT;
