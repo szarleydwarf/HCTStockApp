@@ -83,6 +83,7 @@ public class ConstStrings {
 	public final String HASH = "#";
 	public final String AT = "@";
 	public final String AMP = "&";
+	public final String CARET = "^";
 	public final String STAR = "*";
 	public final String EURO = "€ ";
 	public final String PLUS = "+";
@@ -129,6 +130,9 @@ public class ConstStrings {
 	public  final String STOCK_REP_PATH = "stock folder path";
 	public  final String REPAK_REP_PATH = "repak folder path";
 	public  final String DOC_SUB_PATH = "doc subfolder path";
+
+	public  final String SUPLIERS_NAMES_ARR = "suppliers names";
+	public  final String SUPPLIERS_CHARGES_ARR = "transport charges";
 
 
 	// JSON LANG PACKET

@@ -26,6 +26,7 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -152,15 +153,23 @@ public class MainView {
 
 	private static void updateJSONSettings(boolean isStarting) {
 		JSONObject jo = new JSONObject();
-		String t = "";
+		String t = ""; String[]ta = new String[10];
 		for (Object key : jSettings.keySet()) {
 			String keyStr = (String)key;
 			if(keyStr.equals(cs.JSTART)){
 				t = ""+isStarting;
+				jo.put(keyStr, t);
 			} else {
-				t = (String) jSettings.get(keyStr);
+				Object k = jSettings.get(keyStr);
+				if(k instanceof JSONArray){
+					JSONArray j = (JSONArray) k;
+					jo.put(keyStr, j);
+				}
+				else{
+					t = (String) k;
+					jo.put(keyStr, t);
+				}
 			}
-	    	jo.put(keyStr, t);
 		}
 		boolean saved = msh.saveJSON(cp.JSON_SETTINGS_PATH, jo);
 		if(!saved)
@@ -176,7 +185,7 @@ public class MainView {
 		loadManagers();
 
 		//		get cars list TODO ????????
-//		cars_BI = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_BRAND_ID);
+		cars_BI = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_BRAND_ID);
 //		cars_IB = (HashMap<String, String>) dm.selectDataMap(cdb.SELECT_CARS_LIST_ID_BRAND);
 		carBrandList = new ArrayList<String>();
 		carBrandList = (ArrayList<String>) dm.selectData("SELECT brand FROM brands ORDER BY brand ASC", carBrandList);
@@ -185,7 +194,7 @@ public class MainView {
 //		TODO
 //		check last database last backup - do it if necessary
 		checkLastDBUpdate();
-		test();
+//		test();
 	}
 
 	private static void setDates() {
@@ -355,7 +364,7 @@ public class MainView {
 //		            JOptionPane.YES_NO_OPTION,
 //		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 //		        	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//		            SqliteTestAppV.main(null);
+//		            MainView.main(null);
 //		        }
 		    }
 		});
@@ -367,7 +376,7 @@ public class MainView {
 		nowyRachunekBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if(!newInvoiceFrame.isVisible())
-					newInvoiceFrame.setIsVisible(true);
+					newInvoiceFrame.setIsVisible(MainView.main, true);
 			}
 		});
 		nowyRachunekBtn.setBounds(btnX, btnX, 200, 36);

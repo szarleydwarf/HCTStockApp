@@ -30,7 +30,8 @@ public class Item {
 	/**
 	 * constructor for new item
 	 */
-	public Item(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, DecimalFormat df, String p_code, String p_name, double p_cost, int addVat, int addTransportCost, int addVEMCCharge, int qnt){
+	public Item(DatabaseManager dm, ConstDB cdb, ConstNums ci, ConstStrings cs, DecimalFormat df, 
+			String p_code, String p_name, double p_cost, int addVat, int addTransportCost, int addVEMCCharge, int qnt){
 		this.dm = dm;
 		this.cdb = cdb;
 		this.cn = ci;
@@ -115,13 +116,13 @@ public class Item {
 	}
 	
 	// TODO - 
-	public String calcCost(double p_cost, int vat, int transport, int vemc) {
+	public String calcCost(double p_cost, double transportCharge, int vat, int transport, int vemc) {
 		if(vat == 1)
 			p_cost  = p_cost * cn.VAT;
 		
 		
 		if (transport == 1)
-			p_cost = p_cost + cn.TRANSPORT_COST_DALY;
+			p_cost = p_cost + transportCharge;
 		
 		if(vemc == 1)
 			p_cost = p_cost + cn.REPAK_CHARGE;

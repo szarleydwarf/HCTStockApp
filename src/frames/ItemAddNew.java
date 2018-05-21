@@ -72,6 +72,7 @@ public class ItemAddNew {
 	protected boolean isSuggested;
 	private RepakReport repakReport;
 	private String date;
+	private double transportCharge;
 
 	/**
 	 * Launch the application.
@@ -255,11 +256,19 @@ public class ItemAddNew {
 		transport.setBounds(lblX, lblY, lblW, lbltfH);
 		frame.getContentPane().add(transport);
 		
+		String[] tSupNames = msh.json2Array((JSONArray) js.get(cs.SUPLIERS_NAMES_ARR));
+		String[] tSupTrans = msh.json2Array((JSONArray) js.get(cs.SUPPLIERS_CHARGES_ARR));
+//TODO
+		JComboBox cbTransCharges = new JComboBox(tSupNames);
+		cbTransCharges.setBounds(xOffset, lblY, tfW/2, lbltfH);
+		cbTransCharges.setSelectedIndex(0);
+		frame.getContentPane().add(cbTransCharges);
+
 		JCheckBox chbTransport = new JCheckBox();
 		chbTransport.setSelected(Boolean.parseBoolean(""+tran));
 		chbTransport.setBackground(color);
 		chbTransport.setFont(fonts);
-		chbTransport.setBounds(xOffset, lblY, tfW, lbltfH);
+		chbTransport.setBounds((int) (xOffset*2.4), lblY, tfW, lbltfH);
 		frame.getContentPane().add(chbTransport);
 		
 		JLabel lblVemc = new JLabel(jl.get(cs.LBL_VEMC).toString());
@@ -317,6 +326,10 @@ public class ItemAddNew {
 				if(chbTransport.isSelected())	tran = 1;
 				else tran = 0;
 				
+				if(tran != 0){
+					transportCharge = Double.parseDouble(tSupTrans[cbTransCharges.getSelectedIndex()]);
+				}
+				
 				if(d_cost > 0) {
 					cost = calculateCost();
 					price = calculatePrice();
@@ -338,7 +351,7 @@ public class ItemAddNew {
 				}
 				
 				setCostLBL();
-				  setPriceLBL();
+				setPriceLBL();
 			}
 		});
 		
@@ -364,6 +377,28 @@ public class ItemAddNew {
 			}
 		});
 
+		cbTransCharges.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbTransCharges ){
+					JComboBox cb = (JComboBox) a.getSource();
+					//TODO
+					for (int i=0; i<tSupNames.length; i++) {
+						if(tSupNames[i].equals(cb.getSelectedItem().toString())){
+							transportCharge = Double.parseDouble(tSupTrans[i]);
+							if(tran != 0) {
+								cost = calculateCost();
+								price = calculatePrice();
+							}
+							setCostLBL();
+							setPriceLBL();
+						}
+					}
+					
+				}		
+			}
+		});
+		
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				int tqnt = msh.getInt(tfQnt);
@@ -424,7 +459,6 @@ public class ItemAddNew {
 			
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				// TODO Auto-generated method stub
 				
 			}
 		});
@@ -462,7 +496,7 @@ public class ItemAddNew {
 	}
 
 	protected String calculateCost() {
-		return i.calcCost(d_cost, vat, tran, vemc);
+		return i.calcCost(d_cost, transportCharge, vat, tran, vemc);
 	}
 
 	protected Item getItem(Item i, JComboBox cbCodes, JTextField tfName,  JTextField tfPrice,  
@@ -517,7 +551,11 @@ public class ItemAddNew {
 	public void setIsVisible(boolean b){
 		initialize();
 		i = new Item(dm, cdb, cn, cs, df, "", "", 0.00,0,0,0,0);
-
+		vat = 0;
+		tran = 0;
+		vemc = 0;
+		transportCharge = 0;
+		
 		frame.setVisible(b);
 	}
 	

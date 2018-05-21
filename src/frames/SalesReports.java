@@ -248,7 +248,7 @@ public class SalesReports {
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO
 				String path = createPdfPath(false);
-				System.out.println("Mpath "+path);
+//				System.out.println("Mpath "+path);
 				boolean pdfCreated = printSalesReport(path, false);
 				if(pdfCreated){
 //					try {
@@ -269,7 +269,7 @@ public class SalesReports {
 			public void actionPerformed(ActionEvent arg0) {
 //				if(DATA != null){
 					String path = createPdfPath(true);
-					System.out.println("Dpath "+path);
+//					System.out.println("Dpath "+path);
 					boolean pdfCreated = printSalesReport(path, true);
 					if(pdfCreated){
 //						try {
@@ -407,21 +407,41 @@ public class SalesReports {
 		if(name.equals(jl.get(cs.LBL_DAILY_REPORT).toString())) {
 			String dateYMD = yearOfReportD+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReportD))+cs.MINUS+dfm.format(Integer.parseInt(dayOfReport));
 			String dateDMY = dfm.format(Integer.parseInt(dayOfReport))+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReportD))+cs.MINUS+yearOfReportD;
-			data = new String [this.cs.ITEM_CODES.length][sReportHeadings.length];
+			data = new String [this.cs.ITEM_CODES.length+1][sReportHeadings.length];
 			data = msh.setZeros(data);
 			data = fillReportData(data, dateDMY, dateYMD);
+			data = sumUp(data);
 			this.DATA_D = null;
 			this.DATA_D = data;
 		} else if(name.equals(jl.get(cs.LBL_MONTHLY_REPORT).toString())) {
 			String dateYM = yearOfReport+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReport));
 			String dateMY = dfm.format(dh.getMonthNumber(monthOfReport))+cs.MINUS+yearOfReport;
-			data = new String [this.cs.ITEM_CODES.length][sReportHeadings.length];
+			data = new String [this.cs.ITEM_CODES.length+1][sReportHeadings.length];
 			data = fillReportData(data, dateMY, dateYM);
+			data = sumUp(data);
 			this.DATA_M = null;
 			this.DATA_M = data;
 		}
+		data[7][0] = "SUM";
 		jlbl.setText("");
 		msh.displayDataInLabel(jlbl, df, data, sReportHeadings);
+	}
+
+	private String[][] sumUp(String[][] data) {
+		String t = ""; double td = 0, dC = 0, dP = 0, dD = 0;
+		for (int i = 0; i < data.length-1; i++) {
+			for (int j = 1; j < data[i].length; j++) {
+				t = data[i][j];
+				td = Double.parseDouble(t);
+				if(j == 1)dC += td;
+				if(j == 2)dP += td;
+				if(j == 3)dD += td;
+			}
+		}
+		data[7][1] = ""+dC;
+		data[7][2] = ""+dP;
+		data[7][3] = ""+dD;
+		return data;
 	}
 
 	private void populateTabel(int x, int y, int w, int h, String name) {
@@ -444,7 +464,7 @@ public class SalesReports {
 	private String[][] fillReportData(String[][] data, String dMY, String dYM) {
 		data = fillFirst(data);
 		String lists = findInList(dMY, dYM);
-//		log.log("frd ", ""+lists);
+//		log.log("fillReportData ", ""+lists);
 		if(lists != ""){
 			data = splitToData(lists, data);
 		}
@@ -456,15 +476,24 @@ public class SalesReports {
 		double diff = 0;
 		data = msh.setZeros(data);
 		for (String s : tokens) {
+//			System.out.println("S "+s);
 			if(!s.isEmpty()){
-				int qnt = Integer.parseInt(s.substring(0, s.indexOf(cs.STAR)));
+				double discount = 0;
+				if(s.contains(cs.CARET))
+					discount = Double.parseDouble(s.substring(0, s.indexOf(cs.CARET)));
+
+				int qnt = getQnt(s);
+				
 				String code = s.substring(s.indexOf(cs.STAR)+1, s.indexOf(cs.UNDERSCORE)); 
 				double cost = Double.parseDouble(s.substring(s.indexOf(cs.HASH)+1, s.indexOf(cs.AT)));
 				cost *= qnt;
 				double price = Double.parseDouble(s.substring(s.indexOf(cs.AT)+1));
 				price *= qnt;
+				// TODO substract discount from prices
+				if(discount > 0)
+					price = price - discount;
 				diff = price - cost;
-	
+
 				if(code.equals(cs.TYRE_CODE_C)){
 					data[0][1] = getValue(data[0][1], cost);
 					data[0][2] = getValue(data[0][2], price);
@@ -485,10 +514,10 @@ public class SalesReports {
 					data[4][1] = getValue(data[4][1], cost);
 					data[4][2] = getValue(data[4][2], price);
 					data[4][3] = getValue(data[4][3], diff);
-				} else if(code.equals(cs.OTHER_CODE)){
-					data[5][1] = getValue(data[5][1], cost);
-					data[5][2] = getValue(data[5][2], price);
-					data[5][3] = getValue(data[5][3], diff);
+//				} else if(code.equals(cs.OTHER_CODE)){
+//					data[5][1] = getValue(data[5][1], cost);
+//					data[5][2] = getValue(data[5][2], price);
+//					data[5][3] = getValue(data[5][3], diff);
 				} else if(code.equals(cs.CARWASH_CODE)){
 					data[6][1] = getValue(data[6][1], cost);
 					data[6][2] = getValue(data[6][2], price);
@@ -520,7 +549,7 @@ public class SalesReports {
 		String lists="";
 		for(Invoice in : list){
 			if (in.getDate().contains(dateYMD) || in.getDate().contains(dateDMY)){
-				lists += in.getList();
+				lists += in.getDiscount()+cs.CARET+ in.getList();
 			}
 		}
 		return lists;
@@ -543,7 +572,7 @@ public class SalesReports {
 				for (int j = 0; j < tokens.length; j++) {
 					
 					if(!tokens[j].isEmpty()){
-						int qnt = Integer.parseInt(tokens[j].substring(0, tokens[j].indexOf(cs.STAR)));
+						int qnt = getQnt(tokens[j]);
 						double cost = Double.parseDouble(tokens[j].substring(tokens[j].indexOf(cs.HASH)+1, tokens[j].indexOf(cs.AT)));
 						double price = Double.parseDouble(tokens[j].substring(tokens[j].indexOf(cs.AT)+1));
 						
@@ -573,6 +602,20 @@ public class SalesReports {
 			monthNo--;
 		}
 		return data;
+	}
+
+	private int getQnt(String s) {
+		int i = 0;
+		if(s.contains(cs.CARET)){
+			int in1 = s.indexOf(cs.CARET)+1;
+			int in2 = s.indexOf(cs.STAR);
+//			System.out.println("\tin1 "+in1+"/"+in2+"\n\t"+s);
+			if(in1 >= 0 && in2 >= 0)
+			i = Integer.parseInt(s.substring(in1, in2));
+		} else{
+			i = Integer.parseInt(s.substring(0, s.indexOf(cs.STAR)));
+		}
+		return i;
 	}
 
 	protected void goBack() {

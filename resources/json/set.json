@@ -1,1 +1,35 @@
-{"doc subfolder path":"YYYY\\MM\\DD\\","fs def":"14","invoice folder path":"_documents\\invoices\\","stock folder path":"_documents\\stock\\","repak folder path":"_documents\\repak\\","default printer name":"Canon MP620 series Printer (Copy 1)","db user":"hct","app color R":"250","fs lbl title":"18","db pass":"pass1234","app color G":"50","sales folder path":"_documents\\sales\\","db host":"jdbc:mysql:\/\/127.0.0.1:3306\/hct_stock","starting":"true","lang":"eng.json","app color B":"50","font":"Segoe UI Black"}
+{
+	"lang":"eng.json",
+	"starting":"true",
+
+	"db host":"jdbc:mysql:\/\/127.0.0.1:3306\/hct_stock",
+	"db user":"hct",
+	"db pass":"pass1234",
+
+	"logo path":"resources\\img\\Logo HCT 245x84.png",
+	"doc subfolder path":"YYYY\\MM\\DD\\",
+	"invoice folder path":"_documents\\invoices\\",
+	"stock folder path":"_documents\\stock\\",
+	"repak folder path":"_documents\\repak\\",
+	"sales folder path":"_documents\\sales\\",
+
+	"default printer name":"Canon MP620 series Printer (Copy 1)",
+
+	"number of services":"10",
+
+	"vat rate":"1.23",
+	"profit rate 1":"1.35",
+	"profit rate 2":"2.5",
+	"profit rate 3":"1.75",
+	"recycling charge":"3.50",
+
+	"suppliers names":["DT","TyreLeader","PWT","TyreCall","",""],
+	"transport charges":["2.50","10.00","4.00","4.50","",""],
+
+	"app color R":"250",
+	"app color G":"50",
+	"app color B":"50",
+	"fs def":"11",
+	"fs lbl title":"16",
+	"font":"Segoe UI Black"
+}

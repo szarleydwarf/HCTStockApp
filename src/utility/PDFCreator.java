@@ -314,7 +314,7 @@ public class PDFCreator {
 		cst.newLineAtOffset(cn.PDF_DOC_X_OFFSET,  740);
 		cst.setLeading(cn.LEADING_LINE_SIZE);
 		
-		cst.showText(ju.get(cs.JSON_COMPANY_NAME).toString() + "                                       " + date);
+		cst.showText(ju.get(cs.JSON_COMPANY_NAME).toString() + "                                           " + date);
 		cst.newLine();
 		
 		cst.setFont(PDType1Font.COURIER, this.fonts);
@@ -336,7 +336,7 @@ public class PDFCreator {
 	}
 	
 	private void addLogo(PDPageContentStream cst, PDDocument pdd) throws IOException {
-		PDImageXObject pdImage = PDImageXObject.createFromFile(ju.get(cs.LOGO_PATH).toString(), pdd);
+		PDImageXObject pdImage = PDImageXObject.createFromFile(js.get(cs.LOGO_PATH).toString(), pdd);
 		
 		cst.drawImage(pdImage, 210,  675);
 		cst.setNonStrokingColor(Color.darkGray);

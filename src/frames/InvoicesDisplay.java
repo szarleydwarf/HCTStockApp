@@ -221,7 +221,7 @@ public class InvoicesDisplay {
 				if(row != -1) {
 					btnEdit.setEnabled(true);
 					createInvoiceDetails(table.getModel(), row);
-					int id = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
+					int id = Integer.parseInt(table.getModel().getValueAt(table.convertRowIndexToModel(row), 0).toString());
 					invoice = im.getInvoiceByID(id);
 //					if(invoice != null)
 //						System.out.println("IN "+invoice.getId());
