@@ -208,6 +208,7 @@ public class RepakROne {
 	}
 
 	public int getToReturnCarTyres() {
+		toReturnCarTyres = boughtCarTyres - returnedCarTyres;
 		return toReturnCarTyres;
 	}
 
@@ -216,6 +217,7 @@ public class RepakROne {
 	}
 
 	public int getToReturnAgriTyres() {
+		toReturnAgriTyres = boughtAgriTyres - returnedAgriTyres;
 		return toReturnAgriTyres;
 	}
 

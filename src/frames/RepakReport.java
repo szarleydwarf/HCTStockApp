@@ -329,11 +329,12 @@ public class RepakReport {
 	private String[][] fillReportData(String[][] data, String dMY, String dYM) {
 		int monthNo = dh.getMonthNum()+1;
 		int yearNo = dh.getYearNum();
+		int c2r = 0, a2r = 0;
 		String dateMMYYYY=dMY, dateYYYYMM=dYM;
 		for (int i = 0; i < cn.NUM_OF_MONTHS; i++) {
 			String lists = "";
-			dateMMYYYY = ""+dfm.format(monthNo)+"-"+yearNo;
-			dateYYYYMM = ""+yearNo+"-"+dfm.format(monthNo);
+			dateMMYYYY = ""+dfm.format(monthNo)+cs.MINUS+yearNo;
+			dateYYYYMM = ""+yearNo+cs.MINUS+dfm.format(monthNo);
 			
 			data[i][0] = dateMMYYYY;
 			lists = findInList(dateMMYYYY, dateYYYYMM);
@@ -343,13 +344,29 @@ public class RepakReport {
 				
 				for(String s : tokens){
 					if(!s.isEmpty()){
-						int k = 1;
 						String[] tok = msh.splitString(s, cs.COMA);
+						int k = 1, end = tok.length;
 						for(String st : tok) {
 							if(!st.isEmpty()) {
-								data[i][k] = dfm.format(Integer.parseInt(st));
+								if(k == (end - 2)){
+									//TODO  calculate car tyres to return
+									c2r -= Integer.parseInt(st);
+									data[i][k] = dfm.format(c2r);
+									System.out.println("Car " + dateMMYYYY + " "+ st + " " +  c2r);
+								} else if(k == (end - 1)){
+									//TODO  calculate agri tyres to return
+									a2r -= Integer.parseInt(st);
+									data[i][k] = dfm.format(a2r);
+									System.out.println("Agri " + dateMMYYYY + " "+ st + " " + a2r);
+								} 
+//									else {
+									data[i][k] = dfm.format(Integer.parseInt(st));
+//								}
+								
+							} else {
+								data[i][k] = dfm.format(0);
 							}
-							if(k < tok.length)
+							if(k < end)
 								k++;
 						}
 					}

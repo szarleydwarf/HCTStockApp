@@ -424,7 +424,7 @@ public class InvoiceAddEdit {
 		tfCustomers.getDocument().addDocumentListener(new DocumentListener(){
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				String text = tfCustomers.getText();
+				String text = tfCustomers.getText().toUpperCase();
 				if (text.trim().length() == 0) rSortCustomer.setRowFilter(null);
 				else rSortCustomer.setRowFilter(RowFilter.regexFilter(cs.REGEX_FILTER + text));
 				updateInvoiceLbl(text);
