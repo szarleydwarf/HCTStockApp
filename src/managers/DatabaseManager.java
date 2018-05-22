@@ -498,7 +498,7 @@ public class DatabaseManager {
 		int soldAgriTyres = 0, fittedAgriTyres = 0, boughtAgriTyres = 0;
 		int returnedCarTyres = 0, returnedAgriTyres = 0;
 		for(int i = 1 ; i <= colNum; i++){
-//			System.out.println(i + " "+ rs.getString(i));
+//			System.out.println(i + " db "+ rs.getString(i));
 			if(!rs.getString(i).isEmpty()) {
 				switch (i) {
 				case 1:

@@ -283,13 +283,21 @@ public class ItemAddNew {
 		chbVemc.setFont(fonts);
 		chbVemc.setBounds(xOffset, lblY, tfW, lbltfH);
 		frame.getContentPane().add(chbVemc);
+
+		int btnX = (frame.getWidth() - cn.BACK_BTN_X_OFFSET),
+				btnY = (frame.getHeight() - cn.BACK_BTN_Y_OFFSET);
+		
+		JButton btnBack = new JButton(jl.get(cs.BTN_BACK).toString());
+		btnBack.setFont(fonts_title);
+		btnBack.setBounds(btnX, btnY, cn.BACK_BTN_WIDTH - 20, cn.BACK_BTN_HEIGHT);
+		frame.getContentPane().add(btnBack);
 		
 		JButton btnSave = new JButton(jl.get(cs.BTN_SAVE).toString());
 		btnSave.setForeground(Color.RED);
 		btnSave.setBackground(Color.LIGHT_GRAY);
 		btnSave.setFont(fonts);
 		lblY += yOffset;
-		btnSave.setBounds(xOffset, lblY, tfW, lbltfH+10);
+		btnSave.setBounds(xOffset, lblY, tfW / 2, lbltfH+10);
 		frame.getContentPane().add(btnSave);
 
 		// LISTENERS SECTION
@@ -429,6 +437,12 @@ public class ItemAddNew {
 			}
 		});
 		
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				goBack();
+			}
+		});
+	
 		tfCost.getDocument().addDocumentListener(new DocumentListener() {
 			
 			@Override
@@ -559,5 +573,12 @@ public class ItemAddNew {
 		frame.setVisible(b);
 	}
 	
+	protected void goBack() {
+		frame.dispose();
+		setIsVisible(false);
+		if(mainView != null)
+			if(!mainView.isVisible())
+				mainView.setIsVisible(true);		
+	}
 
 }

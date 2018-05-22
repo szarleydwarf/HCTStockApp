@@ -98,8 +98,8 @@ public class RepakROne {
 	}
 
 	public String toStringForData(){
-		return this.getSoldCarTyres() + ","  + this.getBoughtCarTyres() + ","  + this.getFittedCarTyres()
-			+ ","  + this.getSoldAgriTyres() + ","  + this.getBoughtAgriTyres() + ","  + this.getFittedAgriTyres()
+		return this.getSoldCarTyres() + ","  + this.getFittedCarTyres() + ","  + this.getBoughtCarTyres()
+			+ ","  + this.getSoldAgriTyres() + ","  + this.getFittedAgriTyres() + ","  + this.getBoughtAgriTyres()
 			+ ","  + this.getReturnedCarTyres() + ","  + this.getReturnedAgriTyres()
 			+ ","  + this.getToReturnCarTyres() + ","  + this.getToReturnAgriTyres()+";";
 
