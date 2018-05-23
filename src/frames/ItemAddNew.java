@@ -3,6 +3,7 @@ package frames;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -263,13 +264,19 @@ public class ItemAddNew {
 		cbTransCharges.setBounds(xOffset, lblY, tfW/2, lbltfH);
 		cbTransCharges.setSelectedIndex(0);
 		frame.getContentPane().add(cbTransCharges);
+		
 
 		JCheckBox chbTransport = new JCheckBox();
 		chbTransport.setSelected(Boolean.parseBoolean(""+tran));
 		chbTransport.setBackground(color);
 		chbTransport.setFont(fonts);
-		chbTransport.setBounds((int) (xOffset*2.4), lblY, tfW, lbltfH);
+		chbTransport.setBounds((int) (xOffset*2.4), lblY, 30, lbltfH);
 		frame.getContentPane().add(chbTransport);
+
+		JLabel lblTransportCharges = new JLabel("€ 0");
+		lblTransportCharges.setFont(fonts);
+		lblTransportCharges.setBounds((int) (chbTransport.getX() + chbTransport.getWidth() + xOffset), lblY, lblW, lbltfH);
+		frame.getContentPane().add(lblTransportCharges);
 		
 		JLabel lblVemc = new JLabel(jl.get(cs.LBL_VEMC).toString());
 		lblVemc.setFont(fonts);
@@ -394,6 +401,7 @@ public class ItemAddNew {
 					for (int i=0; i<tSupNames.length; i++) {
 						if(tSupNames[i].equals(cb.getSelectedItem().toString())){
 							transportCharge = Double.parseDouble(tSupTrans[i]);
+							lblTransportCharges.setText(cs.EURO+df.format(transportCharge));
 							if(tran != 0) {
 								cost = calculateCost();
 								price = calculatePrice();
@@ -579,6 +587,10 @@ public class ItemAddNew {
 		if(mainView != null)
 			if(!mainView.isVisible())
 				mainView.setIsVisible(true);		
+	}
+	
+	public JFrame getFrame() {
+		return frame;
 	}
 
 }

@@ -258,5 +258,8 @@ public class InvoicesDisplay {
 		frame.setVisible(b);
 	}
 
+	public JFrame getFrame() {
+		return frame;
+	}
 
 }

@@ -138,6 +138,7 @@ public class ConstStrings {
 	// JSON LANG PACKET
 	public final String TYRES_CATEGORY = "tyre categories";
 	public final String ITEM_CATEGORY = "items cat";
+	public final String ITEM_CODES_ARR = "items codes for print";
 
 	public final String BTN_NEXT = "next";
 	public final String BTN_SAVE = "save";

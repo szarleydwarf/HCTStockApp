@@ -492,5 +492,8 @@ public class RepakReport {
 		this.list = list;
 	}
 
+	public JFrame getFrame() {
+		return frame;
+	}
 
 }

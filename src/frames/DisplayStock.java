@@ -164,6 +164,18 @@ public class DisplayStock {
 		lblSearch.setFont(fonts);
 		lblSearch.setBounds(10, 40, 200, 24);
 		frame.getContentPane().add(lblSearch);
+		
+		String[] tCodes = msh.json2Array((JSONArray) jl.get(cs.ITEM_CODES_ARR));
+		JComboBox cbCodes = new JComboBox(tCodes);
+		cbCodes.setSelectedIndex(0);
+		cbCodes.setFont(fonts);
+		cbCodes.setBounds((frame.getWidth() - cn.BACK_BTN_X_OFFSET), 160, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
+		frame.getContentPane().add(cbCodes);
+		
+		JButton btnPrint = new JButton(jl.get(cs.BTN_PRINT).toString());
+		btnPrint.setFont(fonts);
+		btnPrint.setBounds((frame.getWidth() - cn.BACK_BTN_X_OFFSET), 200, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
+		frame.getContentPane().add(btnPrint);
 
 		TitledBorder lblCosts = msh.createBorders(jl.get(cs.LBL_COST).toString(), Color.YELLOW);
 		TitledBorder lblPrice = msh.createBorders(jl.get(cs.LBL_PRICE).toString(), Color.YELLOW);
@@ -172,7 +184,6 @@ public class DisplayStock {
 		int xOffset = 120, heigh = 32;
 		int xPosLbl = (msh.getScreenDimension()[0] / 5), yPosLbl = frame.getHeight() - 76;
 
-// TODO
 		JSONArray jArr = (JSONArray) jl.get(cs.ITEM_CATEGORY);
 		String[] tCat = msh.json2Array(jArr);
 
@@ -266,6 +277,14 @@ public class DisplayStock {
 						mainView.setIsVisible(true);
 			}
 		});
+		
+		btnPrint.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("PRINT "+cbCodes.getSelectedIndex());
+			}
+		});
 
 		btnAddNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -321,7 +340,6 @@ public class DisplayStock {
 					JComboBox cb = (JComboBox) a.getSource();
 					String defaultCategory = cb.getSelectedItem().toString();
 					String code = "";
-// TODO 					
 					if(defaultCategory.equals(tCat[0])){
 						code = cs.TYRE_CODE_C;
 					} else if(defaultCategory.equals(tCat[1])){
@@ -432,6 +450,7 @@ public class DisplayStock {
 				}		
 			}
 		});
+		
 
 		JLabel name = new JLabel(jl.get(cs.LBL_NAME).toString());
 		name.setFont(fonts);
@@ -694,4 +713,9 @@ public class DisplayStock {
 	public static JSONObject getJl() {
 		return jl;
 	}
+	
+	public JFrame getFrame() {
+		return frame;
+	}
+
 }

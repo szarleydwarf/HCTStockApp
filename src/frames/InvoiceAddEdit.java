@@ -1038,7 +1038,10 @@ public class InvoiceAddEdit {
 	}
 
 	protected void updateStockTableQnt(DefaultTableModel model, int chosenRow, int stRow) {
-		if(stRow != -1){
+		if(stRow != -1 && (model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(cs.TYRE_CODE_C) 
+				|| model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(cs.TYRE_CODE_A) 
+				|| model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(cs.TUBE_CODE) 
+				|| model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(cs.SHOP_CODE))){
 			int qnt = Integer.parseInt(model.getValueAt(chosenRow, cn.QNT_COLUMN).toString());
 			if(qnt <= 0)
 				qnt = 1;
@@ -1373,6 +1376,10 @@ public class InvoiceAddEdit {
 
 	public static JSONObject getJl() {
 		return jl;
+	}
+
+	public JFrame getFrame() {
+		return frame;
 	}
 
 

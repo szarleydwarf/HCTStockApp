@@ -221,7 +221,7 @@ public class MainView {
 		newItemFrame = new ItemAddNew(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2, repakRepFrame, todayYM);
 		
 		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
-		logger.log(cs.INFO_LOG, "Classes loaded");
+//		logger.log(cs.INFO_LOG, "Classes loaded");
 	}
 
 	private static void loadConst() {
@@ -238,7 +238,7 @@ public class MainView {
 		fh = new FileHelper();
 
 		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
-		logger.log(cs.INFO_LOG, "Logger Init");
+//		logger.log(cs.INFO_LOG, "Logger Init");
 		msh = new MiscHelper(logger, cs, jLang);
 
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols( new Locale("en", "UK"));
@@ -254,7 +254,7 @@ public class MainView {
 		System.out.println("loadManagers");
 		try {
 			dm = new DatabaseManager(logger, todayL, cdb, cn, cs, cp, jSettings, df_3_2);
-			logger.log(cs.INFO_LOG, "DM Init");
+//			logger.log(cs.INFO_LOG, "DM Init");
 
 		} catch (FileNotFoundException e) {
 			logger.log(cs.ERR_LOG, "FileNotFoundException DM in Main "+e.getMessage());
@@ -269,7 +269,7 @@ public class MainView {
 		stmng = new StockManager(dm, cdb, cn, cs);
 		//get invoices list
 		invmng = new InvoiceManager(dm, cdb, cn, cs);		
-		logger.log(cs.INFO_LOG, "Mangers Init");
+//		logger.log(cs.INFO_LOG, "Mangers Init");
 	}
 
 	private static void loadJsonFiles() {
@@ -344,7 +344,7 @@ public class MainView {
 	 * @wbp.parser.entryPoint
 	 */
 	private void initialize() {
-		logger.log(cs.INFO_LOG, "MAIN Init");
+//		logger.log(cs.INFO_LOG, "MAIN Init");
 		Color color = msh.getColor(cs.APP, cs, jSettings);
 		int btnX = 16, btnY = 22, yOffset = 48, frameW = 240, frameH = 480;
 		
@@ -365,6 +365,19 @@ public class MainView {
 //		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 //		        	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //		            MainView.main(null);
+		    	if(newInvoiceFrame != null && newInvoiceFrame.isVisible())
+		    		newInvoiceFrame.getFrame().dispose();
+		    	if(stockFrame != null && stockFrame.isVisible())
+		    		stockFrame.getFrame().dispose();
+		    	if(invoicesFrame != null && invoicesFrame.isVisible())
+			    	invoicesFrame.getFrame().dispose();
+		    	if(newItemFrame != null && newItemFrame.isVisible())
+			    	newItemFrame.getFrame().dispose();
+		    	if(repakRepFrame != null && repakRepFrame.isVisible())
+			    	repakRepFrame.getFrame().dispose();
+		    	if(salesRepFrame != null && salesRepFrame.isVisible())
+			    	salesRepFrame.getFrame().dispose();
+		    	
 //		        }
 		    }
 		});
