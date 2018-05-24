@@ -3,6 +3,8 @@ package managers;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.xml.transform.SourceLocator;
+
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
@@ -111,6 +113,27 @@ public class StockManager {
 		String[][] data = new String[this.list.size()][];
 		for (int i = 0; i < list.size(); i++)
 			data[i] = list.get(i).getItemAsData();
+		return data;
+	}
+	
+	public String[][] getDataByCode(String code){
+		ArrayList<String[]> t = new ArrayList<String[]>();
+		for (int i = 0; i < list.size(); i++){
+			if(!code.equals(cs.ALL_EN) && !code.equals(cs.ALL_PL)){
+				if(list.get(i).getCode().equals(code)) {
+					t.add(list.get(i).getItemAsDataShortWithID());
+				}
+			} else {
+				if(!list.get(i).getCode().equals(cs.OTHER_CODE)
+						&& (!list.get(i).getCode().equals(cs.CARWASH_CODE)) 
+						&& (!list.get(i).getCode().equals(cs.SERVICE_CODE))) {
+					t.add(list.get(i).getItemAsDataShortWithID());
+				}
+			}
+		}
+		String[][] data = new String[t.size()][];
+		data = t.toArray(data);
+		System.out.println("SM 3 "+data.length+" "+data[0].length);
 		return data;
 	}
 	

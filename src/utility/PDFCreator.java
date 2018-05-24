@@ -75,7 +75,7 @@ public class PDFCreator {
 			try {
 				pdd = createInvoice(i, customer, date);
 			} catch (IOException e) {
-				log.log(cs.ERR_LOG, jl.get(cs.PDF_CREATION_ERROR).toString());
+				log.log(cs.ERR_LOG, "INVOICE " + jl.get(cs.PDF_CREATION_ERROR).toString());
 				e.printStackTrace();
 			}
 		} else if (docType.equals(cs.PDF_SALE_REPORT)){
@@ -84,22 +84,33 @@ public class PDFCreator {
 			try {
 				pdd = createSaleRep(data, header, date);
 			} catch (IOException e) {
-				log.log(cs.ERR_LOG, jl.get(cs.PDF_CREATION_ERROR).toString());
+				log.log(cs.ERR_LOG, "SALE REPORT " + jl.get(cs.PDF_CREATION_ERROR).toString());
 				e.printStackTrace();
 			}
 		} else if (docType.equals(cs.PDF_STOCK_REPORT)){
-			pdd = createStockRep();
+			String[][] data = (String[][]) object1;
+			String header = (String) obj2;
+			try {
+				pdd = createStockRep(data, header, date);
+			} catch (IOException e) {
+				log.log(cs.ERR_LOG, "STOCK REPORT " + jl.get(cs.PDF_CREATION_ERROR).toString());
+				e.printStackTrace();
+			}
 		} else if (docType.equals(ConstStrings.PDF_REPAK_REPORT)){
 			pdd = createRepakRep();
 		} else {
-			JOptionPane.showMessageDialog(null, jl.get(cs.PDF_CREATION_ERROR).toString());
+			JOptionPane.showMessageDialog(null, "GENERAL " + jl.get(cs.PDF_CREATION_ERROR).toString());
 		}
 		return pdd;
 	}
 
-	private PDDocument createStockRep() {
-		// TODO Auto-generated method stub
-		return null;
+	private PDDocument createStockRep(String[][] data, String header, String date) throws IOException {
+		// TODO work in progress
+		PDDocument pdd = new PDDocument();
+		PDPage page = new PDPage();
+		pdd.addPage(page);
+		PDPageContentStream cst = new PDPageContentStream(pdd, page);
+		return pdd;
 	}
 	
 	private PDDocument createRepakRep() {
@@ -229,7 +240,7 @@ public class PDFCreator {
 	private void fillSalesReport(PDPageContentStream cst, String[][] data, String header) throws IOException {
 		displayHeadings(cst, header);
 		double  sc = 0, sp = 0, ss = 0;
-		String tt = msh.paddStringRight("***TOTAL ", cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE);
+//		String tt = msh.paddStringRight("***TOTAL ", cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE);
 		if(data.length > 0) {
 			for (int i = 0; i < data.length; i++) {
 				String code = data[i][0];
@@ -271,11 +282,11 @@ public class PDFCreator {
 				cst.newLine();
 			}
 			cst.newLine();
-			tt += msh.removeLastChar(msh.paddStringRight("€ "+df.format(sc), cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE) 
-					+ msh.paddStringRight("€ "+df.format(ss), cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE)
-					+ msh.paddStringRight("€ "+df.format(sp), cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE), cs.UNDERSCORE);
-			
-			cst.showText(tt);
+//			tt += msh.removeLastChar(msh.paddStringRight("€ "+df.format(sc), cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE) 
+//					+ msh.paddStringRight("€ "+df.format(ss), cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE)
+//					+ msh.paddStringRight("€ "+df.format(sp), cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE), cs.UNDERSCORE);
+//			
+//			cst.showText(tt);
 		}
 		cst.endText();
 	}

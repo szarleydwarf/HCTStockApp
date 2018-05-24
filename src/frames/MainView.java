@@ -220,7 +220,7 @@ public class MainView {
 		newInvoiceFrame = new InvoiceAddEdit(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, jUser, msh, dh, fh, stmng, cmng, invmng, repakRepFrame, carBrandList, df_3_2);
 		newItemFrame = new ItemAddNew(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2, repakRepFrame, todayYM);
 		
-		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
+		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, dh, pdfCreator, stmng, df_4_2);
 //		logger.log(cs.INFO_LOG, "Classes loaded");
 	}
 
@@ -239,7 +239,7 @@ public class MainView {
 
 		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
 //		logger.log(cs.INFO_LOG, "Logger Init");
-		msh = new MiscHelper(logger, cs, jLang);
+		msh = new MiscHelper(logger, cs, jLang, jSettings, fh);
 
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols( new Locale("en", "UK"));
 		symbols.setDecimalSeparator('.');

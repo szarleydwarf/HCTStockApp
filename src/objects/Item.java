@@ -167,6 +167,16 @@ public class Item {
 		data[3] = ""+this.qnt;
 		return data;
 	}
+
+	public String[] getItemAsDataShortWithID(){
+		String[] data = new String[cs.STOCK_TB_HEADINGS_SHORT.length];
+		data[0] = ""+this.id;
+		data[1] = this.code;
+		data[2] = this.name;
+		data[3] = ""+this.price;
+		data[4] = ""+this.qnt;
+		return data;
+	}
 	
 	public boolean saveNewInDatabase(){
 		String q = this.createInsertQuery();

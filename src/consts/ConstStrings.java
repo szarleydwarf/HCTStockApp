@@ -21,6 +21,7 @@ public class ConstStrings {
 	public final String DATE_TIME_FORMAT_REVERSE = "yyyy-MM-dd @HH:mm:ss";
 	public final String YEARS = "years";
 	public final String SALE_REPORT_HEADINGS = "sale report headings";
+	public final String STOCK_REPORT_HEADINGS = "stock report headings";
 	public final String REPAK_REPORT_HEADINGS = "repak report headings";
 	public final String REPAK_TB_COL_NAMES = "repak tb col names";
 
@@ -221,4 +222,6 @@ public class ConstStrings {
 	public final String NONAME = "noname";
 	public final String NOT_INT_ERROR = "not int";
 	public final String NOT_DOUBLE_ERROR = "not double";
+	public final String ALL_EN = "ALL";
+	public final String ALL_PL = "WSZYSTKO";
 }

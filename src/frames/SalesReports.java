@@ -351,7 +351,7 @@ public class SalesReports {
 		// TODO Auto-generated method stub
 		PDDocument pdf = null;
 		JSONArray jArr = (JSONArray) jl.get(cs.SALE_REPORT_HEADINGS);
-		String header = createHeader(msh.json2Array(jArr));
+		String header = msh.stringArr2String(msh.json2Array(jArr), "I.C. - ");
 		String date = path.substring(path.lastIndexOf(cs.SPACE)+1, path.lastIndexOf(cs.DOT));
 		date = date.replaceAll(cs.UNDERSCORE, cs.MINUS);
 		System.out.println("DD "+date);
@@ -378,24 +378,12 @@ public class SalesReports {
 		}
 	}
 
-	private String createHeader(String[] jArr) {
-		String h = "";
-		jArr[0] = "I.C. - ";
-		for (String s : jArr) {
-			h += msh.paddStringRight(s, 12, cs.UNDERSCORE);
-		}
-		h = msh.removeLastChar(h, cs.UNDERSCORE);
-		return h;
-	}
 
 	protected String createPdfPath(boolean daily) {
 		String s = yearOfReport+cs.SLASH+monthOfReport;
 		if(daily)
 			s+=cs.SLASH+dayOfReport;
-		String p = js.get(cs.SALES_PATH).toString() + s;
-		fh.createFolderIfNotExist(p);
-		p += cs.SLASH + jl.get(cs.BTN_SALES_REPORT).toString() + " " + s.replace(cs.SLASH, cs.UNDERSCORE) + cs.PDF_EXT;
-		return p;
+		return msh.createPdfPath(s, cs.SALES_PATH, cs.BTN_SALES_REPORT);
 	}
 
 	private void previewReport(JLabel jlbl, String name) {

@@ -42,18 +42,22 @@ public class MiscHelper {
 	private Logger log;
 	private ConstStrings cs;
 	private JSONObject jl;
+	private JSONObject js;
+	private FileHelper fh;
 
-	public MiscHelper(Logger logger, ConstStrings CS, JSONObject jLang){
+	public MiscHelper(Logger logger, ConstStrings CS, JSONObject jLang, JSONObject JS, FileHelper FH){
 		log = logger;
 		cs = CS;
 		jl = jLang;
+		js = JS;
+		fh = FH;
 	}
 	
 	public void printData(String[][] d) {
 		System.out.println("Data 1st length "+d.length);
 		System.out.println("Data 2nd length "+d[0].length);
 		for(int i = 0 ; i< d.length; i++)
-			for(int j = 0; j < d[j].length; j++)
+			for(int j = 0; j < d[i].length; j++)
 				System.out.println("i:"+i+" j:"+j+" - "+d[i][j]);
 	}
 	
@@ -403,4 +407,23 @@ public class MiscHelper {
 		}
 		return 0;
 	}
+
+	public String createPdfPath(String date, String path, String repName) {
+		String p = js.get(path).toString() + date;
+		fh.createFolderIfNotExist(p);
+		p += cs.SLASH + jl.get(repName).toString() + " " + date.replace(cs.SLASH, cs.UNDERSCORE) + cs.PDF_EXT;
+		return p;
+	}
+
+	public String stringArr2String(String[] jArr, String st) {
+		String h = "";
+		if(!st.equals(""))
+			jArr[0] = st;
+		for (String s : jArr) {
+			h += paddStringRight(s, 12, cs.UNDERSCORE);
+		}
+		h = removeLastChar(h, cs.UNDERSCORE);
+		return h;
+	}
+
 }

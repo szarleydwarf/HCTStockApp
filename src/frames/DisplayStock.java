@@ -34,6 +34,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -43,8 +44,10 @@ import consts.ConstStrings;
 import managers.DatabaseManager;
 import managers.StockManager;
 import objects.Item;
+import utility.DateHelper;
 import utility.Logger;
 import utility.MiscHelper;
+import utility.PDFCreator;
 import utility.Printer;
 
 public class DisplayStock {
@@ -75,6 +78,8 @@ public class DisplayStock {
 	private JButton btnDelete;
 	protected ItemAddNew newItemFrame;
 	private Printer printer;
+	private DateHelper dh;
+	private PDFCreator pdfc;
 
 	/**
 	 * Launch the application.
@@ -115,8 +120,10 @@ public class DisplayStock {
 		initialize();
 	}
 
-	public DisplayStock(MainView main, ItemAddNew AN, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger, Printer printer,
-			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM, DecimalFormat df_3_2) {
+	public DisplayStock(MainView main, ItemAddNew AN, DatabaseManager dmn, 
+			ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger, Printer printer,
+			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, 
+			PDFCreator PDFC, StockManager SM, DecimalFormat df_3_2) {
 		mainView = main;
 		this.newItemFrame = AN;
 		jl = jLang;
@@ -130,6 +137,9 @@ public class DisplayStock {
 //		cp = cP;
 		
 		msh = mSH;
+		dh = DH;
+		pdfc = PDFC;
+		
 		this.printer = printer;
 		
 		sm = SM;
@@ -281,8 +291,32 @@ public class DisplayStock {
 		btnPrint.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				// TODO Work in progress
 				System.out.println("PRINT "+cbCodes.getSelectedIndex());
+				String code = "";
+				switch (cbCodes.getSelectedIndex()) {
+				case 0:
+					code = cs.ALL_EN;
+					break;
+				case 1:
+					code = cs.TYRE_CODE_C;
+					break;
+				case 2:
+					code = cs.TYRE_CODE_A;
+					break;
+				case 3:
+					code = cs.TUBE_CODE;
+					break;
+				case 4:
+					code = cs.SHOP_CODE;
+					break;
+
+				default:
+					code = cs.ALL_EN;
+					break;
+				}
+				String path = createPath();
+				printStock(path, code);
 			}
 		});
 
@@ -373,6 +407,24 @@ public class DisplayStock {
 		});		
 	}
 
+	protected String createPath() {
+		return msh.createPdfPath(dh.getFormatedDateRev(), cs.STOCK_REP_PATH, cs.LBL_STOCK);
+	}
+
+	protected void printStock(String path, String code) {
+		//TODO work in progress
+		PDDocument pdf = null;
+		JSONArray jArr = (JSONArray) jl.get(cs.STOCK_REPORT_HEADINGS);
+		String header = msh.stringArr2String(msh.json2Array(jArr), "");
+		String date = path.substring(path.lastIndexOf(cs.SPACE)+1, path.lastIndexOf(cs.DOT));
+		date = date.replaceAll(cs.UNDERSCORE, cs.MINUS);
+//		System.out.println("DD "+date+" "+code);
+		String[][] data = sm.getDataByCode(code);
+//		msh.printData(data);
+
+		pdf = pdfc.createPDF(cs.PDF_STOCK_REPORT, data, header, date);
+	}
+
 	protected void fillLabels(JLabel lblTyreCost, JLabel lblTyrePrices, JLabel lblQnt, String code) {
 		double cSum = 0, pSum = 0, pQ = 0;
 		int q = 0;
@@ -422,6 +474,7 @@ public class DisplayStock {
 	}
 
 	private void openEditFrame(Item i) {
+		// TODO change this to open add new item frame
 		int lblX = 10, lblY = 10; 
 		int xOffset = 120, yOffset = 24;
 		int lblW = 80, tfW = 260;

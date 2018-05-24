@@ -1242,6 +1242,7 @@ public class InvoiceAddEdit {
 	// method used for the new invoice
 	public void setIsVisible(MainView MV, boolean b){
 		this.restore = false;
+		this.discount = 0.00;
 		lastInvoice = dm.selectData(cdb.SELECT_LAST_INVOICE);
 		if(lastInvoice.equals(""))
 			lastInvoice = "0";
@@ -1261,7 +1262,8 @@ public class InvoiceAddEdit {
 	// method used for the invoice edition
 	public void setIsVisible(String[] forPreview, boolean b) {
 		this.restore = false;
-
+		this.discount = 0.00;
+		
 		lastInvoice = forPreview[0];
 		initialize();
 
@@ -1319,7 +1321,9 @@ public class InvoiceAddEdit {
 			double sum = calculateSum();
 			sum = this.applyDiscount(sum);
 			this.lblTotal.setText(cs.EURO+" "+df.format(sum));
-		}
+		} else
+			this.discount = 0.00;
+		
 		this.chbInd.setSelected(isBusiness);
 
 		this.date = invoice.getDate();

@@ -55,6 +55,7 @@
 
 	"years":["2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034", "2035"],
 	"sale report headings":["Miesiac", "Koszt", "Sprzedaz", "Zysk"],
+	"stock report headings":["ID", "Kod", "Nazwa", "Cena", "Ilosc"],
 	"repak report headings":["Miesiac", "CT Sprzedane", "CT Zalozone", "CT Zakupione", "AT Sprzedane", "AT Zalozone", "AT Zakupione", "CT Zutylizowane", "AT Zutylizowane", "CT Do Utylizacji", "AT Do Utylizacji"],
 	"repak tb col names":["date", "sold_car", "fitted_car", "bought_car", "sold_agri", "fitted_agri", "bought_agri", "returned_car", "returned_agri"],
 
