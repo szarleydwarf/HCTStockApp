@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.font.TextAttribute;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Map;
 
@@ -315,8 +316,13 @@ public class DisplayStock {
 					code = cs.ALL_EN;
 					break;
 				}
-				String path = createPath();
-				printStock(path, code);
+				String path = createPath(code);
+				
+				if(printStock(path, code)){
+					
+				} else{
+					JOptionPane.showMessageDialog(frame, "BTN PRESSED " + jl.get(cs.PDF_SAVE_ERROR).toString());
+				}
 			}
 		});
 
@@ -407,22 +413,41 @@ public class DisplayStock {
 		});		
 	}
 
-	protected String createPath() {
-		return msh.createPdfPath(dh.getFormatedDateRev(), cs.STOCK_REP_PATH, cs.LBL_STOCK);
+	protected String createPath(String code) {
+		String p = msh.createPdfPath(dh.getFormatedDateRev(), cs.STOCK_REP_PATH, cs.LBL_STOCK);
+		String t = p.substring(p.lastIndexOf(cs.SLASH)+1);
+		p = p.substring(0, p.lastIndexOf(cs.SLASH)) + cs.SLASH + code + cs.UNDERSCORE + t; 
+		return p;
 	}
 
-	protected void printStock(String path, String code) {
+	protected boolean printStock(String path, String code) {
 		//TODO work in progress
 		PDDocument pdf = null;
 		JSONArray jArr = (JSONArray) jl.get(cs.STOCK_REPORT_HEADINGS);
 		String header = msh.stringArr2String(msh.json2Array(jArr), "");
 		String date = path.substring(path.lastIndexOf(cs.SPACE)+1, path.lastIndexOf(cs.DOT));
 		date = date.replaceAll(cs.UNDERSCORE, cs.MINUS);
-//		System.out.println("DD "+date+" "+code);
+		System.out.println("DD "+path);
 		String[][] data = sm.getDataByCode(code);
 //		msh.printData(data);
 
 		pdf = pdfc.createPDF(cs.PDF_STOCK_REPORT, data, header, date);
+		if(pdf != null){
+			try {
+				pdf.save(path);
+				pdf.close();
+				JOptionPane.showMessageDialog(frame, jl.get(cs.INVOICE_SAVED_2).toString());
+				return true;
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+				log.log(cs.ERR_LOG, jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
+				e.printStackTrace();
+				return false;
+			}
+		} else {
+			JOptionPane.showMessageDialog(frame, "PDF NULL "+jl.get(cs.PDF_SAVE_ERROR).toString());
+			return false;
+		}
 	}
 
 	protected void fillLabels(JLabel lblTyreCost, JLabel lblTyrePrices, JLabel lblQnt, String code) {

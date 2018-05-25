@@ -176,7 +176,7 @@ public class SalesReports {
 		lblDayPreview.setBounds(lblW/2+24, lblY, lblW/2-46, lblH/3);
 		frame.getContentPane().add(lblDayPreview);
 		previewReport(lblDayPreview, lblDP.getTitle());
-// TODO
+
 		JLabel lblMonthPreviewFrame = new JLabel("");
 		lblMonthPreviewFrame.setBorder(lblMP);
 		lblMonthPreviewFrame.setFont(fonts_title);
@@ -252,15 +252,15 @@ public class SalesReports {
 //				System.out.println("Mpath "+path);
 				boolean pdfCreated = printSalesReport(path, false);
 				if(pdfCreated){
-//					try {
-//						printer.printDoc(path);
-//					} catch (IOException e) {
-//						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
-//						e.printStackTrace();
-//					} catch (PrinterException e) {
-//						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
-//						e.printStackTrace();
-//					}
+					try {
+						printer.printDoc(path);
+					} catch (IOException e) {
+						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+						e.printStackTrace();
+					} catch (PrinterException e) {
+						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+						e.printStackTrace();
+					}
 				}
 			}
 		});
@@ -273,15 +273,15 @@ public class SalesReports {
 //					System.out.println("Dpath "+path);
 					boolean pdfCreated = printSalesReport(path, true);
 					if(pdfCreated){
-//						try {
-//							printer.printDoc(path);
-//						} catch (IOException e) {
-//							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
-//							e.printStackTrace();
-//						} catch (PrinterException e) {
-//							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
-//							e.printStackTrace();
-//						}
+						try {
+							printer.printDoc(path);
+						} catch (IOException e) {
+							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+							e.printStackTrace();
+						} catch (PrinterException e) {
+							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+							e.printStackTrace();
+						}
 					}
 //				} else {
 //					log.log(cs.ERR_LOG, jl.get(cs.PRINTING_PDF_ERROR).toString());
@@ -348,13 +348,11 @@ public class SalesReports {
 	}
 
 	protected boolean printSalesReport(String path, boolean b) {
-		// TODO Auto-generated method stub
 		PDDocument pdf = null;
 		JSONArray jArr = (JSONArray) jl.get(cs.SALE_REPORT_HEADINGS);
 		String header = msh.stringArr2String(msh.json2Array(jArr), "I.C. - ");
 		String date = path.substring(path.lastIndexOf(cs.SPACE)+1, path.lastIndexOf(cs.DOT));
 		date = date.replaceAll(cs.UNDERSCORE, cs.MINUS);
-		System.out.println("DD "+date);
 		if(b)
 			pdf = pdfCreator.createPDF(cs.PDF_SALE_REPORT, DATA_D, header, date);
 		else
@@ -392,7 +390,6 @@ public class SalesReports {
 		String[][] data = null;
 
 		sReportHeadings[0] = "I.C. - ";
-//TODO
 		if(name.equals(jl.get(cs.LBL_DAILY_REPORT).toString())) {
 			String dateYMD = yearOfReportD+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReportD))+cs.MINUS+dfm.format(Integer.parseInt(dayOfReport));
 			String dateDMY = dfm.format(Integer.parseInt(dayOfReport))+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReportD))+cs.MINUS+yearOfReportD;
@@ -478,7 +475,6 @@ public class SalesReports {
 				cost *= qnt;
 				double price = Double.parseDouble(s.substring(s.indexOf(cs.AT)+1));
 				price *= qnt;
-				// TODO substract discount from prices
 				if(discount > 0)
 					price = price - discount;
 				diff = price - cost;

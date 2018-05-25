@@ -42,4 +42,5 @@ public class ConstNums {
 	public final int SALE_REPORT_PAD_LENGTH = 22;
 	public final int CAR_TYRE_COL = 1;
 	public final int AGRI_TYRE_COL = 4;
+	public final int PAGE_MARGIN = 20;
 }
