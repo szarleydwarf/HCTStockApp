@@ -43,7 +43,7 @@ public class ConstStrings {
 	public final String[] CARS_TABLE_HEADING = {"Cars"};
 	public final String[] STOCK_TB_HEADINGS = {"ID", "Kod", "Nazwa", "Koszt", "Cena", "Qnt", "VAT", "Transport", "VEMC"};
 	public final String[] STOCK_TB_HEADINGS_SHORT =  {"Kod","Towar", "Cena", "Qnt", "Cost"};
-	public final String[] CUSTOMER_TB_HEADINGS = {"Customer", "B/I", "VAT/TAX"};
+	public final String[] CUSTOMER_TB_HEADINGS = {"Customer", "B/I", "VAT/TAX", "No of Serv"};
 	public final String[] INVOICES_TB_HEADINGS = {"ID", "Klient", "Data", "Zakupy", "Plik"};
 
 	public final String SALE_REPORTS = "SALE REPORTS";

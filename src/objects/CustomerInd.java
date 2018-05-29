@@ -143,9 +143,11 @@ public class CustomerInd extends Customer{
 
 	@Override
 	public String[] getCasData() {
-		String[] data = new String[2];
+		String[] data = new String[4];
 		data[0] = this.getCar().getRegistration();
 		data[1] = "I";
+		data[2] = "n/a";
+		data[3] = ""+this.getNumOfServices();
 		return data;
 	}
 

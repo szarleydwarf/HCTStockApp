@@ -596,7 +596,7 @@ public class InvoiceAddEdit {
 
 		// BUTTONS
 		JButton btnRemove = new JButton(cs.MINUS);
-		btnRemove.setForeground(Color.YELLOW);
+		btnRemove.setForeground(Color.RED);
 		btnRemove.setFont(fonts);
 		btnRemove.setBackground(new Color(204, 0, 0));
 		int btnX = (int) (lblPrevX + (lblW*0.88));
@@ -605,7 +605,7 @@ public class InvoiceAddEdit {
 		frame.getContentPane().add(btnRemove);
 		
 		JButton btnRemoveAll = new JButton(cs.MINUS+" "+cs.MINUS);
-		btnRemoveAll.setForeground(Color.YELLOW);
+		btnRemoveAll.setForeground(Color.RED);
 		btnRemoveAll.setFont(fonts);
 		btnRemoveAll.setBackground(new Color(204, 0, 0));
 		int ty  = lblPrevY +btnRemove.getHeight()+ 10;

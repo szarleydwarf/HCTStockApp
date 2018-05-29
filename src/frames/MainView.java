@@ -90,6 +90,7 @@ public class MainView {
 	private static SalesReports salesRepFrame;
 	private static RepakReport repakRepFrame;
 	private static String todayYM;
+	private static CustomersFrame customerFrame;
 	
 
 	/**
@@ -213,7 +214,7 @@ public class MainView {
 		printer = new Printer(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh);
 
 
-		invoicesFrame = new InvoicesDisplay(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, invmng);
+		invoicesFrame = new InvoicesDisplay(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, dh, invmng);
 		salesRepFrame = new SalesReports(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, msh, dh, fh, invmng, df_5_2);
 		repakRepFrame = new RepakReport(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, msh, dh, fh);
 
@@ -221,6 +222,7 @@ public class MainView {
 		newItemFrame = new ItemAddNew(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2, repakRepFrame, todayYM);
 		
 		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, dh, pdfCreator, stmng, df_4_2);
+		customerFrame = new CustomersFrame(main, dm, cdb, cs, cn, logger, jSettings, jLang, msh, dh, cmng);
 //		logger.log(cs.INFO_LOG, "Classes loaded");
 	}
 
@@ -443,12 +445,13 @@ public class MainView {
 		frame.getContentPane().add(btnSalesReports);
 		
 		
-		JButton btnCustomers = new JButton("Klienci");
+		JButton btnCustomers = new JButton(jLang.get(cs.LBL_CUSTOMER).toString());
 		btnCustomers.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		btnCustomers.setBackground(new Color(204, 255, 255));
 		btnCustomers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(frame, "W trakcie tworzenia");
+				if(!customerFrame.isVisible())
+					customerFrame.setIsVisible(true);
 			}
 		});
 		btnY += yOffset;

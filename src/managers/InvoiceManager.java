@@ -94,4 +94,11 @@ public class InvoiceManager {
 		return null;
 	}
 
+	public String[][] getDataShort(ArrayList<Invoice> tList) {
+		String[][] data = new String[tList.size()][];
+		for (int i = 0; i < tList.size(); i++)
+			data[i] = tList.get(i).getCasData();
+		return data;	
+	}
+
 }
