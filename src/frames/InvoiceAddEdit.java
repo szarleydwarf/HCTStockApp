@@ -424,7 +424,7 @@ public class InvoiceAddEdit {
 		tfCustomers.getDocument().addDocumentListener(new DocumentListener(){
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				String text = tfCustomers.getText();
+				String text = tfCustomers.getText().toUpperCase();
 				if (text.trim().length() == 0) rSortCustomer.setRowFilter(null);
 				else rSortCustomer.setRowFilter(RowFilter.regexFilter(cs.REGEX_FILTER + text));
 				updateInvoiceLbl(text);
@@ -596,7 +596,7 @@ public class InvoiceAddEdit {
 
 		// BUTTONS
 		JButton btnRemove = new JButton(cs.MINUS);
-		btnRemove.setForeground(Color.YELLOW);
+		btnRemove.setForeground(Color.RED);
 		btnRemove.setFont(fonts);
 		btnRemove.setBackground(new Color(204, 0, 0));
 		int btnX = (int) (lblPrevX + (lblW*0.88));
@@ -605,7 +605,7 @@ public class InvoiceAddEdit {
 		frame.getContentPane().add(btnRemove);
 		
 		JButton btnRemoveAll = new JButton(cs.MINUS+" "+cs.MINUS);
-		btnRemoveAll.setForeground(Color.YELLOW);
+		btnRemoveAll.setForeground(Color.RED);
 		btnRemoveAll.setFont(fonts);
 		btnRemoveAll.setBackground(new Color(204, 0, 0));
 		int ty  = lblPrevY +btnRemove.getHeight()+ 10;
@@ -1038,7 +1038,10 @@ public class InvoiceAddEdit {
 	}
 
 	protected void updateStockTableQnt(DefaultTableModel model, int chosenRow, int stRow) {
-		if(stRow != -1){
+		if(stRow != -1 && (model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(cs.TYRE_CODE_C) 
+				|| model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(cs.TYRE_CODE_A) 
+				|| model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(cs.TUBE_CODE) 
+				|| model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(cs.SHOP_CODE))){
 			int qnt = Integer.parseInt(model.getValueAt(chosenRow, cn.QNT_COLUMN).toString());
 			if(qnt <= 0)
 				qnt = 1;
@@ -1239,6 +1242,7 @@ public class InvoiceAddEdit {
 	// method used for the new invoice
 	public void setIsVisible(MainView MV, boolean b){
 		this.restore = false;
+		this.discount = 0.00;
 		lastInvoice = dm.selectData(cdb.SELECT_LAST_INVOICE);
 		if(lastInvoice.equals(""))
 			lastInvoice = "0";
@@ -1258,7 +1262,8 @@ public class InvoiceAddEdit {
 	// method used for the invoice edition
 	public void setIsVisible(String[] forPreview, boolean b) {
 		this.restore = false;
-
+		this.discount = 0.00;
+		
 		lastInvoice = forPreview[0];
 		initialize();
 
@@ -1316,7 +1321,9 @@ public class InvoiceAddEdit {
 			double sum = calculateSum();
 			sum = this.applyDiscount(sum);
 			this.lblTotal.setText(cs.EURO+" "+df.format(sum));
-		}
+		} else
+			this.discount = 0.00;
+		
 		this.chbInd.setSelected(isBusiness);
 
 		this.date = invoice.getDate();
@@ -1373,6 +1380,10 @@ public class InvoiceAddEdit {
 
 	public static JSONObject getJl() {
 		return jl;
+	}
+
+	public JFrame getFrame() {
+		return frame;
 	}
 
 

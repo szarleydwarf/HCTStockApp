@@ -21,6 +21,7 @@ public class ConstStrings {
 	public final String DATE_TIME_FORMAT_REVERSE = "yyyy-MM-dd @HH:mm:ss";
 	public final String YEARS = "years";
 	public final String SALE_REPORT_HEADINGS = "sale report headings";
+	public final String STOCK_REPORT_HEADINGS = "stock report headings";
 	public final String REPAK_REPORT_HEADINGS = "repak report headings";
 	public final String REPAK_TB_COL_NAMES = "repak tb col names";
 
@@ -42,7 +43,7 @@ public class ConstStrings {
 	public final String[] CARS_TABLE_HEADING = {"Cars"};
 	public final String[] STOCK_TB_HEADINGS = {"ID", "Kod", "Nazwa", "Koszt", "Cena", "Qnt", "VAT", "Transport", "VEMC"};
 	public final String[] STOCK_TB_HEADINGS_SHORT =  {"Kod","Towar", "Cena", "Qnt", "Cost"};
-	public final String[] CUSTOMER_TB_HEADINGS = {"Customer", "B/I", "VAT/TAX"};
+	public final String[] CUSTOMER_TB_HEADINGS = {"Customer", "B/I", "VAT/TAX", "No of Serv"};
 	public final String[] INVOICES_TB_HEADINGS = {"ID", "Klient", "Data", "Zakupy", "Plik"};
 
 	public final String SALE_REPORTS = "SALE REPORTS";
@@ -138,6 +139,7 @@ public class ConstStrings {
 	// JSON LANG PACKET
 	public final String TYRES_CATEGORY = "tyre categories";
 	public final String ITEM_CATEGORY = "items cat";
+	public final String ITEM_CODES_ARR = "items codes for print";
 
 	public final String BTN_NEXT = "next";
 	public final String BTN_SAVE = "save";
@@ -220,4 +222,6 @@ public class ConstStrings {
 	public final String NONAME = "noname";
 	public final String NOT_INT_ERROR = "not int";
 	public final String NOT_DOUBLE_ERROR = "not double";
+	public final String ALL_EN = "ALL";
+	public final String ALL_PL = "WSZYSTKO";
 }

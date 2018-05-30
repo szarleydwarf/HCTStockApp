@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.font.TextAttribute;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -43,8 +45,10 @@ import consts.ConstStrings;
 import managers.DatabaseManager;
 import managers.StockManager;
 import objects.Item;
+import utility.DateHelper;
 import utility.Logger;
 import utility.MiscHelper;
+import utility.PDFCreator;
 import utility.Printer;
 
 public class DisplayStock {
@@ -75,6 +79,8 @@ public class DisplayStock {
 	private JButton btnDelete;
 	protected ItemAddNew newItemFrame;
 	private Printer printer;
+	private DateHelper dh;
+	private PDFCreator pdfc;
 
 	/**
 	 * Launch the application.
@@ -115,8 +121,10 @@ public class DisplayStock {
 		initialize();
 	}
 
-	public DisplayStock(MainView main, ItemAddNew AN, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger, Printer printer,
-			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM, DecimalFormat df_3_2) {
+	public DisplayStock(MainView main, ItemAddNew AN, DatabaseManager dmn, 
+			ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger, Printer printer,
+			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, 
+			PDFCreator PDFC, StockManager SM, DecimalFormat df_3_2) {
 		mainView = main;
 		this.newItemFrame = AN;
 		jl = jLang;
@@ -130,6 +138,9 @@ public class DisplayStock {
 //		cp = cP;
 		
 		msh = mSH;
+		dh = DH;
+		pdfc = PDFC;
+		
 		this.printer = printer;
 		
 		sm = SM;
@@ -164,6 +175,18 @@ public class DisplayStock {
 		lblSearch.setFont(fonts);
 		lblSearch.setBounds(10, 40, 200, 24);
 		frame.getContentPane().add(lblSearch);
+		
+		String[] tCodes = msh.json2Array((JSONArray) jl.get(cs.ITEM_CODES_ARR));
+		JComboBox cbCodes = new JComboBox(tCodes);
+		cbCodes.setSelectedIndex(0);
+		cbCodes.setFont(fonts);
+		cbCodes.setBounds((frame.getWidth() - cn.BACK_BTN_X_OFFSET), 160, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
+		frame.getContentPane().add(cbCodes);
+		
+		JButton btnPrint = new JButton(jl.get(cs.BTN_PRINT).toString());
+		btnPrint.setFont(fonts);
+		btnPrint.setBounds((frame.getWidth() - cn.BACK_BTN_X_OFFSET), 200, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
+		frame.getContentPane().add(btnPrint);
 
 		TitledBorder lblCosts = msh.createBorders(jl.get(cs.LBL_COST).toString(), Color.YELLOW);
 		TitledBorder lblPrice = msh.createBorders(jl.get(cs.LBL_PRICE).toString(), Color.YELLOW);
@@ -172,7 +195,6 @@ public class DisplayStock {
 		int xOffset = 120, heigh = 32;
 		int xPosLbl = (msh.getScreenDimension()[0] / 5), yPosLbl = frame.getHeight() - 76;
 
-// TODO
 		JSONArray jArr = (JSONArray) jl.get(cs.ITEM_CATEGORY);
 		String[] tCat = msh.json2Array(jArr);
 
@@ -266,6 +288,43 @@ public class DisplayStock {
 						mainView.setIsVisible(true);
 			}
 		});
+		
+		btnPrint.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Work in progress
+				System.out.println("PRINT "+cbCodes.getSelectedIndex());
+				String code = "";
+				switch (cbCodes.getSelectedIndex()) {
+				case 0:
+					code = cs.ALL_EN;
+					break;
+				case 1:
+					code = cs.TYRE_CODE_C;
+					break;
+				case 2:
+					code = cs.TYRE_CODE_A;
+					break;
+				case 3:
+					code = cs.TUBE_CODE;
+					break;
+				case 4:
+					code = cs.SHOP_CODE;
+					break;
+
+				default:
+					code = cs.ALL_EN;
+					break;
+				}
+				String path = createPath(code);
+				
+				if(printStock(path, code)){
+					
+				} else{
+					JOptionPane.showMessageDialog(frame, "BTN PRESSED " + jl.get(cs.PDF_SAVE_ERROR).toString());
+				}
+			}
+		});
 
 		btnAddNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -321,7 +380,6 @@ public class DisplayStock {
 					JComboBox cb = (JComboBox) a.getSource();
 					String defaultCategory = cb.getSelectedItem().toString();
 					String code = "";
-// TODO 					
 					if(defaultCategory.equals(tCat[0])){
 						code = cs.TYRE_CODE_C;
 					} else if(defaultCategory.equals(tCat[1])){
@@ -353,6 +411,43 @@ public class DisplayStock {
 		        }
 		    }
 		});		
+	}
+
+	protected String createPath(String code) {
+		String p = msh.createPdfPath(dh.getFormatedDateRev(), cs.STOCK_REP_PATH, cs.LBL_STOCK);
+		String t = p.substring(p.lastIndexOf(cs.SLASH)+1);
+		p = p.substring(0, p.lastIndexOf(cs.SLASH)) + cs.SLASH + code + cs.UNDERSCORE + t; 
+		return p;
+	}
+
+	protected boolean printStock(String path, String code) {
+		//TODO work in progress
+		PDDocument pdf = null;
+		JSONArray jArr = (JSONArray) jl.get(cs.STOCK_REPORT_HEADINGS);
+		String header = msh.stringArr2String(msh.json2Array(jArr), "");
+		String date = path.substring(path.lastIndexOf(cs.SPACE)+1, path.lastIndexOf(cs.DOT));
+		date = date.replaceAll(cs.UNDERSCORE, cs.MINUS);
+		System.out.println("DD "+path);
+		String[][] data = sm.getDataByCode(code);
+//		msh.printData(data);
+
+		pdf = pdfc.createPDF(cs.PDF_STOCK_REPORT, data, header, date);
+		if(pdf != null){
+			try {
+				pdf.save(path);
+				pdf.close();
+				JOptionPane.showMessageDialog(frame, jl.get(cs.INVOICE_SAVED_2).toString());
+				return true;
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+				log.log(cs.ERR_LOG, jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
+				e.printStackTrace();
+				return false;
+			}
+		} else {
+			JOptionPane.showMessageDialog(frame, "PDF NULL "+jl.get(cs.PDF_SAVE_ERROR).toString());
+			return false;
+		}
 	}
 
 	protected void fillLabels(JLabel lblTyreCost, JLabel lblTyrePrices, JLabel lblQnt, String code) {
@@ -404,6 +499,7 @@ public class DisplayStock {
 	}
 
 	private void openEditFrame(Item i) {
+		// TODO change this to open add new item frame
 		int lblX = 10, lblY = 10; 
 		int xOffset = 120, yOffset = 24;
 		int lblW = 80, tfW = 260;
@@ -432,6 +528,7 @@ public class DisplayStock {
 				}		
 			}
 		});
+		
 
 		JLabel name = new JLabel(jl.get(cs.LBL_NAME).toString());
 		name.setFont(fonts);
@@ -694,4 +791,9 @@ public class DisplayStock {
 	public static JSONObject getJl() {
 		return jl;
 	}
+	
+	public JFrame getFrame() {
+		return frame;
+	}
+
 }

@@ -6,10 +6,13 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.font.TextAttribute;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -21,9 +24,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import consts.ConstDB;
@@ -33,6 +38,7 @@ import managers.DatabaseManager;
 import managers.InvoiceManager;
 import objects.Invoice;
 import objects.Item;
+import utility.DateHelper;
 import utility.Logger;
 import utility.MiscHelper;
 
@@ -58,6 +64,12 @@ public class InvoicesDisplay {
 	private JButton btnEdit;
 	private String[] forPreview;
 	protected Invoice invoice;
+	private DateHelper dh;
+	private String dayString;
+	private String monthName;
+	private String yearString;
+	private DecimalFormat dfm;
+	private JTable table;
 
 	/**
 	 * Launch the application.
@@ -83,7 +95,7 @@ public class InvoicesDisplay {
 	}
 
 	public InvoicesDisplay(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN,
-			Logger logger, JSONObject jSettings, JSONObject jLang, MiscHelper mSH, InvoiceManager invMng) {
+			Logger logger, JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, InvoiceManager invMng) {
 		this.mainView = main;
 		this.jl = jLang;
 		this.js = jSettings;
@@ -95,8 +107,11 @@ public class InvoicesDisplay {
 		this.cn = cN;
 		
 		this.msh = mSH;
+		this.dh = DH;
 
 		this.im = invMng;
+
+		dfm = new DecimalFormat("00");
 
 		this.fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
 		this.fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
@@ -150,7 +165,39 @@ public class InvoicesDisplay {
 		btnEdit.setBounds(btnX, btnY - cn.BACK_BTN_HEIGHT - cn.BACK_BTN_Y_OFFSET, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
 		frame.getContentPane().add(btnEdit);
 		
-		populateInvoiceListTable(lblX+6, lblY+52, btnX - 40, btnY-80);
+		String[]days = dh.getDaysArray();
+		String[]months = msh.json2Array((JSONArray) jl.get(cs.MONTHS_NAMES));
+		String[]years = msh.json2Array((JSONArray) jl.get(cs.YEARS));
+		
+		int today = dh.getDayOfMonthNum();
+		today--;
+		int month = dh.getMonthNum();
+		int year = dh.getYearIndex();
+		
+		dayString = days[today];
+		monthName = months[month];
+		yearString = years[year];
+//		monthOfReport = months[month];
+//		yearOfReport = years[year];
+
+		JComboBox cbDays = new JComboBox(days);
+		cbDays.setSelectedIndex(today);
+		int jcbW = 40, jcbH = 26, offsetY = 40;
+		cbDays.setBounds(lblX + 10, btnY - offsetY, jcbW, jcbH);
+		frame.getContentPane().add(cbDays);
+		
+		JComboBox cbMonths = new JComboBox(months);
+		cbMonths.setSelectedIndex(month);
+		cbMonths.setBounds(lblX+cbDays.getWidth()+16, btnY - offsetY, jcbW*2, jcbH);
+		frame.getContentPane().add(cbMonths);
+		
+		JComboBox cbYear = new JComboBox(years);
+		cbYear.setSelectedIndex(year);
+		cbYear.setBounds(cbMonths.getX()+cbMonths.getWidth()+16, btnY - offsetY, jcbW*2, jcbH);
+		frame.getContentPane().add(cbYear);
+
+		
+		populateInvoiceListTable(lblX+6, lblY+52, btnX - 40, btnY-180);
 
 		// LISTENERS
 		btnBack.addActionListener(new ActionListener() {
@@ -161,7 +208,6 @@ public class InvoicesDisplay {
 		
 		btnEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-// TODO create invoice preview
 				if(mainView != null && invoice != null)
 					mainView.getInvoiceAEFrame().setIsVisible(invoice, true);
 				else if(invoice != null)
@@ -194,12 +240,52 @@ public class InvoicesDisplay {
 				throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 			}
 		});
+		
+		cbDays.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbDays ){
+					JComboBox cb = (JComboBox) a.getSource();
+					dayString = cb.getSelectedItem().toString();
+					updateTable();
+				}		
+			}
+		});
+
+		cbMonths.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbMonths ){
+					JComboBox cb = (JComboBox) a.getSource();
+					monthName = cb.getSelectedItem().toString();
+					updateTable();
+				}		
+			}
+		});
+		
+		cbYear.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbYear ){
+					JComboBox cb = (JComboBox) a.getSource();
+					yearString = cb.getSelectedItem().toString();
+					updateTable();
+				}		
+			}
+		});
+		
+
 	}
 
 	private void populateInvoiceListTable(int x, int y, int w, int h) {
-		String[][] data = new String [im.getList().size()][cs.INVOICES_TB_HEADINGS.length];
-		data = im.getDataShort();
-		JTable table = new JTable();
+		ArrayList<Invoice> tList = new ArrayList<Invoice>();
+		tList = getList(tList);
+
+		String[][] data = new String [tList.size()][cs.INVOICES_TB_HEADINGS.length];
+		data = im.getDataShort(tList);
+
+//		frame.getContentPane().repaint();
+		table = new JTable();
 		table = msh.createTable(fonts, data, cs.INVOICES_TB_HEADINGS, cs.INVOICE_TB_NAME, 20, 120);
 		rSorter = new TableRowSorter<>(table.getModel());
 		
@@ -211,6 +297,42 @@ public class InvoicesDisplay {
 		JScrollPane spInvoicesList = new JScrollPane(table);
 		spInvoicesList.setBounds(x, y, w, h);
 		frame.getContentPane().add(spInvoicesList);
+	}
+
+	private void updateTable(){
+		ArrayList<Invoice> tList = new ArrayList<Invoice>();
+		tList = getList(tList);
+		for (int i = 0; i < tList.size(); i++) {
+			System.out.println(i+" "+tList.get(i).toString());
+		}
+		String[][] data = new String [tList.size()][cs.INVOICES_TB_HEADINGS.length];
+		data = im.getDataShort(tList);
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		int rows = model.getRowCount(), col = model.getColumnCount();
+		int dataRows = data.length;
+		//TODO - need to find a way to clear data in table, better than this one below
+		if(rows > dataRows){
+			for (int i = 0; i < rows; i++) {
+				for (int j = 0; j < col; j++) {
+					model.setValueAt("", i, j);
+				}
+			}
+		}
+		for (int i = 0; i < dataRows; i++) {
+			for (int j = 0; j < data[i].length; j++) {
+				model.setValueAt(data[i][j], i, j);
+			}
+		}
+		table.setModel(model);
+	}
+	private ArrayList<Invoice> getList(ArrayList<Invoice> tList) {
+		String dDMY = yearString+cs.MINUS+dfm.format(dh.getMonthNumber(monthName))+cs.MINUS+dfm.format(Integer.parseInt(dayString)),
+				dYMD = dfm.format(Integer.parseInt(dayString))+cs.MINUS+dfm.format(dh.getMonthNumber(monthName))+cs.MINUS+yearString;
+		for (Invoice invoice : im.getList()) {
+			if(invoice.getDate().equals(dYMD) || invoice.getDate().equals(dDMY))
+				tList.add(invoice);
+		}
+		return tList;
 	}
 
 	private ListSelectionListener createTableListener(JTable table) {
@@ -258,5 +380,8 @@ public class InvoicesDisplay {
 		frame.setVisible(b);
 	}
 
+	public JFrame getFrame() {
+		return frame;
+	}
 
 }

@@ -90,6 +90,7 @@ public class MainView {
 	private static SalesReports salesRepFrame;
 	private static RepakReport repakRepFrame;
 	private static String todayYM;
+	private static CustomersFrame customerFrame;
 	
 
 	/**
@@ -213,15 +214,16 @@ public class MainView {
 		printer = new Printer(cs, cn, cp, logger, jSettings, jLang, jUser, msh, dh);
 
 
-		invoicesFrame = new InvoicesDisplay(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, invmng);
+		invoicesFrame = new InvoicesDisplay(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, dh, invmng);
 		salesRepFrame = new SalesReports(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, msh, dh, fh, invmng, df_5_2);
 		repakRepFrame = new RepakReport(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, msh, dh, fh);
 
 		newInvoiceFrame = new InvoiceAddEdit(main, dm, cdb, cs, cn, logger, pdfCreator, printer, jSettings , jLang, jUser, msh, dh, fh, stmng, cmng, invmng, repakRepFrame, carBrandList, df_3_2);
 		newItemFrame = new ItemAddNew(main, dm, cdb, cs, cn, logger, jSettings , jLang, msh, stmng, df_3_2, repakRepFrame, todayYM);
 		
-		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, stmng, df_4_2);
-		logger.log(cs.INFO_LOG, "Classes loaded");
+		stockFrame = new DisplayStock(main, newItemFrame, dm, cdb, cs, cn, logger, printer, jSettings , jLang, msh, dh, pdfCreator, stmng, df_4_2);
+		customerFrame = new CustomersFrame(main, dm, cdb, cs, cn, logger, jSettings, jLang, msh, dh, cmng);
+//		logger.log(cs.INFO_LOG, "Classes loaded");
 	}
 
 	private static void loadConst() {
@@ -238,8 +240,8 @@ public class MainView {
 		fh = new FileHelper();
 
 		logger = new Logger(dh, fh, cp.DEFAULT_LOG_PATH);
-		logger.log(cs.INFO_LOG, "Logger Init");
-		msh = new MiscHelper(logger, cs, jLang);
+//		logger.log(cs.INFO_LOG, "Logger Init");
+		msh = new MiscHelper(logger, cs, jLang, jSettings, fh);
 
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols( new Locale("en", "UK"));
 		symbols.setDecimalSeparator('.');
@@ -254,7 +256,7 @@ public class MainView {
 		System.out.println("loadManagers");
 		try {
 			dm = new DatabaseManager(logger, todayL, cdb, cn, cs, cp, jSettings, df_3_2);
-			logger.log(cs.INFO_LOG, "DM Init");
+//			logger.log(cs.INFO_LOG, "DM Init");
 
 		} catch (FileNotFoundException e) {
 			logger.log(cs.ERR_LOG, "FileNotFoundException DM in Main "+e.getMessage());
@@ -269,7 +271,7 @@ public class MainView {
 		stmng = new StockManager(dm, cdb, cn, cs);
 		//get invoices list
 		invmng = new InvoiceManager(dm, cdb, cn, cs);		
-		logger.log(cs.INFO_LOG, "Mangers Init");
+//		logger.log(cs.INFO_LOG, "Mangers Init");
 	}
 
 	private static void loadJsonFiles() {
@@ -344,7 +346,7 @@ public class MainView {
 	 * @wbp.parser.entryPoint
 	 */
 	private void initialize() {
-		logger.log(cs.INFO_LOG, "MAIN Init");
+//		logger.log(cs.INFO_LOG, "MAIN Init");
 		Color color = msh.getColor(cs.APP, cs, jSettings);
 		int btnX = 16, btnY = 22, yOffset = 48, frameW = 240, frameH = 480;
 		
@@ -365,6 +367,19 @@ public class MainView {
 //		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 //		        	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //		            MainView.main(null);
+		    	if(newInvoiceFrame != null && newInvoiceFrame.isVisible())
+		    		newInvoiceFrame.getFrame().dispose();
+		    	if(stockFrame != null && stockFrame.isVisible())
+		    		stockFrame.getFrame().dispose();
+		    	if(invoicesFrame != null && invoicesFrame.isVisible())
+			    	invoicesFrame.getFrame().dispose();
+		    	if(newItemFrame != null && newItemFrame.isVisible())
+			    	newItemFrame.getFrame().dispose();
+		    	if(repakRepFrame != null && repakRepFrame.isVisible())
+			    	repakRepFrame.getFrame().dispose();
+		    	if(salesRepFrame != null && salesRepFrame.isVisible())
+			    	salesRepFrame.getFrame().dispose();
+		    	
 //		        }
 		    }
 		});
@@ -430,12 +445,13 @@ public class MainView {
 		frame.getContentPane().add(btnSalesReports);
 		
 		
-		JButton btnCustomers = new JButton("Klienci");
+		JButton btnCustomers = new JButton(jLang.get(cs.LBL_CUSTOMER).toString());
 		btnCustomers.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
 		btnCustomers.setBackground(new Color(204, 255, 255));
 		btnCustomers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(frame, "W trakcie tworzenia");
+				if(!customerFrame.isVisible())
+					customerFrame.setIsVisible(true);
 			}
 		});
 		btnY += yOffset;

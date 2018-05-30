@@ -3,6 +3,7 @@ package frames;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -263,13 +264,19 @@ public class ItemAddNew {
 		cbTransCharges.setBounds(xOffset, lblY, tfW/2, lbltfH);
 		cbTransCharges.setSelectedIndex(0);
 		frame.getContentPane().add(cbTransCharges);
+		
 
 		JCheckBox chbTransport = new JCheckBox();
 		chbTransport.setSelected(Boolean.parseBoolean(""+tran));
 		chbTransport.setBackground(color);
 		chbTransport.setFont(fonts);
-		chbTransport.setBounds((int) (xOffset*2.4), lblY, tfW, lbltfH);
+		chbTransport.setBounds((int) (xOffset*2.4), lblY, 30, lbltfH);
 		frame.getContentPane().add(chbTransport);
+
+		JLabel lblTransportCharges = new JLabel("€ 0");
+		lblTransportCharges.setFont(fonts);
+		lblTransportCharges.setBounds((int) (chbTransport.getX() + chbTransport.getWidth() + xOffset), lblY, lblW, lbltfH);
+		frame.getContentPane().add(lblTransportCharges);
 		
 		JLabel lblVemc = new JLabel(jl.get(cs.LBL_VEMC).toString());
 		lblVemc.setFont(fonts);
@@ -283,13 +290,21 @@ public class ItemAddNew {
 		chbVemc.setFont(fonts);
 		chbVemc.setBounds(xOffset, lblY, tfW, lbltfH);
 		frame.getContentPane().add(chbVemc);
+
+		int btnX = (frame.getWidth() - cn.BACK_BTN_X_OFFSET),
+				btnY = (frame.getHeight() - cn.BACK_BTN_Y_OFFSET);
+		
+		JButton btnBack = new JButton(jl.get(cs.BTN_BACK).toString());
+		btnBack.setFont(fonts_title);
+		btnBack.setBounds(btnX, btnY, cn.BACK_BTN_WIDTH - 20, cn.BACK_BTN_HEIGHT);
+		frame.getContentPane().add(btnBack);
 		
 		JButton btnSave = new JButton(jl.get(cs.BTN_SAVE).toString());
 		btnSave.setForeground(Color.RED);
 		btnSave.setBackground(Color.LIGHT_GRAY);
 		btnSave.setFont(fonts);
 		lblY += yOffset;
-		btnSave.setBounds(xOffset, lblY, tfW, lbltfH+10);
+		btnSave.setBounds(xOffset, lblY, tfW / 2, lbltfH+10);
 		frame.getContentPane().add(btnSave);
 
 		// LISTENERS SECTION
@@ -386,6 +401,7 @@ public class ItemAddNew {
 					for (int i=0; i<tSupNames.length; i++) {
 						if(tSupNames[i].equals(cb.getSelectedItem().toString())){
 							transportCharge = Double.parseDouble(tSupTrans[i]);
+							lblTransportCharges.setText(cs.EURO+df.format(transportCharge));
 							if(tran != 0) {
 								cost = calculateCost();
 								price = calculatePrice();
@@ -401,7 +417,7 @@ public class ItemAddNew {
 		
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				int tqnt = msh.getInt(tfQnt);
+				int tqnt = msh.isInt(tfQnt.getText());
 				
 				i = getItem(i, cbCodes, tfName, tfPrice, tfQnt, chbVAT, chbTransport, chbVemc);
 				System.out.println(""+i.toString());
@@ -429,37 +445,9 @@ public class ItemAddNew {
 			}
 		});
 		
-		tfCost.getDocument().addDocumentListener(new DocumentListener() {
-			
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-			}
-			
-			private boolean isNumber(String st) {
-				double dCost;
-				try{
-					dCost = Double.parseDouble(st);
-					return true;
-				} catch(NumberFormatException e){
-					JOptionPane.showMessageDialog(null, jl.get(cs.NOT_INT_ERROR).toString());
-				}
-				
-				return false;
-			}
-
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				// TODO Auto-generated method stub
-				String st = tfCost.getText();
-				//check if a number if no 
-				boolean b = isNumber(st);
-				if(b)System.out.println("true");
-				
-			}
-			
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				goBack();
 			}
 		});
 	}
@@ -467,12 +455,13 @@ public class ItemAddNew {
 	protected void recalculateCost(JTextField tfCost) {
 		  d_cost = 0;
 		  cost = ""; price = "";
-		  try {
-			  d_cost = Double.parseDouble(tfCost.getText()); 
-		  } catch (NumberFormatException nfe) {
-			  if(!tfCost.getText().isEmpty())
-				  JOptionPane.showMessageDialog(frame, jl.get(cs.NOT_NUMBER_ERROR).toString());
-		  }
+//		  try {
+		  if(tfCost.getText() != null && !tfCost.getText().isEmpty())
+			  d_cost = msh.isDouble(tfCost.getText()); 
+//		  } catch (NumberFormatException nfe) {
+//			  if(!tfCost.getText().isEmpty())
+//				  JOptionPane.showMessageDialog(frame, jl.get(cs.NOT_NUMBER_ERROR).toString());
+//		  }
 		  
 		  if(d_cost > 0){
 			  cost = calculateCost();
@@ -528,17 +517,21 @@ public class ItemAddNew {
 		i.setAddVEMCCharge((byte) vemc);
 
 		if(cost != null && !cost.equals(cs.EURO) && !cost.isEmpty())
-			i.setCost(Double.parseDouble(cost));
+			i.setCost(msh.isDouble(cost));
 		
 		if(price != null && !price.equals(cs.EURO) && !price.isEmpty()) {
 			String pt = price;
 			if(!isSuggested)
 				pt = tfPrice.getText();
 			else pt = price;
-			i.setPrice(Double.parseDouble(pt));
+			
+			i.setPrice(msh.isDouble(pt));
 		}
 		
-		if(!tfQnt.getText().isEmpty())i.setQnt(Integer.parseInt(tfQnt.getText()));
+		if(!tfQnt.getText().isEmpty()){ 
+			int qn = msh.isInt(tfQnt.getText());
+			i.setQnt(qn);
+		}
 		return i;
 	}
 	
@@ -559,5 +552,16 @@ public class ItemAddNew {
 		frame.setVisible(b);
 	}
 	
+	protected void goBack() {
+		frame.dispose();
+		setIsVisible(false);
+		if(mainView != null)
+			if(!mainView.isVisible())
+				mainView.setIsVisible(true);		
+	}
+	
+	public JFrame getFrame() {
+		return frame;
+	}
 
 }

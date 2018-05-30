@@ -15,6 +15,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import consts.ConstNums;
@@ -41,6 +42,8 @@ public class PDFCreator {
 	private Color color;
 	private String date;
 	private JSONObject ju;
+	private double lineSpacing = 18f;
+	private String noSt = "No.";
 
 	public PDFCreator(ConstStrings cS, ConstNums cN, ConstPaths CP, Logger logger,
 			JSONObject jSettings, JSONObject jLang, JSONObject jUser,
@@ -75,7 +78,7 @@ public class PDFCreator {
 			try {
 				pdd = createInvoice(i, customer, date);
 			} catch (IOException e) {
-				log.log(cs.ERR_LOG, jl.get(cs.PDF_CREATION_ERROR).toString());
+				log.log(cs.ERR_LOG, "INVOICE " + jl.get(cs.PDF_CREATION_ERROR).toString());
 				e.printStackTrace();
 			}
 		} else if (docType.equals(cs.PDF_SALE_REPORT)){
@@ -84,24 +87,101 @@ public class PDFCreator {
 			try {
 				pdd = createSaleRep(data, header, date);
 			} catch (IOException e) {
-				log.log(cs.ERR_LOG, jl.get(cs.PDF_CREATION_ERROR).toString());
+				log.log(cs.ERR_LOG, "SALE REPORT " + jl.get(cs.PDF_CREATION_ERROR).toString());
 				e.printStackTrace();
 			}
 		} else if (docType.equals(cs.PDF_STOCK_REPORT)){
-			pdd = createStockRep();
+			String[][] data = (String[][]) object1;
+			String header = (String) obj2;
+			try {
+				pdd = createStockRep(data, header, date);
+			} catch (IOException e) {
+				log.log(cs.ERR_LOG, "STOCK REPORT " + jl.get(cs.PDF_CREATION_ERROR).toString());
+				e.printStackTrace();
+			}
 		} else if (docType.equals(ConstStrings.PDF_REPAK_REPORT)){
 			pdd = createRepakRep();
 		} else {
-			JOptionPane.showMessageDialog(null, jl.get(cs.PDF_CREATION_ERROR).toString());
+			JOptionPane.showMessageDialog(null, "GENERAL " + jl.get(cs.PDF_CREATION_ERROR).toString());
 		}
 		return pdd;
 	}
 
-	private PDDocument createStockRep() {
-		// TODO Auto-generated method stub
-		return null;
+	private PDDocument createStockRep(String[][] data, String header, String date) throws IOException {
+		// TODO work in progress
+		PDDocument pdd = new PDDocument();
+		PDPage page = new PDPage();
+		pdd.addPage(page);
+		
+		int k = 1;
+		String s = "";
+		
+		float pageH = page.getMediaBox().getHeight();
+		float th = pageH - (cn.PAGE_MARGIN*3);		
+
+		if(data.length > 0){
+			PDPageContentStream cst = new PDPageContentStream(pdd, page);
+			createHeader(cst, date, header);
+			for(int i = 0; i < data.length; i++){
+				if(th <= (cn.PAGE_MARGIN*4)) {
+					cst.close();
+					page = new PDPage();
+					pdd.addPage(page);
+					cst = new PDPageContentStream(pdd, page);
+					createHeader(cst, date, header);			
+					th = pageH -(cn.PAGE_MARGIN*3);
+				}
+
+				th = th - fonts;
+				cst.beginText();
+				cst.setNonStrokingColor(Color.black);
+				cst.setFont(PDType1Font.COURIER, fonts);
+				cst.newLineAtOffset(25, th);
+				
+				s = msh.paddStringRight(""+k, 5, cs.UNDERSCORE);
+				for(int j = 0; j < data[i].length; j++){
+					if(j == 2)
+						s += msh.paddStringRight(data[i][j], cn.DESCRPTION_LENGTH, cs.UNDERSCORE);
+					else
+						s += msh.paddStringRight(data[i][j], cn.PAGE_MARGIN/2, cs.UNDERSCORE);
+				}
+				s = msh.removeLastChar(s, cs.UNDERSCORE);
+				cst.showText(s);
+				cst.endText();
+				k++;
+			}
+			cst.close();
+
+		}
+		return pdd;
 	}
 	
+	private void createHeader(PDPageContentStream cst, String date, String header) throws IOException {
+		cst.setNonStrokingColor(Color.darkGray);
+		cst.addRect(15, 750, 580, 30);
+		cst.fill();
+		
+		cst.beginText();
+		cst.setNonStrokingColor(Color.white);
+		cst.setLeading(lineSpacing );
+		cst.setFont(PDType1Font.COURIER_BOLD, fonts_title );
+		cst.newLineAtOffset(25, 760);
+		
+		String s = "";
+		String[] as = msh.json2Array((JSONArray) jl.get(cs.STOCK_REPORT_HEADINGS));
+		int j = 0;
+		for (String st : as) {
+			if(j == 2)
+				s += msh.paddStringRight(st, cn.DESCRPTION_LENGTH/2, cs.UNDERSCORE);
+			else
+				s += msh.paddStringRight(st, cn.PAGE_MARGIN/3, cs.UNDERSCORE);
+			j++;
+		}
+		cst.showText(noSt+s);
+		cst.endText();
+
+	}
+
 	private PDDocument createRepakRep() {
 		// TODO Auto-generated method stub
 		return null;
@@ -229,7 +309,7 @@ public class PDFCreator {
 	private void fillSalesReport(PDPageContentStream cst, String[][] data, String header) throws IOException {
 		displayHeadings(cst, header);
 		double  sc = 0, sp = 0, ss = 0;
-		String tt = msh.paddStringRight("***TOTAL ", cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE);
+//		String tt = msh.paddStringRight("***TOTAL ", cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE);
 		if(data.length > 0) {
 			for (int i = 0; i < data.length; i++) {
 				String code = data[i][0];
@@ -271,11 +351,11 @@ public class PDFCreator {
 				cst.newLine();
 			}
 			cst.newLine();
-			tt += msh.removeLastChar(msh.paddStringRight("€ "+df.format(sc), cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE) 
-					+ msh.paddStringRight("€ "+df.format(ss), cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE)
-					+ msh.paddStringRight("€ "+df.format(sp), cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE), cs.UNDERSCORE);
-			
-			cst.showText(tt);
+//			tt += msh.removeLastChar(msh.paddStringRight("€ "+df.format(sc), cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE) 
+//					+ msh.paddStringRight("€ "+df.format(ss), cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE)
+//					+ msh.paddStringRight("€ "+df.format(sp), cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE), cs.UNDERSCORE);
+//			
+//			cst.showText(tt);
 		}
 		cst.endText();
 	}
