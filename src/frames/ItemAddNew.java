@@ -417,7 +417,7 @@ public class ItemAddNew {
 		
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				int tqnt = msh.getInt(tfQnt);
+				int tqnt = msh.isInt(tfQnt.getText());
 				
 				i = getItem(i, cbCodes, tfName, tfPrice, tfQnt, chbVAT, chbTransport, chbVemc);
 				System.out.println(""+i.toString());
@@ -450,51 +450,18 @@ public class ItemAddNew {
 				goBack();
 			}
 		});
-	
-		tfCost.getDocument().addDocumentListener(new DocumentListener() {
-			
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-			}
-			
-			private boolean isNumber(String st) {
-				double dCost;
-				try{
-					dCost = Double.parseDouble(st);
-					return true;
-				} catch(NumberFormatException e){
-					JOptionPane.showMessageDialog(null, jl.get(cs.NOT_INT_ERROR).toString());
-				}
-				
-				return false;
-			}
-
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				// TODO Auto-generated method stub
-				String st = tfCost.getText();
-				//check if a number if no 
-				boolean b = isNumber(st);
-				if(b)System.out.println("true");
-				
-			}
-			
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				
-			}
-		});
 	}
 
 	protected void recalculateCost(JTextField tfCost) {
 		  d_cost = 0;
 		  cost = ""; price = "";
-		  try {
-			  d_cost = Double.parseDouble(tfCost.getText()); 
-		  } catch (NumberFormatException nfe) {
-			  if(!tfCost.getText().isEmpty())
-				  JOptionPane.showMessageDialog(frame, jl.get(cs.NOT_NUMBER_ERROR).toString());
-		  }
+//		  try {
+		  if(tfCost.getText() != null && !tfCost.getText().isEmpty())
+			  d_cost = msh.isDouble(tfCost.getText()); 
+//		  } catch (NumberFormatException nfe) {
+//			  if(!tfCost.getText().isEmpty())
+//				  JOptionPane.showMessageDialog(frame, jl.get(cs.NOT_NUMBER_ERROR).toString());
+//		  }
 		  
 		  if(d_cost > 0){
 			  cost = calculateCost();
@@ -550,17 +517,21 @@ public class ItemAddNew {
 		i.setAddVEMCCharge((byte) vemc);
 
 		if(cost != null && !cost.equals(cs.EURO) && !cost.isEmpty())
-			i.setCost(Double.parseDouble(cost));
+			i.setCost(msh.isDouble(cost));
 		
 		if(price != null && !price.equals(cs.EURO) && !price.isEmpty()) {
 			String pt = price;
 			if(!isSuggested)
 				pt = tfPrice.getText();
 			else pt = price;
-			i.setPrice(Double.parseDouble(pt));
+			
+			i.setPrice(msh.isDouble(pt));
 		}
 		
-		if(!tfQnt.getText().isEmpty())i.setQnt(Integer.parseInt(tfQnt.getText()));
+		if(!tfQnt.getText().isEmpty()){ 
+			int qn = msh.isInt(tfQnt.getText());
+			i.setQnt(qn);
+		}
 		return i;
 	}
 	

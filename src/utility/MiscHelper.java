@@ -391,23 +391,6 @@ public class MiscHelper {
 		return text.replaceAll("\\D+","");
 	}
 
-	public int getInt(JTextField tfQnt) {
-		try{
-			return Integer.parseInt(tfQnt.getText());
-		} catch(NumberFormatException e){
-			JOptionPane.showMessageDialog(null, jl.get(cs.NOT_INT_ERROR).toString());
-		}
-		return 0;
-	}
-	public double getDouble(JTextField tf) {
-		try{
-			return Double.parseDouble(tf.getText());
-		} catch(NumberFormatException e){
-			JOptionPane.showMessageDialog(null, jl.get(cs.NOT_DOUBLE_ERROR).toString());
-		}
-		return 0;
-	}
-
 	public String createPdfPath(String date, String path, String repName) {
 		String p = js.get(path).toString() + date;
 		fh.createFolderIfNotExist(p);
@@ -424,6 +407,29 @@ public class MiscHelper {
 		}
 		h = removeLastChar(h, cs.UNDERSCORE);
 		return h;
+	}
+
+	
+	public double isDouble(String st) {
+		if(st.contains(cs.COMA)){
+			st = st.replace(cs.COMA, cs.DOT);
+		}
+		try{
+			return Double.parseDouble(st);
+		} catch(NumberFormatException e){
+			JOptionPane.showMessageDialog(null, jl.get(cs.NOT_DOUBLE_ERROR).toString());
+		}
+		
+		return 0;
+	}
+	public int isInt(String st) {
+		try{
+			return Integer.parseInt(st);
+		} catch(NumberFormatException e){
+			JOptionPane.showMessageDialog(null, jl.get(cs.NOT_INT_ERROR).toString());
+		}
+		
+		return 0;
 	}
 
 }
