@@ -210,13 +210,8 @@ public class MiscHelper {
 		int count = countChar(str, cs.SEMICOLON);
 		String[] t = new String[count];
 		if(str.contains(c)){
-//			System.out.println("msh 1. "+str.matches(cs.SPECIAL_CHAR_PATTERN));
-			
 			if(str.matches(cs.SPECIAL_CHAR_PATTERN)){
-				System.out.println("msh 2. "+str);
 				str = str.replaceAll(cs.REPLACE_CHAR_PATTERN, "");
-						System.out.println("msh 3. "+str);
-//				str = str.substring(str.indexOf(cs.SPECIAL_CHAR_PATTERN)+1);
 			}
 			t = str.split(c, -1);
 		} else {
@@ -224,6 +219,7 @@ public class MiscHelper {
 		}	
 		return t;
 	}
+	
 	public String[] splitString(String str, String c) {
 		int count = countChar(str, cs.SEMICOLON);
 		String[] t = new String[count+1];
@@ -387,6 +383,11 @@ public class MiscHelper {
 		return Integer.parseInt(text);
 	}
 
+	public int removeSpecialChars(String str) {
+		str = str.replaceAll("\\D+","");
+		return isInt(str);
+	}
+
 	private String removeSpecials(String text) {
 		return text.replaceAll("\\D+","");
 	}
@@ -431,5 +432,6 @@ public class MiscHelper {
 		
 		return 0;
 	}
+
 
 }

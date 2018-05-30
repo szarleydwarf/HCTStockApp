@@ -68,21 +68,6 @@ public class SalesReports {
 	private Printer printer;
 	private String[][] DATA_D;
 
-//	/**
-//	 * Launch the application.
-//	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					SalesReports window = new SalesReports();
-//					window.frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
 	/**
 	 * Create the application.
@@ -479,6 +464,7 @@ public class SalesReports {
 					price = price - discount;
 				diff = price - cost;
 
+
 				if(code.equals(cs.TYRE_CODE_C)){
 					data[0][1] = getValue(data[0][1], cost);
 					data[0][2] = getValue(data[0][2], price);
@@ -491,11 +477,11 @@ public class SalesReports {
 					data[2][1] = getValue(data[2][1], cost);
 					data[2][2] = getValue(data[2][2], price);
 					data[2][3] = getValue(data[2][3], diff);
-				} else if(code.equals(cs.SERVICE_CODE)){
+				} else if(code.equals(cs.SHOP_CODE)){
 					data[3][1] = getValue(data[3][1], cost);
 					data[3][2] = getValue(data[3][2], price);
 					data[3][3] = getValue(data[3][3], diff);
-				} else if(code.equals(cs.SHOP_CODE)){
+				} else if(code.equals(cs.SERVICE_CODE)){
 					data[4][1] = getValue(data[4][1], cost);
 					data[4][2] = getValue(data[4][2], price);
 					data[4][3] = getValue(data[4][3], diff);
@@ -518,7 +504,7 @@ public class SalesReports {
 	}
 
 	private String getValue(String s, double dd) {
-		double d = Double.parseDouble(s);
+		double d = msh.isDouble(s);
 		d += dd;
 		return ""+d;
 	}

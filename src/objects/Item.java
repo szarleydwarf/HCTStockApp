@@ -131,18 +131,14 @@ public class Item {
 		return df.format(p_cost);
 	}
 	
-	// TODO -
-	public String calculateSuggestedPrice(double p_cost, String code) {
+	// TODO - add different values for profit percentage
+	public String calculateSuggestedPrice(double p_cost, String code, double profitPercent) {
 		double tCost = p_cost;
-		double profit, price;
-		profit = tCost * this.cn.PROFIT;
+		double profit;
+		profit = tCost + (tCost * profitPercent)/100;
 		
-		if((profit - tCost) < 20 && code.contains(cs.ITEM_CODES[0]))//TODO ??
-			price = tCost + 20;
-		else
-			price = profit;
-		this.price = price;//Double.parseDouble(this.df.format(price));
-		return df.format(price);
+		this.price = profit;//Double.parseDouble(this.df.format(price));
+		return df.format(profit);
 	}
 	
 	public String[] getItemAsData(){

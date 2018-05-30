@@ -224,4 +224,5 @@ public class ConstStrings {
 	public final String NOT_DOUBLE_ERROR = "not double";
 	public final String ALL_EN = "ALL";
 	public final String ALL_PL = "WSZYSTKO";
+	public final String PROFITS = "profits";
 }
