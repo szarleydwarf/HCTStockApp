@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -35,6 +37,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
@@ -64,31 +68,37 @@ public class DisplayStock {
 	private static DatabaseManager dm;
 	private static JSONObject js;
 	private static JSONObject jl;
+	private static MiscHelper msh;
+	private static String[][] data;
+	private static StockManager sm;
+
 	private JFrame frame;
-	private JTextField tfSearch;
+	private JTextField tfSearch, tfName, tfCost, tfPrice, tfQnt;
 	private JTable table;
+	private JLabel sugestedCost, sugestedPrice;
+	private JButton btnDelete;
+	private JRadioButton rbTypedIn, rbSuggested;
+	private JComboBox cbCodes;
+	private JCheckBox chbTransport, chbVAT, chbVemc;
 	private TableRowSorter rowSorter;
+	
 	private MainView mainView;
+	private Printer printer;
+	private PDFCreator pdfc;
+	private DateHelper dh;
+	protected ItemAddNew newItemFrame;
+
 	private Font fonts;
 	private Font fonts_title;
 	private Map attributes;
 	private Color color;
 	private DecimalFormat df;
-	private static MiscHelper msh;
-	private static String[][] data;
-	private static StockManager sm;
-	private boolean itemSaved = false;
+	private boolean itemSaved = false, isSuggested;
 	protected String itemCode;
-	private JButton btnDelete;
-	protected ItemAddNew newItemFrame;
-	private Printer printer;
-	private DateHelper dh;
-	private PDFCreator pdfc;
-	private JLabel sugestedCost, sugestedPrice;
-	private JRadioButton rbTypedIn, rbSuggested;
 	private int profitPercent;
 	private int vat, tran, vemc;
-
+	protected double d_cost, transportCharge;
+	protected String cost, price;
 
 	/**
 	 * Create the application.
@@ -377,6 +387,7 @@ public class DisplayStock {
 		    }
 		});		
 		editForm();
+		
 	}
 
 	private void editForm() {
@@ -400,7 +411,7 @@ public class DisplayStock {
 		code.setBounds(lblX, lblY, lblW, lbltfH);
 		frame.getContentPane().add(code);
 		
-		JComboBox cbCodes = new JComboBox(cs.ITEM_CODES);
+		cbCodes = new JComboBox(cs.ITEM_CODES);
 		xOffset = lblX + xOffset;
 		cbCodes.setBounds(xOffset, lblY, tfW, lbltfH);
 		frame.getContentPane().add(cbCodes);
@@ -411,7 +422,7 @@ public class DisplayStock {
 		name.setBounds(lblX, lblY, lblW, lbltfH);
 		frame.getContentPane().add(name);
 		
-		JTextField tfName = new JTextField();
+		tfName = new JTextField();
 		tfName.setFont(fonts);
 		tfName.setBounds(xOffset, lblY, tfW, lbltfH);
 		frame.getContentPane().add(tfName);
@@ -422,7 +433,7 @@ public class DisplayStock {
 		lblCost.setBounds(lblX, lblY, lblW, lbltfH);
 		frame.getContentPane().add(lblCost);
 		
-		JTextField tfCost = new JTextField();
+		tfCost = new JTextField();
 		tfCost.setFont(fonts);
 		tfCost.setText("0.00");
 		tfCost.setBounds(xOffset, lblY, (int) (tfW/wDiv), lbltfH);
@@ -444,7 +455,7 @@ public class DisplayStock {
 		lblPrice.setBounds(lblX, lblY, lblW, lbltfH);
 		frame.getContentPane().add(lblPrice);
 		
-		JTextField tfPrice = new JTextField();
+		tfPrice = new JTextField();
 		tfPrice.setFont(fonts);
 		tfPrice.setText("0.00");
 		tfPrice.setBounds(xOffset, lblY, (int) (tfW/wDiv), lbltfH);
@@ -479,7 +490,7 @@ public class DisplayStock {
 		qnt.setBounds(lblX, lblY, lblW, lbltfH);
 		frame.getContentPane().add(qnt);
 		
-		JTextField tfQnt = new JTextField();
+		tfQnt = new JTextField();
 		tfQnt.setFont(fonts);
 		tfQnt.setText(""+0);
 		tfQnt.setBounds(xOffset, lblY, (int) (tfW/wDiv), lbltfH);
@@ -499,7 +510,7 @@ public class DisplayStock {
 		lblVat.setBounds(lblX, lblY, lblW, lbltfH);
 		frame.getContentPane().add(lblVat);
 		
-		JCheckBox chbVAT = new JCheckBox();
+		chbVAT = new JCheckBox();
 		chbVAT.setSelected(Boolean.parseBoolean(""+vat));
 		chbVAT.setBackground(color);
 		chbVAT.setFont(fonts);
@@ -515,22 +526,22 @@ public class DisplayStock {
 		String[] tSupNames = msh.json2Array((JSONArray) js.get(cs.SUPLIERS_NAMES_ARR));
 		String[] tSupTrans = msh.json2Array((JSONArray) js.get(cs.SUPPLIERS_CHARGES_ARR));
 		
+		chbTransport = new JCheckBox();
+		chbTransport.setSelected(Boolean.parseBoolean(""+tran));
+		chbTransport.setBackground(color);
+		chbTransport.setFont(fonts);
+		chbTransport.setBounds(xOffset, lblY, 30, lbltfH);
+		frame.getContentPane().add(chbTransport);
+		
 		JComboBox cbTransCharges = new JComboBox(tSupNames);
-		cbTransCharges.setBounds(xOffset, lblY, tfW/2, lbltfH);
+		cbTransCharges.setBounds(xOffset + 30, lblY, tfW/2, lbltfH);
 		cbTransCharges.setSelectedIndex(0);
 		frame.getContentPane().add(cbTransCharges);
 		
 
-		JCheckBox chbTransport = new JCheckBox();
-		chbTransport.setSelected(Boolean.parseBoolean(""+tran));
-		chbTransport.setBackground(color);
-		chbTransport.setFont(fonts);
-		chbTransport.setBounds((int) (xOffset*2.4), lblY, 30, lbltfH);
-		frame.getContentPane().add(chbTransport);
-
 		JLabel lblTransportCharges = new JLabel("€ 0");
 		lblTransportCharges.setFont(fonts);
-		lblTransportCharges.setBounds(x+5, lblY, lblW, lbltfH);
+		lblTransportCharges.setBounds(x+50, lblY, lblW, lbltfH);
 		frame.getContentPane().add(lblTransportCharges);
 		
 		JLabel lblVemc = new JLabel(jl.get(cs.LBL_VEMC).toString());
@@ -539,7 +550,7 @@ public class DisplayStock {
 		lblVemc.setBounds(lblX, lblY, lblW, lbltfH);
 		frame.getContentPane().add(lblVemc);
 		
-		JCheckBox chbVemc = new JCheckBox();
+		chbVemc = new JCheckBox();
 		chbVemc.setSelected(Boolean.parseBoolean(""+vemc));
 		chbVemc.setBackground(color);
 		chbVemc.setFont(fonts);
@@ -554,6 +565,166 @@ public class DisplayStock {
 		btnSave.setBounds(xOffset, lblY, tfW / 2, lbltfH+10);
 		frame.getContentPane().add(btnSave);
 
+		tfCost.getDocument().addDocumentListener(new DocumentListener() {
+			  public void changedUpdate(DocumentEvent e) {
+			  }
+			  public void removeUpdate(DocumentEvent e) {
+				  recalculateCost(tfCost);
+			  }
+			  public void insertUpdate(DocumentEvent e) {
+				  recalculateCost(tfCost);
+			  }
+		});
+		
+		chbVAT.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				cost = "";price = "";
+				if(chbVAT.isSelected())	vat = 1;
+				else vat = 0;
+
+				if(d_cost > 0) {
+					cost = calculateCost();
+					price = calculatePrice();
+				}
+				
+				setCostLBL();
+				setPriceLBL();
+		    }
+		});
+
+		chbTransport.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				cost = "";price = "";
+				if(chbTransport.isSelected())	tran = 1;
+				else tran = 0;
+				
+				if(tran != 0){
+					transportCharge = Double.parseDouble(tSupTrans[cbTransCharges.getSelectedIndex()]);
+				}
+				
+				if(d_cost > 0) {
+					cost = calculateCost();
+					price = calculatePrice();
+				}
+			
+				setCostLBL();
+				setPriceLBL();
+			}
+		});
+		
+		chbVemc.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				cost = ""; price = "";
+				if(chbVemc.isSelected())	vemc = 1;
+				else vemc = 0;
+				if(d_cost > 0) {
+					cost = calculateCost();
+					price = calculatePrice();
+				}
+				
+				setCostLBL();
+				setPriceLBL();
+			}
+		});
+		
+		rbSuggested.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isSuggested = true;
+			}
+		});
+
+		rbTypedIn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				isSuggested = false;
+			}
+		});
+		
+		cbCodes.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbCodes ){
+					JComboBox cb = (JComboBox) a.getSource();
+					itemCode = (cb.getSelectedItem().toString());
+				}		
+			}
+		});
+		
+		cbProfit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbProfit ){
+					JComboBox cb = (JComboBox) a.getSource();
+					//TODO
+					profitPercent = msh.removeSpecialChars(cb.getSelectedItem().toString());
+					
+					cost = calculateCost();
+					price = calculatePrice();
+					setCostLBL();
+					setPriceLBL();
+				}
+			}
+		});
+
+		cbTransCharges.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbTransCharges ){
+					JComboBox cb = (JComboBox) a.getSource();
+					for (int i=0; i<tSupNames.length; i++) {
+						if(tSupNames[i].equals(cb.getSelectedItem().toString())){
+							transportCharge = Double.parseDouble(tSupTrans[i]);
+							lblTransportCharges.setText(cs.EURO+df.format(transportCharge));
+							if(tran != 0) {
+								cost = calculateCost();
+								price = calculatePrice();
+							}
+							setCostLBL();
+							setPriceLBL();
+						}
+					}
+					
+				}		
+			}
+		});
+
+	}
+
+	protected void recalculateCost(JTextField tfCost) {
+		  d_cost = 0;
+		  cost = ""; price = "";
+		  if(tfCost.getText() != null && !tfCost.getText().isEmpty())
+			  d_cost = msh.isDouble(tfCost.getText()); 
+
+		  
+		  if(d_cost > 0){
+			  cost = calculateCost();
+			  price = calculatePrice();
+		  }
+		  setCostLBL();
+		  setPriceLBL();
+	}
+
+	// TODO work in progress
+	private String calculatePrice() {
+		double dc = msh.isDouble(cost);//Double.parseDouble(cost);
+		if(getSelected() != null)
+			return getSelected().calculateSuggestedPrice(dc, itemCode, profitPercent);
+		return "";
+	}
+
+	private void setPriceLBL() {
+		sugestedPrice.setText(cs.EURO + price);
+	}
+
+	protected void setCostLBL() {
+		sugestedCost.setText(cs.EURO + cost);
+	}
+
+	// TODO work in progress
+	protected String calculateCost() {
+		if(getSelected() != null)
+			return getSelected().calcCost(d_cost, transportCharge, vat, tran, vemc);
+		return "";
 	}
 
 	protected String createPath(String code) {
@@ -596,7 +767,6 @@ public class DisplayStock {
 		double cSum = 0, pSum = 0, pQ = 0;
 		int q = 0;
 		for (int i = 0; i < sm.getList().size(); i++) {
-//			System.out.println("Code "+code+"\t"+sm.getList().get(i).getCode());
 			if(sm.getList().get(i).getCode().equals(code)){
 				double ct = sm.getList().get(i).getCost();
 				double pt = sm.getList().get(i).getPrice();
@@ -631,9 +801,8 @@ public class DisplayStock {
 	}
 
 	protected void editRecordInDatabase() {
-		Item i = getSelected();
-		if(i != null){
-			updateEdition(i);
+		if(getSelected() != null){
+			updateEdition(getSelected());
 		} else {
 			log.log(cs.ERR_LOG, jl.get(cs.ITEM_EDITION_ERROR).toString());
 			System.out.println("Edit NULL");
@@ -642,7 +811,7 @@ public class DisplayStock {
 
 	private void updateEdition(Item i) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("updateEdition");
 	}
 
 	public void refreashTable() {
@@ -669,8 +838,8 @@ public class DisplayStock {
 		if(chbVemc.isSelected()) i.setAddVEMCCharge((byte) 1); else i.setAddVEMCCharge((byte) 0);
 	}
 
-	private void populateFields(Item i, JComboBox<?> cbCodes, JTextField tfName, JTextField tfCost, JTextField tfPrice,
-			JTextField tfQnt, JCheckBox chbVAT, JCheckBox chbTransport, JCheckBox chbVemc) {
+	private void populateFields(Item i) {
+		System.out.println("po "+i.getName());
 		if(!i.getCode().isEmpty()){
 			int index = 0;
 			for (int j = 0; j < cs.ITEM_CODES.length; j++) {
@@ -679,7 +848,7 @@ public class DisplayStock {
 			}
 			cbCodes.setSelectedIndex(index);
 		}
-		
+//		TODO work in progress
 		if(!i.getName().isEmpty())
 			tfName.setText(i.getName());
 		if(i.getCost() != 0)
@@ -745,8 +914,10 @@ public class DisplayStock {
 		ListSelectionListener listener = new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-//				helper.toggleJButton(btnAddToInvoice, Color.green, Color.darkGray, true);
 				msh.toggleJButton(btnDelete, Color.red, Color.gray, true);
+				if(getSelected() != null)
+					populateFields(getSelected());
+				
 			}
 	    };
 	    return listener;
