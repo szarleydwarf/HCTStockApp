@@ -237,15 +237,15 @@ public class SalesReports {
 //				System.out.println("Mpath "+path);
 				boolean pdfCreated = printSalesReport(path, false);
 				if(pdfCreated){
-					try {
-						printer.printDoc(path);
-					} catch (IOException e) {
-						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
-						e.printStackTrace();
-					} catch (PrinterException e) {
-						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
-						e.printStackTrace();
-					}
+//					try {
+//						printer.printDoc(path);
+//					} catch (IOException e) {
+//						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+//						e.printStackTrace();
+//					} catch (PrinterException e) {
+//						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+//						e.printStackTrace();
+//					}
 				}
 			}
 		});
@@ -258,15 +258,15 @@ public class SalesReports {
 //					System.out.println("Dpath "+path);
 					boolean pdfCreated = printSalesReport(path, true);
 					if(pdfCreated){
-						try {
-							printer.printDoc(path);
-						} catch (IOException e) {
-							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
-							e.printStackTrace();
-						} catch (PrinterException e) {
-							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
-							e.printStackTrace();
-						}
+//						try {
+//							printer.printDoc(path);
+//						} catch (IOException e) {
+//							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+//							e.printStackTrace();
+//						} catch (PrinterException e) {
+//							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+//							e.printStackTrace();
+//						}
 					}
 //				} else {
 //					log.log(cs.ERR_LOG, jl.get(cs.PRINTING_PDF_ERROR).toString());
@@ -335,7 +335,7 @@ public class SalesReports {
 	protected boolean printSalesReport(String path, boolean b) {
 		PDDocument pdf = null;
 		JSONArray jArr = (JSONArray) jl.get(cs.SALE_REPORT_HEADINGS);
-		String header = msh.stringArr2String(msh.json2Array(jArr), "I.C. - ");
+		String header = msh.stringArr2String(msh.json2Array(jArr, 2), "I.C. - ");
 		String date = path.substring(path.lastIndexOf(cs.SPACE)+1, path.lastIndexOf(cs.DOT));
 		date = date.replaceAll(cs.UNDERSCORE, cs.MINUS);
 		if(b)

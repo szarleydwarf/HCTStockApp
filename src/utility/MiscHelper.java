@@ -329,6 +329,32 @@ public class MiscHelper {
 	    return stringArray;
 	}
 
+	
+	public String[] json2Array(JSONArray jsonArray, int mod) {
+		String[] stringArray = null;
+		if (jsonArray != null) {
+			int length = jsonArray.size();
+			stringArray = new String[length];
+			for (int i = 0; i < length; i++) {
+				if(i%mod == 0)
+					stringArray[i] = jsonArray.get(i).toString();
+				else
+					stringArray[i] = "";
+			}
+		}
+		return stringArray;
+	}
+	
+	public String swapNames(String s, String[] cods, String[] names) {
+		
+		for (int i = 0; i < names.length; i++) {
+			if(s.equals(cods[i]))
+				s = names[i];
+		}
+		return s;
+	}
+
+	
 	public void displayDataInLabel(JLabel jlbl, DecimalFormat df, String[][] data, String[] sa) {
 		String s = "<html><body> ";
 		for (String ss : sa) {
