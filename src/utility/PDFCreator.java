@@ -309,22 +309,20 @@ public class PDFCreator {
 	private void fillSalesReport(PDPageContentStream cst, String[][] data, String header) throws IOException {
 		displayHeadings(cst, header);
 		double  sc = 0, sp = 0, ss = 0;
-//		String tt = msh.paddStringRight("***TOTAL ", cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE);
+		String[]cods = msh.json2Array((JSONArray) jl.get(cs.ITEM_CODE_ARR));
+		String[]names = msh.json2Array((JSONArray) jl.get(cs.ITEM_NAMES_ARR));
 		if(data.length > 0) {
 			for (int i = 0; i < data.length; i++) {
-				String code = data[i][0];
-//				double cost = data[i][1];
-				
-				
 				String s = "", t = "";
 				double d = 0;
 				boolean b;
 				for (int j = 0; j < data[i].length; j++) {
+					t="";
 					if(j == 0){
-						s = data[i][j];
+						s = msh.swapNames(data[i][j], cods, names);
 						b = false;
 						s = msh.paddStringRight(s, cn.SALE_REPORT_PAD_LENGTH, cs.UNDERSCORE);
-					} else {
+					} else if(j == 2) {
 						d = Double.parseDouble(data[i][j]);
 						switch (j) {
 						case 1:
@@ -359,6 +357,8 @@ public class PDFCreator {
 		}
 		cst.endText();
 	}
+	
+
 	// END SALES REPORTS SECTION
 
 	// GENERAL SECTION

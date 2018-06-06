@@ -74,6 +74,7 @@ public class ItemAddNew {
 	private RepakReport repakReport;
 	private String date;
 	private double transportCharge;
+	private double profitPercent;
 
 	/**
 	 * Launch the application.
@@ -235,8 +236,17 @@ public class ItemAddNew {
 		JTextField tfQnt = new JTextField();
 		tfQnt.setFont(fonts);
 		tfQnt.setText(""+0);
-		tfQnt.setBounds(xOffset, lblY, tfW, lbltfH);
+		tfQnt.setBounds(xOffset, lblY, tfW/2, lbltfH);
 		frame.getContentPane().add(tfQnt);
+
+//TODO - profit percent combobox
+		String[] profits = msh.json2Array((JSONArray) js.get(cs.PROFITS));
+		JComboBox cbProfit = new JComboBox(profits);
+		cbProfit.setBounds(tfQnt.getX()+tfQnt.getWidth()+10, lblY, tfW/2, lbltfH);
+		cbProfit.setSelectedIndex(0);
+		frame.getContentPane().add(cbProfit);
+		profitPercent = msh.removeSpecialChars(cbProfit.getItemAt(0).toString());
+
 		
 		JLabel lblVat = new JLabel(jl.get(cs.LBL_VAT).toString());
 		lblVat.setFont(fonts);
@@ -259,7 +269,7 @@ public class ItemAddNew {
 		
 		String[] tSupNames = msh.json2Array((JSONArray) js.get(cs.SUPLIERS_NAMES_ARR));
 		String[] tSupTrans = msh.json2Array((JSONArray) js.get(cs.SUPPLIERS_CHARGES_ARR));
-//TODO
+		
 		JComboBox cbTransCharges = new JComboBox(tSupNames);
 		cbTransCharges.setBounds(xOffset, lblY, tfW/2, lbltfH);
 		cbTransCharges.setSelectedIndex(0);
@@ -391,13 +401,28 @@ public class ItemAddNew {
 				}		
 			}
 		});
+		
+		cbProfit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbProfit ){
+					JComboBox cb = (JComboBox) a.getSource();
+					//TODO
+					profitPercent = msh.removeSpecialChars(cb.getSelectedItem().toString());
+					
+					cost = calculateCost();
+					price = calculatePrice();
+					setCostLBL();
+					setPriceLBL();
+				}
+			}
+		});
 
 		cbTransCharges.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent a) {
 				if(a.getSource() == cbTransCharges ){
 					JComboBox cb = (JComboBox) a.getSource();
-					//TODO
 					for (int i=0; i<tSupNames.length; i++) {
 						if(tSupNames[i].equals(cb.getSelectedItem().toString())){
 							transportCharge = Double.parseDouble(tSupTrans[i]);
@@ -455,13 +480,9 @@ public class ItemAddNew {
 	protected void recalculateCost(JTextField tfCost) {
 		  d_cost = 0;
 		  cost = ""; price = "";
-//		  try {
 		  if(tfCost.getText() != null && !tfCost.getText().isEmpty())
 			  d_cost = msh.isDouble(tfCost.getText()); 
-//		  } catch (NumberFormatException nfe) {
-//			  if(!tfCost.getText().isEmpty())
-//				  JOptionPane.showMessageDialog(frame, jl.get(cs.NOT_NUMBER_ERROR).toString());
-//		  }
+
 		  
 		  if(d_cost > 0){
 			  cost = calculateCost();
@@ -472,8 +493,8 @@ public class ItemAddNew {
 	}
 
 	private String calculatePrice() {
-		double dc = Double.parseDouble(cost);
-		return i.calculateSuggestedPrice(dc, itemCode);
+		double dc = msh.isDouble(cost);//Double.parseDouble(cost);
+		return i.calculateSuggestedPrice(dc, itemCode, profitPercent);
 	}
 
 	private void setPriceLBL() {

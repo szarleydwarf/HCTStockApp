@@ -210,13 +210,8 @@ public class MiscHelper {
 		int count = countChar(str, cs.SEMICOLON);
 		String[] t = new String[count];
 		if(str.contains(c)){
-//			System.out.println("msh 1. "+str.matches(cs.SPECIAL_CHAR_PATTERN));
-			
 			if(str.matches(cs.SPECIAL_CHAR_PATTERN)){
-				System.out.println("msh 2. "+str);
 				str = str.replaceAll(cs.REPLACE_CHAR_PATTERN, "");
-						System.out.println("msh 3. "+str);
-//				str = str.substring(str.indexOf(cs.SPECIAL_CHAR_PATTERN)+1);
 			}
 			t = str.split(c, -1);
 		} else {
@@ -224,6 +219,7 @@ public class MiscHelper {
 		}	
 		return t;
 	}
+	
 	public String[] splitString(String str, String c) {
 		int count = countChar(str, cs.SEMICOLON);
 		String[] t = new String[count+1];
@@ -333,6 +329,32 @@ public class MiscHelper {
 	    return stringArray;
 	}
 
+	
+	public String[] json2Array(JSONArray jsonArray, int mod) {
+		String[] stringArray = null;
+		if (jsonArray != null) {
+			int length = jsonArray.size();
+			stringArray = new String[length];
+			for (int i = 0; i < length; i++) {
+				if(i%mod == 0)
+					stringArray[i] = jsonArray.get(i).toString();
+				else
+					stringArray[i] = "";
+			}
+		}
+		return stringArray;
+	}
+	
+	public String swapNames(String s, String[] cods, String[] names) {
+		
+		for (int i = 0; i < names.length; i++) {
+			if(s.equals(cods[i]))
+				s = names[i];
+		}
+		return s;
+	}
+
+	
 	public void displayDataInLabel(JLabel jlbl, DecimalFormat df, String[][] data, String[] sa) {
 		String s = "<html><body> ";
 		for (String ss : sa) {
@@ -387,6 +409,11 @@ public class MiscHelper {
 		return Integer.parseInt(text);
 	}
 
+	public int removeSpecialChars(String str) {
+		str = str.replaceAll("\\D+","");
+		return isInt(str);
+	}
+
 	private String removeSpecials(String text) {
 		return text.replaceAll("\\D+","");
 	}
@@ -414,6 +441,7 @@ public class MiscHelper {
 		if(st.contains(cs.COMA)){
 			st = st.replace(cs.COMA, cs.DOT);
 		}
+		st = removeZerosAndSpaces(st);
 		try{
 			return Double.parseDouble(st);
 		} catch(NumberFormatException e){
@@ -422,6 +450,14 @@ public class MiscHelper {
 		
 		return 0;
 	}
+	
+	private String removeZerosAndSpaces(String st) {
+		st = st.replaceAll("\\s", "");
+		String pattern = "^0+";
+		st = st.replaceAll(pattern, "");		
+		return st;
+	}
+
 	public int isInt(String st) {
 		try{
 			return Integer.parseInt(st);
@@ -431,5 +467,6 @@ public class MiscHelper {
 		
 		return 0;
 	}
+
 
 }

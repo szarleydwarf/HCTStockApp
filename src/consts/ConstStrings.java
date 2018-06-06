@@ -140,6 +140,8 @@ public class ConstStrings {
 	public final String TYRES_CATEGORY = "tyre categories";
 	public final String ITEM_CATEGORY = "items cat";
 	public final String ITEM_CODES_ARR = "items codes for print";
+	public final String ITEM_CODE_ARR = "items codes";
+	public final String ITEM_NAMES_ARR = "items names";
 
 	public final String BTN_NEXT = "next";
 	public final String BTN_SAVE = "save";
@@ -224,4 +226,5 @@ public class ConstStrings {
 	public final String NOT_DOUBLE_ERROR = "not double";
 	public final String ALL_EN = "ALL";
 	public final String ALL_PL = "WSZYSTKO";
+	public final String PROFITS = "profits";
 }

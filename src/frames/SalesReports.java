@@ -68,21 +68,6 @@ public class SalesReports {
 	private Printer printer;
 	private String[][] DATA_D;
 
-//	/**
-//	 * Launch the application.
-//	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					SalesReports window = new SalesReports();
-//					window.frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
 	/**
 	 * Create the application.
@@ -252,15 +237,15 @@ public class SalesReports {
 //				System.out.println("Mpath "+path);
 				boolean pdfCreated = printSalesReport(path, false);
 				if(pdfCreated){
-					try {
-						printer.printDoc(path);
-					} catch (IOException e) {
-						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
-						e.printStackTrace();
-					} catch (PrinterException e) {
-						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
-						e.printStackTrace();
-					}
+//					try {
+//						printer.printDoc(path);
+//					} catch (IOException e) {
+//						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+//						e.printStackTrace();
+//					} catch (PrinterException e) {
+//						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+//						e.printStackTrace();
+//					}
 				}
 			}
 		});
@@ -273,15 +258,15 @@ public class SalesReports {
 //					System.out.println("Dpath "+path);
 					boolean pdfCreated = printSalesReport(path, true);
 					if(pdfCreated){
-						try {
-							printer.printDoc(path);
-						} catch (IOException e) {
-							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
-							e.printStackTrace();
-						} catch (PrinterException e) {
-							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
-							e.printStackTrace();
-						}
+//						try {
+//							printer.printDoc(path);
+//						} catch (IOException e) {
+//							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+//							e.printStackTrace();
+//						} catch (PrinterException e) {
+//							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+//							e.printStackTrace();
+//						}
 					}
 //				} else {
 //					log.log(cs.ERR_LOG, jl.get(cs.PRINTING_PDF_ERROR).toString());
@@ -350,7 +335,7 @@ public class SalesReports {
 	protected boolean printSalesReport(String path, boolean b) {
 		PDDocument pdf = null;
 		JSONArray jArr = (JSONArray) jl.get(cs.SALE_REPORT_HEADINGS);
-		String header = msh.stringArr2String(msh.json2Array(jArr), "I.C. - ");
+		String header = msh.stringArr2String(msh.json2Array(jArr, 2), "I.C. - ");
 		String date = path.substring(path.lastIndexOf(cs.SPACE)+1, path.lastIndexOf(cs.DOT));
 		date = date.replaceAll(cs.UNDERSCORE, cs.MINUS);
 		if(b)
@@ -418,7 +403,9 @@ public class SalesReports {
 		for (int i = 0; i < data.length-1; i++) {
 			for (int j = 1; j < data[i].length; j++) {
 				t = data[i][j];
-				td = Double.parseDouble(t);
+				if(t != null)
+					td = Double.parseDouble(t);
+
 				if(j == 1)dC += td;
 				if(j == 2)dP += td;
 				if(j == 3)dD += td;
@@ -462,7 +449,7 @@ public class SalesReports {
 		double diff = 0;
 		data = msh.setZeros(data);
 		for (String s : tokens) {
-//			System.out.println("S "+s);
+//			System.out.println("splitToData "+s);
 			if(!s.isEmpty()){
 				double discount = 0;
 				if(s.contains(cs.CARET))
@@ -479,6 +466,7 @@ public class SalesReports {
 					price = price - discount;
 				diff = price - cost;
 
+
 				if(code.equals(cs.TYRE_CODE_C)){
 					data[0][1] = getValue(data[0][1], cost);
 					data[0][2] = getValue(data[0][2], price);
@@ -491,11 +479,11 @@ public class SalesReports {
 					data[2][1] = getValue(data[2][1], cost);
 					data[2][2] = getValue(data[2][2], price);
 					data[2][3] = getValue(data[2][3], diff);
-				} else if(code.equals(cs.SERVICE_CODE)){
+				} else if(code.equals(cs.SHOP_CODE)){
 					data[3][1] = getValue(data[3][1], cost);
 					data[3][2] = getValue(data[3][2], price);
 					data[3][3] = getValue(data[3][3], diff);
-				} else if(code.equals(cs.SHOP_CODE)){
+				} else if(code.equals(cs.SERVICE_CODE)){
 					data[4][1] = getValue(data[4][1], cost);
 					data[4][2] = getValue(data[4][2], price);
 					data[4][3] = getValue(data[4][3], diff);
@@ -518,7 +506,7 @@ public class SalesReports {
 	}
 
 	private String getValue(String s, double dd) {
-		double d = Double.parseDouble(s);
+		double d = msh.isDouble(s);
 		d += dd;
 		return ""+d;
 	}
