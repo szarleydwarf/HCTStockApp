@@ -50,8 +50,7 @@ public class Item {
 		this.setAddTransportCost((byte) addTransportCost);
 		this.setAddVEMCCharge((byte) addVEMCCharge);
 
-		calculateCost(p_cost);
-		this.calculatePrice();
+		this.cost = p_cost;
 		
 		this.qnt = qnt;
 //		this should be handled by manager
@@ -84,42 +83,9 @@ public class Item {
 		this.qnt = qnt;
 	}
 
-	private void calculateCost(double p_cost) {
-//		System.out.println("1 pcost "+p_cost);
-		if(this.getAddVat() == 1)
-			p_cost  = p_cost * cn.VAT;
-		
-//		System.out.println("2 pcost "+p_cost);
-		// TODO - different transport cost depending, company depend
-		if (this.getAddTransportCost() == 1)
-			p_cost = p_cost + cn.TRANSPORT_COST_DALY;
-		
-//		System.out.println("3 pcost "+p_cost);
-		if(this.getAddVEMCCharge() == 1)
-			p_cost = p_cost + cn.REPAK_CHARGE;
-		
-//		System.out.println("4 pcost "+p_cost);
-		this.cost = p_cost;//Double.parseDouble(this.df.format(p_cost));
-	}
-
-	private void calculatePrice() {
-		double tCost = this.getCost();
-		double profit;
-		profit = tCost * this.cn.PROFIT;
-		
-		if(this.getCode().contains(cs.ITEM_CODES[0]) && (profit - tCost) < 20)//TODO ??
-			this.price = tCost + 20;
-		else
-			this.price = profit;
-//		this.price = Double.parseDouble(this.df.format(this.price));
-//		System.out.println("price "+profit + " - " + tCost + " - " + this.price);
-	}
-	
-	// TODO - 
 	public String calcCost(double p_cost, double transportCharge, int vat, int transport, int vemc) {
 		if(vat == 1)
 			p_cost  = p_cost * cn.VAT;
-		
 		
 		if (transport == 1)
 			p_cost = p_cost + transportCharge;
@@ -127,7 +93,7 @@ public class Item {
 		if(vemc == 1)
 			p_cost = p_cost + cn.REPAK_CHARGE;
 		
-		this.cost = p_cost;//Double.parseDouble(this.df.format(p_cost));
+//		this.cost = p_cost;
 		return df.format(p_cost);
 	}
 	
@@ -137,7 +103,7 @@ public class Item {
 		double profit;
 		profit = tCost + (tCost * profitPercent)/100;
 		
-		this.price = profit;//Double.parseDouble(this.df.format(price));
+//		this.price = profit;//Double.parseDouble(this.df.format(price));
 		return df.format(profit);
 	}
 	
@@ -146,7 +112,7 @@ public class Item {
 		data[0] = ""+this.id;
 		data[1] = ""+this.code;
 		data[2] = this.name;
-		data[3] = ""+this.cost;
+		data[3] = ""+this.cost;//TODO - should this return cost or calculatedCost
 		data[4] = ""+this.price;
 		data[5] = ""+this.qnt;
 		data[6] = ""+this.addVat;

@@ -403,7 +403,9 @@ public class SalesReports {
 		for (int i = 0; i < data.length-1; i++) {
 			for (int j = 1; j < data[i].length; j++) {
 				t = data[i][j];
-				td = Double.parseDouble(t);
+				if(t != null)
+					td = Double.parseDouble(t);
+
 				if(j == 1)dC += td;
 				if(j == 2)dP += td;
 				if(j == 3)dD += td;
@@ -447,7 +449,7 @@ public class SalesReports {
 		double diff = 0;
 		data = msh.setZeros(data);
 		for (String s : tokens) {
-//			System.out.println("S "+s);
+//			System.out.println("splitToData "+s);
 			if(!s.isEmpty()){
 				double discount = 0;
 				if(s.contains(cs.CARET))

@@ -241,13 +241,6 @@ public class DisplayStock {
 		btnDelete.setEnabled(false);
 		frame.getContentPane().add(btnDelete);
 
-		JButton btnAddNew = new JButton(jl.get(cs.BTN_NEW).toString());
-		btnAddNew.setForeground(new Color(245, 245, 245));
-		btnAddNew.setBackground(Color.GREEN);
-		btnAddNew.setFont(fonts);
-		btnAddNew.setBounds((frame.getWidth() - cn.BACK_BTN_X_OFFSET), 120, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
-		frame.getContentPane().add(btnAddNew);
-		
 		// LISTENERS SECTION
 
 		btnDelete.addActionListener(new ActionListener() {
@@ -301,12 +294,6 @@ public class DisplayStock {
 			}
 		});
 
-		btnAddNew.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(!newItemFrame.isVisible())
-					newItemFrame.setIsVisible(true);
-			}
-		});
 		
 		tfSearch.addFocusListener(new FocusListener(){
 	        @Override
@@ -391,7 +378,6 @@ public class DisplayStock {
 	}
 
 	private void editForm() {
-		// TODO work in progress
 		int lblX = frame.getWidth()/2+30, lblY = 70, lblW = frame.getWidth()/2-200, lblH = (int) (frame.getHeight()/2.2);
 		int lbltfH = 24, xOffset = 120, yOffset = 28, tfW = 260, rbW = 110;
 		float sHigh = 1.25f, wDiv = 1.7f;
@@ -557,13 +543,33 @@ public class DisplayStock {
 		chbVemc.setBounds(xOffset, lblY, tfW, lbltfH);
 		frame.getContentPane().add(chbVemc);
 
-		JButton btnSave = new JButton(jl.get(cs.BTN_SAVE).toString());
+		JButton btnSave = new JButton(jl.get(cs.BTN_UPDATE).toString());
 		btnSave.setForeground(Color.RED);
 		btnSave.setBackground(Color.LIGHT_GRAY);
 		btnSave.setFont(fonts);
 		lblY += yOffset;
 		btnSave.setBounds(xOffset, lblY, tfW / 2, lbltfH+10);
 		frame.getContentPane().add(btnSave);
+
+		JButton btnAddNew = new JButton(jl.get(cs.BTN_NEW).toString());
+		btnAddNew.setForeground(Color.RED);
+		btnAddNew.setBackground(Color.GREEN);
+		btnAddNew.setFont(fonts);
+		btnAddNew.setBounds((btnSave.getX() + btnSave.getWidth() + 10), lblY, tfW / 2, lbltfH+10);
+		frame.getContentPane().add(btnAddNew);
+		
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//TODO -  update
+			}
+		});
+		
+
+		btnAddNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//TODO save new item, check if not exist already
+			}
+		});
 
 		tfCost.getDocument().addDocumentListener(new DocumentListener() {
 			  public void changedUpdate(DocumentEvent e) {
@@ -654,11 +660,12 @@ public class DisplayStock {
 			public void actionPerformed(ActionEvent a) {
 				if(a.getSource() == cbProfit ){
 					JComboBox cb = (JComboBox) a.getSource();
-					//TODO
 					profitPercent = msh.removeSpecialChars(cb.getSelectedItem().toString());
 					
-					cost = calculateCost();
-					price = calculatePrice();
+					  if(d_cost > 0){
+						  cost = calculateCost();
+						  price = calculatePrice();
+					  }
 					setCostLBL();
 					setPriceLBL();
 				}
@@ -674,7 +681,7 @@ public class DisplayStock {
 						if(tSupNames[i].equals(cb.getSelectedItem().toString())){
 							transportCharge = Double.parseDouble(tSupTrans[i]);
 							lblTransportCharges.setText(cs.EURO+df.format(transportCharge));
-							if(tran != 0) {
+							if(tran != 0 && d_cost > 0) {
 								cost = calculateCost();
 								price = calculatePrice();
 							}
@@ -692,9 +699,8 @@ public class DisplayStock {
 	protected void recalculateCost(JTextField tfCost) {
 		  d_cost = 0;
 		  cost = ""; price = "";
-		  if(tfCost.getText() != null && !tfCost.getText().isEmpty())
+		  if(tfCost.getText() != null && !tfCost.getText().isEmpty() && tfCost.getText() != "")
 			  d_cost = msh.isDouble(tfCost.getText()); 
-
 		  
 		  if(d_cost > 0){
 			  cost = calculateCost();
@@ -704,12 +710,16 @@ public class DisplayStock {
 		  setPriceLBL();
 	}
 
-	// TODO work in progress
 	private String calculatePrice() {
-		double dc = msh.isDouble(cost);//Double.parseDouble(cost);
+		double dc = 0;
+		if(cost != "" && !cost.isEmpty() && cost != null)
+			dc = msh.isDouble(cost);//Double.parseDouble(cost);
 		if(getSelected() != null)
 			return getSelected().calculateSuggestedPrice(dc, itemCode, profitPercent);
-		return "";
+		else {
+			Item i = new Item(dm, cdb, cn, cs, df, "", "", 0.00,0,0,0,0);
+			return i.calculateSuggestedPrice(dc, itemCode, profitPercent);
+		}
 	}
 
 	private void setPriceLBL() {
@@ -720,11 +730,14 @@ public class DisplayStock {
 		sugestedCost.setText(cs.EURO + cost);
 	}
 
-	// TODO work in progress
 	protected String calculateCost() {
 		if(getSelected() != null)
 			return getSelected().calcCost(d_cost, transportCharge, vat, tran, vemc);
-		return "";
+		else {
+			Item i = new Item(dm, cdb, cn, cs, df, "", "", 0.00,0,0,0,0);
+			return i.calcCost(d_cost, transportCharge, vat, tran, vemc);
+		}
+//		return "";
 	}
 
 	protected String createPath(String code) {
@@ -848,7 +861,6 @@ public class DisplayStock {
 			}
 			cbCodes.setSelectedIndex(index);
 		}
-//		TODO work in progress
 		if(!i.getName().isEmpty())
 			tfName.setText(i.getName());
 		if(i.getCost() != 0)

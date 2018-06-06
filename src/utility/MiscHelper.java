@@ -441,6 +441,7 @@ public class MiscHelper {
 		if(st.contains(cs.COMA)){
 			st = st.replace(cs.COMA, cs.DOT);
 		}
+		st = removeZerosAndSpaces(st);
 		try{
 			return Double.parseDouble(st);
 		} catch(NumberFormatException e){
@@ -449,6 +450,14 @@ public class MiscHelper {
 		
 		return 0;
 	}
+	
+	private String removeZerosAndSpaces(String st) {
+		st = st.replaceAll("\\s", "");
+		String pattern = "^0+";
+		st = st.replaceAll(pattern, "");		
+		return st;
+	}
+
 	public int isInt(String st) {
 		try{
 			return Integer.parseInt(st);
