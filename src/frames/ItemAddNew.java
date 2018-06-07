@@ -77,23 +77,6 @@ public class ItemAddNew {
 	private double profitPercent;
 
 	/**
-	 * Launch the application.
-	 */
-//	public static void main() {
-//
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					ItemAddNew window = new ItemAddNew();
-//					window.frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
-
-	/**
 	 * Create the application.
 	 */public ItemAddNew(){
 		 
@@ -117,7 +100,7 @@ public class ItemAddNew {
 		
 		df = df_3_2;
 	
-		this.itemCode = cs.OTHER_CODE;
+		this.itemCode = cs.TYRE_CODE_C;
 		vat = 0;
 		tran = 0;
 		vemc = 0;
@@ -156,6 +139,7 @@ public class ItemAddNew {
 		frame.getContentPane().add(code);
 		
 		JComboBox cbCodes = new JComboBox(cs.ITEM_CODES);
+		cbCodes.setSelectedIndex(0);
 		cbCodes.setBounds(xOffset, lblY, tfW, lbltfH);
 		frame.getContentPane().add(cbCodes);
 
@@ -493,8 +477,8 @@ public class ItemAddNew {
 	}
 
 	private String calculatePrice() {
-		double dc = msh.isDouble(cost);//Double.parseDouble(cost);
-		return i.calculateSuggestedPrice(dc, itemCode, profitPercent);
+		double dc = msh.isDouble(cost);
+		return i.calculateSuggestedPrice(dc, profitPercent);
 	}
 
 	private void setPriceLBL() {
@@ -511,6 +495,7 @@ public class ItemAddNew {
 
 	protected Item getItem(Item i, JComboBox cbCodes, JTextField tfName,  JTextField tfPrice,  
 			JTextField tfQnt, JCheckBox chbVAT, JCheckBox chbTransport, JCheckBox chbVemc) {
+		System.out.println("getItem "+itemCode);
 		if(!itemCode.isEmpty())i.setCode(itemCode); else i.setCode(cs.OTHER_CODE);
 		if(!tfName.getText().isEmpty())i.setName(tfName.getText());
 

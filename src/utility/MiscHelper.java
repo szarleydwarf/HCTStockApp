@@ -453,8 +453,7 @@ public class MiscHelper {
 	
 	private String removeZerosAndSpaces(String st) {
 		st = st.replaceAll("\\s", "");
-		String pattern = "^0+";
-		st = st.replaceAll(pattern, "");		
+		st = st.replaceAll("^0+", "");		
 		return st;
 	}
 

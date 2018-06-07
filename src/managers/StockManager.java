@@ -24,13 +24,13 @@ public class StockManager {
 		this.cn = cn;
 		this.cs = cs;
 		
-		this.getListFromDatabase();
+//		this.getListFromDatabase();
 //		list = (ArrayList<Item>) this.dm.selectData(this.cdb.SELECT_ALL_ITEMS, list);
 	}
 
 	public void getListFromDatabase(){
 		list.clear();
-		list = (ArrayList<Item>) this.dm.selectData(this.cdb.SELECT_ALL_ITEMS, list);
+		list = (ArrayList<Item>) this.dm.selectData(this.cdb.SELECT_ALL_ITEMS_ORDERED, list);
 	}
 
 	public boolean addItem(Item i){

@@ -82,6 +82,9 @@
 	"item_add_error":"Wystapil blad podczas dodawania nowego przedmiotu. Najprawdopodobniej, wybrany przedmiot zwrocil NULL.",
 	"item_edition_error":"Wystapil blad podczas edycji przedmiotu. Najprawdopodobniej, wybrany przedmiot zwrocil NULL.",
 	"saving error":"Wystapil blad podczas proby zapisu przedmiotu. Zapis nie udany",
+	"updated selected err":"Aktualizacja dziala tylko gdy wybierzesz przedmiot z listy, sprobuj ponownie lub wcisnij 'ZAPISZ NOWY'.",
+
+
 	"save pdf error":"Wystapil blad podczas proby zapisu pliku PDF.",
 	"not_number_error":"To nie jest cyfra. Prosze sprobowac jeszcze raz.",
 	"pdf creation error":"Wystapil blad podczas proby stworzenia pliku PDF. Nie odpowiedni format dokumentu przeslany do funkcji.",

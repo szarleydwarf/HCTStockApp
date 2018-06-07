@@ -83,6 +83,8 @@
 	"item_add_error":"There was an error when trying add an item. Most likely, item selection return null.",
 	"item_edition_error":"There was an error when trying edit an item. Most likely, item selection return null.",
 	"saving error":"There was an error when trying save an item. Save unsucessful",
+	"updated selected err":"Update works only with selected items, please try again or press \"ADD NEW\"",
+
 	"save pdf error":"There was an error when trying to save a PDF document.",
 	"not_number_error":"This is not a number. Please try again.",
 	"pdf creation error":"There was an error when trying to create a PDF document. Wrong document type passed.",

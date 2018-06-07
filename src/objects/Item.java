@@ -83,6 +83,34 @@ public class Item {
 		this.qnt = qnt;
 	}
 
+	/**
+	 * Default constructor
+	 * @param dm
+	 * @param cdb
+	 * @param cn
+	 * @param cs
+	 * @param df
+	 */
+	public Item(DatabaseManager dm, ConstDB cdb, ConstNums cn, ConstStrings cs, DecimalFormat df) {
+		this.dm = dm;
+		this.cdb = cdb;
+		this.cn = cn;
+		this.cs = cs;
+		this.df = df;
+
+		this.id = id;
+
+		this.code = cs.TYRE_CODE_C;
+		this.name = "";
+		this.setAddVat((byte) 0);
+		this.setAddTransportCost((byte) 0);
+		this.setAddVEMCCharge((byte) 0);
+		
+		this.cost = 0;
+		this.price = 0;
+		this.qnt = 0;
+	}
+
 	public String calcCost(double p_cost, double transportCharge, int vat, int transport, int vemc) {
 		if(vat == 1)
 			p_cost  = p_cost * cn.VAT;
@@ -98,7 +126,7 @@ public class Item {
 	}
 	
 	// TODO - add different values for profit percentage
-	public String calculateSuggestedPrice(double p_cost, String code, double profitPercent) {
+	public String calculateSuggestedPrice(double p_cost, double profitPercent) {
 		double tCost = p_cost;
 		double profit;
 		profit = tCost + (tCost * profitPercent)/100;
