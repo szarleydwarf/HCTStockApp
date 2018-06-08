@@ -51,6 +51,7 @@ import org.json.simple.JSONObject;
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
+import logic.MainView;
 import managers.CustomersManager;
 import managers.DatabaseManager;
 import managers.InvoiceManager;
@@ -67,7 +68,7 @@ import utility.MiscHelper;
 import utility.PDFCreator;
 import utility.Printer;
 
-public class InvoiceAddEdit {
+public class InvoiceAddEditFrame {
 
 	private JFrame frame;
 	
@@ -130,7 +131,7 @@ public class InvoiceAddEdit {
 
 	private Invoice editedInvoice;
 
-	private RepakReport repakReport;
+	private RepakReportFrame repakReport;
 
 	
 	/**
@@ -153,15 +154,15 @@ public class InvoiceAddEdit {
 	/**
 	 * Create the application.
 	 */
-	public InvoiceAddEdit() {
+	public InvoiceAddEditFrame() {
 		initialize();
 	}
 
-	public InvoiceAddEdit(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger, 
+	public InvoiceAddEditFrame(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger, 
 			PDFCreator PDFCreator, Printer printer,
 			JSONObject jSettings, JSONObject jLang, JSONObject jUser, 
 			MiscHelper mSH, DateHelper DH, FileHelper FH,
-			StockManager SM, CustomersManager cMng, InvoiceManager invMng, RepakReport RR,
+			StockManager SM, CustomersManager cMng, InvoiceManager invMng, RepakReportFrame RR,
 			ArrayList<String> carList, DecimalFormat DF) {
 		this.mainView = main;
 		this.jl = jLang;
@@ -1202,7 +1203,7 @@ public class InvoiceAddEdit {
 	private int findBrand(String car) {
 		if(this.mainView != null) {
 			if(!car.equals(jl.get(cs.LBL_CUSTOMER).toString())) {
-				return Integer.parseInt(this.mainView.getCars_BI().get(car));
+//				return Integer.parseInt(this.mainView.getCars_BI().get(car));
 			}
 		}
 		return cn.DEFAULT_CAR_BRAND_ID;

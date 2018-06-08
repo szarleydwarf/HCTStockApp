@@ -21,6 +21,7 @@ import org.json.simple.JSONObject;
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
+import logic.MainView;
 import managers.DatabaseManager;
 import objects.RepakROne;
 import utility.DateHelper;
@@ -30,7 +31,7 @@ import utility.MiscHelper;
 import utility.PDFCreator;
 import utility.Printer;
 
-public class RepakReport {
+public class RepakReportFrame {
 
 	private JFrame frame;
 	private MainView mainView;
@@ -78,11 +79,11 @@ public class RepakReport {
 	/**
 	 * Create the application.
 	 */
-	public RepakReport() {
+	public RepakReportFrame() {
 		initialize();
 	}
 
-	public RepakReport(MainView main, DatabaseManager DM, ConstDB CDB, ConstStrings CS, ConstNums CN, Logger logger,
+	public RepakReportFrame(MainView main, DatabaseManager DM, ConstDB CDB, ConstStrings CS, ConstNums CN, Logger logger,
 			PDFCreator PDFCreator, Printer p_rinter,
 			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, FileHelper FH) {
 		mainView = main;

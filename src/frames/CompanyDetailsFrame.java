@@ -3,6 +3,7 @@ package frames;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.font.TextAttribute;
@@ -18,17 +19,19 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstPaths;
 import consts.ConstStrings;
+import logic.MainView;
 import managers.DatabaseManager;
 import utility.Logger;
 import utility.MiscHelper;
 
-public class CompanyDetails {
+public class CompanyDetailsFrame {
 
 	private static JSONObject js;
 	private static JSONObject ju;
@@ -54,13 +57,11 @@ public class CompanyDetails {
 	private JTextField tfFB;
 	protected String lang;
 	private String info;
+
 	/**
-	 * Launch the application.
-	 * @param jSettings 
-	 * @param jUser 
-	 * @param isNew 
+	 * Create the application.
 	 */
-	public static void main(DatabaseManager dmn, Logger logger, 
+	public CompanyDetailsFrame(DatabaseManager dmn, Logger logger, 
 			ConstDB cDB, ConstStrings cS, ConstNums cN, ConstPaths cP, 
 			JSONObject jSettings, JSONObject jUser, JSONObject jLang, MiscHelper msch) {
 		jl = jLang;
@@ -74,24 +75,7 @@ public class CompanyDetails {
 		cs = cS;
 		cn = cN;
 		cp = cP;
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					CompanyDetails window = new CompanyDetails();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					log.log(cs.ERR_LOG, "Fail to display Company Details window. "+e.getMessage());
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
-	/**
-	 * Create the application.
-	 */
-	public CompanyDetails() {
-		initialize();
 	}
 
 	/* TODO add
@@ -101,34 +85,34 @@ public class CompanyDetails {
 		saveLanguage();
 		JSONObject newJU = new JSONObject();
 		String t = "";
-		info = jl.get(cs.FILL_UP).toString();
+		info = jl.get(cs.JL_FILL_UP).toString();
 		boolean allGood = false;
 		for (Object key : ju.keySet()) {
 	        String keyStr = (String)key;
-	        if(keyStr.equals(cs.JSON_COMPANY_NAME) && !validateTextField(this.tfName)){
+	        if(keyStr.equals(cs.JU_COMPANY_NAME) && !validateTextField(this.tfName)){
 	        	t = this.tfName.getText();
-	        } else if(keyStr.equals(cs.JSON_VAT) && !validateTextField(this.tfVat)) {
+	        } else if(keyStr.equals(cs.JU_VAT) && !validateTextField(this.tfVat)) {
 	        	t = this.tfVat.getText();
-	        } else if(keyStr.equals(cs.JSON_ADDRESS) && !validateTextField(this.tfAddress)) {
+	        } else if(keyStr.equals(cs.JU_ADDRESS) && !validateTextField(this.tfAddress)) {
 	        	t = this.tfAddress.getText();
-	        } else if(keyStr.equals(cs.JSON_TOWN) && !validateTextField(this.tfTown)) {
+	        } else if(keyStr.equals(cs.JU_TOWN) && !validateTextField(this.tfTown)) {
 	        	t = this.tfTown.getText();
-	        } else if(keyStr.equals(cs.JSON_COUNTY) && !validateTextField(this.tfCounty)) {
+	        } else if(keyStr.equals(cs.JU_COUNTY) && !validateTextField(this.tfCounty)) {
 	        	t = this.tfCounty.getText();
-	        } else if(keyStr.equals(cs.JSON_POST_CODE) && !validateTextField(this.tfPostCode)) {
+	        } else if(keyStr.equals(cs.JU_POST_CODE) && !validateTextField(this.tfPostCode)) {
 	        	t = this.tfPostCode.getText();
-	        } else if(keyStr.equals(cs.JSON_TELEPHONE) && !validateTextField(this.tfTelephone)) {
+	        } else if(keyStr.equals(cs.JU_TELEPHONE) && !validateTextField(this.tfTelephone)) {
 	        	t = this.tfTelephone.getText();
-	        } else if(keyStr.equals(cs.JSON_EMAIL) && !validateTextField(this.tfEmail)) {
+	        } else if(keyStr.equals(cs.JU_EMAIL) && !validateTextField(this.tfEmail)) {
 	        	t = this.tfEmail.getText();
-	        } else if(keyStr.equals(cs.JSON_WWW) && !validateTextField(this.tfWWW)) {
+	        } else if(keyStr.equals(cs.JU_WWW) && !validateTextField(this.tfWWW)) {
 	        	t = this.tfWWW.getText();
-	        } else if(keyStr.equals(cs.JSON_FB) && !validateTextField(this.tfFB)) {
+	        } else if(keyStr.equals(cs.JU_FB) && !validateTextField(this.tfFB)) {
 	        	t = this.tfFB.getText();
 	        }
 	        newJU.put(keyStr, t);
 	    }
-        if(!info.equals(jl.get(cs.FILL_UP).toString())){
+        if(!info.equals(jl.get(cs.JL_FILL_UP).toString())){
         	return false;
         }
 		return msh.saveJSON(cp.JSON_USER_PATH, newJU);
@@ -136,15 +120,15 @@ public class CompanyDetails {
 
 	private boolean validateTextField(JTextField tf) {
 		if(tf.getName() != null && tf.getText().isEmpty()){
-			if(tf.getName().equals(cs.JSON_COMPANY_NAME))
+			if(tf.getName().equals(cs.JU_COMPANY_NAME))
 				info += " Company Name,";
-			if(tf.getName().equals(cs.JSON_VAT))
+			if(tf.getName().equals(cs.JU_VAT))
 				info += " VAT number,";
-			if(tf.getName().equals(cs.JSON_TOWN))
+			if(tf.getName().equals(cs.JU_TOWN))
 				info += " Town,";
-			if(tf.getName().equals(cs.JSON_ADDRESS))
+			if(tf.getName().equals(cs.JU_ADDRESS))
 				info += " Address,";
-			if(tf.getName().equals(cs.JSON_COUNTY))
+			if(tf.getName().equals(cs.JU_COUNTY))
 				info += " County,";
 		}
 		return tf.getText().isEmpty();
@@ -155,7 +139,7 @@ public class CompanyDetails {
 		String t = "";
 		for (Object key : js.keySet()) {
 			String keyStr = (String)key;
-			if(keyStr.equals(cs.JLANG)){
+			if(keyStr.equals(cs.JS_LANG)){
 				if(lang != null)
 					t = lang;
 				else
@@ -171,21 +155,28 @@ public class CompanyDetails {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	public void initialize() {
 		System.out.println("Gattering info");
-		Font fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
-		Font fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
+		Font fonts = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_DEF).toString()));
+		Font fonts_title = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_TITLE).toString()));
 		Map attributes = fonts_title.getAttributes();
 		attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 		int yPos = 42, xPos = 30, line = 26, tfxPos = 130, tfLength = 540, tfHeight = 24;
 		Color color = msh.getColor(cs.APP, cs, js);
 		
 		frame = new JFrame();
-		frame.setTitle(js.get(cs.JSON_COMPANY_NAME).toString());
+		frame.setTitle(jl.get(cs.JU_COMPANY_NAME).toString());
 		frame.getContentPane().setBackground(color);
 		frame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, 704, 410);
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(this.cp.ICON_PATH));
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		    }
+		});
+		frame.getContentPane().setLayout(null);
 		
-		JLabel lblTitle = new JLabel(jl.get(cs.ENTER_DETAILS).toString());
+		JLabel lblTitle = new JLabel(jl.get(cs.JL_ENTER_DETAILS).toString());
 		lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTitle.setBounds(0, 5, 700, 24);
 		lblTitle.setFont(fonts_title.deriveFont(attributes));
@@ -196,7 +187,8 @@ public class CompanyDetails {
 		lblLang.setFont(fonts);
 		frame.getContentPane().add(lblLang);
 
-		JComboBox cbLang = new JComboBox(cs.LANG);
+		String[] languages = msh.json2Array((JSONArray) jl.get(cs.JL_A_LANG));
+		JComboBox cbLang = new JComboBox(languages);
 		cbLang.setFont(fonts);
 		cbLang.setBounds(tfxPos, yPos, tfLength/2, tfHeight);
 		frame.getContentPane().add(cbLang);
@@ -207,7 +199,7 @@ public class CompanyDetails {
 				if(a.getSource() == cbLang ){
 					JComboBox cb = (JComboBox) a.getSource();
 					lang = (cb.getSelectedItem().toString());				
-					if(lang.equals(cs.LANG[0])){
+					if(lang.equals(languages[0])){
 						lang = cp.JSON_ENG;
 					} else {
 						lang = cp.JSON_PL;
@@ -217,7 +209,7 @@ public class CompanyDetails {
 		});
 
 		
-		JLabel lblName = new JLabel(cs.JSON_COMPANY_NAME+cs.STAR);
+		JLabel lblName = new JLabel(cs.JU_COMPANY_NAME+cs.STAR);
 		yPos+=line;
 		lblName.setBounds(xPos, yPos, 96, 28);
 		lblName.setFont(fonts);
@@ -225,12 +217,12 @@ public class CompanyDetails {
 
 		tfName = new JTextField();
 		tfName.setBounds(tfxPos, yPos, tfLength, tfHeight);
-		tfName.setName(cs.JSON_COMPANY_NAME);
+		tfName.setName(cs.JU_COMPANY_NAME);
 		frame.getContentPane().add(tfName);
 		tfName.setColumns(10);
 
 
-		JLabel lblVAT = new JLabel(cs.JSON_VAT+cs.STAR);
+		JLabel lblVAT = new JLabel(cs.JU_VAT+cs.STAR);
 		yPos+=line;
 		lblVAT.setBounds(xPos, yPos, 96, 28);
 		lblVAT.setFont(fonts);
@@ -239,10 +231,10 @@ public class CompanyDetails {
 		tfVat = new JTextField();
 		tfVat.setColumns(10);
 		tfVat.setBounds(tfxPos, yPos, tfLength, tfHeight);
-		tfVat.setName(cs.JSON_VAT);
+		tfVat.setName(cs.JU_VAT);
 		frame.getContentPane().add(tfVat);
 	
-		JLabel lblAddress = new JLabel(cs.JSON_ADDRESS+cs.STAR);
+		JLabel lblAddress = new JLabel(cs.JU_ADDRESS+cs.STAR);
 		yPos+=line;
 		lblAddress.setBounds(xPos, yPos, 96, 28);
 		lblAddress.setFont(fonts);
@@ -251,10 +243,10 @@ public class CompanyDetails {
 		tfAddress = new JTextField();
 		tfAddress.setColumns(10);
 		tfAddress.setBounds(tfxPos, yPos, tfLength, tfHeight);
-		tfAddress.setName(cs.JSON_ADDRESS);
+		tfAddress.setName(cs.JU_ADDRESS);
 		frame.getContentPane().add(tfAddress);
 		
-		JLabel lblTown = new JLabel(cs.JSON_TOWN+cs.STAR);
+		JLabel lblTown = new JLabel(cs.JU_TOWN+cs.STAR);
 		yPos+=line;
 		lblTown.setBounds(xPos, yPos, 96, 28);
 		lblTown.setFont(fonts);
@@ -262,11 +254,11 @@ public class CompanyDetails {
 		
 		tfTown = new JTextField();
 		tfTown.setColumns(10);
-		tfTown.setName(cs.JSON_TOWN);
+		tfTown.setName(cs.JU_TOWN);
 		tfTown.setBounds(tfxPos, yPos, tfLength, tfHeight);
 		frame.getContentPane().add(tfTown);
 		
-		JLabel lblCounty = new JLabel(cs.JSON_COUNTY+cs.STAR);
+		JLabel lblCounty = new JLabel(cs.JU_COUNTY+cs.STAR);
 		yPos+=line;
 		lblCounty.setBounds(xPos, yPos, 96, 28);
 		lblCounty.setFont(fonts);
@@ -274,11 +266,11 @@ public class CompanyDetails {
 		
 		tfCounty = new JTextField();
 		tfCounty.setColumns(10);
-		tfCounty.setName(cs.JSON_COUNTY);
+		tfCounty.setName(cs.JU_COUNTY);
 		tfCounty.setBounds(tfxPos, yPos, tfLength, tfHeight);
 		frame.getContentPane().add(tfCounty);
 
-		JLabel lblPostCode = new JLabel(cs.JSON_POST_CODE);
+		JLabel lblPostCode = new JLabel(cs.JU_POST_CODE);
 		yPos+=line;
 		lblPostCode.setBounds(xPos, yPos, 96, 28);
 		lblPostCode.setFont(fonts);
@@ -286,11 +278,11 @@ public class CompanyDetails {
 		
 		tfPostCode = new JTextField();
 		tfPostCode.setColumns(10);
-		tfPostCode.setName(cs.JSON_POST_CODE);
+		tfPostCode.setName(cs.JU_POST_CODE);
 		tfPostCode.setBounds(tfxPos, yPos, tfLength, tfHeight);
 		frame.getContentPane().add(tfPostCode);
 
-		JLabel lblTelephone = new JLabel(cs.JSON_TELEPHONE);
+		JLabel lblTelephone = new JLabel(cs.JU_TELEPHONE);
 		yPos+=line;
 		lblTelephone.setBounds(xPos, yPos, 96, 28);
 		lblTelephone.setFont(fonts);
@@ -298,11 +290,11 @@ public class CompanyDetails {
 		
 		tfTelephone = new JTextField();
 		tfTelephone.setColumns(10);
-		tfTelephone.setName(cs.JSON_TELEPHONE);
+		tfTelephone.setName(cs.JU_TELEPHONE);
 		tfTelephone.setBounds(tfxPos, yPos, tfLength, tfHeight);
 		frame.getContentPane().add(tfTelephone);
 		
-		JLabel lblEmail = new JLabel(cs.JSON_EMAIL);
+		JLabel lblEmail = new JLabel(cs.JU_EMAIL);
 		yPos+=line;
 		lblEmail.setBounds(xPos, yPos, 96, 28);
 		lblEmail.setFont(fonts);
@@ -310,11 +302,11 @@ public class CompanyDetails {
 		
 		tfEmail = new JTextField();
 		tfEmail.setColumns(10);
-		tfEmail.setName(cs.JSON_EMAIL);
+		tfEmail.setName(cs.JU_EMAIL);
 		tfEmail.setBounds(tfxPos, yPos, tfLength, tfHeight);
 		frame.getContentPane().add(tfEmail);
 		
-		JLabel lblWWW = new JLabel(cs.JSON_WWW);
+		JLabel lblWWW = new JLabel(cs.JU_WWW);
 		yPos+=line;
 		lblWWW.setBounds(xPos, yPos, 96, 28);
 		lblWWW.setFont(fonts);
@@ -322,11 +314,11 @@ public class CompanyDetails {
 		
 		tfWWW = new JTextField();
 		tfWWW.setColumns(10);
-		tfWWW.setName(cs.JSON_WWW);
+		tfWWW.setName(cs.JU_WWW);
 		tfWWW.setBounds(tfxPos, yPos, tfLength, tfHeight);
 		frame.getContentPane().add(tfWWW);
 
-		JLabel lblFB = new JLabel(cs.JSON_FB);
+		JLabel lblFB = new JLabel(cs.JU_FB);
 		yPos+=line;
 		lblFB.setBounds(xPos, yPos, 96, 28);
 		lblFB.setFont(fonts);
@@ -334,7 +326,7 @@ public class CompanyDetails {
 		
 		tfFB = new JTextField();
 		tfFB.setColumns(10);
-		tfFB.setName(cs.JSON_FB);
+		tfFB.setName(cs.JU_FB);
 		tfFB.setBounds(tfxPos, yPos, tfLength, tfHeight);
 		frame.getContentPane().add(tfFB);
 
@@ -357,6 +349,9 @@ public class CompanyDetails {
 		});
 		frame.getContentPane().setLayout(null);
 		frame.getContentPane().add(nextBtn);
+		
+		frame.setVisible(true);
+		
 	}
 
 	

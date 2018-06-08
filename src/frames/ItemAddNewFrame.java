@@ -34,6 +34,7 @@ import org.json.simple.JSONObject;
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
+import logic.MainView;
 import managers.DatabaseManager;
 import managers.StockManager;
 import objects.Item;
@@ -41,7 +42,7 @@ import objects.RepakROne;
 import utility.Logger;
 import utility.MiscHelper;
 
-public class ItemAddNew {
+public class ItemAddNewFrame {
 	private  ConstNums cn;
 	private  ConstStrings cs;
 	private  ConstDB cdb;
@@ -71,18 +72,18 @@ public class ItemAddNew {
 	private JRadioButton rbSuggested;
 	private String price;
 	protected boolean isSuggested;
-	private RepakReport repakReport;
+	private RepakReportFrame repakReport;
 	private String date;
 	private double transportCharge;
 	private double profitPercent;
 
 	/**
 	 * Create the application.
-	 */public ItemAddNew(){
+	 */public ItemAddNewFrame(){
 		 
 	 }
-	public ItemAddNew(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
-			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM, DecimalFormat df_3_2, RepakReport rr,
+	public ItemAddNewFrame(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
+			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM, DecimalFormat df_3_2, RepakReportFrame rr,
 			String Date) {
 		mainView = main;
 		jl = jLang;

@@ -48,11 +48,18 @@
 		"December"
 	],
 
+	"lang arr":["ENGLISH", "POLISH"],
 	"tyre categories":["Osobowe", "Rolnicze"],
 	"items cat":["Osobowe", "Rolnicze", "Detki", "Sklep"],
 	"items codes":["TRC", "TRA", "TB", "SH", "SR", "OT", "CW"],
 	"items names":["Car Tyres", "Agri Tyres", "Tubes", "Shop", "Services", "Other", "Car Wash"],
 	"items codes for print":["WSZYSTKO", "Osobowe", "Rolnicze", "Detki", "Sklep"],
+
+	"CARS_TABLE_HEADING" : ["Cars"],
+	"STOCK_TB_HEADINGS" : ["ID", "Kod", "Nazwa", "Koszt", "Cena", "Qnt", "VAT", "Transport", "VEMC"],
+	"STOCK_TB_HEADINGS_SHORT" :  ["Kod","Towar", "Cena", "Qnt", "Cost"],
+	"CUSTOMER_TB_HEADINGS" : ["Klient", "B/I", "VAT/TAX", "# Uslug"],
+	"INVOICES_TB_HEADINGS" : ["ID", "Klient", "Data", "Zakupy", "Plik"],
 
 	"years":["2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034", "2035"],
 	"sale report headings":["Miesiac", "Koszt", "Sprzedaz", "Zysk"],

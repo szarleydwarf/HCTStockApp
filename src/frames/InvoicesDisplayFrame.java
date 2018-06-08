@@ -34,6 +34,7 @@ import org.json.simple.JSONObject;
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
+import logic.MainView;
 import managers.DatabaseManager;
 import managers.InvoiceManager;
 import objects.Invoice;
@@ -42,7 +43,7 @@ import utility.DateHelper;
 import utility.Logger;
 import utility.MiscHelper;
 
-public class InvoicesDisplay {
+public class InvoicesDisplayFrame {
 
 	private JFrame frame;
 	private MainView mainView;
@@ -90,11 +91,11 @@ public class InvoicesDisplay {
 	/**
 	 * Create the application.
 	 */
-	public InvoicesDisplay() {
+	public InvoicesDisplayFrame() {
 		initialize();
 	}
 
-	public InvoicesDisplay(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN,
+	public InvoicesDisplayFrame(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN,
 			Logger logger, JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, InvoiceManager invMng) {
 		this.mainView = main;
 		this.jl = jLang;
@@ -208,14 +209,14 @@ public class InvoicesDisplay {
 		
 		btnEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(mainView != null && invoice != null)
-					mainView.getInvoiceAEFrame().setIsVisible(invoice, true);
-				else if(invoice != null)
-					MainView.main.getInvoiceAEFrame().setIsVisible(invoice, true);
-				else if(mainView != null)
-					mainView.getInvoiceAEFrame().setIsVisible(forPreview, true);
-				else
-					MainView.main.getInvoiceAEFrame().setIsVisible(forPreview, true);
+//				if(mainView != null && invoice != null)
+//					mainView.getInvoiceAEFrame().setIsVisible(invoice, true);
+//				else if(invoice != null)
+//					MainView.main.getInvoiceAEFrame().setIsVisible(invoice, true);
+//				else if(mainView != null)
+//					mainView.getInvoiceAEFrame().setIsVisible(forPreview, true);
+//				else
+//					MainView.main.getInvoiceAEFrame().setIsVisible(forPreview, true);
 				frame.setVisible(false);
 			}
 		});

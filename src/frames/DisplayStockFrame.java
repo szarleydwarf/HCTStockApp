@@ -50,6 +50,7 @@ import org.json.simple.JSONObject;
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
+import logic.MainView;
 import managers.DatabaseManager;
 import managers.StockManager;
 import objects.Item;
@@ -59,7 +60,7 @@ import utility.MiscHelper;
 import utility.PDFCreator;
 import utility.Printer;
 
-public class DisplayStock {
+public class DisplayStockFrame {
 
 	private static ConstNums cn;
 	private static ConstStrings cs;
@@ -86,7 +87,7 @@ public class DisplayStock {
 	private Printer printer;
 	private PDFCreator pdfc;
 	private DateHelper dh;
-	protected ItemAddNew newItemFrame;
+	protected ItemAddNewFrame newItemFrame;
 
 	private Font fonts;
 	private Font fonts_title;
@@ -103,11 +104,11 @@ public class DisplayStock {
 	/**
 	 * Create the application.
 	 */
-	public DisplayStock() {
+	public DisplayStockFrame() {
 		initialize();
 	}
 
-	public DisplayStock(MainView main, ItemAddNew AN, DatabaseManager dmn, 
+	public DisplayStockFrame(MainView main, ItemAddNewFrame AN, DatabaseManager dmn, 
 			ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger, Printer printer,
 			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, 
 			PDFCreator PDFC, StockManager SM, DecimalFormat df_3_2) {

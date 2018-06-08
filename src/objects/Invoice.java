@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
-import frames.MainView;
+import logic.MainView;
 import managers.DatabaseManager;
 
 public class Invoice {
@@ -227,18 +227,18 @@ public class Invoice {
 		String c = "";
 		Customer ct = null;
 		
-		ArrayList<Customer> list = MainView.getCustMng().getList();
-		for (int i = 0; i < list.size(); i++) {
-			ct = list.get(i);
-			if(ct.getId().equals(cid)) {
-				if(ct instanceof CustomerInd){
-					c = cs.AT + ((CustomerInd) ct).getCar().getBrandString() + " " + cs.AMP + ((CustomerInd) ct).getCar().getRegistration();;
-				}
-				if(ct instanceof CustomerBusiness){
-					c =  " " + cs.AMP + ((CustomerBusiness) ct).getCompName();
-				}
-			}
-		}
+//		ArrayList<Customer> list = MainView.getCustMng().getList();
+//		for (int i = 0; i < list.size(); i++) {
+//			ct = list.get(i);
+//			if(ct.getId().equals(cid)) {
+//				if(ct instanceof CustomerInd){
+//					c = cs.AT + ((CustomerInd) ct).getCar().getBrandString() + " " + cs.AMP + ((CustomerInd) ct).getCar().getRegistration();;
+//				}
+//				if(ct instanceof CustomerBusiness){
+//					c =  " " + cs.AMP + ((CustomerBusiness) ct).getCompName();
+//				}
+//			}
+//		}
 		return c;
 	}
 }

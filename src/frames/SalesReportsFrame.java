@@ -28,6 +28,7 @@ import org.json.simple.JSONObject;
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
+import logic.MainView;
 import managers.DatabaseManager;
 import managers.InvoiceManager;
 import objects.Invoice;
@@ -39,7 +40,7 @@ import utility.MiscHelper;
 import utility.PDFCreator;
 import utility.Printer;
 
-public class SalesReports {
+public class SalesReportsFrame {
 
 	private JFrame frame;
 	private MainView mainView;
@@ -72,11 +73,11 @@ public class SalesReports {
 	/**
 	 * Create the application.
 	 */
-	public SalesReports() {
+	public SalesReportsFrame() {
 		initialize();
 	}
 
-	public SalesReports(MainView main, DatabaseManager dm, ConstDB CDB, ConstStrings CS, ConstNums CN, Logger logger,
+	public SalesReportsFrame(MainView main, DatabaseManager dm, ConstDB CDB, ConstStrings CS, ConstNums CN, Logger logger,
 			PDFCreator PDFCreator, Printer p_rinter,
 			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, FileHelper FH,
 			InvoiceManager invMng, DecimalFormat DF) {
