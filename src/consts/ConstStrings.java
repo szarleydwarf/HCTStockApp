@@ -2,11 +2,17 @@ package consts;
 
 public class ConstStrings {
 
+	public final String PDF_INVOICE = "invoice pdf";
+	public final String PDF_SALE_REPORT = "sale pdf";
+	public final String PDF_STOCK_REPORT = "stock pdf";
+	public final String PDF_REPAK_REPORT = "repak pdf";
+
 	public final String APP = "app";
 	public final String PDF_EXT = ".pdf";
 	public final String ERR_LOG = "ERR_";
 	public final String INFO_LOG = "INFO_";
 	public final String CAR = "car";
+	public final String ALL_EN = "ALL";
 
 	// CUSTOMER CODES
 	public final String CUST_IND_CODE = "C_";
@@ -118,13 +124,46 @@ public class ConstStrings {
 	public final String LBL_DAILY_REPORT = "daily report";
 	public final String LBL_MONTHLY_REPORT = "monthly report";
 	public final String LBL_PICK_DATE = "pick date";
+	public final String LBL_CHECKBOX_I_B = "I/B";
 	
 	public final String TF_CUST_HINT = "tf cust hint";
-
+	public final String TF_SEARCH_FRAZE = "search";
+	
+	// INFOS
 	public final String JL_FILL_UP = "fill_up";
 	public final String JL_ENTER_DETAILS = "company details";
 	public final String JL_A_LANG = "lang arr";
-	public final String JL_CUSTOMER_TB_HEADINGS = "CUSTOMER_TB_HEADINGS";
+	public final String JL_A_ITEM_CODES = "item codes";
+	public final String JL_ITEM_CATEGORY = "items cat";
+	public final String JL_SAVE_PDF = "save pdf";
+	public final String JL_SAVED_MSG = "saved";
+	public final String JL_INVOICE_SAVED_1 = "saved invoice 1";
+	public final String JL_INVOICE_SAVED_2 = "saved invoice 2";
+	public final String JL_DELETE_MSG = "delete_msg";
+	public final String JL_ENTER_TEXT = "enter search fraze";
+
+	// TABLE HEADINGS
+	public final String JL_CUSTOMER_TB_HEADINGS = "customer_tb_headings";
+	public final String JL_SALE_REPORT_HEADINGS = "sale report headings";
+	public final String JL_STOCK_REPORT_HEADINGS = "stock report headings";
+	public final String JL_REPAK_REPORT_HEADINGS = "repak report headings";
+	public final String JL_STOCK_TB_HEADINGS = "stock_tb_headings";
+	
+
+	
+	// ERRORS
+	public final String JL_ERR_ITEM_ADD = "item_add_error";
+	public final String JL_ERR_ITEM_EDITION = "item_edition_error";
+	public final String JL_ERR_ITEM_EDITION_SAVE = "saving error";
+	public final String JL_ERR_ITEM_DELETING = "delete_error";
+	public final String JL_ERR_NOT_NUMBER = "not_number_error";
+	public final String JL_ERR_COMA = "coma error";
+	public final String JL_ERR_PDF_SAVE = "save pdf error";
+	public final String JL_ERR_PDF_CREATION = "pdf creation error";
+	public final String JL_ERR_UPDATE_SELECTED = "updated selected err";
+	public final String JL_ERR_PRINTING_PDF = "pdf print error";
+	public final String JL_ERR_PRINTER_NAME = "printer name error";
 
 
+	
 }

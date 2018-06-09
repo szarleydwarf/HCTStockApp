@@ -124,33 +124,14 @@ public class InvoiceAddEditFrame {
 
 	private Printer printer;
 	private PDFCreator pdfCreator;
-
 	private FileHelper fh;
-
 	private boolean isNew;
-
 	private Invoice editedInvoice;
-
 	private RepakReportFrame repakReport;
 
-	
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
-//			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					InvoiceAddEdit window = new InvoiceAddEdit();
-//					window.frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
+	private String[] itemCodes;
 
+	
 	/**
 	 * Create the application.
 	 */
@@ -191,9 +172,11 @@ public class InvoiceAddEditFrame {
 		this.df = DF;
 		
 		this.restore = false;
+		
+		this.itemCodes = msh.json2Array((JSONArray) jl.get(cs.JL_A_ITEM_CODES));
 
-		this.fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
-		this.fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
+		this.fonts = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_DEF).toString()));
+		this.fonts_title = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_TITLE).toString()));
 		this.attributes = fonts_title.getAttributes();
 		this.attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 		this.color = msh.getColor(cs.APP, cs, js);
@@ -249,7 +232,7 @@ public class InvoiceAddEditFrame {
 		tfCustomers.setBounds(custX, custY, custW, lbltfH);
 		frame.getContentPane().add(tfCustomers);
 		
-		chbInd = new JCheckBox(cs.CHECKBOX_LBL);
+		chbInd = new JCheckBox(cs.LBL_CHECKBOX_I_B);
 		chbInd.setFont(fonts);
 		chbInd.setBackground(color);
 		chbInd.setSelected(true);
@@ -266,7 +249,7 @@ public class InvoiceAddEditFrame {
 		frame.getContentPane().add(lblItemsList);
 
 		tfSearch = new JTextField();
-		tfSearch.setText(jl.get(cs.ENTER_TEXT).toString());
+		tfSearch.setText(jl.get(cs.JL_ENTER_TEXT).toString());
 		tfSearch.setFont(fonts);
 		tfSearch.setColumns(10);
 		int stockW = (int) (lblW*0.75);
@@ -363,10 +346,10 @@ public class InvoiceAddEditFrame {
 				try {
 					printer.printDoc(invPath);
 				} catch (IOException e) {
-					log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+					log.log(cs.ERR_LOG, js.get(cs.JL_ERR_PRINTING_PDF+" IOException: "+e.getMessage()).toString());
 					e.printStackTrace();
 				} catch (PrinterException e) {
-					log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+					log.log(cs.ERR_LOG, js.get(cs.JL_ERR_PRINTING_PDF+" PrinterException: "+e.getMessage()).toString());
 					e.printStackTrace();
 				}
 			}
@@ -678,10 +661,10 @@ public class InvoiceAddEditFrame {
 		for(int i = 0; i < modTBchosen.getRowCount(); i++){
 			Item it = null;
 			t = 0;
-			if(modTBchosen.getValueAt(i, 0).toString().equals(cs.SHOP_CODE)
-					|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TUBE_CODE)
-					|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE_C)
-					|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE_A)){
+			if(modTBchosen.getValueAt(i, 0).toString().equals(itemCodes[3])
+					|| modTBchosen.getValueAt(i, 0).toString().equals(itemCodes[2])
+					|| modTBchosen.getValueAt(i, 0).toString().equals(itemCodes[0])
+					|| modTBchosen.getValueAt(i, 0).toString().equals(itemCodes[1])){
 				it = this.getItemByName(this.modTBchosen.getValueAt(i, cn.NAME_COLUMN).toString());
 			}
 			if(it != null){
