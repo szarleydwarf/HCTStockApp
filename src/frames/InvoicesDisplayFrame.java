@@ -168,14 +168,14 @@ public class InvoicesDisplayFrame {
 		btnEdit.setBounds(btnX, btnY - cn.BACK_BTN_HEIGHT - cn.BACK_BTN_Y_OFFSET, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
 		frame.getContentPane().add(btnEdit);
 		
-//		String[]days = dh.getDaysArray();
-		String[]months = msh.json2Array((JSONArray) jl.get(cs.JL_MONTHS_NAMES));
-		String[]years = dh.getYearsArr();//msh.json2Array((JSONArray) jl.get(cs.YEARS));
-		System.out.println(msh.stringArr2String(years, ""));
 		int today = dh.getDayOfMonthNum();
 		today--;
 		int month = dh.getMonthNum();
 		int year = dh.getYearIndex();
+
+		String[]days = dh.getDaysArray(month, year);
+		String[]months = msh.json2Array((JSONArray) jl.get(cs.JL_MONTHS_NAMES));
+		String[]years = dh.getYearsArr();//msh.json2Array((JSONArray) jl.get(cs.YEARS));
 		
 //		dayString = days[today];
 		monthName = months[month];

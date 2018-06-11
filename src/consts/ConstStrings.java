@@ -37,6 +37,10 @@ public class ConstStrings {
 	public final String INTEGER_PATTERN = "^-?\\d+$";
 	public final String REPLACE_PATTERN = "#\\?.*?";
 
+	public final String DECIMAL_FORMAT_3_2 = "000.00";
+	public final String DECIMAL_FORMAT_4_2 = "0,000.00";
+	public final String DECIMAL_FORMAT_5_2 = "00,000.00";
+
 	public final String DEFAULT_REGISTRATION = "00AA0000";
 
 	// SYMBOLS ETC
