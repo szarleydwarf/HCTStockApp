@@ -87,7 +87,6 @@ public class DisplayStockFrame {
 	private Printer printer;
 	private PDFCreator pdfc;
 	private DateHelper dh;
-	protected ItemAddNewFrame newItemFrame;
 
 	private Font fonts;
 	private Font fonts_title;
@@ -109,12 +108,11 @@ public class DisplayStockFrame {
 		initialize();
 	}
 
-	public DisplayStockFrame(MainView main, ItemAddNewFrame AN, DatabaseManager dmn, 
+	public DisplayStockFrame(MainView main,  DatabaseManager dmn, 
 			ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger, Printer printer,
 			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, 
 			PDFCreator PDFC, StockManager SM, DecimalFormat df_3_2) {
 		mainView = main;
-		this.newItemFrame = AN;
 		jl = jLang;
 		js = jSettings;
 
@@ -220,7 +218,7 @@ public class DisplayStockFrame {
 		lblQnt.setBounds(xPosLbl, yPosLbl, xOffset, heigh);
 		frame.getContentPane().add(lblQnt);
 		
-		fillLabels(lblTyreCost, lblTyrePrices, lblQnt, itemCodes[0]);
+		fillLabels(lblTyreCost, lblTyrePrices, lblQnt, itemCodes[cn.TCC]);
 	
 		tfSearch = new JTextField();
 		tfSearch.setHorizontalAlignment(SwingConstants.CENTER);
@@ -266,16 +264,16 @@ public class DisplayStockFrame {
 					code = cs.ALL_EN;
 					break;
 				case 1:
-					code = itemCodes[0];
+					code = itemCodes[cn.TCC];
 					break;
 				case 2:
-					code = itemCodes[1];
+					code = itemCodes[cn.TCA];
 					break;
 				case 3:
-					code = itemCodes[2];
+					code = itemCodes[cn.TB];
 					break;
 				case 4:
-					code = itemCodes[3];
+					code = itemCodes[cn.SH];
 					break;
 
 				default:
@@ -341,13 +339,13 @@ public class DisplayStockFrame {
 					String defaultCategory = cb.getSelectedItem().toString();
 					String code = "";
 					if(defaultCategory.equals(tCat[0])){
-						code = itemCodes[0];
+						code = itemCodes[cn.TCC];
 					} else if(defaultCategory.equals(tCat[1])){
-						code = itemCodes[1];
+						code = itemCodes[cn.TCA];
 					} else if(defaultCategory.equals(tCat[2])){
-						code = itemCodes[2];
+						code = itemCodes[cn.TB];
 					} else if(defaultCategory.equals(tCat[3])){
-						code = itemCodes[3];
+						code = itemCodes[cn.SH];
 					} 
 					fillLabels(lblTyreCost, lblTyrePrices, lblQnt, code);
 				}		
@@ -769,7 +767,7 @@ public class DisplayStockFrame {
 		String date = path.substring(path.lastIndexOf(cs.SPACE)+1, path.lastIndexOf(cs.DOT));
 		date = date.replaceAll(cs.UNDERSCORE, cs.MINUS);
 		System.out.println("DD "+path);
-		String[][] data = sm.getDataByCode(code);
+		String[][] data = sm.getDataByCode(code, header.length());
 //		msh.printData(data);
 
 		pdf = pdfc.createPDF(cs.PDF_STOCK_REPORT, data, header, date);
@@ -854,7 +852,7 @@ public class DisplayStockFrame {
 			JCheckBox chbVAT, JCheckBox chbTransport, JCheckBox chbVemc) {
 		String sp = sugestedPrice.getText();
 		sp = sp.replaceAll(cs.EURO, "");
-		if(!itemCode.isEmpty())i.setCode(itemCode); else i.setCode(itemCodes[5]);
+		if(!itemCode.isEmpty())i.setCode(itemCode); else i.setCode(itemCodes[cn.OT]);
 		if(!tfName.getText().isEmpty())i.setName(tfName.getText());
 		if(!tfCost.getText().isEmpty())i.setCost(msh.isDouble(tfCost.getText()));
 		if(!isSuggested) {

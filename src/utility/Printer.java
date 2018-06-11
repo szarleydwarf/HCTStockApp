@@ -59,10 +59,10 @@ public class Printer {
 		this.dh = DH;
 		this.printerName = "";
 		try{
-			this.printerName = js.get(cs.DEF_PRINTER_NAME).toString();
+			this.printerName = js.get(cs.JS_DEF_PRINTER_NAME).toString();
 		}catch(NullPointerException ne){
 			this.printerName = cs.PRINTER_NAME;
-			log.log(cs.ERR_LOG, jl.get(cs.PRINTER_NAME_ERROR).toString());
+			log.log(cs.ERR_LOG, jl.get(cs.JL_ERR_PRINTER_NAME).toString());
 		}
 }
 	

@@ -5,10 +5,14 @@ import java.util.Iterator;
 
 import javax.xml.transform.SourceLocator;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
 import objects.Item;
+import utility.MiscHelper;
 
 public class StockManager {
 	private ArrayList<Item> list;
@@ -16,13 +20,19 @@ public class StockManager {
 	private ConstDB cdb;
 	private ConstNums cn;
 	private ConstStrings cs;
+	private MiscHelper msh;
+	private JSONObject jl;
 	
-	public StockManager(DatabaseManager dm, ConstDB cdb, ConstNums cn, ConstStrings cs){
+	public StockManager(DatabaseManager dm, ConstDB cdb, ConstNums cn, ConstStrings cs, 
+			MiscHelper MSH,
+			JSONObject JL){
 		list = new ArrayList<Item>();
 		this.dm = dm;
 		this.cdb = cdb;
 		this.cn = cn;
 		this.cs = cs;
+		this.msh = MSH;
+		this.jl = JL;
 		
 //		this.getListFromDatabase();
 //		list = (ArrayList<Item>) this.dm.selectData(this.cdb.SELECT_ALL_ITEMS, list);
@@ -117,18 +127,20 @@ public class StockManager {
 		return data;
 	}
 	
-	public String[][] getDataByCode(String code){
+	public String[][] getDataByCode(String code, int ln){
 		ArrayList<String[]> t = new ArrayList<String[]>();
+		String[] itemCodes = msh.json2Array((JSONArray) jl.get(cs.JL_A_ITEM_CODES));
+
 		for (int i = 0; i < list.size(); i++){
 			if(!code.equals(cs.ALL_EN) && !code.equals(cs.ALL_PL)){
 				if(list.get(i).getCode().equals(code)) {
-					t.add(list.get(i).getItemAsDataShortWithID());
+					t.add(list.get(i).getItemAsDataShortWithID(ln));
 				}
 			} else {
-				if(!list.get(i).getCode().equals(cs.OTHER_CODE)
-						&& (!list.get(i).getCode().equals(cs.CARWASH_CODE)) 
-						&& (!list.get(i).getCode().equals(cs.SERVICE_CODE))) {
-					t.add(list.get(i).getItemAsDataShortWithID());
+				if(!list.get(i).getCode().equals(itemCodes[cn.OT])
+						&& (!list.get(i).getCode().equals(itemCodes[cn.CW])) 
+						&& (!list.get(i).getCode().equals(itemCodes[cn.SR]))) {
+					t.add(list.get(i).getItemAsDataShortWithID(ln));
 				}
 			}
 		}
@@ -141,7 +153,7 @@ public class StockManager {
 	public String[][] getDataNoCost() {
 		String[][] data = new String[this.list.size()][];
 		for (int i = 0; i < list.size(); i++){
-				data[i] = list.get(i).getItemAsDataShort();
+				data[i] = list.get(i).getItemAsDataShort(4);
 		}
 		return data;
 	}

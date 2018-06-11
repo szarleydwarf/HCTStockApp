@@ -4,6 +4,14 @@ public class ConstNums {
 
 	public static final int FRAME_X_BOUND = 100;
 	public static final int FRAME_Y_BOUND = 10;
+	//"TRC", "TRA", "TB", "SH", "SR", "OT", "CW"
+	public final int TCC = 0;
+	public final int TCA = 1;
+	public final int TB = 2;
+	public final int SH = 3;
+	public final int SR = 4;
+	public final int OT = 5;
+	public final int CW = 6;
 
 	public final long SPLASHSCREEN_TIME = 5000;
 	

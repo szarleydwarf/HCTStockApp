@@ -61,6 +61,12 @@ public class MiscHelper {
 				System.out.println("i:"+i+" j:"+j+" - "+d[i][j]);
 	}
 	
+	public void printArr(String[] a){
+		for (int i = 0; i < a.length; i++) {
+			System.out.println(i+ " - " + a[i]);
+		}
+	}
+	
 	public void sopl2DimensionalArray(String[][] da) {
 		System.out.println("Data 1st length "+da.length);
 		System.out.println("Data 2nd length "+da[0].length);
@@ -154,9 +160,9 @@ public class MiscHelper {
 	public Color getColor(String str, ConstStrings cs, JSONObject js) {
 		int r = 0, g = 0, b = 0;
 		if(str.equals(cs.APP)){
-			r = Integer.parseInt(js.get(cs.APP_COLOR_R).toString());
-			g = Integer.parseInt(js.get(cs.APP_COLOR_G).toString());
-			b = Integer.parseInt(js.get(cs.APP_COLOR_B).toString());
+			r = Integer.parseInt(js.get(cs.JS_APP_COLOR_R).toString());
+			g = Integer.parseInt(js.get(cs.JS_APP_COLOR_G).toString());
+			b = Integer.parseInt(js.get(cs.JS_APP_COLOR_B).toString());
 		}
 		return new Color(r, g, b);
 	}
@@ -189,7 +195,7 @@ public class MiscHelper {
 	    for (int i = 0 ; i < nRow ; i++){
 	        for (int j = 0 ; j < nCol ; j++){
 	        	temp = dtm.getValueAt(i, j).toString();
-	        	if(temp.equals(string) && !temp.contains(cs.STAR) && !temp.toUpperCase().contains(cs.WASH.toUpperCase()))
+	        	if(temp.equals(string) && !temp.contains(cs.STAR) )//&& !temp.toUpperCase().contains(cs.WASH.toUpperCase()))
 	        		return i;
 	        }
 	    }       
@@ -244,7 +250,7 @@ public class MiscHelper {
 	public String paddStringRight(String string2Padd, int stringLength, String paddingChar){
 		if(stringLength <= 0)
 			return string2Padd;
-		
+		System.out.println(""+string2Padd);
 		StringBuilder sb = new StringBuilder(string2Padd);
 		stringLength = stringLength - sb.length() - 1;
 		while(stringLength-- >= 0){
@@ -445,7 +451,7 @@ public class MiscHelper {
 		try{
 			return Double.parseDouble(st);
 		} catch(NumberFormatException e){
-			JOptionPane.showMessageDialog(null, jl.get(cs.NOT_DOUBLE_ERROR).toString());
+			JOptionPane.showMessageDialog(null, jl.get(cs.JL_ERR_NOT_DOUBLE).toString());
 		}
 		
 		return 0;
@@ -461,7 +467,7 @@ public class MiscHelper {
 		try{
 			return Integer.parseInt(st);
 		} catch(NumberFormatException e){
-			JOptionPane.showMessageDialog(null, jl.get(cs.NOT_INT_ERROR).toString());
+			JOptionPane.showMessageDialog(null, jl.get(cs.JL_ERR_NOT_INT).toString());
 		}
 		
 		return 0;

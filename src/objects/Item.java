@@ -100,7 +100,7 @@ public class Item {
 
 		this.id = id;
 
-		this.code = cs.TYRE_CODE_C;
+		this.code = "";
 		this.name = "";
 		this.setAddVat((byte) 0);
 		this.setAddTransportCost((byte) 0);
@@ -149,8 +149,8 @@ public class Item {
 		return data;
 	}
  
-	public String[] getItemAsDataShort(){
-		String[] data = new String[cs.STOCK_TB_HEADINGS_SHORT.length];
+	public String[] getItemAsDataShort(int ln){
+		String[] data = new String[ln];
 		data[0] = this.code;
 		data[1] = this.name;
 		data[2] = ""+this.price;
@@ -158,8 +158,8 @@ public class Item {
 		return data;
 	}
 
-	public String[] getItemAsDataShortWithID(){
-		String[] data = new String[cs.STOCK_TB_HEADINGS_SHORT.length];
+	public String[] getItemAsDataShortWithID(int ln){
+		String[] data = new String[ln];
 		data[0] = ""+this.id;
 		data[1] = this.code;
 		data[2] = this.name;

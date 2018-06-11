@@ -91,7 +91,8 @@ public class mainFrame {
 		    }
 		});
 		frame.getContentPane().setLayout(null);
-
+		String[]years = dh.getYearsArr();//msh.json2Array((JSONArray) jl.get(cs.YEARS));
+msh.printArr(years);
 		JButton nowyRachunekBtn = new JButton(jl.get(cs.BTN_INVOICE).toString());
 		nowyRachunekBtn.setBackground(new Color(255, 255, 0));
 		nowyRachunekBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));

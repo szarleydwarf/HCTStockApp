@@ -131,6 +131,8 @@ public class InvoiceAddEditFrame {
 
 	private String[] itemCodes;
 
+	private String[] stockTBHeadings;
+
 	
 	/**
 	 * Create the application.
@@ -174,6 +176,7 @@ public class InvoiceAddEditFrame {
 		this.restore = false;
 		
 		this.itemCodes = msh.json2Array((JSONArray) jl.get(cs.JL_A_ITEM_CODES));
+		this.stockTBHeadings = msh.json2Array((JSONArray) jl.get(cs.JL_STOCK_TB_HEADINGS_SHORT));
 
 		this.fonts = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_DEF).toString()));
 		this.fonts_title = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_TITLE).toString()));
@@ -670,18 +673,18 @@ public class InvoiceAddEditFrame {
 			if(it != null){
 				it.updateRecord();
 				t = Integer.parseInt(modTBchosen.getValueAt(i, 3).toString());
-				if(it.getCode().equals(cs.TYRE_CODE_C)) {
+				if(it.getCode().equals(itemCodes[cn.TCC])) {
 					TRC = true;
 					ct += t;
 				}
-				if(it.getCode().equals(cs.TYRE_CODE_A)){
+				if(it.getCode().equals(itemCodes[cn.TCA])){
 					TRA = true;
 					at += t;
 				}
 			}
 		}
 		//TODO
-		JSONArray jArr = (JSONArray) jl.get(cs.REPAK_TB_COL_NAMES);
+		JSONArray jArr = (JSONArray) jl.get(cs.JL_REPAK_TB_COL_NAMES);
 		String[]sHeadings = msh.json2Array(jArr);
 
 		if(TRC){
@@ -741,7 +744,7 @@ public class InvoiceAddEditFrame {
 	private void checkCustomer() {
 		if(customer != null){
 			int n;
-			if(customer.getNumOfServices()>= Integer.parseInt(js.get(cs.NUMBER_OF_SERVICES).toString())){
+			if(customer.getNumOfServices()>= Integer.parseInt(js.get(cs.JS_NUMBER_OF_SERVICES).toString())){
 				n = 0;
 			} else {
 				n = customer.getNumOfServices();
@@ -755,7 +758,7 @@ public class InvoiceAddEditFrame {
 			str = str.substring(str.indexOf(cs.AMP)+1);
 			int brand = findBrand(car);
 			if(str.contains(cs.COMA) && this.chbInd.isSelected() ){
-				JOptionPane.showMessageDialog(frame, jl.get(cs.COMA_ERROR).toString());
+				JOptionPane.showMessageDialog(frame, jl.get(cs.JL_ERR_COMA).toString());
 				return;
 			}else if(this.chbInd.isSelected() && !str.contains(cs.COMA)){
 				customer =  new CustomerInd(this.dm, this.cdb, this.cn, this.cs, 1, str, brand);
@@ -800,15 +803,14 @@ public class InvoiceAddEditFrame {
 		Iterator<Item> it = list .iterator();
 		while(it.hasNext()){
 			Item itit = it.next();
-			if (itit.getQnt() == 0 && (itit.getCode().equals(cs.TYRE_CODE_C) || itit.getCode().equals(cs.TYRE_CODE_A))){
+			if (itit.getQnt() == 0 && (itit.getCode().equals(itemCodes[cn.TCC]) || itit.getCode().equals(itemCodes[cn.TCA]))){
 				it.remove();
 			}
 		}
-
-		String[][] data = new String [list.size()][cs.STOCK_TB_HEADINGS_SHORT.length];
+		String[][] data = new String [list.size()][stockTBHeadings.length];
 		data = sm.getDataNoCost();
 		JTable table = new JTable();
-		table = msh.createTable(fonts, data, cs.STOCK_TB_HEADINGS_SHORT, cs.STOCK_TB_NAME, 40, 240);
+		table = msh.createTable(fonts, data, stockTBHeadings, cs.STOCK_TB_NAME, 40, 240);
 		addListener(table, cs.STOCK_TB_NAME);
 
 		rSortStock = new TableRowSorter<>(table.getModel());
@@ -821,10 +823,11 @@ public class InvoiceAddEditFrame {
 	}
 
 	private void populateCustomerTable(int x, int y, int w, int h) {
-		String[][] data = new String [cm.getList().size()][cs.CUSTOMER_TB_HEADINGS.length];
+		String[] custTbHeadings = msh.json2Array((JSONArray) jl.get(cs.JL_CUSTOMER_TB_HEADINGS));
+		String[][] data = new String [cm.getList().size()][custTbHeadings.length];
 		data = cm.getDataShort();
 		JTable table = new JTable();
-		table = msh.createTable(fonts, data, cs.CUSTOMER_TB_HEADINGS, cs.CUSTOMER_TB_NAME, 140, 20);
+		table = msh.createTable(fonts, data, custTbHeadings, cs.CUSTOMER_TB_NAME, 140, 20);
 		addListener(table, cs.CUSTOMER_TB_NAME);
 
 		rSortCustomer = new TableRowSorter<>(table.getModel());
@@ -836,12 +839,13 @@ public class InvoiceAddEditFrame {
 	}
 	
 	private void createChoosenItemsTable(int x, int y, int w, int h) {
+		String[] stockTbHeadings = msh.json2Array((JSONArray) jl.get(cs.JL_STOCK_TB_HEADINGS_SHORT));
 		ArrayList<Item>emptyArray = new ArrayList<Item>();
-		String[][] data = new String [0][this.cs.STOCK_TB_HEADINGS_SHORT.length];
+		String[][] data = new String [0][stockTbHeadings.length];
 		data = populateDataArray(emptyArray, data, 0, 0);
 
 		tbChoosen = new JTable();
-		tbChoosen = msh.createTable(fonts, data, this.cs.STOCK_TB_HEADINGS_SHORT, cs.CHOSEN_TB_NAME, 40, 240);
+		tbChoosen = msh.createTable(fonts, data, stockTbHeadings, cs.CHOSEN_TB_NAME, 40, 240);
 		addListener(tbChoosen, cs.CHOSEN_TB_NAME);
 		
 		JScrollPane spInvoice = new JScrollPane(tbChoosen);
@@ -975,7 +979,7 @@ public class InvoiceAddEditFrame {
 			productPrice = item.getPrice();
 
 		int itemQnt = 0, tfQntInt = 0;
-		if(item.getCode().equals(cs.CARWASH_CODE) || item.getCode().equals(cs.SERVICE_CODE))
+		if(item.getCode().equals(itemCodes[cn.CW]) || item.getCode().equals(itemCodes[cn.SR]))
 			itemQnt  = 1;
 		else
 			itemQnt = item.getQnt();
@@ -983,12 +987,12 @@ public class InvoiceAddEditFrame {
 		if(!tfQnt.getText().isEmpty()) tfQntInt = Integer.parseInt(this.tfQnt.getText());
 		else tfQntInt = 1;
 		
-		while(tfQntInt > itemQnt && !(item.getCode().equals(cs.CARWASH_CODE) || item.getCode().equals(cs.SERVICE_CODE))){
+		while(tfQntInt > itemQnt && !(item.getCode().equals(itemCodes[cn.CW]) || item.getCode().equals(itemCodes[cn.SR]))){
 			JOptionPane.showMessageDialog(frame, "Dostępnych "+itemQnt+"szt.");
 			if(tfQntInt > itemQnt) return;
 		}
 		
-		if(!item.getCode().equals(cs.CARWASH_CODE) || !item.getCode().equals(cs.SERVICE_CODE)){
+		if(!item.getCode().equals(itemCodes[cn.CW]) || !item.getCode().equals(itemCodes[cn.SR])){
 			itemQnt = (itemQnt <= 0) ? 0 : itemQnt - tfQntInt;
 			if(this.selectedRowItem.containsKey(item)){
 				item.setQnt(itemQnt);
@@ -997,7 +1001,7 @@ public class InvoiceAddEditFrame {
 			}	
 		}
 		//TODO - move below to method?
-		String[] rowData = new String[this.cs.STOCK_TB_HEADINGS_SHORT.length+1];
+		String[] rowData = new String[this.stockTBHeadings.length+1];
 
 		rowData[0] = item.getCode();
 		rowData[1] = item.getName();
@@ -1022,10 +1026,10 @@ public class InvoiceAddEditFrame {
 	}
 
 	protected void updateStockTableQnt(DefaultTableModel model, int chosenRow, int stRow) {
-		if(stRow != -1 && (model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(cs.TYRE_CODE_C) 
-				|| model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(cs.TYRE_CODE_A) 
-				|| model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(cs.TUBE_CODE) 
-				|| model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(cs.SHOP_CODE))){
+		if(stRow != -1 && (model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(itemCodes[cn.TCC]) 
+				|| model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(itemCodes[cn.TCA]) 
+				|| model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(itemCodes[cn.TB]) 
+				|| model.getValueAt(chosenRow, cn.NAME_C_COLUMN).toString().equals(itemCodes[cn.SH]))){
 			int qnt = Integer.parseInt(model.getValueAt(chosenRow, cn.QNT_COLUMN).toString());
 			if(qnt <= 0)
 				qnt = 1;
@@ -1039,10 +1043,10 @@ public class InvoiceAddEditFrame {
 	protected boolean isUpdateRequred() {
 		//TODO check if this method doesn't need any improvements, check by codes?
 		for(int i = 0; i < modTBchosen.getRowCount(); i++){
-			if(modTBchosen.getValueAt(i, 0).toString().equals(cs.SHOP_CODE)
-				|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TUBE_CODE)
-				|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE_C)
-				|| modTBchosen.getValueAt(i, 0).toString().equals(cs.TYRE_CODE_A)){
+			if(modTBchosen.getValueAt(i, 0).toString().equals(itemCodes[cn.SH])
+				|| modTBchosen.getValueAt(i, 0).toString().equals(itemCodes[cn.TB])
+				|| modTBchosen.getValueAt(i, 0).toString().equals(itemCodes[cn.TCC])
+				|| modTBchosen.getValueAt(i, 0).toString().equals(itemCodes[cn.TCA])){
 				return true;
 			}
 		}
@@ -1067,7 +1071,7 @@ public class InvoiceAddEditFrame {
 	
 	protected String getInvoicePath() {
 		String subPath = date.replace(cs.MINUS, cs.SLASH); 
-		String invoicePath = js.get(cs.INVOICE_PATH).toString()+subPath;
+		String invoicePath = js.get(cs.JS_INVOICE_PATH).toString()+subPath;
 		fh.createFolderIfNotExist(invoicePath);
 		invoicePath+=cs.SLASH + date + cs.UNDERSCORE + lastInvoice + cs.PDF_EXT;
 		return invoicePath;
@@ -1077,18 +1081,18 @@ public class InvoiceAddEditFrame {
 		PDDocument pdf = null;
 		if(!isBusiness && !checkInvoiceForString()){
 			String toFill = getFieldsToFill();
-			JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
+			JOptionPane.showMessageDialog(frame, jl.get(cs.JL_FILL_UP).toString() + " " + toFill);
 		} else if(isBusiness && !checkBusinesFields()) {
 			String toFill = getBFieldsToFill();
-			JOptionPane.showMessageDialog(frame, jl.get(cs.FILL_UP).toString() + " " + toFill);
+			JOptionPane.showMessageDialog(frame, jl.get(cs.JL_FILL_UP).toString() + " " + toFill);
 		} else {
 			if (!tableHasElements()){
-				JOptionPane.showMessageDialog(frame, jl.get(cs.TABLE_EMPTY).toString());
+				JOptionPane.showMessageDialog(frame, jl.get(cs.JL_WARN_EMPTY_TABLE).toString());
 			} else {
 				boolean update = isUpdateRequred();
 				String listOfServices = getSalesList();
 				Invoice i = collectDataForInvoice(listOfServices, invoicePath);
-				int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
+				int dialogResult = JOptionPane.showConfirmDialog (frame, jl.get(cs.JL_SAVE_PDF).toString(),"Warning",JOptionPane.YES_NO_OPTION);
 				if(dialogResult == JOptionPane.YES_OPTION){
 					pdf = pdfCreator.createPDF(cs.PDF_INVOICE, i, customer, this.date);
 				}
@@ -1099,17 +1103,17 @@ public class InvoiceAddEditFrame {
 					try {
 						pdf.save(invoicePath);
 						pdf.close();
-						JOptionPane.showMessageDialog(frame, jl.get(cs.INVOICE_SAVED_2).toString());
+						JOptionPane.showMessageDialog(frame, jl.get(cs.JL_INVOICE_SAVED_2).toString());
 						goBack();
 					} catch (IOException e) {
-						JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
-						log.log(cs.ERR_LOG, jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
+						JOptionPane.showMessageDialog(frame, jl.get(cs.JL_ERR_PDF_SAVE).toString());
+						log.log(cs.ERR_LOG, jl.get(cs.JL_ERR_PDF_SAVE).toString() +"    " + e.getMessage());
 						e.printStackTrace();
 					}
 				} else if(dialogResult == JOptionPane.NO_OPTION) {
-					JOptionPane.showMessageDialog(frame, jl.get(cs.INVOICE_SAVED_1).toString());
+					JOptionPane.showMessageDialog(frame, jl.get(cs.JL_INVOICE_SAVED_1).toString());
 				} else {
-					JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+					JOptionPane.showMessageDialog(frame, jl.get(cs.JL_ERR_PDF_SAVE).toString());
 				}
 			}
 		}
@@ -1125,7 +1129,7 @@ public class InvoiceAddEditFrame {
 	protected String getFieldsToFill() {
 		String s = "";
 		if(lblForWho.getText().contains(jl.get(cs.LBL_CUSTOMER).toString()) )
-			s += jl.get(cs.BRAND).toString()+ " ";
+			s += jl.get(cs.JL_BRAND).toString()+ " ";
 		
 		if(lblForWho.getText().contains(jl.get(cs.LBL_COMPANY).toString()) )
 			s +=jl.get(cs.LBL_COMPANY).toString();
@@ -1136,7 +1140,7 @@ public class InvoiceAddEditFrame {
 	protected String getBFieldsToFill() {
 		String s = "";
 		if(lblForWho.getText().contains(jl.get(cs.TF_CUST_HINT).toString()) )
-			s += jl.get(cs.ENTER_DETAILS).toString()+ " ";
+			s += jl.get(cs.JL_ENTER_DETAILS).toString()+ " ";
 		return s;
 	}
 
@@ -1290,7 +1294,7 @@ public class InvoiceAddEditFrame {
 				str += ((CustomerBusiness) customer).getVATTaxNUM() +cs.COMA + ((CustomerBusiness) customer).getCompName()+cs.COMA+((CustomerBusiness) customer).getCompAddress();
 			}
 		} else {
-			str += jl.get(cs.OTHER_STRING).toString() + cs.AT + jl.get(cs.NONAME).toString();
+			str += jl.get(cs.JL_OTHER_STRING).toString() + cs.AT + jl.get(cs.JL_NONAME).toString();
 			isBusiness = false;
 		}
 		
@@ -1324,7 +1328,7 @@ public class InvoiceAddEditFrame {
 		for (int i = 0; i < shopping.length-1; i++) {
 			if(shopping[i] != "" || !shopping[i].isEmpty() || shopping[i] != null){
 				String ss = shopping[i];
-				String[] rowData = new String[this.cs.STOCK_TB_HEADINGS_SHORT.length+1];
+				String[] rowData = new String[this.stockTBHeadings.length+1];
 				rowData[3] = ""+ss.substring(0, ss.indexOf(cs.STAR));
 				rowData[0] = ss.substring(ss.indexOf(cs.STAR)+1, ss.indexOf(cs.UNDERSCORE));
 				rowData[1] = ss.substring(ss.indexOf(cs.UNDERSCORE)+1, ss.indexOf(cs.HASH));

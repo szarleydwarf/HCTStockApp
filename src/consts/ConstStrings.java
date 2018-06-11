@@ -13,6 +13,17 @@ public class ConstStrings {
 	public final String INFO_LOG = "INFO_";
 	public final String CAR = "car";
 	public final String ALL_EN = "ALL";
+	public final String ALL_PL = "WSZYSTKO";
+
+	public final String PRINTER_NAME = "Canon MP620 series Printer (Copy 1)";
+
+	
+	// DATE
+	public final String DATE_FORMAT = "dd-MM-yyyy";//"yyyy-MM-dd" ?? not sure which format is correct for a database entry. so far works
+	public final String DATE_FORMAT_REVERSE = "yyyy-MM-dd";
+	public final String DATE_TIME_FORMAT = "dd-MM-yyyy @HH:mm:ss";
+	public final String DATE_TIME_FORMAT_REVERSE = "yyyy-MM-dd @HH:mm:ss";
+
 
 	// CUSTOMER CODES
 	public final String CUST_IND_CODE = "C_";
@@ -25,6 +36,8 @@ public class ConstStrings {
 	public final String SPECIAL_CHAR_PATTERN = "^.*[^a-zA-Z0-9\\d\\s,].*$";	
 	public final String INTEGER_PATTERN = "^-?\\d+$";
 	public final String REPLACE_PATTERN = "#\\?.*?";
+
+	public final String DEFAULT_REGISTRATION = "00AA0000";
 
 	// SYMBOLS ETC
 	public final String HASH = "#";
@@ -42,6 +55,15 @@ public class ConstStrings {
 	public final String SEMICOLON = ";";
 	public final String SLASH = "\\";
 	public final String SPACE = " ";
+
+
+	// TABLE NAMES
+	public final String SALE_REPORTS = "SALE REPORTS";
+	public final String CARS_TB_NAME = "CARS";
+	public final String STOCK_TB_NAME = "STOCK";
+	public final String CUSTOMER_TB_NAME = "CUSTOMER";
+	public final String CHOSEN_TB_NAME = "CHOOSEN";
+	public final String INVOICE_TB_NAME = "INVOICES TABLE";
 
 	// JSON USER FILE
 	public final String JU_COMPANY_NAME = "company";
@@ -141,14 +163,36 @@ public class ConstStrings {
 	public final String JL_INVOICE_SAVED_2 = "saved invoice 2";
 	public final String JL_DELETE_MSG = "delete_msg";
 	public final String JL_ENTER_TEXT = "enter search fraze";
+	public final String JL_BRAND = "brand";
+	public final String JL_OTHER_STRING = "other";
+	public final String JL_NONAME = "noname";
+	public final String JL_MONTHS_NAMES = "months names";
+
+	public final String JL_TYRES_CATEGORY = "tyre categories";
+	public final String JL_ITEM_CODE_ARR_PRINT = "items codes for print";
+	public final String JL_ITEM_CODE_ARR = "items codes";
+	public final String JL_ITEM_NAMES_ARR = "items names";
+
+	// WARNING
+	public final String JL_WARN_EMPTY_TABLE = "empty table";
+	public final String JL_TYRE_CHECK_MESSAGE_1 = "tyre check msg1";
+	public final String JL_TYRE_CHECK_MESSAGE_2 = "tyre check msg2";
+	public final String JL_TYRE_CHECK_MESSAGE_3 = "tyre check msg3";
 
 	// TABLE HEADINGS
+	public final String[] CARS_TABLE_HEADING = {"Cars"};
 	public final String JL_CUSTOMER_TB_HEADINGS = "customer_tb_headings";
 	public final String JL_SALE_REPORT_HEADINGS = "sale report headings";
 	public final String JL_STOCK_REPORT_HEADINGS = "stock report headings";
 	public final String JL_REPAK_REPORT_HEADINGS = "repak report headings";
 	public final String JL_STOCK_TB_HEADINGS = "stock_tb_headings";
+	public final String JL_REPAK_TB_COL_NAMES = "repak tb col names";
+	public final String JL_STOCK_TB_HEADINGS_SHORT = "stock_tb_headings_short";
+	public final String JL_INVOICE_TB_HEADINGS = "invoices_tb_headings";
 	
+	// OTHER HEADINGS
+	public final String JL_PDF_SALES_HEADER = "pdf sales header";
+
 
 	
 	// ERRORS
@@ -157,6 +201,8 @@ public class ConstStrings {
 	public final String JL_ERR_ITEM_EDITION_SAVE = "saving error";
 	public final String JL_ERR_ITEM_DELETING = "delete_error";
 	public final String JL_ERR_NOT_NUMBER = "not_number_error";
+	public final String JL_ERR_NOT_INT = "not int";
+	public final String JL_ERR_NOT_DOUBLE = "not double";
 	public final String JL_ERR_COMA = "coma error";
 	public final String JL_ERR_PDF_SAVE = "save pdf error";
 	public final String JL_ERR_PDF_CREATION = "pdf creation error";

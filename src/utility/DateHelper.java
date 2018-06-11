@@ -39,66 +39,66 @@ public class DateHelper {
 		return df.format(today.getTime());
 	}
 
-	public String[] getDaysArray() {
-		int month = getMonthNum();
-		month++;
-
-		switch(month){
-			case 1:
-			case 3:
-			case 5:
-			case 7:
-			case 8:
-			case 10:
-			case 12:
-				return cs.DAYS_NUM_31;
-	
-			case 4:
-			case 6:
-			case 9:
-			case 11:
-				return cs.DAYS_NUM_30;
-	
-			case 2:
-				boolean isLeap = isLeapYear();
-				if(isLeap)
-					return cs.DAYS_NUM_29;
-				else
-					return cs.DAYS_NUM_28;
-	
-			default:
-				return cs.DAYS_NUM_31;
-		}
-	}
-
-	public String[] getDaysArray(int month) {
-		switch(month){
-			case 1:
-			case 3:
-			case 5:
-			case 7:
-			case 8:
-			case 10:
-			case 12:
-				return cs.DAYS_NUM_31;
-	
-			case 4:
-			case 6:
-			case 9:
-			case 11:
-				return cs.DAYS_NUM_30;
-	
-			case 2:
-				boolean isLeap = isLeapYear();
-				if(isLeap)
-					return cs.DAYS_NUM_29;
-				else
-					return cs.DAYS_NUM_28;
-	
-			default:
-				return cs.DAYS_NUM_31;
-		}
-	}
+//	public String[] getDaysArray() {
+//		int month = getMonthNum();
+//		month++;
+//
+//		switch(month){
+//			case 1:
+//			case 3:
+//			case 5:
+//			case 7:
+//			case 8:
+//			case 10:
+//			case 12:
+//				return cs.DAYS_NUM_31;
+//	
+//			case 4:
+//			case 6:
+//			case 9:
+//			case 11:
+//				return cs.DAYS_NUM_30;
+//	
+//			case 2:
+//				boolean isLeap = isLeapYear();
+//				if(isLeap)
+//					return cs.DAYS_NUM_29;
+//				else
+//					return cs.DAYS_NUM_28;
+//	
+//			default:
+//				return cs.DAYS_NUM_31;
+//		}
+//	}
+//
+//	public String[] getDaysArray(int month) {
+//		switch(month){
+//			case 1:
+//			case 3:
+//			case 5:
+//			case 7:
+//			case 8:
+//			case 10:
+//			case 12:
+//				return cs.DAYS_NUM_31;
+//	
+//			case 4:
+//			case 6:
+//			case 9:
+//			case 11:
+//				return cs.DAYS_NUM_30;
+//	
+//			case 2:
+//				boolean isLeap = isLeapYear();
+//				if(isLeap)
+//					return cs.DAYS_NUM_29;
+//				else
+//					return cs.DAYS_NUM_28;
+//	
+//			default:
+//				return cs.DAYS_NUM_31;
+//		}
+//	}
 
 
 	public int getDayOfMonthNum(){
@@ -130,11 +130,11 @@ public class DateHelper {
 	public int getYearIndex() {
 		String year = ""+getYearNum();
 		int index = 0;
-		for(int i = 0; i < cs.YEARS_NO_STRING.length; i++){
-			if(cs.YEARS_NO_STRING[i].equals(year)){
-				return i;
-			}
-		}
+//		for(int i = 0; i < cs.YEARS_NO_STRING.length; i++){
+//			if(cs.YEARS_NO_STRING[i].equals(year)){
+//				return i;
+//			}
+//		}
 		return index;
 	}
 	
@@ -182,6 +182,25 @@ public class DateHelper {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM");
 		
 		return df.format(today.getTime());
+	}
+
+	public String[] getYearsArr() {
+		int y = this.getYearNum();
+		String[]ys = new  String[10];
+		System.out.println("Y "+y + " - " + ys.length);
+		for(int i = 4; i >= 0; i--){
+			System.out.println(i + " Y1 " + y);
+			ys[i] = ""+y;
+			y--;
+		}
+		y = this.getYearNum();
+		for (int i = 5; i < ys.length; i++) {
+			System.out.println(i + " Y2 " + y);
+			y++;
+			ys[i] = ""+y;
+		}
+		
+		return ys;
 	}
 
 }

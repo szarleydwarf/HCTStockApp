@@ -105,8 +105,8 @@ public class RepakReportFrame {
 
 		dfm = new DecimalFormat("00");
 
-		fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
-		fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
+		fonts = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_DEF).toString()));
+		fonts_title = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_TITLE).toString()));
 		color = msh.getColor(cs.APP, cs, js);
 
 		list = new ArrayList<>();
@@ -121,11 +121,8 @@ public class RepakReportFrame {
 		int lblX = 10, lblY = 10, lblW = (int) (msh.getScreenDimension()[0]/1.5), lblH = (int) (msh.getScreenDimension()[1]/1.2);
 		int jcbW = 55, jcbH = 28, jcbYOffset = 70, btnPrintX = 400;
 		
-		JSONArray jArr = (JSONArray) jl.get(cs.MONTHS_NAMES);
-		months = msh.json2Array(jArr);
-		jArr = null;
-		jArr = (JSONArray) jl.get(cs.YEARS);
-		String[]years = msh.json2Array(jArr);
+		months = msh.json2Array((JSONArray) jl.get(cs.JL_MONTHS_NAMES));
+		String[]years = dh.getYearsArr();
 
 		frame = new JFrame();
 		frame.getContentPane().setBackground(color);
@@ -158,9 +155,7 @@ public class RepakReportFrame {
 		cbYear.setBounds(cbMonth.getX()+cbMonth.getWidth()+16, lblY*3, jcbW*3, jcbH);
 		frame.getContentPane().add(cbYear);
 		
-		jArr = null;
-		jArr = (JSONArray) jl.get(cs.TYRES_CATEGORY);
-		tCat = msh.json2Array(jArr);
+		tCat = msh.json2Array((JSONArray) jl.get(cs.JL_TYRES_CATEGORY));
 		defaultCategory = tCat[0];
 
 		JComboBox cbTyreCategorys = new JComboBox(tCat);
@@ -279,8 +274,7 @@ public class RepakReportFrame {
 	// END OF INIT METHOD
 
 	protected void previewReport(JLabel jlbl, String title) {
-		JSONArray jArr = (JSONArray) jl.get(cs.REPAK_REPORT_HEADINGS);
-		String[]sReportHeadings = msh.json2Array(jArr);
+		String[]sReportHeadings = msh.json2Array((JSONArray) jl.get(cs.JL_REPAK_REPORT_HEADINGS));
 		String[][] data = null;
 		String dateYM = yearOfReport+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReport));
 		String dateMY = dfm.format(dh.getMonthNumber(monthOfReport))+cs.MINUS+yearOfReport;
