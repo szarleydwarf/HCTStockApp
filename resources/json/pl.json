@@ -115,5 +115,10 @@
 	"pdf sales header":"No.     Description                  Price   Qnt",
 	"tyre check msg1":"IMPORTANT !!!",
 	"tyre check msg2":"After tyre change, check the tightening of your wheels,",
-	"tyre check msg3":"after driving around 10 miles."
+	"tyre check msg3":"after driving around 10 miles.",
+
+	"new item saved":"Zapisano nowy przedmiot",
+	"item saved":"Przedmiot zapisany",
+	"item updated":"Aktualizacja przedmiotu zakonczona pomyslnie"
+
 }

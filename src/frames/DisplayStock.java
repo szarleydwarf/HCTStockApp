@@ -50,7 +50,6 @@ import org.json.simple.JSONObject;
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
-import logic.MainView;
 import managers.DatabaseManager;
 import managers.StockManager;
 import objects.Item;
@@ -60,7 +59,7 @@ import utility.MiscHelper;
 import utility.PDFCreator;
 import utility.Printer;
 
-public class DisplayStockFrame {
+public class DisplayStock {
 
 	private static ConstNums cn;
 	private static ConstStrings cs;
@@ -87,6 +86,7 @@ public class DisplayStockFrame {
 	private Printer printer;
 	private PDFCreator pdfc;
 	private DateHelper dh;
+	protected ItemAddNew newItemFrame;
 
 	private Font fonts;
 	private Font fonts_title;
@@ -94,25 +94,25 @@ public class DisplayStockFrame {
 	private Color color;
 	private DecimalFormat df;
 	private boolean itemSaved = false, isSuggested;
-	protected String[] itemCodes;
+	protected String itemCode;
 	private int profitPercent;
 	private int vat, tran, vemc;
 	protected double d_cost, transportCharge;
 	protected String cost, price;
-	protected String itemCode;
 
 	/**
 	 * Create the application.
 	 */
-	public DisplayStockFrame() {
+	public DisplayStock() {
 		initialize();
 	}
 
-	public DisplayStockFrame(MainView main,  DatabaseManager dmn, 
+	public DisplayStock(MainView main, ItemAddNew AN, DatabaseManager dmn, 
 			ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger, Printer printer,
 			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, 
 			PDFCreator PDFC, StockManager SM, DecimalFormat df_3_2) {
 		mainView = main;
+		this.newItemFrame = AN;
 		jl = jLang;
 		js = jSettings;
 
@@ -128,7 +128,7 @@ public class DisplayStockFrame {
 		pdfc = PDFC;
 		
 		this.printer = printer;
-		itemCodes = msh.json2Array((JSONArray) jl.get(cs.JL_A_ITEM_CODES));
+		itemCode = cs.TYRE_CODE_C;
 		
 		sm = SM;
 		
@@ -138,8 +138,8 @@ public class DisplayStockFrame {
 		vemc = 0;
 
 		
-		fonts = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_DEF).toString()));
-		fonts_title = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_TITLE).toString()));
+		fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
+		fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
 		attributes = fonts_title.getAttributes();
 		attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 		color = msh.getColor(cs.APP, cs, js);
@@ -161,13 +161,14 @@ public class DisplayStockFrame {
 		lblTitle.setBounds(msh.getCenterXofFrame(frame, lblTitle), 10, 260, 24);
 		frame.getContentPane().add(lblTitle);
 
-		JLabel lblSearch = new JLabel(jl.get(cs.TF_SEARCH_FRAZE).toString());
+		JLabel lblSearch = new JLabel(jl.get(cs.SEARCH_TEXT_FIELD_FRAZE).toString());
 		lblSearch.setHorizontalAlignment(SwingConstants.CENTER);
 		lblSearch.setFont(fonts);
 		lblSearch.setBounds(10, 40, 200, 24);
 		frame.getContentPane().add(lblSearch);
 		
-		JComboBox cbCodes = new JComboBox(itemCodes);
+		String[] tCodes = msh.json2Array((JSONArray) jl.get(cs.ITEM_CODES_ARR));
+		JComboBox cbCodes = new JComboBox(tCodes);
 		cbCodes.setSelectedIndex(0);
 		cbCodes.setFont(fonts);
 		cbCodes.setBounds((frame.getWidth() - cn.BACK_BTN_X_OFFSET), 160, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
@@ -185,7 +186,7 @@ public class DisplayStockFrame {
 		int xOffset = 120, heigh = 32;
 		int xPosLbl = (frame.getWidth() / 2)+40, yPosLbl = frame.getHeight() /2 + 50;
 
-		JSONArray jArr = (JSONArray) jl.get(cs.JL_ITEM_CATEGORY);
+		JSONArray jArr = (JSONArray) jl.get(cs.ITEM_CATEGORY);
 		String[] tCat = msh.json2Array(jArr);
 
 		JComboBox cbCategory = new JComboBox(tCat);
@@ -218,7 +219,7 @@ public class DisplayStockFrame {
 		lblQnt.setBounds(xPosLbl, yPosLbl, xOffset, heigh);
 		frame.getContentPane().add(lblQnt);
 		
-		fillLabels(lblTyreCost, lblTyrePrices, lblQnt, itemCodes[cn.TCC]);
+		fillLabels(lblTyreCost, lblTyrePrices, lblQnt, cs.TYRE_CODE_C);
 	
 		tfSearch = new JTextField();
 		tfSearch.setHorizontalAlignment(SwingConstants.CENTER);
@@ -264,16 +265,16 @@ public class DisplayStockFrame {
 					code = cs.ALL_EN;
 					break;
 				case 1:
-					code = itemCodes[cn.TCC];
+					code = cs.TYRE_CODE_C;
 					break;
 				case 2:
-					code = itemCodes[cn.TCA];
+					code = cs.TYRE_CODE_A;
 					break;
 				case 3:
-					code = itemCodes[cn.TB];
+					code = cs.TUBE_CODE;
 					break;
 				case 4:
-					code = itemCodes[cn.SH];
+					code = cs.SHOP_CODE;
 					break;
 
 				default:
@@ -285,7 +286,7 @@ public class DisplayStockFrame {
 				if(printStock(path, code)){
 					
 				} else{
-					JOptionPane.showMessageDialog(frame, "BTN PRESSED " + jl.get(cs.JL_ERR_PDF_SAVE).toString());
+					JOptionPane.showMessageDialog(frame, "BTN PRESSED " + jl.get(cs.PDF_SAVE_ERROR).toString());
 				}
 			}
 		});
@@ -339,13 +340,13 @@ public class DisplayStockFrame {
 					String defaultCategory = cb.getSelectedItem().toString();
 					String code = "";
 					if(defaultCategory.equals(tCat[0])){
-						code = itemCodes[cn.TCC];
+						code = cs.TYRE_CODE_C;
 					} else if(defaultCategory.equals(tCat[1])){
-						code = itemCodes[cn.TCA];
+						code = cs.TYRE_CODE_A;
 					} else if(defaultCategory.equals(tCat[2])){
-						code = itemCodes[cn.TB];
+						code = cs.TUBE_CODE;
 					} else if(defaultCategory.equals(tCat[3])){
-						code = itemCodes[cn.SH];
+						code = cs.SHOP_CODE;
 					} 
 					fillLabels(lblTyreCost, lblTyrePrices, lblQnt, code);
 				}		
@@ -401,7 +402,7 @@ public class DisplayStockFrame {
 		code.setBounds(lblX, lblY, lblW, lbltfH);
 		frame.getContentPane().add(code);
 		
-		cbCodes = new JComboBox(itemCodes);
+		cbCodes = new JComboBox(cs.ITEM_CODES);
 		xOffset = lblX + xOffset;
 		cbCodes.setBounds(xOffset, lblY, tfW, lbltfH);
 		frame.getContentPane().add(cbCodes);
@@ -487,7 +488,7 @@ public class DisplayStockFrame {
 		frame.getContentPane().add(tfQnt);
 //
 ////TODO - profit percent combobox
-		JComboBox cbProfit = new JComboBox(msh.json2Array((JSONArray) js.get(cs.JS_PROFITS)));
+		JComboBox cbProfit = new JComboBox(msh.json2Array((JSONArray) js.get(cs.PROFITS)));
 		cbProfit.setBounds(x+5, lblY, (int) (lblW*0.25), lbltfH);
 		cbProfit.setSelectedIndex(0);
 		frame.getContentPane().add(cbProfit);
@@ -513,8 +514,8 @@ public class DisplayStockFrame {
 		transport.setBounds(lblX, lblY, lblW, lbltfH);
 		frame.getContentPane().add(transport);
 		
-		String[] tSupNames = msh.json2Array((JSONArray) js.get(cs.JS_SUPLIERS_NAMES_ARR));
-		String[] tSupTrans = msh.json2Array((JSONArray) js.get(cs.JS_SUPPLIERS_CHARGES_ARR));
+		String[] tSupNames = msh.json2Array((JSONArray) js.get(cs.SUPLIERS_NAMES_ARR));
+		String[] tSupTrans = msh.json2Array((JSONArray) js.get(cs.SUPPLIERS_CHARGES_ARR));
 		
 		chbTransport = new JCheckBox();
 		chbTransport.setSelected(Boolean.parseBoolean(""+tran));
@@ -570,7 +571,7 @@ public class DisplayStockFrame {
 					i = setItemUpdates(i, cbCodes, tfName, tfCost, tfPrice, tfQnt, chbVAT, chbTransport, chbVemc);
 					updateEdition(i);
 				} else{
-					JOptionPane.showMessageDialog(frame, jl.get(cs.JL_ERR_UPDATE_SELECTED).toString());
+					JOptionPane.showMessageDialog(frame, jl.get(cs.UPDATE_SELECTED_ERR).toString());
 				}
 			}
 		});
@@ -755,7 +756,7 @@ public class DisplayStockFrame {
 	}
 
 	protected String createPath(String code) {
-		String p = msh.createPdfPath(dh.getFormatedDateRev(), cs.JS_STOCK_REP_PATH, cs.LBL_STOCK);
+		String p = msh.createPdfPath(dh.getFormatedDateRev(), cs.STOCK_REP_PATH, cs.LBL_STOCK);
 		String t = p.substring(p.lastIndexOf(cs.SLASH)+1);
 		p = p.substring(0, p.lastIndexOf(cs.SLASH)) + cs.SLASH + code + cs.UNDERSCORE + t; 
 		return p;
@@ -763,11 +764,12 @@ public class DisplayStockFrame {
 
 	protected boolean printStock(String path, String code) {
 		PDDocument pdf = null;
-		String header = msh.stringArr2String(msh.json2Array((JSONArray) jl.get(cs.JL_STOCK_REPORT_HEADINGS)), "");
+		JSONArray jArr = (JSONArray) jl.get(cs.STOCK_REPORT_HEADINGS);
+		String header = msh.stringArr2String(msh.json2Array(jArr), "");
 		String date = path.substring(path.lastIndexOf(cs.SPACE)+1, path.lastIndexOf(cs.DOT));
 		date = date.replaceAll(cs.UNDERSCORE, cs.MINUS);
 		System.out.println("DD "+path);
-		String[][] data = sm.getDataByCode(code, header.length());
+		String[][] data = sm.getDataByCode(code);
 //		msh.printData(data);
 
 		pdf = pdfc.createPDF(cs.PDF_STOCK_REPORT, data, header, date);
@@ -775,16 +777,16 @@ public class DisplayStockFrame {
 			try {
 				pdf.save(path);
 				pdf.close();
-				JOptionPane.showMessageDialog(frame, jl.get(cs.JL_INVOICE_SAVED_2).toString());
+				JOptionPane.showMessageDialog(frame, jl.get(cs.INVOICE_SAVED_2).toString());
 				return true;
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog(frame, jl.get(cs.JL_ERR_PDF_SAVE).toString());
-				log.log(cs.ERR_LOG, jl.get(cs.JL_ERR_PDF_SAVE).toString() +"    " + e.getMessage());
+				JOptionPane.showMessageDialog(frame, jl.get(cs.PDF_SAVE_ERROR).toString());
+				log.log(cs.ERR_LOG, jl.get(cs.PDF_SAVE_ERROR).toString() +"    " + e.getMessage());
 				e.printStackTrace();
 				return false;
 			}
 		} else {
-			JOptionPane.showMessageDialog(frame, "PDF NULL "+jl.get(cs.JL_ERR_PDF_SAVE).toString());
+			JOptionPane.showMessageDialog(frame, "PDF NULL "+jl.get(cs.PDF_SAVE_ERROR).toString());
 			return false;
 		}
 	}
@@ -814,14 +816,14 @@ public class DisplayStockFrame {
 		Item i = getSelected();
 		if(i != null){
 			 if (JOptionPane.showConfirmDialog(frame, 
-			            jl.get(cs.JL_DELETE_MSG).toString(), "", 
+			            jl.get(cs.DELETE_MSG).toString(), "", 
 		            JOptionPane.YES_NO_OPTION,
 		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 				boolean deleted = sm.deleteItem(i);//i.deleteRecordFromDatabase();
 				if(deleted) refreashTable();
 			 }
 		} else {
-			log.log(cs.ERR_LOG, jl.get(cs.JL_ERR_ITEM_DELETING).toString());
+			log.log(cs.ERR_LOG, jl.get(cs.ITEM_DELETING_ERROR).toString());
 			System.out.println("Delete NULL");
 		}
 	}
@@ -829,14 +831,18 @@ public class DisplayStockFrame {
 
 	private void updateEdition(Item i) {
 		boolean saved = sm.edit(i);
-		if(saved)
+		if(saved){
+			JOptionPane.showMessageDialog(frame, jl.get(cs.JL_ITEM_UPDATED).toString());
 			goBack();
+		}
 	}
 
 	protected void addNewItem(Item i) {
 		boolean saved = sm.addItem(i);
-		if(saved)
+		if(saved){
+			JOptionPane.showMessageDialog(frame, jl.get(cs.JL_NEW_ITEM_SAVED).toString());
 			goBack();
+		}
 	}
 
 	public void refreashTable() {
@@ -852,7 +858,7 @@ public class DisplayStockFrame {
 			JCheckBox chbVAT, JCheckBox chbTransport, JCheckBox chbVemc) {
 		String sp = sugestedPrice.getText();
 		sp = sp.replaceAll(cs.EURO, "");
-		if(!itemCode.isEmpty())i.setCode(itemCode); else i.setCode(itemCodes[cn.OT]);
+		if(!itemCode.isEmpty())i.setCode(itemCode); else i.setCode(cs.OTHER_CODE);
 		if(!tfName.getText().isEmpty())i.setName(tfName.getText());
 		if(!tfCost.getText().isEmpty())i.setCost(msh.isDouble(tfCost.getText()));
 		if(!isSuggested) {
@@ -873,8 +879,8 @@ public class DisplayStockFrame {
 	private void populateFields(Item i) {
 		if(!i.getCode().isEmpty()){
 			int index = 0;
-			for (int j = 0; j < itemCodes.length; j++) {
-				if(itemCodes[j].equals(i.getCode()))
+			for (int j = 0; j < cs.ITEM_CODES.length; j++) {
+				if(cs.ITEM_CODES[j].equals(i.getCode()))
 					index = j;
 			}
 			cbCodes.setSelectedIndex(index);
@@ -915,7 +921,7 @@ public class DisplayStockFrame {
 
 	private void createTable() {
 		ListSelectionListener listener = createTableListener();
-		DefaultTableModel dm = new DefaultTableModel(data, msh.json2Array((JSONArray) jl.get(this.cs.JL_STOCK_TB_HEADINGS)));
+		DefaultTableModel dm = new DefaultTableModel(data, this.cs.STOCK_TB_HEADINGS);
 		
 		table = new JTable();
 		table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -965,6 +971,7 @@ public class DisplayStockFrame {
 		vat = 0;
 		tran = 0;
 		vemc = 0;
+		isSuggested = true;
 		initialize();
 		sm.getListFromDatabase();
 		data = sm.getData();

@@ -5,14 +5,10 @@ import java.util.Iterator;
 
 import javax.xml.transform.SourceLocator;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
 import objects.Item;
-import utility.MiscHelper;
 
 public class StockManager {
 	private ArrayList<Item> list;
@@ -20,19 +16,13 @@ public class StockManager {
 	private ConstDB cdb;
 	private ConstNums cn;
 	private ConstStrings cs;
-	private MiscHelper msh;
-	private JSONObject jl;
 	
-	public StockManager(DatabaseManager dm, ConstDB cdb, ConstNums cn, ConstStrings cs, 
-			MiscHelper MSH,
-			JSONObject JL){
+	public StockManager(DatabaseManager dm, ConstDB cdb, ConstNums cn, ConstStrings cs){
 		list = new ArrayList<Item>();
 		this.dm = dm;
 		this.cdb = cdb;
 		this.cn = cn;
 		this.cs = cs;
-		this.msh = MSH;
-		this.jl = JL;
 		
 //		this.getListFromDatabase();
 //		list = (ArrayList<Item>) this.dm.selectData(this.cdb.SELECT_ALL_ITEMS, list);
@@ -127,33 +117,30 @@ public class StockManager {
 		return data;
 	}
 	
-	public String[][] getDataByCode(String code, int ln){
+	public String[][] getDataByCode(String code){
 		ArrayList<String[]> t = new ArrayList<String[]>();
-		String[] itemCodes = msh.json2Array((JSONArray) jl.get(cs.JL_A_ITEM_CODES));
-
 		for (int i = 0; i < list.size(); i++){
 			if(!code.equals(cs.ALL_EN) && !code.equals(cs.ALL_PL)){
 				if(list.get(i).getCode().equals(code)) {
-					t.add(list.get(i).getItemAsDataShortWithID(ln));
+					t.add(list.get(i).getItemAsDataShortWithID());
 				}
 			} else {
-				if(!list.get(i).getCode().equals(itemCodes[cn.OT])
-						&& (!list.get(i).getCode().equals(itemCodes[cn.CW])) 
-						&& (!list.get(i).getCode().equals(itemCodes[cn.SR]))) {
-					t.add(list.get(i).getItemAsDataShortWithID(ln));
+				if(!list.get(i).getCode().equals(cs.OTHER_CODE)
+						&& (!list.get(i).getCode().equals(cs.CARWASH_CODE)) 
+						&& (!list.get(i).getCode().equals(cs.SERVICE_CODE))) {
+					t.add(list.get(i).getItemAsDataShortWithID());
 				}
 			}
 		}
 		String[][] data = new String[t.size()][];
 		data = t.toArray(data);
-		System.out.println("SM 3 "+data.length+" "+data[0].length);
 		return data;
 	}
 	
 	public String[][] getDataNoCost() {
 		String[][] data = new String[this.list.size()][];
 		for (int i = 0; i < list.size(); i++){
-				data[i] = list.get(i).getItemAsDataShort(4);
+				data[i] = list.get(i).getItemAsDataShort();
 		}
 		return data;
 	}
@@ -192,6 +179,7 @@ public class StockManager {
 	}
 
 	public ArrayList<Item> getSortedList() {
+		getListFromDatabase();
 		list.sort((o1,o2) -> o1.getCode().compareTo(o2.getCode()));
 		return list;
 	}

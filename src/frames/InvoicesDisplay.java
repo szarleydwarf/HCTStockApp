@@ -34,7 +34,6 @@ import org.json.simple.JSONObject;
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
-import logic.MainView;
 import managers.DatabaseManager;
 import managers.InvoiceManager;
 import objects.Invoice;
@@ -43,7 +42,7 @@ import utility.DateHelper;
 import utility.Logger;
 import utility.MiscHelper;
 
-public class InvoicesDisplayFrame {
+public class InvoicesDisplay {
 
 	private JFrame frame;
 	private MainView mainView;
@@ -71,7 +70,6 @@ public class InvoicesDisplayFrame {
 	private String yearString;
 	private DecimalFormat dfm;
 	private JTable table;
-	private String[] invTbHeadings;
 
 	/**
 	 * Launch the application.
@@ -92,11 +90,11 @@ public class InvoicesDisplayFrame {
 	/**
 	 * Create the application.
 	 */
-	public InvoicesDisplayFrame() {
+	public InvoicesDisplay() {
 		initialize();
 	}
 
-	public InvoicesDisplayFrame(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN,
+	public InvoicesDisplay(MainView main, DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN,
 			Logger logger, JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, InvoiceManager invMng) {
 		this.mainView = main;
 		this.jl = jLang;
@@ -114,10 +112,9 @@ public class InvoicesDisplayFrame {
 		this.im = invMng;
 
 		dfm = new DecimalFormat("00");
-		invTbHeadings = msh.json2Array((JSONArray) jl.get(cs.JL_INVOICE_TB_HEADINGS));
 
-		this.fonts = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_DEF).toString()));
-		this.fonts_title = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_TITLE).toString()));
+		this.fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
+		this.fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
 		this.attributes = fonts_title.getAttributes();
 		this.attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 		this.color = msh.getColor(cs.APP, cs, js);
@@ -132,7 +129,7 @@ public class InvoicesDisplayFrame {
 		int lblX = 10, lblY = 10, lblW = (msh.getScreenDimension()[0]), lblH = (msh.getScreenDimension()[1]);
 		frame = new JFrame();
 		frame.getContentPane().setBackground(color);
-		frame.setTitle(jl.get(cs.BTN_INVOICE).toString());
+		frame.setTitle(jl.get(cs.INVOICE).toString());
 		frame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, lblW, lblH);
 		frame.getContentPane().setLayout(null);
 
@@ -140,7 +137,7 @@ public class InvoicesDisplayFrame {
 				btnY = (frame.getHeight() - cn.BACK_BTN_Y_OFFSET);
 
 		// BORDERS
-		TitledBorder lblTB = msh.createBorders(jl.get(cs.BTN_INVOICE).toString(), Color.YELLOW);
+		TitledBorder lblTB = msh.createBorders(jl.get(cs.INVOICE).toString(), Color.YELLOW);
 
 		// LABELS & TEXTFIELDS
 		JLabel lblInvoicesList = new JLabel("");
@@ -168,36 +165,36 @@ public class InvoicesDisplayFrame {
 		btnEdit.setBounds(btnX, btnY - cn.BACK_BTN_HEIGHT - cn.BACK_BTN_Y_OFFSET, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
 		frame.getContentPane().add(btnEdit);
 		
+		String[]days = dh.getDaysArray();
+		String[]months = msh.json2Array((JSONArray) jl.get(cs.MONTHS_NAMES));
+		String[]years = msh.json2Array((JSONArray) jl.get(cs.YEARS));
+		
 		int today = dh.getDayOfMonthNum();
 		today--;
 		int month = dh.getMonthNum();
 		int year = dh.getYearIndex();
-
-		String[]days = dh.getDaysArray(month, year);
-		String[]months = msh.json2Array((JSONArray) jl.get(cs.JL_MONTHS_NAMES));
-		String[]years = dh.getYearsArr();//msh.json2Array((JSONArray) jl.get(cs.YEARS));
 		
-//		dayString = days[today];
+		dayString = days[today];
 		monthName = months[month];
 		yearString = years[year];
 //		monthOfReport = months[month];
 //		yearOfReport = years[year];
 
-//		JComboBox cbDays = new JComboBox(days);
-//		cbDays.setSelectedIndex(today);
-//		int jcbW = 40, jcbH = 26, offsetY = 40;
-//		cbDays.setBounds(lblX + 10, btnY - offsetY, jcbW, jcbH);
-//		frame.getContentPane().add(cbDays);
-//		
-//		JComboBox cbMonths = new JComboBox(months);
-//		cbMonths.setSelectedIndex(month);
-//		cbMonths.setBounds(lblX+cbDays.getWidth()+16, btnY - offsetY, jcbW*2, jcbH);
-//		frame.getContentPane().add(cbMonths);
-//		
-//		JComboBox cbYear = new JComboBox(years);
-//		cbYear.setSelectedIndex(year);
-//		cbYear.setBounds(cbMonths.getX()+cbMonths.getWidth()+16, btnY - offsetY, jcbW*2, jcbH);
-//		frame.getContentPane().add(cbYear);
+		JComboBox cbDays = new JComboBox(days);
+		cbDays.setSelectedIndex(today);
+		int jcbW = 40, jcbH = 26, offsetY = 40;
+		cbDays.setBounds(lblX + 10, btnY - offsetY, jcbW, jcbH);
+		frame.getContentPane().add(cbDays);
+		
+		JComboBox cbMonths = new JComboBox(months);
+		cbMonths.setSelectedIndex(month);
+		cbMonths.setBounds(lblX+cbDays.getWidth()+16, btnY - offsetY, jcbW*2, jcbH);
+		frame.getContentPane().add(cbMonths);
+		
+		JComboBox cbYear = new JComboBox(years);
+		cbYear.setSelectedIndex(year);
+		cbYear.setBounds(cbMonths.getX()+cbMonths.getWidth()+16, btnY - offsetY, jcbW*2, jcbH);
+		frame.getContentPane().add(cbYear);
 
 		
 		populateInvoiceListTable(lblX+6, lblY+52, btnX - 40, btnY-180);
@@ -211,14 +208,14 @@ public class InvoicesDisplayFrame {
 		
 		btnEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				if(mainView != null && invoice != null)
-//					mainView.getInvoiceAEFrame().setIsVisible(invoice, true);
-//				else if(invoice != null)
-//					MainView.main.getInvoiceAEFrame().setIsVisible(invoice, true);
-//				else if(mainView != null)
-//					mainView.getInvoiceAEFrame().setIsVisible(forPreview, true);
-//				else
-//					MainView.main.getInvoiceAEFrame().setIsVisible(forPreview, true);
+				if(mainView != null && invoice != null)
+					mainView.getInvoiceAEFrame().setIsVisible(invoice, true);
+				else if(invoice != null)
+					MainView.main.getInvoiceAEFrame().setIsVisible(invoice, true);
+				else if(mainView != null)
+					mainView.getInvoiceAEFrame().setIsVisible(forPreview, true);
+				else
+					MainView.main.getInvoiceAEFrame().setIsVisible(forPreview, true);
 				frame.setVisible(false);
 			}
 		});
@@ -244,38 +241,38 @@ public class InvoicesDisplayFrame {
 			}
 		});
 		
-//		cbDays.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent a) {
-//				if(a.getSource() == cbDays ){
-//					JComboBox cb = (JComboBox) a.getSource();
-//					dayString = cb.getSelectedItem().toString();
-//					updateTable();
-//				}		
-//			}
-//		});
-//
-//		cbMonths.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent a) {
-//				if(a.getSource() == cbMonths ){
-//					JComboBox cb = (JComboBox) a.getSource();
-//					monthName = cb.getSelectedItem().toString();
-//					updateTable();
-//				}		
-//			}
-//		});
-//		
-//		cbYear.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent a) {
-//				if(a.getSource() == cbYear ){
-//					JComboBox cb = (JComboBox) a.getSource();
-//					yearString = cb.getSelectedItem().toString();
-//					updateTable();
-//				}		
-//			}
-//		});
+		cbDays.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbDays ){
+					JComboBox cb = (JComboBox) a.getSource();
+					dayString = cb.getSelectedItem().toString();
+					updateTable();
+				}		
+			}
+		});
+
+		cbMonths.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbMonths ){
+					JComboBox cb = (JComboBox) a.getSource();
+					monthName = cb.getSelectedItem().toString();
+					updateTable();
+				}		
+			}
+		});
+		
+		cbYear.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent a) {
+				if(a.getSource() == cbYear ){
+					JComboBox cb = (JComboBox) a.getSource();
+					yearString = cb.getSelectedItem().toString();
+					updateTable();
+				}		
+			}
+		});
 		
 
 	}
@@ -284,12 +281,12 @@ public class InvoicesDisplayFrame {
 		ArrayList<Invoice> tList = new ArrayList<Invoice>();
 		tList = getList(tList);
 
-		String[][] data = new String [tList.size()][invTbHeadings.length];
+		String[][] data = new String [tList.size()][cs.INVOICES_TB_HEADINGS.length];
 		data = im.getDataShort(tList);
 
 //		frame.getContentPane().repaint();
 		table = new JTable();
-		table = msh.createTable(fonts, data, invTbHeadings, cs.INVOICE_TB_NAME, 20, 120);
+		table = msh.createTable(fonts, data, cs.INVOICES_TB_HEADINGS, cs.INVOICE_TB_NAME, 20, 120);
 		rSorter = new TableRowSorter<>(table.getModel());
 		
 		table.setRowSorter(rSorter);
@@ -308,7 +305,7 @@ public class InvoicesDisplayFrame {
 		for (int i = 0; i < tList.size(); i++) {
 			System.out.println(i+" "+tList.get(i).toString());
 		}
-		String[][] data = new String [tList.size()][invTbHeadings.length];
+		String[][] data = new String [tList.size()][cs.INVOICES_TB_HEADINGS.length];
 		data = im.getDataShort(tList);
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		int rows = model.getRowCount(), col = model.getColumnCount();
@@ -357,7 +354,7 @@ public class InvoicesDisplayFrame {
 	}
 
 	protected void createInvoiceDetails(TableModel tm, int row) {
-		forPreview = new String[invTbHeadings.length];
+		forPreview = new String[cs.INVOICES_TB_HEADINGS.length];
 		for (int i = 0; i < forPreview.length; i++) {
 			forPreview[i] = (String) tm.getValueAt(row, i);
 		}

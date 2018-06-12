@@ -62,8 +62,8 @@ public class PDFCreator {
 		
 		this.df = df_3_2;
 		
-		this.fonts_title = Integer.parseInt(js.get(cs.JS_FONT_SIZE_TITLE).toString());
-		this.fonts = Integer.parseInt(js.get(cs.JS_FONT_SIZE_DEF).toString()) - 2;
+		this.fonts_title = Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString());
+		this.fonts = Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()) - 2;
 		this.color = msh.getColor(cs.APP, cs, js);
 		this.date = dh.getFormatedDate();
 	}
@@ -78,7 +78,7 @@ public class PDFCreator {
 			try {
 				pdd = createInvoice(i, customer, date);
 			} catch (IOException e) {
-				log.log(cs.ERR_LOG, "INVOICE " + jl.get(cs.JL_ERR_PDF_CREATION).toString());
+				log.log(cs.ERR_LOG, "INVOICE " + jl.get(cs.PDF_CREATION_ERROR).toString());
 				e.printStackTrace();
 			}
 		} else if (docType.equals(cs.PDF_SALE_REPORT)){
@@ -87,7 +87,7 @@ public class PDFCreator {
 			try {
 				pdd = createSaleRep(data, header, date);
 			} catch (IOException e) {
-				log.log(cs.ERR_LOG, "SALE REPORT " + jl.get(cs.JL_ERR_PDF_CREATION).toString());
+				log.log(cs.ERR_LOG, "SALE REPORT " + jl.get(cs.PDF_CREATION_ERROR).toString());
 				e.printStackTrace();
 			}
 		} else if (docType.equals(cs.PDF_STOCK_REPORT)){
@@ -96,13 +96,13 @@ public class PDFCreator {
 			try {
 				pdd = createStockRep(data, header, date);
 			} catch (IOException e) {
-				log.log(cs.ERR_LOG, "STOCK REPORT " + jl.get(cs.JL_ERR_PDF_CREATION).toString());
+				log.log(cs.ERR_LOG, "STOCK REPORT " + jl.get(cs.PDF_CREATION_ERROR).toString());
 				e.printStackTrace();
 			}
-		} else if (docType.equals(cs.PDF_REPAK_REPORT)){
+		} else if (docType.equals(ConstStrings.PDF_REPAK_REPORT)){
 			pdd = createRepakRep();
 		} else {
-			JOptionPane.showMessageDialog(null, "GENERAL " + jl.get(cs.JL_ERR_PDF_CREATION).toString());
+			JOptionPane.showMessageDialog(null, "GENERAL " + jl.get(cs.PDF_CREATION_ERROR).toString());
 		}
 		return pdd;
 	}
@@ -168,7 +168,7 @@ public class PDFCreator {
 		cst.newLineAtOffset(25, 760);
 		
 		String s = "";
-		String[] as = msh.json2Array((JSONArray) jl.get(cs.JL_STOCK_REPORT_HEADINGS));
+		String[] as = msh.json2Array((JSONArray) jl.get(cs.STOCK_REPORT_HEADINGS));
 		int j = 0;
 		for (String st : as) {
 			if(j == 2)
@@ -209,7 +209,7 @@ public class PDFCreator {
 	}
 
 	private void fillSales(PDPageContentStream cst, Invoice i) throws IOException {
-		displayHeadings(cst, jl.get(cs.JL_PDF_SALES_HEADER).toString());
+		displayHeadings(cst, jl.get(cs.PDF_SALES_HEADER).toString());
 //		float yPos = 440f+cn.LEADING_LINE_SIZE;
 		String[] salesList = msh.splitString(i.getList(), cs.SEMICOLON);
 		if(salesList.length > 0){
@@ -241,8 +241,7 @@ public class PDFCreator {
 	}
 
 	private boolean saleListContainTyres(Invoice i) {
-		String[] itemCodes = msh.json2Array((JSONArray) jl.get(cs.JL_A_ITEM_CODES));
-		return (i.getList().contains(itemCodes[cn.TCC]) || i.getList().contains(itemCodes[cn.TCA])) ? true : false;
+		return (i.getList().contains(cs.TYRE_CODE_C) || i.getList().contains(cs.TYRE_CODE_A)) ? true : false;
 	}
 
 	private void addMessage(PDPageContentStream cst) throws IOException {
@@ -252,11 +251,11 @@ public class PDFCreator {
 		cst.setNonStrokingColor(Color.BLACK);
 		cst.setFont(PDType1Font.COURIER, fonts);
 		
-		cst.showText(jl.get(cs.JL_TYRE_CHECK_MESSAGE_1).toString());
+		cst.showText(jl.get(cs.TYRE_CHECK_MESSAGE_1).toString());
 		cst.newLine();
-		cst.showText(jl.get(cs.JL_TYRE_CHECK_MESSAGE_2).toString());
+		cst.showText(jl.get(cs.TYRE_CHECK_MESSAGE_2).toString());
 		cst.newLine();
-		cst.showText(jl.get(cs.JL_TYRE_CHECK_MESSAGE_3).toString());
+		cst.showText(jl.get(cs.TYRE_CHECK_MESSAGE_3).toString());
 		cst.endText();
 	}
 	
@@ -274,7 +273,7 @@ public class PDFCreator {
 			if(c != null)
 				cst.showText("Invoice No: "+i.getId()+" for "+c.getCar().getBrandString());
 			else
-				cst.showText("Invoice No: "+i.getId()+" for "+jl.get(cs.JL_OTHER_STRING).toString());
+				cst.showText("Invoice No: "+i.getId()+" for "+jl.get(cs.OTHER_STRING).toString());
 		} else {
 			CustomerBusiness c = null;
 			if(customer != null)
@@ -310,8 +309,8 @@ public class PDFCreator {
 	private void fillSalesReport(PDPageContentStream cst, String[][] data, String header) throws IOException {
 		displayHeadings(cst, header);
 		double  sc = 0, sp = 0, ss = 0;
-		String[]cods = msh.json2Array((JSONArray) jl.get(cs.JL_ITEM_CODE_ARR));
-		String[]names = msh.json2Array((JSONArray) jl.get(cs.JL_ITEM_NAMES_ARR));
+		String[]cods = msh.json2Array((JSONArray) jl.get(cs.ITEM_CODE_ARR));
+		String[]names = msh.json2Array((JSONArray) jl.get(cs.ITEM_NAMES_ARR));
 		if(data.length > 0) {
 			for (int i = 0; i < data.length; i++) {
 				String s = "", t = "";
@@ -395,29 +394,29 @@ public class PDFCreator {
 		cst.newLineAtOffset(cn.PDF_DOC_X_OFFSET,  740);
 		cst.setLeading(cn.LEADING_LINE_SIZE);
 		
-		cst.showText(ju.get(cs.JU_COMPANY_NAME).toString() + "                                           " + date);
+		cst.showText(ju.get(cs.JSON_COMPANY_NAME).toString() + "                                           " + date);
 		cst.newLine();
 		
 		cst.setFont(PDType1Font.COURIER, this.fonts);
-		cst.showText(ju.get(cs.JU_ADDRESS).toString() + " " + ju.get(cs.JU_TOWN).toString());
+		cst.showText(ju.get(cs.JSON_ADDRESS).toString() + " " + ju.get(cs.JSON_TOWN).toString());
 		cst.newLine();
-		cst.showText(ju.get(cs.JU_COUNTY).toString());
+		cst.showText(ju.get(cs.JSON_COUNTY).toString());
 		cst.newLine();
-		cst.showText(ju.get(cs.JU_POST_CODE).toString());
+		cst.showText(ju.get(cs.JSON_POST_CODE).toString());
 		cst.newLine();
-		cst.showText(ju.get(cs.JU_TELEPHONE).toString());
+		cst.showText(ju.get(cs.JSON_TELEPHONE).toString());
 		cst.newLine();
-		cst.showText(ju.get(cs.JU_EMAIL).toString());
+		cst.showText(ju.get(cs.JSON_EMAIL).toString());
 		cst.newLine();
-		cst.showText(ju.get(cs.JU_WWW).toString());
+		cst.showText(ju.get(cs.JSON_WWW).toString());
 		cst.newLine();
-		cst.showText("FB: "+ju.get(cs.JU_FB).toString());
+		cst.showText("FB: "+ju.get(cs.JSON_FB).toString());
 		cst.endText();
 		
 	}
 	
 	private void addLogo(PDPageContentStream cst, PDDocument pdd) throws IOException {
-		PDImageXObject pdImage = PDImageXObject.createFromFile(js.get(cs.JS_LOGO_PATH).toString(), pdd);
+		PDImageXObject pdImage = PDImageXObject.createFromFile(js.get(cs.LOGO_PATH).toString(), pdd);
 		
 		cst.drawImage(pdImage, 210,  675);
 		cst.setNonStrokingColor(Color.darkGray);

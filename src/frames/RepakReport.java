@@ -21,7 +21,6 @@ import org.json.simple.JSONObject;
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
-import logic.MainView;
 import managers.DatabaseManager;
 import objects.RepakROne;
 import utility.DateHelper;
@@ -31,7 +30,7 @@ import utility.MiscHelper;
 import utility.PDFCreator;
 import utility.Printer;
 
-public class RepakReportFrame {
+public class RepakReport {
 
 	private JFrame frame;
 	private MainView mainView;
@@ -79,11 +78,11 @@ public class RepakReportFrame {
 	/**
 	 * Create the application.
 	 */
-	public RepakReportFrame() {
+	public RepakReport() {
 		initialize();
 	}
 
-	public RepakReportFrame(MainView main, DatabaseManager DM, ConstDB CDB, ConstStrings CS, ConstNums CN, Logger logger,
+	public RepakReport(MainView main, DatabaseManager DM, ConstDB CDB, ConstStrings CS, ConstNums CN, Logger logger,
 			PDFCreator PDFCreator, Printer p_rinter,
 			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, DateHelper DH, FileHelper FH) {
 		mainView = main;
@@ -105,8 +104,8 @@ public class RepakReportFrame {
 
 		dfm = new DecimalFormat("00");
 
-		fonts = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_DEF).toString()));
-		fonts_title = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_TITLE).toString()));
+		fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
+		fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
 		color = msh.getColor(cs.APP, cs, js);
 
 		list = new ArrayList<>();
@@ -121,8 +120,11 @@ public class RepakReportFrame {
 		int lblX = 10, lblY = 10, lblW = (int) (msh.getScreenDimension()[0]/1.5), lblH = (int) (msh.getScreenDimension()[1]/1.2);
 		int jcbW = 55, jcbH = 28, jcbYOffset = 70, btnPrintX = 400;
 		
-		months = msh.json2Array((JSONArray) jl.get(cs.JL_MONTHS_NAMES));
-		String[]years = dh.getYearsArr();
+		JSONArray jArr = (JSONArray) jl.get(cs.MONTHS_NAMES);
+		months = msh.json2Array(jArr);
+		jArr = null;
+		jArr = (JSONArray) jl.get(cs.YEARS);
+		String[]years = msh.json2Array(jArr);
 
 		frame = new JFrame();
 		frame.getContentPane().setBackground(color);
@@ -155,7 +157,9 @@ public class RepakReportFrame {
 		cbYear.setBounds(cbMonth.getX()+cbMonth.getWidth()+16, lblY*3, jcbW*3, jcbH);
 		frame.getContentPane().add(cbYear);
 		
-		tCat = msh.json2Array((JSONArray) jl.get(cs.JL_TYRES_CATEGORY));
+		jArr = null;
+		jArr = (JSONArray) jl.get(cs.TYRES_CATEGORY);
+		tCat = msh.json2Array(jArr);
 		defaultCategory = tCat[0];
 
 		JComboBox cbTyreCategorys = new JComboBox(tCat);
@@ -274,7 +278,8 @@ public class RepakReportFrame {
 	// END OF INIT METHOD
 
 	protected void previewReport(JLabel jlbl, String title) {
-		String[]sReportHeadings = msh.json2Array((JSONArray) jl.get(cs.JL_REPAK_REPORT_HEADINGS));
+		JSONArray jArr = (JSONArray) jl.get(cs.REPAK_REPORT_HEADINGS);
+		String[]sReportHeadings = msh.json2Array(jArr);
 		String[][] data = null;
 		String dateYM = yearOfReport+cs.MINUS+dfm.format(dh.getMonthNumber(monthOfReport));
 		String dateMY = dfm.format(dh.getMonthNumber(monthOfReport))+cs.MINUS+yearOfReport;

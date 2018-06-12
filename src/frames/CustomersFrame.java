@@ -22,13 +22,11 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import consts.ConstDB;
 import consts.ConstNums;
 import consts.ConstStrings;
-import logic.MainView;
 import managers.CustomersManager;
 import managers.DatabaseManager;
 import objects.CustomerBusiness;
@@ -85,8 +83,8 @@ public class CustomersFrame {
 		
 		cm = cMNG;
 		
-		fonts = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_DEF).toString()));
-		fonts_title = new Font(js.get(cs.JS_FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.JS_FONT_SIZE_TITLE).toString()));
+		fonts = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_DEF).toString()));
+		fonts_title = new Font(js.get(cs.FONT).toString(), Font.PLAIN, Integer.parseInt(js.get(cs.FONT_SIZE_TITLE).toString()));
 		color = msh.getColor(cs.APP, cs, js);
 
 //		initialize();
@@ -150,11 +148,10 @@ public class CustomersFrame {
 	}
 	
 	private void populateCustomerTable(int x, int y, int w, int h) {
-		String[] headings = msh.json2Array((JSONArray) jl.get(cs.JL_CUSTOMER_TB_HEADINGS));
-		String[][] data = new String [cm.getList().size()][headings.length];
+		String[][] data = new String [cm.getList().size()][cs.CUSTOMER_TB_HEADINGS.length];
 		data = cm.getDataShort();
 		JTable table = new JTable();
-		table = msh.createTable(fonts, data, headings, headings[0], 140, 20);
+		table = msh.createTable(fonts, data, cs.CUSTOMER_TB_HEADINGS, cs.CUSTOMER_TB_NAME, 140, 20);
 		ListSelectionListener listener = createCustomerTableListener(table);
 		table.getSelectionModel().addListSelectionListener(listener);
 		rSortCustomer = new TableRowSorter<>(table.getModel());

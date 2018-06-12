@@ -49,7 +49,7 @@ public class DatabaseManager {
 	
 	
 	public DatabaseManager (Logger logger, String date, ConstDB cdbm, ConstNums cn, ConstStrings cs, ConstPaths CP, 
-			JSONObject JS) throws IOException {
+			JSONObject JS,DecimalFormat df) throws IOException {
 		this.cdb = cdbm;
 		this.cs = cs;
 		this.cn = cn;
@@ -63,42 +63,24 @@ public class DatabaseManager {
 		
 	public void checkIfDatabaseExists() throws IOException {
 		Connection con = this.connect();
-//TODO - 
-		/*
-		 * You don't need to count anything.
-
-SELECT 1 FROM testtable LIMIT 1;
-If there's no error, table exists.
-
-Or, if you want to be correct, use INFORMATION_SCHEMA.
-
-SELECT * 
-FROM information_schema.tables
-WHERE table_schema = 'yourdb' 
-    AND table_name = 'testtable'
-LIMIT 1;
-Alternatively, you can use SHOW TABLES
-
-SHOW TABLES LIKE 'yourtable';
-If there is a row in the resultset, table exists.
-
-
-################
-SELECT count(*)
-FROM information_schema.TABLES
-WHERE (TABLE_SCHEMA = 'your_db_name') AND (TABLE_NAME = 'name_of_table')
-
-##############
-
-SHOW TABLES FROM `db` LIKE 'tablename'; //zero rows = not exist
-		 */
+		this.executeQuery(con, cdb.CREATE_BRANDS_TABLE);
+		this.executeQuery(con, cdb.CREATE_BUSINESS_TABLE);
+		this.executeQuery(con, cdb.CREATE_CAR_TABLE);
+		this.executeQuery(con, cdb.CREATE_CUSTOMER_TABLE);
+		this.executeQuery(con, cdb.CREATE_INVOICE_TABLE);
+		this.executeQuery(con, cdb.CREATE_REPAK_REPORT_TABLE);
+		this.executeQuery(con, cdb.CREATE_SETTINGS_TABLE);
+		this.executeQuery(con, cdb.CREATE_STOCK_TABLE);
+		this.executeQuery(con, cdb.POPULATE_BRANDS);
+		this.executeQuery(con, cdb.ALTER_CAR_TABLE);
+		this.executeQuery(con, cdb.ALTER_CUSTOMER_TABLE);
 	}
 
 	private Connection connect() {
 //		System.out.println("1conn "+js.get(cs.DB_URL).toString()+"\n");
 		try {
 			Class.forName(cdb.JDBC_DRIVER);
-			Connection conn = DriverManager.getConnection(js.get(cs.JS_DB_URL).toString(), js.get(cs.JS_DB_USER).toString(), js.get(cs.JS_DB_PASS).toString());
+			Connection conn = DriverManager.getConnection(js.get(cs.DB_URL).toString(), js.get(cs.DB_USER).toString(), js.get(cs.DB_PASS).toString());
 //			System.out.println("conn "+js.get(cs.DB_URL).toString()+"\n"+conn.toString());
 //			this.executeQuery(conn, cdb.USE_DATABASE+js.get(cs.DB_USER).toString());
 			return conn;
