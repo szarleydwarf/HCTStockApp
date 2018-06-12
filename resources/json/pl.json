@@ -119,6 +119,7 @@
 
 	"new item saved":"Zapisano nowy przedmiot",
 	"item saved":"Przedmiot zapisany",
-	"item updated":"Aktualizacja przedmiotu zakonczona pomyslnie"
-
+	"item updated":"Aktualizacja przedmiotu zakonczona pomyslnie",
+	"warn item update":"Znaleziono ten przedmiot w magazynie, chcesz go zaktualizowac czy zapisac NOWY?",
+	"btn options":["AKTUALIZUJ", "ZAPISZ NOWY"]
 }

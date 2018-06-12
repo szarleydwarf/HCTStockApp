@@ -786,6 +786,7 @@ public class DisplayStock {
 				return false;
 			}
 		} else {
+			log.log(cs.ERR_LOG, "PDF NULL "+jl.get(cs.PDF_SAVE_ERROR).toString());
 			JOptionPane.showMessageDialog(frame, "PDF NULL "+jl.get(cs.PDF_SAVE_ERROR).toString());
 			return false;
 		}
@@ -838,7 +839,31 @@ public class DisplayStock {
 	}
 
 	protected void addNewItem(Item i) {
-		boolean saved = sm.addItem(i);
+		boolean saved = false;
+		Item t = null;
+		String[] options = msh.json2Array((JSONArray) jl.get(cs.JL_OPTIONS_BTN));
+
+		if(sm.search(i.getCode()+i.getID()) || sm.search(i.getName())){
+			String str = "";
+			if(sm.search(i.getName()))
+				str = i.getName();
+			else
+				str = i.getCode()+i.getID();
+			
+			t = sm.find(str);
+			
+		}
+		if(t != null){
+			if(JOptionPane.showOptionDialog(frame,jl.get(cs.JL_WARN_ITEM_UPDATE).toString(),"Title",JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, 
+				    options, options[0]) == JOptionPane.YES_OPTION){
+				t = sm.editNew(t, i);//TODO popraw edycje
+				saved = t.updateRecord();
+			} else {
+				saved = sm.addItem(i);
+			}
+		} else {
+			saved = sm.addItem(i);
+		}
 		if(saved){
 			JOptionPane.showMessageDialog(frame, jl.get(cs.JL_NEW_ITEM_SAVED).toString());
 			goBack();

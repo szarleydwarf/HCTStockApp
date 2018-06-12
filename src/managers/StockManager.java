@@ -23,9 +23,6 @@ public class StockManager {
 		this.cdb = cdb;
 		this.cn = cn;
 		this.cs = cs;
-		
-//		this.getListFromDatabase();
-//		list = (ArrayList<Item>) this.dm.selectData(this.cdb.SELECT_ALL_ITEMS, list);
 	}
 
 	public void getListFromDatabase(){
@@ -34,27 +31,27 @@ public class StockManager {
 	}
 
 	public boolean addItem(Item i){
-		if(this.search(i.getCode()+i.getID()) || this.search(i.getName())){
+//		if(this.search(i.getCode()+i.getID()) || this.search(i.getName())){
 			//TODO perform item update
-			String str = "";
-			if(this.search(i.getName()))
-				str = i.getName();
-			else
-				str = i.getCode()+i.getID();
-
-			Item t = this.find(str);
-			if(t != null){
-				this.removeFromList(i);
-				t = this.editNew(t, i);
-				this.list.add(t);
-				return t.updateRecord();
-			}
-		} else {
+//			String str = "";
+//			if(this.search(i.getName()))
+//				str = i.getName();
+//			else
+//				str = i.getCode()+i.getID();
+//
+//			Item t = this.find(str);
+//			if(t != null){
+//				this.removeFromList(i);
+//				t = this.editNew(t, i);
+//				this.list.add(t);
+//				return t.updateRecord();
+//			}
+//		} else {
 			System.out.println("ADD NEW");
 			list.add(i);
 			return i.saveNewInDatabase();
-		}		
-		return false;
+//		}		
+//		return false;
 	}
 	
 	private void removeFromList(Item t) {
@@ -63,6 +60,7 @@ public class StockManager {
 			if (t.equals(it.next())){
 				System.out.println("REMOVE");
 				it.remove();
+				return;
 			}
 		}
 	}
@@ -100,7 +98,7 @@ public class StockManager {
 		int tq = i.getQnt();
 		tq = tq + i2.getQnt();
 		i.setQnt(tq);
-		System.out.println("\nEditing new item 2\n"+i.getQnt()+"\t"+i2.getQnt()+"\t"+tq);
+		System.out.println("\nEditing new item 2\n"+i.toString()+"\t"+i2.toString()+"\t"+tq);
 		return i;
 	}
 	

@@ -117,5 +117,7 @@
 
 	"new item saved":"New ITEM saved",
 	"item saved":"Item saved",
-	"item updated":"Item updated"
+	"item updated":"Item updated",
+	"warn item update":"Item already in stock, Want to update or save NEW?",
+	"btn options":["UPDATE", "SAVE NEW"]
 }

@@ -231,4 +231,6 @@ public class ConstStrings {
 	public final String JL_NEW_ITEM_SAVED = "new item saved";
 	public final String JL_ITEM_SAVED = "item saved";
 	public final String JL_ITEM_UPDATED = "item updated";
+	public final String JL_WARN_ITEM_UPDATE = "warn item update";
+	public final String JL_OPTIONS_BTN = "btn options";
 }
