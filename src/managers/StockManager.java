@@ -95,10 +95,14 @@ public class StockManager {
 		if(i.getPrice() != i2.getPrice()){
 			i.setPrice(i2.getPrice());
 		}
-		int tq = i.getQnt();
-		tq = tq + i2.getQnt();
-		i.setQnt(tq);
-		System.out.println("\nEditing new item 2\n"+i.toString()+"\t"+i2.toString()+"\t"+tq);
+		if(i.getQnt() != i2.getQnt()){
+			i.setQnt(i2.getQnt());
+		}
+		// TODO qnt update, add or change ???
+//		int tq = i.getQnt();
+//		tq = tq + i2.getQnt();
+//		i.setQnt(tq);
+		System.out.println("\nEditing new item 2\n"+i.toString()+"\t"+i2.toString()+"\t");
 		return i;
 	}
 	
