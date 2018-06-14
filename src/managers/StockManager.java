@@ -74,7 +74,7 @@ public class StockManager {
 	}
 	
 	//TODO - edit?
-	public Item editNew(Item i, Item i2){
+	public Item editNew(Item i, Item i2, boolean update){
 		System.out.println("\nEditing new item\n"+i.toString()+"\n"+i2.toString());
 		//make adjustments
 		if(!i.getName().equals(i2.getName())){
@@ -95,13 +95,16 @@ public class StockManager {
 		if(i.getPrice() != i2.getPrice()){
 			i.setPrice(i2.getPrice());
 		}
-		if(i.getQnt() != i2.getQnt()){
-			i.setQnt(i2.getQnt());
+		if(update){
+			int tq = i.getQnt();
+			tq = tq + i2.getQnt();
+			i.setQnt(tq);
+		} else {
+			if(i.getQnt() != i2.getQnt()){
+				i.setQnt(i2.getQnt());
+			}
 		}
 		// TODO qnt update, add or change ???
-//		int tq = i.getQnt();
-//		tq = tq + i2.getQnt();
-//		i.setQnt(tq);
 		System.out.println("\nEditing new item 2\n"+i.toString()+"\t"+i2.toString()+"\t");
 		return i;
 	}

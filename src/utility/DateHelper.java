@@ -129,13 +129,13 @@ public class DateHelper {
 
 	public int getYearIndex() {
 		String year = ""+getYearNum();
-		int index = 0;
-		for(int i = 0; i < cs.YEARS_NO_STRING.length; i++){
-			if(cs.YEARS_NO_STRING[i].equals(year)){
+		String[]ys = getYearsArr();
+		for(int i = 0; i < ys.length; i++){
+			if(ys[i].equals(year)){
 				return i;
 			}
 		}
-		return index;
+		return 0;
 	}
 	
 	public boolean isLeapYear(int year){
@@ -183,5 +183,54 @@ public class DateHelper {
 		
 		return df.format(today.getTime());
 	}
+	public String[] getYearsArr() {
+		int y = this.getYearNum();
+		String[]ys = new  String[10];
+		for(int i = 4; i >= 0; i--){
+			ys[i] = ""+y;
+			y--;
+		}
+		y = this.getYearNum();
+		for (int i = 5; i < ys.length; i++) {
+			y++;
+			ys[i] = ""+y;
+		}
+		
+		return ys;
+	}
 
+	public String[] getDaysArray(int month, int year) {
+		int daysInMont = getDaysInMonth(month, year);
+		String[]ds = new String[daysInMont];
+		for (int i = 1; i <= daysInMont; i++) {
+			ds[i-1] = ""+i;
+		}
+		return ds;
+	}
+
+	private int getDaysInMonth(int month, int year) {
+		switch (month) {
+		case 1:
+		case 3:
+		case 5:
+		case 7:
+		case 8:
+		case 10:
+		case 12:
+ 			return 31;
+		case 4:
+		case 6:
+		case 9:
+		case 11:
+			return 30;
+		case 2:
+			if(isLeapYear(year))
+				return 29;
+			else
+				return 28;
+
+		default:
+			return 0;
+		}
+	}
 }

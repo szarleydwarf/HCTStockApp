@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -70,6 +72,7 @@ public class InvoicesDisplay {
 	private String yearString;
 	private DecimalFormat dfm;
 	private JTable table;
+	private int today;
 
 	/**
 	 * Launch the application.
@@ -165,20 +168,18 @@ public class InvoicesDisplay {
 		btnEdit.setBounds(btnX, btnY - cn.BACK_BTN_HEIGHT - cn.BACK_BTN_Y_OFFSET, cn.BACK_BTN_WIDTH, cn.BACK_BTN_HEIGHT);
 		frame.getContentPane().add(btnEdit);
 		
-		String[]days = dh.getDaysArray();
+		String[]years = dh.getYearsArr();// msh.json2Array((JSONArray) jl.get(cs.YEARS));
 		String[]months = msh.json2Array((JSONArray) jl.get(cs.MONTHS_NAMES));
-		String[]years = msh.json2Array((JSONArray) jl.get(cs.YEARS));
 		
-		int today = dh.getDayOfMonthNum();
+		today = dh.getDayOfMonthNum();
 		today--;
 		int month = dh.getMonthNum();
 		int year = dh.getYearIndex();
 		
+		String[]days = dh.getDaysArray(month++, year);
 		dayString = days[today];
 		monthName = months[month];
 		yearString = years[year];
-//		monthOfReport = months[month];
-//		yearOfReport = years[year];
 
 		JComboBox cbDays = new JComboBox(days);
 		cbDays.setSelectedIndex(today);
@@ -258,6 +259,8 @@ public class InvoicesDisplay {
 				if(a.getSource() == cbMonths ){
 					JComboBox cb = (JComboBox) a.getSource();
 					monthName = cb.getSelectedItem().toString();
+					
+					updateCBDays(cbDays);
 					updateTable();
 				}		
 			}
@@ -269,12 +272,23 @@ public class InvoicesDisplay {
 				if(a.getSource() == cbYear ){
 					JComboBox cb = (JComboBox) a.getSource();
 					yearString = cb.getSelectedItem().toString();
+
+					updateCBDays(cbDays);
 					updateTable();
 				}		
 			}
 		});
 		
 
+	}
+
+	protected void updateCBDays(JComboBox cbDays) {
+		int month = dh.getMonthNumber(monthName);
+		int year = Integer.parseInt(yearString);
+		String[]days = dh.getDaysArray(month, year);
+		DefaultComboBoxModel cbm = new DefaultComboBoxModel(days);
+        cbDays.setModel(cbm);
+        cbDays.setSelectedIndex(today);
 	}
 
 	private void populateInvoiceListTable(int x, int y, int w, int h) {
@@ -302,9 +316,6 @@ public class InvoicesDisplay {
 	private void updateTable(){
 		ArrayList<Invoice> tList = new ArrayList<Invoice>();
 		tList = getList(tList);
-		for (int i = 0; i < tList.size(); i++) {
-			System.out.println(i+" "+tList.get(i).toString());
-		}
 		String[][] data = new String [tList.size()][cs.INVOICES_TB_HEADINGS.length];
 		data = im.getDataShort(tList);
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -318,10 +329,14 @@ public class InvoicesDisplay {
 				}
 			}
 		}
+//		System.out.println(data[0].length+" "+dataRows+" "+rows);
 		for (int i = 0; i < dataRows; i++) {
-			for (int j = 0; j < data[i].length; j++) {
-				model.setValueAt(data[i][j], i, j);
-			}
+			if(dataRows <= rows) { 
+				for (int j = 0; j < data[i].length; j++) {
+						model.setValueAt(data[i][j], i, j);
+				}
+			} else
+				model.addRow(data[i]);
 		}
 		table.setModel(model);
 	}

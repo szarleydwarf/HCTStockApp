@@ -856,7 +856,7 @@ public class DisplayStock {
 		if(t != null){
 			if(JOptionPane.showOptionDialog(frame,jl.get(cs.JL_WARN_ITEM_UPDATE).toString(),"Title",JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, 
 				    options, options[0]) == JOptionPane.YES_OPTION){
-				t = sm.editNew(t, i);
+				t = sm.editNew(t, i, true);
 				saved = t.updateRecord();
 			} else {
 				saved = sm.addItem(i);
