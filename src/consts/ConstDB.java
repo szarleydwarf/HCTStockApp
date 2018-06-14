@@ -39,6 +39,7 @@ public class ConstDB {
 	public final String SET = " SET ";
 	public final String ODER_BY = " ORDER BY ";
 	public final String DESC = " DESC ";
+	public final String ASC = " ASC ";
 
 	
 	//database tables names
@@ -104,6 +105,7 @@ public class ConstDB {
 	public final String SELECT_CARS_LIST_BRAND_ID = this.SELECT+this.TB_BRANDS_NAME+", "+this.ID+this.FROM+TableNames.TB_BRANDS.getName();
 	public final String SELECT_CARS_LIST_ID_BRAND = this.SELECT+ this.ID+","+ this.TB_BRANDS_NAME+this.FROM+TableNames.TB_BRANDS.getName();
 	public final String SELECT_ALL_ITEMS = this.SELECT_STAR  + this.FROM + TableNames.TB_STOCK.getName();
+	public final String SELECT_ALL_ITEMS_ORDERED = this.SELECT_STAR  + this.FROM + TableNames.TB_STOCK.getName() + this.ODER_BY + this.TB_STOCK_CODE + this.ASC;
 	public final String SELECT_ALL_CUSTOMERS_I = this.SELECT_STAR  + this.FROM + TableNames.TB_CUSTOMERS.getName();
 	public final String SELECT_ALL_CUSTOMERS_B = this.SELECT + TableNames.TB_BUSINESS.getName() + ".* " + this.FROM + TableNames.TB_BUSINESS.getName();
 	public final String SELECT_ALL_INVOICES = this.SELECT_STAR + this.FROM + TableNames.TB_INVOICES.getName() + this.ODER_BY + this.DATE + this.DESC;

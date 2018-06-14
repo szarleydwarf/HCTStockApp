@@ -128,6 +128,7 @@ public class DisplayStock {
 		pdfc = PDFC;
 		
 		this.printer = printer;
+		itemCode = cs.TYRE_CODE_C;
 		
 		sm = SM;
 		
@@ -251,11 +252,7 @@ public class DisplayStock {
 		
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-				setIsVisible(false);
-				if(mainView != null)
-					if(!mainView.isVisible())
-						mainView.setIsVisible(true);
+				goBack();
 			}
 		});
 		
@@ -375,6 +372,14 @@ public class DisplayStock {
 		});		
 		editForm();
 		
+	}
+
+	protected void goBack() {
+		frame.dispose();
+		setIsVisible(false);
+		if(mainView != null)
+			if(!mainView.isVisible())
+				mainView.setIsVisible(true);
 	}
 
 	private void editForm() {
@@ -543,24 +548,31 @@ public class DisplayStock {
 		chbVemc.setBounds(xOffset, lblY, tfW, lbltfH);
 		frame.getContentPane().add(chbVemc);
 
-		JButton btnSave = new JButton(jl.get(cs.BTN_UPDATE).toString());
-		btnSave.setForeground(Color.RED);
-		btnSave.setBackground(Color.LIGHT_GRAY);
-		btnSave.setFont(fonts);
+		JButton btnUpdate = new JButton(jl.get(cs.BTN_UPDATE).toString());
+		btnUpdate.setForeground(Color.RED);
+		btnUpdate.setBackground(Color.LIGHT_GRAY);
+		btnUpdate.setFont(fonts);
 		lblY += yOffset;
-		btnSave.setBounds(xOffset, lblY, tfW / 2, lbltfH+10);
-		frame.getContentPane().add(btnSave);
+		btnUpdate.setBounds(xOffset, lblY, tfW / 2, lbltfH+10);
+		frame.getContentPane().add(btnUpdate);
 
 		JButton btnAddNew = new JButton(jl.get(cs.BTN_NEW).toString());
 		btnAddNew.setForeground(Color.RED);
 		btnAddNew.setBackground(Color.GREEN);
 		btnAddNew.setFont(fonts);
-		btnAddNew.setBounds((btnSave.getX() + btnSave.getWidth() + 10), lblY, tfW / 2, lbltfH+10);
+		btnAddNew.setBounds((btnUpdate.getX() + btnUpdate.getWidth() + 10), lblY, tfW / 2, lbltfH+10);
 		frame.getContentPane().add(btnAddNew);
 		
-		btnSave.addActionListener(new ActionListener() {
+		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO -  update
+				if(getSelected() != null) {
+					Item i = getSelected();
+					i = setItemUpdates(i, cbCodes, tfName, tfCost, tfPrice, tfQnt, chbVAT, chbTransport, chbVemc);
+					updateEdition(i);
+				} else{
+					JOptionPane.showMessageDialog(frame, jl.get(cs.UPDATE_SELECTED_ERR).toString());
+				}
 			}
 		});
 		
@@ -568,6 +580,9 @@ public class DisplayStock {
 		btnAddNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//TODO save new item, check if not exist already
+				Item i = new Item(dm, cdb, cn, cs, df);
+				i = setItemUpdates(i, cbCodes, tfName, tfCost, tfPrice, tfQnt, chbVAT, chbTransport, chbVemc);
+				addNewItem(i);
 			}
 		});
 
@@ -715,10 +730,10 @@ public class DisplayStock {
 		if(cost != "" && !cost.isEmpty() && cost != null)
 			dc = msh.isDouble(cost);//Double.parseDouble(cost);
 		if(getSelected() != null)
-			return getSelected().calculateSuggestedPrice(dc, itemCode, profitPercent);
+			return getSelected().calculateSuggestedPrice(dc, profitPercent);
 		else {
 			Item i = new Item(dm, cdb, cn, cs, df, "", "", 0.00,0,0,0,0);
-			return i.calculateSuggestedPrice(dc, itemCode, profitPercent);
+			return i.calculateSuggestedPrice(dc, profitPercent);
 		}
 	}
 
@@ -771,6 +786,7 @@ public class DisplayStock {
 				return false;
 			}
 		} else {
+			log.log(cs.ERR_LOG, "PDF NULL "+jl.get(cs.PDF_SAVE_ERROR).toString());
 			JOptionPane.showMessageDialog(frame, "PDF NULL "+jl.get(cs.PDF_SAVE_ERROR).toString());
 			return false;
 		}
@@ -813,22 +829,48 @@ public class DisplayStock {
 		}
 	}
 
-	protected void editRecordInDatabase() {
-		if(getSelected() != null){
-			updateEdition(getSelected());
-		} else {
-			log.log(cs.ERR_LOG, jl.get(cs.ITEM_EDITION_ERROR).toString());
-			System.out.println("Edit NULL");
+
+	private void updateEdition(Item i) {
+		boolean saved = sm.edit(i);
+		if(saved){
+			JOptionPane.showMessageDialog(frame, jl.get(cs.JL_ITEM_UPDATED).toString());
+			goBack();
 		}
 	}
 
-	private void updateEdition(Item i) {
-		// TODO Auto-generated method stub
-		System.out.println("updateEdition");
+	protected void addNewItem(Item i) {
+		boolean saved = false;
+		Item t = null;
+		String[] options = msh.json2Array((JSONArray) jl.get(cs.JL_OPTIONS_BTN));
+
+		if(sm.search(i.getCode()+i.getID()) || sm.search(i.getName())){
+			String str = "";
+			if(sm.search(i.getName()))
+				str = i.getName();
+			else
+				str = i.getCode()+i.getID();
+			
+			t = sm.find(str);
+			
+		}
+		if(t != null){
+			if(JOptionPane.showOptionDialog(frame,jl.get(cs.JL_WARN_ITEM_UPDATE).toString(),"Title",JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, 
+				    options, options[0]) == JOptionPane.YES_OPTION){
+				t = sm.editNew(t, i, true);
+				saved = t.updateRecord();
+			} else {
+				saved = sm.addItem(i);
+			}
+		} else {
+			saved = sm.addItem(i);
+		}
+		if(saved){
+			JOptionPane.showMessageDialog(frame, jl.get(cs.JL_NEW_ITEM_SAVED).toString());
+			goBack();
+		}
 	}
 
 	public void refreashTable() {
-		System.out.println("table refreash");
 		sm.getListFromDatabase();
 		data = null;
 		data = sm.getData();
@@ -837,22 +879,29 @@ public class DisplayStock {
 		itemSaved = false;		
 	}
 
-	protected void setItemUpdates(Item i, JComboBox cbCodes, JTextField tfName, JTextField tfCost, JTextField tfPrice, JTextField tfQnt,
+	protected Item setItemUpdates(Item i, JComboBox cbCodes, JTextField tfName, JTextField tfCost, JTextField tfPrice, JTextField tfQnt,
 			JCheckBox chbVAT, JCheckBox chbTransport, JCheckBox chbVemc) {
-	
+		String sp = sugestedPrice.getText();
+		sp = sp.replaceAll(cs.EURO, "");
 		if(!itemCode.isEmpty())i.setCode(itemCode); else i.setCode(cs.OTHER_CODE);
 		if(!tfName.getText().isEmpty())i.setName(tfName.getText());
-		if(!tfCost.getText().isEmpty())i.setCost(Double.parseDouble(tfCost.getText()));
-		if(!tfPrice.getText().isEmpty())i.setPrice(Double.parseDouble(tfPrice.getText()));
-		if(!tfQnt.getText().isEmpty())i.setQnt(Integer.parseInt(tfQnt.getText()));
+		if(!tfCost.getText().isEmpty())i.setCost(msh.isDouble(tfCost.getText()));
+		if(!isSuggested) {
+			if(!tfPrice.getText().isEmpty())i.setPrice(msh.isDouble(tfPrice.getText()));
+		} else {
+			i.setPrice(msh.isDouble(sp));
+		}
+		
+		if(!tfQnt.getText().isEmpty())i.setQnt(msh.isInt(tfQnt.getText()));
 		
 		if(chbVAT.isSelected()) i.setAddVat((byte) 1); else i.setAddVat((byte) 0);
 		if(chbTransport.isSelected()) i.setAddTransportCost((byte) 1); else i.setAddTransportCost((byte) 0);
 		if(chbVemc.isSelected()) i.setAddVEMCCharge((byte) 1); else i.setAddVEMCCharge((byte) 0);
+		
+		return i;
 	}
 
 	private void populateFields(Item i) {
-		System.out.println("po "+i.getName());
 		if(!i.getCode().isEmpty()){
 			int index = 0;
 			for (int j = 0; j < cs.ITEM_CODES.length; j++) {
@@ -947,6 +996,7 @@ public class DisplayStock {
 		vat = 0;
 		tran = 0;
 		vemc = 0;
+		isSuggested = true;
 		initialize();
 		sm.getListFromDatabase();
 		data = sm.getData();

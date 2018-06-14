@@ -61,6 +61,12 @@ public class MiscHelper {
 				System.out.println("i:"+i+" j:"+j+" - "+d[i][j]);
 	}
 	
+	public void printArr(String[] a){
+		for (int i = 0; i < a.length; i++) {
+			System.out.println(i+ " - " + a[i]);
+		}
+	}
+	
 	public void sopl2DimensionalArray(String[][] da) {
 		System.out.println("Data 1st length "+da.length);
 		System.out.println("Data 2nd length "+da[0].length);
@@ -453,8 +459,7 @@ public class MiscHelper {
 	
 	private String removeZerosAndSpaces(String st) {
 		st = st.replaceAll("\\s", "");
-		String pattern = "^0+";
-		st = st.replaceAll(pattern, "");		
+		st = st.replaceAll("^0+", "");		
 		return st;
 	}
 

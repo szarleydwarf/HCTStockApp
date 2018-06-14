@@ -23,38 +23,35 @@ public class StockManager {
 		this.cdb = cdb;
 		this.cn = cn;
 		this.cs = cs;
-		
-		this.getListFromDatabase();
-//		list = (ArrayList<Item>) this.dm.selectData(this.cdb.SELECT_ALL_ITEMS, list);
 	}
 
 	public void getListFromDatabase(){
 		list.clear();
-		list = (ArrayList<Item>) this.dm.selectData(this.cdb.SELECT_ALL_ITEMS, list);
+		list = (ArrayList<Item>) this.dm.selectData(this.cdb.SELECT_ALL_ITEMS_ORDERED, list);
 	}
 
 	public boolean addItem(Item i){
-		if(this.search(i.getCode()+i.getID()) || this.search(i.getName())){
+//		if(this.search(i.getCode()+i.getID()) || this.search(i.getName())){
 			//TODO perform item update
-			String str = "";
-			if(this.search(i.getName()))
-				str = i.getName();
-			else
-				str = i.getCode()+i.getID();
-
-			Item t = this.find(str);
-			if(t != null){
-				this.removeFromList(i);
-				t = this.editNew(t, i);
-				this.list.add(t);
-				return t.updateRecord();
-			}
-		} else {
+//			String str = "";
+//			if(this.search(i.getName()))
+//				str = i.getName();
+//			else
+//				str = i.getCode()+i.getID();
+//
+//			Item t = this.find(str);
+//			if(t != null){
+//				this.removeFromList(i);
+//				t = this.editNew(t, i);
+//				this.list.add(t);
+//				return t.updateRecord();
+//			}
+//		} else {
 			System.out.println("ADD NEW");
 			list.add(i);
 			return i.saveNewInDatabase();
-		}		
-		return false;
+//		}		
+//		return false;
 	}
 	
 	private void removeFromList(Item t) {
@@ -63,6 +60,7 @@ public class StockManager {
 			if (t.equals(it.next())){
 				System.out.println("REMOVE");
 				it.remove();
+				return;
 			}
 		}
 	}
@@ -76,7 +74,7 @@ public class StockManager {
 	}
 	
 	//TODO - edit?
-	public Item editNew(Item i, Item i2){
+	public Item editNew(Item i, Item i2, boolean update){
 		System.out.println("\nEditing new item\n"+i.toString()+"\n"+i2.toString());
 		//make adjustments
 		if(!i.getName().equals(i2.getName())){
@@ -97,10 +95,17 @@ public class StockManager {
 		if(i.getPrice() != i2.getPrice()){
 			i.setPrice(i2.getPrice());
 		}
-		int tq = i.getQnt();
-		tq = tq + i2.getQnt();
-		i.setQnt(tq);
-		System.out.println("\nEditing new item 2\n"+i.getQnt()+"\t"+i2.getQnt()+"\t"+tq);
+		if(update){
+			int tq = i.getQnt();
+			tq = tq + i2.getQnt();
+			i.setQnt(tq);
+		} else {
+			if(i.getQnt() != i2.getQnt()){
+				i.setQnt(i2.getQnt());
+			}
+		}
+		// TODO qnt update, add or change ???
+		System.out.println("\nEditing new item 2\n"+i.toString()+"\t"+i2.toString()+"\t");
 		return i;
 	}
 	
@@ -134,7 +139,6 @@ public class StockManager {
 		}
 		String[][] data = new String[t.size()][];
 		data = t.toArray(data);
-		System.out.println("SM 3 "+data.length+" "+data[0].length);
 		return data;
 	}
 	
@@ -180,6 +184,7 @@ public class StockManager {
 	}
 
 	public ArrayList<Item> getSortedList() {
+		getListFromDatabase();
 		list.sort((o1,o2) -> o1.getCode().compareTo(o2.getCode()));
 		return list;
 	}

@@ -466,7 +466,6 @@ public class SalesReports {
 					price = price - discount;
 				diff = price - cost;
 
-
 				if(code.equals(cs.TYRE_CODE_C)){
 					data[0][1] = getValue(data[0][1], cost);
 					data[0][2] = getValue(data[0][2], price);
@@ -487,15 +486,11 @@ public class SalesReports {
 					data[4][1] = getValue(data[4][1], cost);
 					data[4][2] = getValue(data[4][2], price);
 					data[4][3] = getValue(data[4][3], diff);
-//				} else if(code.equals(cs.OTHER_CODE)){
-//					data[5][1] = getValue(data[5][1], cost);
-//					data[5][2] = getValue(data[5][2], price);
-//					data[5][3] = getValue(data[5][3], diff);
 				} else if(code.equals(cs.CARWASH_CODE)){
 					data[6][1] = getValue(data[6][1], cost);
 					data[6][2] = getValue(data[6][2], price);
 					data[6][3] = getValue(data[6][3], diff);
-				} else {
+				} else if(code.equals(cs.OTHER_CODE)){
 					data[5][1] = getValue(data[5][1], cost);
 					data[5][2] = getValue(data[5][2], price);
 					data[5][3] = getValue(data[5][3], diff);
@@ -506,7 +501,9 @@ public class SalesReports {
 	}
 
 	private String getValue(String s, double dd) {
-		double d = msh.isDouble(s);
+		double d = 0;
+		if(!s.equals("0"))
+			d = msh.isDouble(s);
 		d += dd;
 		return ""+d;
 	}

@@ -48,17 +48,25 @@
 		"December"
 	],
 
+	"lang arr":["ENGLISH", "POLISH"],
 	"tyre categories":["Osobowe", "Rolnicze"],
 	"items cat":["Osobowe", "Rolnicze", "Detki", "Sklep"],
 	"items codes":["TRC", "TRA", "TB", "SH", "SR", "OT", "CW"],
 	"items names":["Car Tyres", "Agri Tyres", "Tubes", "Shop", "Services", "Other", "Car Wash"],
 	"items codes for print":["WSZYSTKO", "Osobowe", "Rolnicze", "Detki", "Sklep"],
 
+	"cars_table_heading" : ["Cars"],
+	"stock_tb_headings" : ["ID", "Kod", "Nazwa", "Koszt", "Cena", "Qnt", "VAT", "Transport", "VEMC"],
+	"stock_tb_headings_short" :  ["Kod","Towar", "Cena", "Qnt", "Cost"],
+	"customer_tb_headings" : ["Klient", "B/I", "VAT/TAX", "# Uslug"],
+	"invoices_tb_headings" : ["ID", "Klient", "Data", "Zakupy", "Plik"],
+
 	"years":["2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034", "2035"],
 	"sale report headings":["Miesiac", "Koszt", "Sprzedaz", "Zysk"],
 	"stock report headings":["ID", "Kod", "Nazwa", "Cena", "Ilosc"],
 	"repak report headings":["Miesiac", "CT Sprzedane", "CT Zalozone", "CT Zakupione", "AT Sprzedane", "AT Zalozone", "AT Zakupione", "CT Zutylizowane", "AT Zutylizowane", "CT Do Utylizacji", "AT Do Utylizacji"],
 	"repak tb col names":["date", "sold_car", "fitted_car", "bought_car", "sold_agri", "fitted_agri", "bought_agri", "returned_car", "returned_agri"],
+
 
 	"code":"Kod:",
 	"name":"Nazwa:",
@@ -82,6 +90,9 @@
 	"item_add_error":"Wystapil blad podczas dodawania nowego przedmiotu. Najprawdopodobniej, wybrany przedmiot zwrocil NULL.",
 	"item_edition_error":"Wystapil blad podczas edycji przedmiotu. Najprawdopodobniej, wybrany przedmiot zwrocil NULL.",
 	"saving error":"Wystapil blad podczas proby zapisu przedmiotu. Zapis nie udany",
+	"updated selected err":"Aktualizacja dziala tylko gdy wybierzesz przedmiot z listy, sprobuj ponownie lub wcisnij 'ZAPISZ NOWY'.",
+
+
 	"save pdf error":"Wystapil blad podczas proby zapisu pliku PDF.",
 	"not_number_error":"To nie jest cyfra. Prosze sprobowac jeszcze raz.",
 	"pdf creation error":"Wystapil blad podczas proby stworzenia pliku PDF. Nie odpowiedni format dokumentu przeslany do funkcji.",
@@ -104,5 +115,11 @@
 	"pdf sales header":"No.     Description                  Price   Qnt",
 	"tyre check msg1":"IMPORTANT !!!",
 	"tyre check msg2":"After tyre change, check the tightening of your wheels,",
-	"tyre check msg3":"after driving around 10 miles."
+	"tyre check msg3":"after driving around 10 miles.",
+
+	"new item saved":"Zapisano nowy przedmiot",
+	"item saved":"Przedmiot zapisany",
+	"item updated":"Aktualizacja przedmiotu zakonczona pomyslnie",
+	"warn item update":"Znaleziono ten przedmiot w magazynie, chcesz go zaktualizowac czy zapisac NOWY?",
+	"btn options":["AKTUALIZUJ", "ZAPISZ NOWY"]
 }

@@ -86,7 +86,7 @@ public class ConstStrings {
 	public final String AMP = "&";
 	public final String CARET = "^";
 	public final String STAR = "*";
-	public final String EURO = "â‚¬ ";
+	public final String EURO = "€ ";
 	public final String PLUS = "+";
 	public final String PERCENT = "%";
 	public final String MINUS = "-";
@@ -227,4 +227,10 @@ public class ConstStrings {
 	public final String ALL_EN = "ALL";
 	public final String ALL_PL = "WSZYSTKO";
 	public final String PROFITS = "profits";
+	public final String UPDATE_SELECTED_ERR = "updated selected err";
+	public final String JL_NEW_ITEM_SAVED = "new item saved";
+	public final String JL_ITEM_SAVED = "item saved";
+	public final String JL_ITEM_UPDATED = "item updated";
+	public final String JL_WARN_ITEM_UPDATE = "warn item update";
+	public final String JL_OPTIONS_BTN = "btn options";
 }
