@@ -113,20 +113,31 @@ public class SalesReports {
 	private void initialize() {
 		int lblX = 10, lblY = 10, lblW = (msh.getScreenDimension()[0]), lblH = (msh.getScreenDimension()[1]);
 		int jcbW = 55, jcbH = 28, jcbYOffset = 70, btnPrintX = 400;
-		String[]days = dh.getDaysArray();
-		JSONArray jArr = (JSONArray) jl.get(cs.MONTHS_NAMES);
-		String[]months = msh.json2Array(jArr);
-		jArr = null;
-		jArr = (JSONArray) jl.get(cs.YEARS);
-		String[]years = msh.json2Array(jArr);
+		
+//		String[]days = dh.getDaysArray();
+//		JSONArray jArr = (JSONArray) jl.get(cs.MONTHS_NAMES);
+//		String[]months = msh.json2Array(jArr);
+//		jArr = null;
+//		jArr = (JSONArray) jl.get(cs.YEARS);
+//		String[]years = msh.json2Array(jArr);
+//		
+//		int today = dh.getDayOfMonthNum();
+//		today--;
+//		int month = dh.getMonthNum();
+//		int year = dh.getYearIndex();
+		
+		String[]years = dh.getYearsArr();// msh.json2Array((JSONArray) jl.get(cs.YEARS));
+		String[]months = msh.json2Array((JSONArray) jl.get(cs.MONTHS_NAMES));
 		
 		int today = dh.getDayOfMonthNum();
 		today--;
 		int month = dh.getMonthNum();
 		int year = dh.getYearIndex();
 		
+		String[]days = dh.getDaysArray(++month, year);
+
 		dayOfReport = days[today];
-		monthOfReportD = months[month];
+		monthOfReportD = months[--month];
 		yearOfReportD = years[year];
 		monthOfReport = months[month];
 		yearOfReport = years[year];
@@ -237,15 +248,15 @@ public class SalesReports {
 //				System.out.println("Mpath "+path);
 				boolean pdfCreated = printSalesReport(path, false);
 				if(pdfCreated){
-//					try {
-//						printer.printDoc(path);
-//					} catch (IOException e) {
-//						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
-//						e.printStackTrace();
-//					} catch (PrinterException e) {
-//						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
-//						e.printStackTrace();
-//					}
+					try {
+						printer.printDoc(path);
+					} catch (IOException e) {
+						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+						e.printStackTrace();
+					} catch (PrinterException e) {
+						log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+						e.printStackTrace();
+					}
 				}
 			}
 		});
@@ -258,15 +269,15 @@ public class SalesReports {
 //					System.out.println("Dpath "+path);
 					boolean pdfCreated = printSalesReport(path, true);
 					if(pdfCreated){
-//						try {
-//							printer.printDoc(path);
-//						} catch (IOException e) {
-//							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
-//							e.printStackTrace();
-//						} catch (PrinterException e) {
-//							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
-//							e.printStackTrace();
-//						}
+						try {
+							printer.printDoc(path);
+						} catch (IOException e) {
+							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" IOException: "+e.getMessage()).toString());
+							e.printStackTrace();
+						} catch (PrinterException e) {
+							log.log(cs.ERR_LOG, js.get(cs.PRINTING_PDF_ERROR+" PrinterException: "+e.getMessage()).toString());
+							e.printStackTrace();
+						}
 					}
 //				} else {
 //					log.log(cs.ERR_LOG, jl.get(cs.PRINTING_PDF_ERROR).toString());

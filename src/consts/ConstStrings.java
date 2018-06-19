@@ -96,7 +96,8 @@ public class ConstStrings {
 	public final String SEMICOLON = ";";
 	public final String SLASH = "\\";
 	public final String SPACE = " ";
-	
+	public final String NA = "n/a";
+
 	// JSON USER FILE
 	public final String JSON_COMPANY_NAME = "company";
 	public final String JSON_VAT = "vat number";

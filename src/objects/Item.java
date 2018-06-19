@@ -98,7 +98,7 @@ public class Item {
 		this.cs = cs;
 		this.df = df;
 
-		this.id = id;
+		this.id = 0;
 
 		this.code = cs.TYRE_CODE_C;
 		this.name = "";

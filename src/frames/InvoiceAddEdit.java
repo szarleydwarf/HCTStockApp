@@ -132,23 +132,6 @@ public class InvoiceAddEdit {
 
 	private RepakReport repakReport;
 
-	
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(DatabaseManager dmn, ConstDB cDB, ConstStrings cS, ConstNums cN, Logger logger,
-//			JSONObject jSettings, JSONObject jLang, MiscHelper mSH, StockManager SM) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					InvoiceAddEdit window = new InvoiceAddEdit();
-//					window.frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
 	/**
 	 * Create the application.
@@ -1165,7 +1148,9 @@ public class InvoiceAddEdit {
 	protected void updateInvoiceLbl(String text) {
 		String car = lblForWho.getText().substring(lblForWho.getText().indexOf(cs.AT)+1, lblForWho.getText().indexOf(cs.AMP)-1);
 		String invFor = jl.get(cs.LBL_INVOICE_FOR).toString();
-
+		if(text.contains(cs.NA))
+			text = text.replace(text.substring(text.indexOf(cs.COMA)), "");
+		
 		invFor = invFor.replace(invFor.substring(invFor.indexOf(cs.AMP)+1), text);
 		lblForWho.setText(invFor);
 		this.setLastInvoiceNum();
