@@ -67,6 +67,7 @@ public class SalesReports {
 	private PDFCreator pdfCreator;
 	private Printer printer;
 	private String[][] DATA_D;
+	private int today;
 
 
 	/**
@@ -129,7 +130,7 @@ public class SalesReports {
 		String[]years = dh.getYearsArr();// msh.json2Array((JSONArray) jl.get(cs.YEARS));
 		String[]months = msh.json2Array((JSONArray) jl.get(cs.MONTHS_NAMES));
 		
-		int today = dh.getDayOfMonthNum();
+		today = dh.getDayOfMonthNum();
 		today--;
 		int month = dh.getMonthNum();
 		int year = dh.getYearIndex();
@@ -302,6 +303,9 @@ public class SalesReports {
 				if(a.getSource() == cbMonthDaily ){
 					JComboBox cb = (JComboBox) a.getSource();
 					monthOfReportD = cb.getSelectedItem().toString();
+					
+					cbDays.setModel(dh.updateCBDays(monthOfReportD, yearOfReportD));
+					cbDays.setSelectedIndex(today);
 					previewReport(lblDayPreview, lblDP.getTitle());
 				}		
 			}
@@ -313,6 +317,9 @@ public class SalesReports {
 				if(a.getSource() == cbYearDaily ){
 					JComboBox cb = (JComboBox) a.getSource();
 					yearOfReportD = cb.getSelectedItem().toString();
+					
+					cbDays.setModel(dh.updateCBDays(monthOfReportD, yearOfReportD));
+					cbDays.setSelectedIndex(today);
 					previewReport(lblDayPreview, lblDP.getTitle());
 				}		
 			}

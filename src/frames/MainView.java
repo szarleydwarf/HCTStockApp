@@ -257,7 +257,7 @@ public class MainView {
 		try {
 			dm = new DatabaseManager(logger, todayL, cdb, cn, cs, cp, jSettings, df_3_2);
 //			logger.log(cs.INFO_LOG, "DM Init");
-
+	
 		} catch (FileNotFoundException e) {
 			logger.log(cs.ERR_LOG, "FileNotFoundException DM in Main "+e.getMessage());
 			e.printStackTrace();

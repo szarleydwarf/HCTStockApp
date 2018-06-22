@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat;
 import java.time.Month;
 import java.util.Calendar;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+
 import org.json.simple.JSONArray;
 
 import consts.ConstNums;
@@ -232,5 +235,17 @@ public class DateHelper {
 		default:
 			return 0;
 		}
+	}
+	
+
+	public DefaultComboBoxModel updateCBDays(String monthName, String yearString) {
+		int month = this.getMonthNumber(monthName);
+		int year = Integer.parseInt(yearString);
+		String[]days = this.getDaysArray(month, year);
+		DefaultComboBoxModel cbm = new DefaultComboBoxModel(days);
+//		JComboBox cbDays = new JComboBox();
+//        cbDays.setModel(cbm);
+//        cbDays.setSelectedIndex(today);
+        return cbm;
 	}
 }

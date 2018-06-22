@@ -245,7 +245,8 @@ public class InvoicesDisplay {
 					JComboBox cb = (JComboBox) a.getSource();
 					monthName = cb.getSelectedItem().toString();
 					
-					updateCBDays(cbDays);
+					cbDays.setModel(dh.updateCBDays(monthName, yearString));
+					cbDays.setSelectedIndex(today);
 					updateTable();
 				}		
 			}
@@ -258,7 +259,8 @@ public class InvoicesDisplay {
 					JComboBox cb = (JComboBox) a.getSource();
 					yearString = cb.getSelectedItem().toString();
 
-					updateCBDays(cbDays);
+					cbDays.setModel(dh.updateCBDays(monthName, yearString));
+					cbDays.setSelectedIndex(today);
 					updateTable();
 				}		
 			}
@@ -267,14 +269,6 @@ public class InvoicesDisplay {
 
 	}
 
-	protected void updateCBDays(JComboBox cbDays) {
-		int month = dh.getMonthNumber(monthName);
-		int year = Integer.parseInt(yearString);
-		String[]days = dh.getDaysArray(month, year);
-		DefaultComboBoxModel cbm = new DefaultComboBoxModel(days);
-        cbDays.setModel(cbm);
-        cbDays.setSelectedIndex(today);
-	}
 
 	private void populateInvoiceListTable(int x, int y, int w, int h) {
 		ArrayList<Invoice> tList = new ArrayList<Invoice>();
