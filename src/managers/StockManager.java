@@ -57,7 +57,7 @@ public class StockManager {
 	private void removeFromList(Item t) {
 		Iterator<Item> it = list.iterator();
 		while(it.hasNext()){
-			if (t.equals(it.next())){
+			if (this.equal(t, it.next())){//t.equals(it.next())){
 				System.out.println("REMOVE");
 				it.remove();
 				return;
@@ -66,13 +66,25 @@ public class StockManager {
 	}
 
 	public boolean deleteItem(Item i){
-		if(this.search(i.getCode()+i.getID())){
-			this.removeFromList(i);
-			return i.deleteRecordFromDatabase();
+		for (int j = 0; j < this.list.size(); j++) {
+			if(this.equal(i, list.get(j))){
+//				this.removeFromList(i);
+				return i.deleteRecordFromDatabase();
+			}
 		}
 		return false;
 	}
 	
+	private boolean equal(Item toSearch, Item toCompare) {
+		if(toSearch.getID() == toCompare.getID() 
+				&& toSearch.getName() == toCompare.getName()
+				&& toSearch.getCost() == toCompare.getCost()
+				&& toSearch.getPrice() == toCompare.getPrice()
+				&& toSearch.getCode() == toCompare.getCode())
+			return true;
+		return false;
+	}
+
 	//TODO - edit?
 	public Item editNew(Item i, Item i2, boolean update){
 		System.out.println("\nEditing new item\n"+i.toString()+"\n"+i2.toString());
