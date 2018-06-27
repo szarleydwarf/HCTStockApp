@@ -31,34 +31,14 @@ public class StockManager {
 	}
 
 	public boolean addItem(Item i){
-//		if(this.search(i.getCode()+i.getID()) || this.search(i.getName())){
-			//TODO perform item update
-//			String str = "";
-//			if(this.search(i.getName()))
-//				str = i.getName();
-//			else
-//				str = i.getCode()+i.getID();
-//
-//			Item t = this.find(str);
-//			if(t != null){
-//				this.removeFromList(i);
-//				t = this.editNew(t, i);
-//				this.list.add(t);
-//				return t.updateRecord();
-//			}
-//		} else {
-			System.out.println("ADD NEW");
 			list.add(i);
 			return i.saveNewInDatabase();
-//		}		
-//		return false;
 	}
 	
 	private void removeFromList(Item t) {
 		Iterator<Item> it = list.iterator();
 		while(it.hasNext()){
 			if (this.equal(t, it.next())){//t.equals(it.next())){
-				System.out.println("REMOVE");
 				it.remove();
 				return;
 			}
@@ -68,6 +48,7 @@ public class StockManager {
 	public boolean deleteItem(Item i){
 		for (int j = 0; j < this.list.size(); j++) {
 			if(this.equal(i, list.get(j))){
+				System.out.println("REMOVE EQUAL "+i.getID() + " " + i.getName());
 //				this.removeFromList(i);
 				return i.deleteRecordFromDatabase();
 			}

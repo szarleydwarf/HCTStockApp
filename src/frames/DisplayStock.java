@@ -821,7 +821,7 @@ public class DisplayStock {
 		            JOptionPane.YES_NO_OPTION,
 		            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
 				boolean deleted = sm.deleteItem(i);//i.deleteRecordFromDatabase();
-				if(deleted) refreashTable();
+				if(deleted) goBack();//refreashTable();
 			 }
 		} else {
 			log.log(cs.ERR_LOG, jl.get(cs.ITEM_DELETING_ERROR).toString());
@@ -936,7 +936,8 @@ public class DisplayStock {
 		int row = table.getSelectedRow();
 		if(row > -1){
 			for(Item i : sm.getList()){
-				if(i.getName().equals(table.getValueAt(row, 2).toString())){
+				int id = Integer.parseInt(table.getValueAt(row, 0).toString());
+				if(i.getName().equals(table.getValueAt(row, 2).toString()) && i.getID() == id){
 					return i;
 				}
 			}
@@ -947,7 +948,7 @@ public class DisplayStock {
 	private void createTable() {
 		ListSelectionListener listener = createTableListener();
 		DefaultTableModel dm = new DefaultTableModel(data, this.cs.STOCK_TB_HEADINGS);
-		
+
 		table = new JTable();
 		table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		table.getSelectionModel().addListSelectionListener(listener);
@@ -978,7 +979,6 @@ public class DisplayStock {
 				msh.toggleJButton(btnDelete, Color.red, Color.gray, true);
 				if(getSelected() != null)
 					populateFields(getSelected());
-				
 			}
 	    };
 	    return listener;
