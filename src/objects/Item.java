@@ -98,7 +98,7 @@ public class Item {
 		this.cs = cs;
 		this.df = df;
 
-		this.id = id;
+		this.id = 0;
 
 		this.code = cs.TYRE_CODE_C;
 		this.name = "";
@@ -206,7 +206,8 @@ public class Item {
 	private String createDeleteQuery() {
 		//TODO - delete only by name, add by id? AND?
 		return cdb.DELETE + cdb.FROM + ConstDB.TableNames.TB_STOCK.getName() 
-		+ cdb.WHERE + cdb.TB_STOCK_NAME + cdb.EQUAL + "'" + this.getName().toUpperCase() + "'";
+		+ cdb.WHERE + cdb.TB_STOCK_NAME + cdb.EQUAL + "'" + this.getName().toUpperCase() + "'"
+		+ cdb.AND + cdb.ID + cdb.EQUAL + "'" + this.id + "'";
 	}
 
 	private String createUpdateQuery() {

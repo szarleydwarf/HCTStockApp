@@ -125,38 +125,37 @@ public class ItemAddNew {
 		int xOffset = 120, yOffset = 24;
 		int lblW = 80, tfW = 260, rbW = 110;
 		int lbltfH = 20;
-		float sHigh = 1.75f;
+		float sHigh = 1.9f, sW = 1.5f;
+		
 		frame = new JFrame();
 		frame.getContentPane().setBackground(color);
-		frame.setTitle(jl.get(cs.LBL_STOCK).toString());
-		frame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, cn.ADD_EDIT_FRAME_WIDTH, cn.ADD_EDIT_FRAME_HEIGHT);
+		frame.setTitle(jl.get(cs.BTN_CALCULATE).toString());
+		frame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, cn.ADD_EDIT_FRAME_WIDTH, (int) (cn.ADD_EDIT_FRAME_HEIGHT*0.75));
 		frame.getContentPane().setLayout(null);
 		frame.setVisible(true);
-				
-		JLabel code = new JLabel(jl.get(cs.LBL_CODE).toString());
-		code.setFont(fonts);
-		code.setBounds(lblX, lblY, lblW, lbltfH);
-		frame.getContentPane().add(code);
-		
-		JComboBox cbCodes = new JComboBox(cs.ITEM_CODES);
-		cbCodes.setSelectedIndex(0);
-		cbCodes.setBounds(xOffset, lblY, tfW, lbltfH);
-		frame.getContentPane().add(cbCodes);
 
-		JLabel name = new JLabel(jl.get(cs.LBL_NAME).toString());
-		name.setFont(fonts);
-		lblY += yOffset;
-		name.setBounds(lblX, lblY, lblW, lbltfH);
-		frame.getContentPane().add(name);
+		int btnX = (frame.getWidth() - cn.BACK_BTN_X_OFFSET),
+				btnY = (frame.getHeight() - cn.BACK_BTN_Y_OFFSET);
+
+		Border b = BorderFactory.createLineBorder(Color.WHITE);
+		TitledBorder border = BorderFactory.createTitledBorder(b, jl.get(cs.LBL_SUGGESTED_COST).toString());
+
+		sugestedCost = new JLabel();
+		sugestedCost.setFont(fonts);
+		sugestedCost.setBounds(lblX, lblY, (int) (lblW*sW), (int) (lbltfH*sHigh));
+		sugestedCost.setBorder(border);
+		frame.getContentPane().add(sugestedCost);
 		
-		JTextField tfName = new JTextField();
-		tfName.setFont(fonts);
-		tfName.setBounds(xOffset, lblY, tfW, lbltfH);
-		frame.getContentPane().add(tfName);
+		border = BorderFactory.createTitledBorder(b, jl.get(cs.LBL_SUGGESTED_PRICE).toString());
+		sugestedPrice = new JLabel();
+		sugestedPrice.setFont(fonts);
+		sugestedPrice.setBounds((int) (xOffset*1.25), lblY, (int) (lblW*sW), (int) (lbltfH*sHigh));
+		sugestedPrice.setBorder(border);
+		frame.getContentPane().add(sugestedPrice);
 		
 		JLabel lblCost = new JLabel(jl.get(cs.LBL_COST).toString());
 		lblCost.setFont(fonts);
-		lblY += yOffset;
+		lblY += (yOffset*2);
 		lblCost.setBounds(lblX, lblY, lblW, lbltfH);
 		frame.getContentPane().add(lblCost);
 		
@@ -165,72 +164,6 @@ public class ItemAddNew {
 		tfCost.setText("0.00");
 		tfCost.setBounds(xOffset, lblY, tfW, lbltfH);
 		frame.getContentPane().add(tfCost);
-		//TODO - add radio button???
-		Border b = BorderFactory.createLineBorder(Color.RED);
-		TitledBorder border = BorderFactory.createTitledBorder(b, jl.get(cs.LBL_SUGGESTED_COST).toString());
-		int x = lblX + lblCost.getWidth()+ tfCost.getWidth() + 40;
-
-		sugestedCost = new JLabel();
-		sugestedCost.setFont(fonts);
-		sugestedCost.setBounds(x, lblY-15, (int) (lblW*1.25), (int) (lbltfH*sHigh));
-		sugestedCost.setBorder(border);
-		frame.getContentPane().add(sugestedCost);
-
-		JLabel lblPrice = new JLabel(jl.get(cs.LBL_PRICE).toString());
-		lblPrice.setFont(fonts);
-		lblY += yOffset;
-		lblPrice.setBounds(lblX, lblY, lblW, lbltfH);
-		frame.getContentPane().add(lblPrice);
-		
-		JTextField tfPrice = new JTextField();
-		tfPrice.setFont(fonts);
-		tfPrice.setText("0.00");
-		tfPrice.setBounds(xOffset, lblY, tfW, lbltfH);
-		frame.getContentPane().add(tfPrice);
-		border = BorderFactory.createTitledBorder(b, jl.get(cs.LBL_SUGGESTED_PRICE).toString());
-		
-		sugestedPrice = new JLabel();
-		sugestedPrice.setFont(fonts);
-		sugestedPrice.setBounds(x, lblY-5, (int) (lblW*1.25), (int) (lbltfH*sHigh));
-		sugestedPrice.setBorder(border);
-		frame.getContentPane().add(sugestedPrice);
-		
-		rbTypedIn = new JRadioButton(jl.get(cs.RB_TYPED_IN).toString(), false);
-		rbTypedIn.setFont(fonts);
-		lblY += yOffset;
-		rbTypedIn.setBounds(xOffset, lblY, rbW, lbltfH);
-		frame.getContentPane().add(rbTypedIn);
-		
-		rbSuggested = new JRadioButton(jl.get(cs.RB_SUGGESTED).toString(), true);
-		rbSuggested.setFont(fonts);
-		rbSuggested.setBounds(xOffset+150, lblY, rbW, lbltfH);
-		frame.getContentPane().add(rbSuggested);
-		
-		ButtonGroup radioGroup = new ButtonGroup();
-		radioGroup.add(rbSuggested);
-		radioGroup.add(rbTypedIn);
-
-		
-		JLabel qnt = new JLabel(jl.get(cs.LBL_QNT).toString());
-		qnt.setFont(fonts);
-		lblY += yOffset;
-		qnt.setBounds(lblX, lblY, lblW, lbltfH);
-		frame.getContentPane().add(qnt);
-		
-		JTextField tfQnt = new JTextField();
-		tfQnt.setFont(fonts);
-		tfQnt.setText(""+0);
-		tfQnt.setBounds(xOffset, lblY, tfW/2, lbltfH);
-		frame.getContentPane().add(tfQnt);
-
-//TODO - profit percent combobox
-		String[] profits = msh.json2Array((JSONArray) js.get(cs.PROFITS));
-		JComboBox cbProfit = new JComboBox(profits);
-		cbProfit.setBounds(tfQnt.getX()+tfQnt.getWidth()+10, lblY, tfW/2, lbltfH);
-		cbProfit.setSelectedIndex(0);
-		frame.getContentPane().add(cbProfit);
-		profitPercent = msh.removeSpecialChars(cbProfit.getItemAt(0).toString());
-
 		
 		JLabel lblVat = new JLabel(jl.get(cs.LBL_VAT).toString());
 		lblVat.setFont(fonts);
@@ -244,33 +177,6 @@ public class ItemAddNew {
 		chbVAT.setFont(fonts);
 		chbVAT.setBounds(xOffset, lblY, tfW, lbltfH);
 		frame.getContentPane().add(chbVAT);
-
-		JLabel transport = new JLabel(jl.get(cs.LBL_TRANSPORT).toString());
-		transport.setFont(fonts);
-		lblY += yOffset;
-		transport.setBounds(lblX, lblY, lblW, lbltfH);
-		frame.getContentPane().add(transport);
-		
-		String[] tSupNames = msh.json2Array((JSONArray) js.get(cs.SUPLIERS_NAMES_ARR));
-		String[] tSupTrans = msh.json2Array((JSONArray) js.get(cs.SUPPLIERS_CHARGES_ARR));
-		
-		JComboBox cbTransCharges = new JComboBox(tSupNames);
-		cbTransCharges.setBounds(xOffset, lblY, tfW/2, lbltfH);
-		cbTransCharges.setSelectedIndex(0);
-		frame.getContentPane().add(cbTransCharges);
-		
-
-		JCheckBox chbTransport = new JCheckBox();
-		chbTransport.setSelected(Boolean.parseBoolean(""+tran));
-		chbTransport.setBackground(color);
-		chbTransport.setFont(fonts);
-		chbTransport.setBounds((int) (xOffset*2.4), lblY, 30, lbltfH);
-		frame.getContentPane().add(chbTransport);
-
-		JLabel lblTransportCharges = new JLabel("€ 0");
-		lblTransportCharges.setFont(fonts);
-		lblTransportCharges.setBounds((int) (chbTransport.getX() + chbTransport.getWidth() + xOffset), lblY, lblW, lbltfH);
-		frame.getContentPane().add(lblTransportCharges);
 		
 		JLabel lblVemc = new JLabel(jl.get(cs.LBL_VEMC).toString());
 		lblVemc.setFont(fonts);
@@ -285,23 +191,48 @@ public class ItemAddNew {
 		chbVemc.setBounds(xOffset, lblY, tfW, lbltfH);
 		frame.getContentPane().add(chbVemc);
 
-		int btnX = (frame.getWidth() - cn.BACK_BTN_X_OFFSET),
-				btnY = (frame.getHeight() - cn.BACK_BTN_Y_OFFSET);
+		JLabel transport = new JLabel(jl.get(cs.LBL_TRANSPORT).toString());
+		transport.setFont(fonts);
+		lblY += yOffset;
+		transport.setBounds(lblX, lblY, lblW, lbltfH);
+		frame.getContentPane().add(transport);
+		
+		JCheckBox chbTransport = new JCheckBox();
+		chbTransport.setSelected(Boolean.parseBoolean(""+tran));
+		chbTransport.setBackground(color);
+		chbTransport.setFont(fonts);
+		chbTransport.setBounds(xOffset, lblY, 30, lbltfH);
+		frame.getContentPane().add(chbTransport);
+		
+		String[] tSupNames = msh.json2Array((JSONArray) js.get(cs.SUPLIERS_NAMES_ARR));
+		String[] tSupTrans = msh.json2Array((JSONArray) js.get(cs.SUPPLIERS_CHARGES_ARR));
+		
+		JComboBox cbTransCharges = new JComboBox(tSupNames);
+		cbTransCharges.setBounds((int) (xOffset*1.4), lblY, tfW/2, lbltfH);
+		cbTransCharges.setSelectedIndex(0);
+		frame.getContentPane().add(cbTransCharges);
+		
+
+		JLabel lblTransportCharges = new JLabel("€ 0");
+		lblTransportCharges.setFont(fonts);
+		lblTransportCharges.setBounds((int) (cbTransCharges.getX() + cbTransCharges.getWidth() + xOffset), lblY, lblW, lbltfH);
+		frame.getContentPane().add(lblTransportCharges);
+
+		String[] profits = msh.json2Array((JSONArray) js.get(cs.PROFITS));
+		JComboBox cbProfit = new JComboBox(profits);
+		lblY += yOffset;
+		cbProfit.setBounds(xOffset, lblY, tfW/2, lbltfH);
+		cbProfit.setSelectedIndex(0);
+		frame.getContentPane().add(cbProfit);
+		profitPercent = msh.removeSpecialChars(cbProfit.getItemAt(0).toString());
+
+
 		
 		JButton btnBack = new JButton(jl.get(cs.BTN_BACK).toString());
 		btnBack.setFont(fonts_title);
 		btnBack.setBounds(btnX, btnY, cn.BACK_BTN_WIDTH - 20, cn.BACK_BTN_HEIGHT);
 		frame.getContentPane().add(btnBack);
 		
-		JButton btnSave = new JButton(jl.get(cs.BTN_SAVE).toString());
-		btnSave.setForeground(Color.RED);
-		btnSave.setBackground(Color.LIGHT_GRAY);
-		btnSave.setFont(fonts);
-		lblY += yOffset;
-		btnSave.setBounds(xOffset, lblY, tfW / 2, lbltfH+10);
-		frame.getContentPane().add(btnSave);
-
-		// LISTENERS SECTION
 		tfCost.getDocument().addDocumentListener(new DocumentListener() {
 			  public void changedUpdate(DocumentEvent e) {
 			  }
@@ -364,27 +295,6 @@ public class ItemAddNew {
 			}
 		});
 		
-		rbSuggested.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				isSuggested = true;
-			}
-		});
-
-		rbTypedIn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				isSuggested = false;
-			}
-		});
-		
-		cbCodes.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent a) {
-				if(a.getSource() == cbCodes ){
-					JComboBox cb = (JComboBox) a.getSource();
-					itemCode = (cb.getSelectedItem().toString());
-				}		
-			}
-		});
 		
 		cbProfit.addActionListener(new ActionListener() {
 			@Override
@@ -424,35 +334,6 @@ public class ItemAddNew {
 			}
 		});
 		
-		btnSave.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				int tqnt = msh.isInt(tfQnt.getText());
-				
-				i = getItem(i, cbCodes, tfName, tfPrice, tfQnt, chbVAT, chbTransport, chbVemc);
-				System.out.println(""+i.toString());
-				itemSaved = sm.addItem(i);
-				if(itemSaved){
-					if(i.getCode().equals(cs.TYRE_CODE_C) || i.getCode().equals(cs.TYRE_CODE_A)){
-						JSONArray jArr = (JSONArray) jl.get(cs.REPAK_TB_COL_NAMES);
-						String[]sHeadings = msh.json2Array(jArr);
-						boolean b = (i.getCode().equals(cs.TYRE_CODE_C)) ? true : false;
-						int col = (i.getCode().equals(cs.TYRE_CODE_C)) ? 3 : 6;
-						
-						int tQ = repakReport.getTyresInStock(date, b);
-						
-						tQ = tQ + tqnt;
-						repakReport.updateRepakList(date, sHeadings[col], tQ);
-						repakReport.setList(repakReport.listUpdate());
-					}
-
-					JOptionPane.showMessageDialog(frame, jl.get(cs.SAVED_MSG).toString());
-					frame.dispose();
-				}else{
-					log.log(cs.ERR_LOG, " - " + this.getClass().getName() + " ~ " + jl.get(cs.ITEM_ADD_ERROR).toString());
-					JOptionPane.showMessageDialog(frame, jl.get(cs.ITEM_ADD_ERROR).toString());
-				}
-			}
-		});
 		
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

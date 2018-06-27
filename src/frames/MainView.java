@@ -257,7 +257,7 @@ public class MainView {
 		try {
 			dm = new DatabaseManager(logger, todayL, cdb, cn, cs, cp, jSettings, df_3_2);
 //			logger.log(cs.INFO_LOG, "DM Init");
-
+	
 		} catch (FileNotFoundException e) {
 			logger.log(cs.ERR_LOG, "FileNotFoundException DM in Main "+e.getMessage());
 			e.printStackTrace();
@@ -410,18 +410,18 @@ public class MainView {
 		stockBtn.setBounds(btnX, btnY, 200, 36);
 		frame.getContentPane().add(stockBtn);
 		
-		JButton nowyTowarBtn = new JButton(jLang.get(cs.BTN_NEW).toString());
-		nowyTowarBtn.setBackground(new Color(0, 255, 153));
-		nowyTowarBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
-		nowyTowarBtn.addActionListener(new ActionListener() {
+		JButton obliczKosztBtn = new JButton(jLang.get(cs.BTN_CALCULATE).toString());
+		obliczKosztBtn.setBackground(new Color(0, 255, 153));
+		obliczKosztBtn.setFont(new Font("Segoe UI Black", Font.PLAIN, 14));
+		obliczKosztBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(!newItemFrame.isVisible())
 					newItemFrame.setIsVisible(true);
 			}
 		});
 		btnY += yOffset;
-		nowyTowarBtn.setBounds(btnX, btnY, 200, 36);
-		frame.getContentPane().add(nowyTowarBtn);
+		obliczKosztBtn.setBounds(btnX, btnY, 200, 36);
+		frame.getContentPane().add(obliczKosztBtn);
 		
 		Border b = BorderFactory.createLineBorder(Color.black);
 		TitledBorder border = BorderFactory.createTitledBorder(b, "");

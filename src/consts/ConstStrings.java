@@ -96,7 +96,8 @@ public class ConstStrings {
 	public final String SEMICOLON = ";";
 	public final String SLASH = "\\";
 	public final String SPACE = " ";
-	
+	public final String NA = "n/a";
+
 	// JSON USER FILE
 	public final String JSON_COMPANY_NAME = "company";
 	public final String JSON_VAT = "vat number";
@@ -151,6 +152,7 @@ public class ConstStrings {
 	public final String BTN_CLOSE = "close";
 	public final String BTN_DELETE = "delete";
 	public final String BTN_NEW = "new";
+	public final String BTN_CALCULATE = "calculate";
 	public final String BTN_INVOICE = "invoice";
 	public final String BTN_PRINT = "print";
 	public final String BTN_INVOICES = "btn invoices";

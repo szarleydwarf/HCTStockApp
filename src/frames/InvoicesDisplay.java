@@ -74,21 +74,6 @@ public class InvoicesDisplay {
 	private JTable table;
 	private int today;
 
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					InvoicesDisplay window = new InvoicesDisplay();
-//					window.frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
 	/**
 	 * Create the application.
@@ -176,9 +161,9 @@ public class InvoicesDisplay {
 		int month = dh.getMonthNum();
 		int year = dh.getYearIndex();
 		
-		String[]days = dh.getDaysArray(month++, year);
+		String[]days = dh.getDaysArray(++month, year);
 		dayString = days[today];
-		monthName = months[month];
+		monthName = months[--month];
 		yearString = years[year];
 
 		JComboBox cbDays = new JComboBox(days);
@@ -260,7 +245,8 @@ public class InvoicesDisplay {
 					JComboBox cb = (JComboBox) a.getSource();
 					monthName = cb.getSelectedItem().toString();
 					
-					updateCBDays(cbDays);
+					cbDays.setModel(dh.updateCBDays(monthName, yearString));
+					cbDays.setSelectedIndex(today);
 					updateTable();
 				}		
 			}
@@ -273,7 +259,8 @@ public class InvoicesDisplay {
 					JComboBox cb = (JComboBox) a.getSource();
 					yearString = cb.getSelectedItem().toString();
 
-					updateCBDays(cbDays);
+					cbDays.setModel(dh.updateCBDays(monthName, yearString));
+					cbDays.setSelectedIndex(today);
 					updateTable();
 				}		
 			}
@@ -282,14 +269,6 @@ public class InvoicesDisplay {
 
 	}
 
-	protected void updateCBDays(JComboBox cbDays) {
-		int month = dh.getMonthNumber(monthName);
-		int year = Integer.parseInt(yearString);
-		String[]days = dh.getDaysArray(month, year);
-		DefaultComboBoxModel cbm = new DefaultComboBoxModel(days);
-        cbDays.setModel(cbm);
-        cbDays.setSelectedIndex(today);
-	}
 
 	private void populateInvoiceListTable(int x, int y, int w, int h) {
 		ArrayList<Invoice> tList = new ArrayList<Invoice>();
