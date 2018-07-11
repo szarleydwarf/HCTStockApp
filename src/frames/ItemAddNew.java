@@ -153,6 +153,15 @@ public class ItemAddNew {
 		sugestedPrice.setBorder(border);
 		frame.getContentPane().add(sugestedPrice);
 		
+		String[] profits = msh.json2Array((JSONArray) js.get(cs.PROFITS));
+		JComboBox cbProfit = new JComboBox(profits);
+//		lblY += yOffset;
+		int x = sugestedPrice.getX() + sugestedPrice.getWidth() + 10;
+		cbProfit.setBounds(x, lblY + 10, tfW/2, lbltfH);
+		cbProfit.setSelectedIndex(0);
+		frame.getContentPane().add(cbProfit);
+		profitPercent = msh.removeSpecialChars(cbProfit.getItemAt(0).toString());
+		
 		JLabel lblCost = new JLabel(jl.get(cs.LBL_COST).toString());
 		lblCost.setFont(fonts);
 		lblY += (yOffset*2);
@@ -217,16 +226,6 @@ public class ItemAddNew {
 		lblTransportCharges.setFont(fonts);
 		lblTransportCharges.setBounds((int) (cbTransCharges.getX() + cbTransCharges.getWidth() + xOffset), lblY, lblW, lbltfH);
 		frame.getContentPane().add(lblTransportCharges);
-
-		String[] profits = msh.json2Array((JSONArray) js.get(cs.PROFITS));
-		JComboBox cbProfit = new JComboBox(profits);
-		lblY += yOffset;
-		cbProfit.setBounds(xOffset, lblY, tfW/2, lbltfH);
-		cbProfit.setSelectedIndex(0);
-		frame.getContentPane().add(cbProfit);
-		profitPercent = msh.removeSpecialChars(cbProfit.getItemAt(0).toString());
-
-
 		
 		JButton btnBack = new JButton(jl.get(cs.BTN_BACK).toString());
 		btnBack.setFont(fonts_title);

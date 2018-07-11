@@ -117,19 +117,15 @@ public class StockManager {
 	
 	public String[][] getDataByCode(String code){
 		ArrayList<String[]> t = new ArrayList<String[]>();
-		for (int i = 0; i < list.size(); i++){
-			if(!code.equals(cs.ALL_EN) && !code.equals(cs.ALL_PL)){
-				if(list.get(i).getCode().equals(code)) {
-					t.add(list.get(i).getItemAsDataShortWithID());
-				}
-			} else {
-				if(!list.get(i).getCode().equals(cs.OTHER_CODE)
-						&& (!list.get(i).getCode().equals(cs.CARWASH_CODE)) 
-						&& (!list.get(i).getCode().equals(cs.SERVICE_CODE))) {
-					t.add(list.get(i).getItemAsDataShortWithID());
-				}
-			}
+		ArrayList<Item> l = new ArrayList<Item>();
+		String q = cdb.SELECT_STAR + cdb.FROM + ConstDB.TableNames.TB_STOCK.getName() + cdb.WHERE + " code " + cdb.EQUAL + "\"" + code + "\""  + cdb.ODER_BY + " name " + cdb.ASC;
+
+		l = (ArrayList<Item>) dm.selectData(q, l);
+		
+		for (int i = 0; i < l.size(); i++) {
+			t.add(l.get(i).getItemAsDataShortWithID());
 		}
+
 		String[][] data = new String[t.size()][];
 		data = t.toArray(data);
 		return data;
