@@ -23,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
@@ -125,7 +126,7 @@ public class ItemAddNew {
 		int xOffset = 120, yOffset = 24;
 		int lblW = 80, tfW = 260, rbW = 110;
 		int lbltfH = 20;
-		float sHigh = 1.9f, sW = 1.5f;
+		float sHigh = 2.1f, sW = 1.75f;
 		
 		frame = new JFrame();
 		frame.getContentPane().setBackground(color);
@@ -141,17 +142,26 @@ public class ItemAddNew {
 		TitledBorder border = BorderFactory.createTitledBorder(b, jl.get(cs.LBL_SUGGESTED_COST).toString());
 
 		sugestedCost = new JLabel();
-		sugestedCost.setFont(fonts);
+		sugestedCost.setFont(fonts_title);
 		sugestedCost.setBounds(lblX, lblY, (int) (lblW*sW), (int) (lbltfH*sHigh));
 		sugestedCost.setBorder(border);
 		frame.getContentPane().add(sugestedCost);
 		
 		border = BorderFactory.createTitledBorder(b, jl.get(cs.LBL_SUGGESTED_PRICE).toString());
 		sugestedPrice = new JLabel();
-		sugestedPrice.setFont(fonts);
+		sugestedPrice.setFont(fonts_title);
 		sugestedPrice.setBounds((int) (xOffset*1.25), lblY, (int) (lblW*sW), (int) (lbltfH*sHigh));
 		sugestedPrice.setBorder(border);
 		frame.getContentPane().add(sugestedPrice);
+		
+		String[] profits = msh.json2Array((JSONArray) js.get(cs.PROFITS));
+		JComboBox cbProfit = new JComboBox(profits);
+//		lblY += yOffset;
+		int x = sugestedPrice.getX() + sugestedPrice.getWidth() + 10;
+		cbProfit.setBounds(x, lblY + 10, tfW/2, lbltfH);
+		cbProfit.setSelectedIndex(0);
+		frame.getContentPane().add(cbProfit);
+		profitPercent = msh.removeSpecialChars(cbProfit.getItemAt(0).toString());
 		
 		JLabel lblCost = new JLabel(jl.get(cs.LBL_COST).toString());
 		lblCost.setFont(fonts);
@@ -163,6 +173,13 @@ public class ItemAddNew {
 		tfCost.setFont(fonts);
 		tfCost.setText("0.00");
 		tfCost.setBounds(xOffset, lblY, tfW, lbltfH);
+		tfCost.requestFocusInWindow();
+		SwingUtilities.invokeLater(new Runnable() {
+		      public void run() {
+		        tfCost.requestFocus();
+		        tfCost.selectAll();
+		      }
+		    });
 		frame.getContentPane().add(tfCost);
 		
 		JLabel lblVat = new JLabel(jl.get(cs.LBL_VAT).toString());
@@ -217,16 +234,6 @@ public class ItemAddNew {
 		lblTransportCharges.setFont(fonts);
 		lblTransportCharges.setBounds((int) (cbTransCharges.getX() + cbTransCharges.getWidth() + xOffset), lblY, lblW, lbltfH);
 		frame.getContentPane().add(lblTransportCharges);
-
-		String[] profits = msh.json2Array((JSONArray) js.get(cs.PROFITS));
-		JComboBox cbProfit = new JComboBox(profits);
-		lblY += yOffset;
-		cbProfit.setBounds(xOffset, lblY, tfW/2, lbltfH);
-		cbProfit.setSelectedIndex(0);
-		frame.getContentPane().add(cbProfit);
-		profitPercent = msh.removeSpecialChars(cbProfit.getItemAt(0).toString());
-
-
 		
 		JButton btnBack = new JButton(jl.get(cs.BTN_BACK).toString());
 		btnBack.setFont(fonts_title);
