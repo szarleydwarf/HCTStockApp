@@ -10,11 +10,13 @@ import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
 import javax.swing.RowSorter;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -98,7 +100,7 @@ public class CustomersFrame {
 		int tfX = 20, tfY = 20;
 
 		frame = new JFrame();
-		frame.setTitle(jl.get(cs.LBL_STOCK).toString());
+		frame.setTitle(jl.get(cs.LBL_CUSTOMER).toString());
 		frame.getContentPane().setBackground(color);
 		frame.setBounds(cn.FRAME_X_BOUND, cn.FRAME_Y_BOUND, (msh.getScreenDimension()[0]), (msh.getScreenDimension()[1]));
 		frame.getContentPane().setLayout(null);
@@ -108,7 +110,8 @@ public class CustomersFrame {
 		JTextField tfCustomers = new JTextField(jl.get(cs.TF_CUST_HINT).toString());
 		tfCustomers.setFont(fonts);
 		tfCustomers.setColumns(10);
-		tfCustomers.setBounds(tfX, tfY, tfW, tfH);
+		tfCustomers.setBounds(tfX, tfY, tfW*3, tfH);
+		tfCustomers.selectAll();
 		frame.getContentPane().add(tfCustomers);
 
 		// BUTTONS
@@ -145,6 +148,49 @@ public class CustomersFrame {
 		});
 		
 		populateCustomerTable(tfX, tfY + 40, frame.getWidth() / 2, frame.getHeight() - 140);
+		editForm();
+	}
+
+	private void editForm() {
+		int lblX = frame.getWidth()/2+30, lblY = 70, lblW = frame.getWidth()/2-200, lblH = (int) (frame.getHeight()/1.7);
+		int lbltfH = 24, xOffset = 120, yOffset = 28, tfW = 260, rbW = 110;
+		float sHigh = 1.25f, wDiv = 1.7f;
+		
+		TitledBorder lblBorder = msh.createBorders(jl.get(cs.BTN_EDIT).toString(), Color.RED);
+
+		JLabel edit = new JLabel();
+		edit.setBorder(lblBorder);
+		edit.setFont(fonts_title);
+		edit.setBounds(lblX, lblY, lblW, lblH);
+		frame.getContentPane().add(edit);
+		
+		JLabel name = new JLabel(jl.get(cs.LBL_NAME).toString());
+		name.setFont(fonts);
+		lblX += 10;
+		xOffset = lblX + xOffset;
+		lblY += yOffset;
+		name.setBounds(lblX, lblY, lblW, lbltfH);
+		frame.getContentPane().add(name);
+		
+		JTextField tfName = new JTextField();
+		tfName.setFont(fonts);
+		tfName.setBounds(xOffset, lblY, tfW, lbltfH);
+		frame.getContentPane().add(tfName);
+
+		JLabel brand = new JLabel(jl.get(cs.BRAND).toString());
+		
+		brand.setFont(fonts);
+//		lblX += 10;
+//		xOffset = lblX + xOffset;
+		lblY += yOffset;
+		brand.setBounds(lblX, lblY, lblW, lbltfH);
+		frame.getContentPane().add(brand);
+		
+		JTextField tfBrand = new JTextField();
+		tfBrand.setFont(fonts);
+		tfBrand.setBounds(xOffset, lblY, tfW, lbltfH);
+		frame.getContentPane().add(tfBrand);
+		
 	}
 	
 	private void populateCustomerTable(int x, int y, int w, int h) {
